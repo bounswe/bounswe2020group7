@@ -4,6 +4,8 @@ This project repository was prepared by the 7th group for CMPE 352 course.
 
 You can find more information on the [Wiki page](https://github.com/bounswe/bounswe2020group7/wiki) of our repository.
 
+![WhatsApp Image 2020-02-20 at 12 23 00](https://user-images.githubusercontent.com/44057947/74977199-512e1680-543b-11ea-8719-fccd2b0bc3e3.jpeg)
+
 ## Team Members
 
 | <img src="https://avatars1.githubusercontent.com/u/44052817?s=400&u=056cf4772398478bb2f54c1bc378f0744189dfc0&v=4" alt="alt text" width="150"> | <img src="https://i.vippng.com/png/small/355-3554387_create-digital-profile-icon-blue-profile-icon-png.png" alt="alt text" width="150"> | <img src="https://i.vippng.com/png/small/355-3554387_create-digital-profile-icon-blue-profile-icon-png.png" alt="alt text" width="150"> | <img src="https://avatars3.githubusercontent.com/u/44054324?s=400&u=d5cb53ffbbd5809d29841fc894b73e5a5ddc590c&v=4" alt="alt text" width="150"> | 
