@@ -4,7 +4,7 @@ This project repository was prepared by the 7th group for CMPE 352 course.
 
 You can find more information on the [Wiki page](https://github.com/bounswe/bounswe2020group7/wiki) of our repository.
 
-![WhatsApp Image 2020-02-20 at 12 23 00](https://user-images.githubusercontent.com/44057947/74977199-512e1680-543b-11ea-8719-fccd2b0bc3e3.jpeg)
+![IMG_2192](https://user-images.githubusercontent.com/45578933/75605022-e3938180-5aef-11ea-9ae6-1539c1a79d4f.jpeg)
 
 ## Team Members
 
