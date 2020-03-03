@@ -5,8 +5,9 @@ This project repository was prepared by the 7th group for CMPE 352 course.
 You can find more information on the [Wiki page](https://github.com/bounswe/bounswe2020group7/wiki) of our repository.
 
 ![IMG_2192](https://user-images.githubusercontent.com/45578933/75605022-e3938180-5aef-11ea-9ae6-1539c1a79d4f.jpeg)
-Front line from left to right: Mehmet Temizel, H. Ramazan Yurt, Oyku Yilmaz, Meltem Arslan, Burak Omur.
-Back line from left to right: Ahmet Dadak, Kerem Uslular, H. Umut Ozdemir, Alperen Divriklioglu, Ertugrul Bulbul.
+_Front line from left to right: Mehmet Temizel, H. Ramazan Yurt, Oyku Yilmaz, Meltem Arslan, Burak Omur._
+
+_Back line from left to right: Ahmet Dadak, Kerem Uslular, H. Umut Ozdemir, Alperen Divriklioglu, Ertugrul Bulbul._
 
 ## Team Members
 
