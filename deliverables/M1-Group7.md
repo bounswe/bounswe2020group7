@@ -399,7 +399,7 @@ We used ProjectLibre for creating our project plan and Gantt chart. As the tool 
 
  * 2.4.3 New users should accept the "Terms of Use" and "Privacy Policy" of the platform which are prepared according to relevant regulations.
 
-  2.5 Implementation   
+#### 2.5 Implementation   
 
  * 2.5.1 The application shall be deployable on a remote and manually configurable remote server.
 
@@ -412,8 +412,6 @@ We used ProjectLibre for creating our project plan and Gantt chart. As the tool 
  * 2.5.5 There shall be a web platform and a native Android application that supports the same functionalities.
 
  * 2.5.6 The implementation of the system should follow [W3C standards](https://www.w3.org/standards/) and [W3C Activity Streams Protocol](https://www.w3.org/TR/activitystreams-core/).
-
-
 
 ### References
 
@@ -674,7 +672,7 @@ Ayşin Özker is a woman professor who studies mathematical physics and general 
 
 ### Scenario 3
 
-<img alt= "Germonie Hranger" src="https://i.ibb.co/wwbYXnj/597bdc91-294c-49c9-92a3-690ec8a0310e.jpg" height="400px" width="400px">
+![](https://camo.githubusercontent.com/6d2984978edf53490b9d5820ab9ac35f16bcfb45/68747470733a2f2f692e6962622e636f2f77776259586e6a2f35393762646339312d323934632d343963392d393261332d3639306563386130333130652e6a7067)
 
 _Image 1. Germonie Hranger with the antenna she produced_
 
@@ -742,11 +740,11 @@ This mockup shows how a user makes an advanced search
 
 2. She clicks the advanced search, selects the person search, and types "Telecommunications" into the "expertise" field. 
 
-[[https://github.com/bounswe/bounswe2020group7/blob/master/non_project/3/new/2.jpg]]
+[[https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/3/new/2.jpg]]
 
 3. She sees the search results 
 
-[[https://github.com/bounswe/bounswe2020group7/blob/master/non_project/3/new/3.jpg]]
+[[https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/3/new/3.jpg]]
 
 ### Mockup 3.2
 
@@ -754,11 +752,11 @@ This mockup shows how a guest register.
 
 1. She decides to open an account, and she opens the registration page
 
-[[https://github.com/bounswe/bounswe2020group7/blob/master/non_project/3/new/5.jpg]]
+[[https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/3/new/5.jpg]]
 
 2. She provides her information to the field in the registration page
 
-[[https://github.com/bounswe/bounswe2020group7/blob/master/non_project/3/new/6.jpg]]
+[[https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/3/new/6.jpg]]
 
 ### Mockup 3.3
 
@@ -766,47 +764,47 @@ This mockup shows how a registered user follows a registered user whose profile 
 
 1. She opens the profile page of "Parry Hotter"
 
-[[https://github.com/bounswe/bounswe2020group7/blob/master/non_project/3/new/4.jpg]]
+[[https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/3/new/4.jpg]]
 
 2. She begins to follow "Parry Hotter"
 
-[[https://github.com/bounswe/bounswe2020group7/blob/master/non_project/3/new/7.jpg]]
+[[https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/3/new/7.jpg]]
 
 ## UML Software Designs
 
 ### Use Case Diagram
 
-![](https://github.com/bounswe/bounswe2020group7/blob/master/non_project/Usecase/Use%20Case%20Diagram%20-%20Platon_after_feed.png?raw=true)
+![](https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/Usecase/Use%20Case%20Diagram%20-%20Platon_after_feed.png)
 
 ### Class Diagram
 
-![](https://github.com/bounswe/bounswe2020group7/blob/master/non_project/Usecase/FinalVersionOfClassDiagram_v2.png)
+![](https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/Usecase/FinalVersionOfClassDiagram_v2.png)
 
 ### Sequence Diagrams
 
 #### 1. Keyword Search with Date Sorting
 
-![](https://github.com/bounswe/bounswe2020group7/blob/master/non_project/SequenceDiagrams/Basic%20Search%20-%20Burakff.png)
+![](https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/SequenceDiagrams/Basic%20Search%20-%20Burakff.png)
 
 #### 2. Workspace Creation
 
-![](https://github.com/bounswe/bounswe2020group7/blob/master/non_project/SequenceDiagrams/Workspace%20Creation_v2.png)
+![](https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/SequenceDiagrams/Workspace%20Creation_v2.png)
 
 #### 3. Link ResearchGate Account
 
-![](https://github.com/bounswe/bounswe2020group7/blob/master/non_project/SequenceDiagrams/LinkRG_v2.png) 
+![](https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/SequenceDiagrams/LinkRG_v2.png) 
 
 #### 4. Link Google Scholar Account
 
-![](https://github.com/bounswe/bounswe2020group7/blob/master/non_project/SequenceDiagrams/LinkGoogle_v2.png)
+![](https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/SequenceDiagrams/LinkGoogle_v2.png)
 
 #### 5. Notification Creation
 
-![](https://github.com/bounswe/bounswe2020group7/blob/master/non_project/SequenceDiagrams/Notificationf.png)
+![](https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/SequenceDiagrams/Notificationf.png)
 
 #### 6. Comment/Rate Profile
 
-![](https://github.com/bounswe/bounswe2020group7/blob/master/non_project/SequenceDiagrams/comment.png)
+![](https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/SequenceDiagrams/comment.png)
 
 #### 7. Advanced Filtered Search
 
@@ -814,7 +812,7 @@ This mockup shows how a registered user follows a registered user whose profile 
 
 #### 8. Creating Issue
 
-![](https://github.com/bounswe/bounswe2020group7/blob/master/non_project/SequenceDiagrams/create%20issue%20v3.png)
+![](https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/SequenceDiagrams/create%20issue%20v3.png)
 
 #### 9. Inviting a User to Workspace
 
@@ -826,7 +824,7 @@ This mockup shows how a registered user follows a registered user whose profile 
 
 #### 11. Milestone Creation
 
-![](https://github.com/bounswe/bounswe2020group7/blob/master/non_project/SequenceDiagrams/Milestone%20Creationlast3.png)
+![](https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/SequenceDiagrams/Milestone%20Creationlast3.png)
 
 #### 12. Send Collaboration Request
 
@@ -834,18 +832,18 @@ This mockup shows how a registered user follows a registered user whose profile 
 
 #### 13. File Creation
 
-![](https://github.com/bounswe/bounswe2020group7/blob/master/non_project/SequenceDiagrams/File_Creation.png)
+![](https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/SequenceDiagrams/File_Creation.png)
 
 ## Project Plan & RAM
 
 ### Project Plan
 
-![](https://github.com/bounswe/bounswe2020group7/blob/master/non_project/Plans/revised_plan/revised_plan-1.jpg)
-![](https://github.com/bounswe/bounswe2020group7/blob/master/non_project/Plans/revised_plan/revised_plan-2.jpg)
-![](https://github.com/bounswe/bounswe2020group7/blob/master/non_project/Plans/revised_plan/revised_plan-3.jpg)
-![](https://github.com/bounswe/bounswe2020group7/blob/master/non_project/Plans/revised_plan/revised_plan-4.jpg)
-![](https://github.com/bounswe/bounswe2020group7/blob/master/non_project/Plans/revised_plan/revised_plan-5.jpg)
-![](https://github.com/bounswe/bounswe2020group7/blob/master/non_project/Plans/revised_plan/gantt_revised.jpg)
+![](https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/Plans/revised_plan/revised_plan-1.jpg)
+![](https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/Plans/revised_plan/revised_plan-2.jpg)
+![](https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/Plans/revised_plan/revised_plan-3.jpg)
+![](https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/Plans/revised_plan/revised_plan-4.jpg)
+![](https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/Plans/revised_plan/revised_plan-5.jpg)
+![](https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/Plans/revised_plan/gantt_revised.jpg)
 
 ### RAM
 
