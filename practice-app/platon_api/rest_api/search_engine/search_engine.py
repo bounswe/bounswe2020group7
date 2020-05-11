@@ -18,8 +18,12 @@ class searchEngine():
     job_list : list
         a list of jobs that whose index is written in the database. 
     
-    mydb: mysql_connection
-        mysql connection to the mysql server of our api
+    exact_match_score: int
+        Semantic score of an exact match in search operation
+    
+    num_of_semantically_related: int
+        Number of words that search engine uses in semantice search foe each token
+
 
     Methods
     -------
@@ -39,7 +43,7 @@ class searchEngine():
     
     exact_match_score = 1000000
 
-    num_of_semantically_related = 3
+    num_of_semantically_related = 5
 
     @staticmethod
     def semantic_related_list(search_tokens,max_num_of_related):
