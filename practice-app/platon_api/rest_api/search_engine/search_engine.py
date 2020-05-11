@@ -1,5 +1,6 @@
 import json
 from django.db import connection
+from platon_api.settings import JOB_CHOICES
 
 import string
 import re
@@ -39,7 +40,7 @@ class searchEngine():
 
     """ TODO: Update the hardcoded list when it is finished"""
 
-    job_list = ["engineer","teacher","doctor","a","b","c","d","f","e","g","c","h","j","k"]
+    job_list = ["EMPTY_JOB"] + [job_tuple[1].lower() for job_tuple in JOB_CHOICES]
     
     exact_match_score = 1000000
 
@@ -58,7 +59,7 @@ class searchEngine():
                 result_list += [(related["word"],related["score"]) for related in resp]
             return result_list
         except:
-            return []
+            return [(token,searchEngine.exact_match_score) for token in search_tokens]
 
 
     @staticmethod
@@ -179,7 +180,7 @@ class searchEngine():
         for id,score in sorted_index:
             for result in result_list:
                 if result[0]==id:
-                    search_result.append({"name":result[1],"surname":result[2],"e-mail":result[3],"about_me":result[4],"job":searchEngine.job_list[result[5]],"field_of_study":result[6]})
+                    search_result.append({"name":result[1],"surname":result[2],"e-mail":result[3],"about_me":result[4],"job":searchEngine.job_list[result[5]].title(),"field_of_study":result[6]})
                     break
             continue
         # Return the search result list

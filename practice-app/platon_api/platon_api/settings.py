@@ -123,3 +123,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+JOB_CHOICES =  ((1, "Student"), 
+                (2, "Academician"), 
+                (3, "Scientist"), 
+                (4, "Accountant"), 
+                (5, "Computer Programmer"), 
+                (6, "President"), 
+                (7, "General Manager"), 
+                (8, "Computer Specialist"), 
+                (9, "Other"))
