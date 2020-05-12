@@ -55,8 +55,7 @@ class searchEngine():
                 querystring = {"ml":token}
                 response = requests.request("GET", url, params=querystring)
                 resp = json.loads(response.text)
-                resp = resp[:max_num_of_related]
-                result_list += [(related["word"],related["score"]) for related in resp]
+                result_list += [(related["word"],related["score"]) for related in resp[:max_num_of_related]]
             return result_list
         except:
             return [(token,searchEngine.exact_match_score) for token in search_tokens]

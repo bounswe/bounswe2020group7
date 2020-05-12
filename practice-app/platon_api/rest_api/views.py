@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 from rest_api.search_engine.search_engine import searchEngine as engine
 
-class search(APIView):
+class Search(APIView):
 
     def get(self,request):
         return Response(engine.search(request))

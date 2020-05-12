@@ -20,5 +20,5 @@ from rest_api import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/search/',views.search.as_view())
+    path('api/search/',views.Search.as_view())
 ]
