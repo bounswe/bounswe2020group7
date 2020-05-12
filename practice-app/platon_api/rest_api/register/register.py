@@ -1,9 +1,12 @@
 from django.db import connection, transaction
 import hashlib
-from django.http import HttpResponse
-from platon_api.settings import DATABASES, USER_TABLENAME, JOB_CHOICES
-
-import re
+from django.http import HttpResponse, HttpRequest
+from platon_api.settings import DATABASES, USER_TABLENAME, JOB_CHOICES, WEBSITE_URL
+from rest_api.register import forms
+import requests as req
+from django.shortcuts import redirect
+from django.shortcuts import render
+import re,copy
 
 def isValid(name, surname, password, email, about_me, job_id, forget_pw_ans, field_of_study):
     try:
@@ -22,7 +25,7 @@ def isValid(name, surname, password, email, about_me, job_id, forget_pw_ans, fie
     except:
         return False
 
-def register_view(response):
+def register_api(response):
     resp = HttpResponse()
     resp.status_code = 200
     if response.method == "POST":
@@ -47,3 +50,23 @@ def register_view(response):
         resp["Content-type"] = "application/json"
         resp.write({"error":"SOME_ERROR_OCCURRED"})
     return resp
+
+
+def register_form(response):
+    form = forms.RegisterForm()
+    
+    if response.method == "POST":
+        url = WEBSITE_URL + "/api/register/"
+        fr = copy.deepcopy(response.POST)
+        fr["password"] = fr.get("password1")
+        resp = HttpResponse()
+        resp.method = "POST"
+        resp.POST = fr
+        resp = register_api(resp)
+        
+        if resp.status_code == 201:
+            return redirect("/api/index")
+        
+    return render(response, "register/register.html", {"form": form})
+            
+    
