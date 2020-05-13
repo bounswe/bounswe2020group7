@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms'
 ]
 
 MIDDLEWARE = [
@@ -133,3 +134,5 @@ JOB_CHOICES =  ((1, "Student"),
 
 USER_TABLENAME = "users"
 WEBSITE_URL = "http://localhost:8000"
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
