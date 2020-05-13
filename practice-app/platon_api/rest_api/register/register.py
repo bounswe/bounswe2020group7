@@ -6,8 +6,9 @@ from rest_api.register import forms
 import requests as req
 from django.shortcuts import redirect
 from django.shortcuts import render
-import re,copy
+import re,copy, requests
 from django.contrib import messages
+
 
 def isValid(name, surname, password1,password2, email, about_me, job_id, forget_pw_ans, field_of_study):
     try:
@@ -34,6 +35,7 @@ def register_api(response):
     resp.status_code = 200
     if response.method == "POST":
         try:
+            print(response.POST)
             form = response.POST
             name, surname, password1,password2, email, about_me, job_id, forget_pw_ans, field_of_study = form.get("name"), form.get("surname"), form.get("password1"),form.get("password2"), form.get("e_mail") , form.get("about_me") , form.get("job_id"), form.get("forget_password_ans") ,form.get("field_of_study") 
             if isValid(name, surname, password1,password2, email, about_me, job_id, forget_pw_ans, field_of_study):
@@ -55,14 +57,14 @@ def register_api(response):
         resp.write({"error":"SOME_ERROR_OCCURRED"})
     return resp
 
-
 def register_form(response):
     error = ""
     form = ""
     if response.method == "POST": 
         form = forms.RegisterForm(response.POST)
+        fr = copy.deepcopy(response.POST)
         url = WEBSITE_URL + "/api/register/"
-        resp = register_api(response)
+        resp = requests.post(url, fr)
         if resp.status_code == 201:
             return redirect("/api/index")
         error = "Some Error Occurred" 
