@@ -30,13 +30,14 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_api',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'crispy_forms'
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -132,7 +133,7 @@ JOB_CHOICES =  ((1, "Student"),
                 (8, "Computer Specialist"), 
                 (9, "Other"))
 
-USER_TABLENAME = "users"
+USER_TABLENAME = "rest_api_registereduser"
 WEBSITE_URL = "http://localhost:8000"
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

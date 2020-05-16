@@ -36,10 +36,6 @@ from platon_api.settings import DATABASES, USER_TABLENAME, JOB_CHOICES, WEBSITE_
 import requests as req
 from django.shortcuts import redirect,render
 import re,copy, requests, hashlib
-from django.contrib import messages
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
-from django import forms
 
 
 
@@ -106,57 +102,16 @@ def register_api(response):
                     password = hashlib.sha256(password1.encode("utf-8")).hexdigest()        # make password hashed
                     token = hashlib.sha256(name.encode("utf-8")).hexdigest()                # create token from name
                     # MYsql insertion query
-                    query = "INSERT INTO `" + db_name + "`.`" + USER_TABLENAME + "` (`id`, `name`, `surname`, `password_hash`, `e-mail`, `token`, `about_me`, `job_id`, `field_of_study`, `forget_password_ans`) VALUES ("
-                    query += "NULL,'" + name + "','" +  surname + "','" + password + "','" + email + "','" + token + "','"  + about_me + "','"+ job_id + "','" + field_of_study + "','" +  forget_pw_ans + "');"
-                    
+                    query = "INSERT INTO `" + db_name + "`.`" + USER_TABLENAME + "` (`name`, `surname`, `password_hashed`, `e_mail`, `token`, `about_me`, `job_id`, `field_of_study`, `forget_password_ans`) VALUES ("
+                    query += "'" + name + "','" +  surname + "','" + password + "','" + email + "','" + token + "','"  + about_me + "','"+ job_id + "','" + field_of_study + "','" +  forget_pw_ans + "');"
+                    print(query)
                     cursor.execute(query)
                     resp.status_code = 201      # if successfull, response code 201 CREATED
                 except:
-                    resp.status_code = 501      # if fail, response code 501 INTERNAL SERVER ERROR
+                    resp.status_code = 503      # if fail, response code 501 INTERNAL SERVER ERROR
         except:
             pass
     if resp.status_code == 200:                 # if response code still 200 as default, GET REQUEST
         resp["Content-type"] = "application/json"
         resp.write({"error":"SOME_ERROR_OCCURRED"})         # return ERROR AS json
     return resp
-
-
-class RegisterForm(UserCreationForm):
-    name = forms.CharField(label='Name:', max_length=30)
-    surname = forms.CharField(label='Surname:', max_length=30)
-    e_mail = forms.EmailField(label='E-Mail:', max_length=250)
-    field_of_study = forms.CharField(label='Field Of Study:', max_length=50)
-    forget_password_ans = forms.CharField(label='Best teacher at school ( secret question ):', max_length=50)
-    about_me = forms.CharField(widget=forms.Textarea)
-    job_id = forms.ChoiceField(choices=JOB_CHOICES)
-    
-    
-    class Meta:
-        model = User
-        fields = ["name","surname", "e_mail", "password1", "password2", "forget_password_ans", "field_of_study", "job_id", "about_me"]
-    
-
-
-def register_form(response):
-    """
-        where 'response': HttpResponse, Name parameter given by user
-
-        returns redirection to another url, or renders a from page
-        
-        This function takes Httpresponse object and if 'POST' request used, it sends the "post" request to a pre-known url to this given HttpResponse object
-    """
-
-    error = ""
-    form = ""
-    if response.method == "POST": 
-        form = RegisterForm(response.POST)                          # Construct form from POST
-        url = WEBSITE_URL + "/api/register/"                        # obtain URL
-        resp = requests.post(url, response.POST)                    # send request to api
-        if resp.status_code == 201:                                 # using response
-            return redirect("/api/index")                                   #redirect
-        error = "Some Error Occurred"                               # else print some error
-    else:    
-        form = RegisterForm()                                       # if get request, render form
-    return render(response, "register/register.html", {"form": form, "error":error})
-            
-    
