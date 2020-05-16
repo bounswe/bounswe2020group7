@@ -1,0 +1,266 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module rest_api.register.register</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="rest_api.html"><font color="#ffffff">rest_api</font></a>.<a href="rest_api.register.html"><font color="#ffffff">register</font></a>.register</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:d%3A%5Cmasa%C3%BCst%C3%BC%5C352_dev%5Cbounswe2020group7%5Cpractice-app%5Cplaton_api%5Crest_api%5Cregister%5Cregister.py">d:\masaüstü\352_dev\bounswe2020group7\practice-app\platon_api\rest_api\register\register.py</a></font></td></tr></table>
+    <p><tt>Created&nbsp;on&nbsp;MAY&nbsp;16,&nbsp;2020<br>
+&nbsp;<br>
+This&nbsp;script&nbsp;controls&nbsp;the&nbsp;registration&nbsp;api&nbsp;of&nbsp;PLATON_API,&nbsp;using&nbsp;django&amp;mysql&nbsp;backend.<br>
+Endpoint&nbsp;description:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://localhost:8000/api/register/">http://localhost:8000/api/register/</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;'GET':<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Produces&nbsp;error<br>
+&nbsp;&nbsp;&nbsp;&nbsp;'POST':<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets&nbsp;dictionary&nbsp;from&nbsp;body.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JSON&nbsp;Format&nbsp;:&nbsp;{&nbsp;'name':&nbsp;"",&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string,&nbsp;Name&nbsp;parameter&nbsp;given&nbsp;by&nbsp;user<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'surname':&nbsp;"",&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string,&nbsp;Surname&nbsp;parameter&nbsp;given&nbsp;by&nbsp;user<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'password1':&nbsp;"",&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string,&nbsp;Password1&nbsp;given&nbsp;by&nbsp;user<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'password2':"",&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string,&nbsp;Password2&nbsp;given&nbsp;by&nbsp;user&nbsp;to&nbsp;check&nbsp;whether&nbsp;Password1&nbsp;is&nbsp;matched.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'e_mail':"",&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string,&nbsp;Email&nbsp;parameter&nbsp;given&nbsp;by&nbsp;user<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'about_me':"",&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string,&nbsp;About&nbsp;me&nbsp;parameter&nbsp;given&nbsp;by&nbsp;user<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'job_id':"",&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int,&nbsp;job&nbsp;id&nbsp;parameter&nbsp;chosen&nbsp;by&nbsp;user<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'forget_password_ans':"",&nbsp;&nbsp;&nbsp;string,&nbsp;forget&nbsp;password&nbsp;answer&nbsp;parameter&nbsp;given&nbsp;by&nbsp;user<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'field_of_study':""&nbsp;}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string,&nbsp;field&nbsp;of&nbsp;study&nbsp;parameter&nbsp;given&nbsp;by&nbsp;user<br>
+&nbsp;<br>
+Frontend&nbsp;Endpoint&nbsp;Description:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://localhost:8000/api/register/home/">http://localhost:8000/api/register/home/</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;'GET':<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Form&nbsp;as&nbsp;HTML<br>
+&nbsp;<br>
+@author:&nbsp;Burak&nbsp;Omur,&nbsp;darktheorys<br>
+@company:&nbsp;Group7</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="copy.html">copy</a><br>
+<a href="django.forms.html">django.forms</a><br>
+</td><td width="25%" valign=top><a href="hashlib.html">hashlib</a><br>
+<a href="django.contrib.messages.html">django.contrib.messages</a><br>
+</td><td width="25%" valign=top><a href="re.html">re</a><br>
+<a href="requests.html">requests</a><br>
+</td><td width="25%" valign=top><a href="requests.html">requests</a><br>
+<a href="django.db.transaction.html">django.db.transaction</a><br>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="django.contrib.auth.forms.html#UserCreationForm">django.contrib.auth.forms.UserCreationForm</a>(<a href="django.forms.models.html#ModelForm">django.forms.models.ModelForm</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="rest_api.register.register.html#RegisterForm">RegisterForm</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="RegisterForm">class <strong>RegisterForm</strong></a>(<a href="django.contrib.auth.forms.html#UserCreationForm">django.contrib.auth.forms.UserCreationForm</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#RegisterForm">RegisterForm</a>(*args,&nbsp;**kwargs)<br>
+&nbsp;<br>
+A&nbsp;form&nbsp;that&nbsp;creates&nbsp;a&nbsp;user,&nbsp;with&nbsp;no&nbsp;privileges,&nbsp;from&nbsp;the&nbsp;given&nbsp;username&nbsp;and<br>
+password.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="rest_api.register.register.html#RegisterForm">RegisterForm</a></dd>
+<dd><a href="django.contrib.auth.forms.html#UserCreationForm">django.contrib.auth.forms.UserCreationForm</a></dd>
+<dd><a href="django.forms.models.html#ModelForm">django.forms.models.ModelForm</a></dd>
+<dd><a href="django.forms.models.html#BaseModelForm">django.forms.models.BaseModelForm</a></dd>
+<dd><a href="django.forms.forms.html#BaseForm">django.forms.forms.BaseForm</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>media</strong></dt>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>Meta</strong> = &lt;class 'rest_api.register.register.RegisterForm.Meta'&gt;</dl>
+
+<dl><dt><strong>base_fields</strong> = {'about_me': &lt;django.forms.fields.CharField object&gt;, 'e_mail': &lt;django.forms.fields.EmailField object&gt;, 'field_of_study': &lt;django.forms.fields.CharField object&gt;, 'forget_password_ans': &lt;django.forms.fields.CharField object&gt;, 'job_id': &lt;django.forms.fields.ChoiceField object&gt;, 'name': &lt;django.forms.fields.CharField object&gt;, 'password1': &lt;django.forms.fields.CharField object&gt;, 'password2': &lt;django.forms.fields.CharField object&gt;, 'surname': &lt;django.forms.fields.CharField object&gt;}</dl>
+
+<dl><dt><strong>declared_fields</strong> = {'about_me': &lt;django.forms.fields.CharField object&gt;, 'e_mail': &lt;django.forms.fields.EmailField object&gt;, 'field_of_study': &lt;django.forms.fields.CharField object&gt;, 'forget_password_ans': &lt;django.forms.fields.CharField object&gt;, 'job_id': &lt;django.forms.fields.ChoiceField object&gt;, 'name': &lt;django.forms.fields.CharField object&gt;, 'password1': &lt;django.forms.fields.CharField object&gt;, 'password2': &lt;django.forms.fields.CharField object&gt;, 'surname': &lt;django.forms.fields.CharField object&gt;}</dl>
+
+<hr>
+Methods inherited from <a href="django.contrib.auth.forms.html#UserCreationForm">django.contrib.auth.forms.UserCreationForm</a>:<br>
+<dl><dt><a name="RegisterForm-__init__"><strong>__init__</strong></a>(self, *args, **kwargs)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="RegisterForm-clean_password2"><strong>clean_password2</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="RegisterForm-save"><strong>save</strong></a>(self, commit=True)</dt><dd><tt>Save&nbsp;this&nbsp;form's&nbsp;self.<strong>instance</strong>&nbsp;object&nbsp;if&nbsp;commit=True.&nbsp;Otherwise,&nbsp;add<br>
+a&nbsp;save_m2m()&nbsp;method&nbsp;to&nbsp;the&nbsp;form&nbsp;which&nbsp;can&nbsp;be&nbsp;called&nbsp;after&nbsp;the&nbsp;instance<br>
+is&nbsp;saved&nbsp;manually&nbsp;at&nbsp;a&nbsp;later&nbsp;time.&nbsp;Return&nbsp;the&nbsp;model&nbsp;instance.</tt></dd></dl>
+
+<hr>
+Data and other attributes inherited from <a href="django.contrib.auth.forms.html#UserCreationForm">django.contrib.auth.forms.UserCreationForm</a>:<br>
+<dl><dt><strong>error_messages</strong> = {'password_mismatch': 'The two password fields didn’t match.'}</dl>
+
+<hr>
+Methods inherited from <a href="django.forms.models.html#BaseModelForm">django.forms.models.BaseModelForm</a>:<br>
+<dl><dt><a name="RegisterForm-clean"><strong>clean</strong></a>(self)</dt><dd><tt>Hook&nbsp;for&nbsp;doing&nbsp;any&nbsp;extra&nbsp;form-wide&nbsp;cleaning&nbsp;after&nbsp;Field.<a href="#RegisterForm-clean">clean</a>()&nbsp;has&nbsp;been<br>
+called&nbsp;on&nbsp;every&nbsp;field.&nbsp;Any&nbsp;ValidationError&nbsp;raised&nbsp;by&nbsp;this&nbsp;method&nbsp;will<br>
+not&nbsp;be&nbsp;associated&nbsp;with&nbsp;a&nbsp;particular&nbsp;field;&nbsp;it&nbsp;will&nbsp;have&nbsp;a&nbsp;special-case<br>
+association&nbsp;with&nbsp;the&nbsp;field&nbsp;named&nbsp;'__all__'.</tt></dd></dl>
+
+<dl><dt><a name="RegisterForm-validate_unique"><strong>validate_unique</strong></a>(self)</dt><dd><tt>Call&nbsp;the&nbsp;instance's&nbsp;<a href="#RegisterForm-validate_unique">validate_unique</a>()&nbsp;method&nbsp;and&nbsp;update&nbsp;the&nbsp;form's<br>
+validation&nbsp;errors&nbsp;if&nbsp;any&nbsp;were&nbsp;raised.</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="django.forms.forms.html#BaseForm">django.forms.forms.BaseForm</a>:<br>
+<dl><dt><a name="RegisterForm-__getitem__"><strong>__getitem__</strong></a>(self, name)</dt><dd><tt>Return&nbsp;a&nbsp;BoundField&nbsp;with&nbsp;the&nbsp;given&nbsp;name.</tt></dd></dl>
+
+<dl><dt><strong>__html__</strong> <em>lambda</em> self</dt></dl>
+
+<dl><dt><a name="RegisterForm-__iter__"><strong>__iter__</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="RegisterForm-__repr__"><strong>__repr__</strong></a>(self)</dt><dd><tt>Return&nbsp;repr(self).</tt></dd></dl>
+
+<dl><dt><strong>__str__</strong> <em>lambda</em> self</dt></dl>
+
+<dl><dt><a name="RegisterForm-add_error"><strong>add_error</strong></a>(self, field, error)</dt><dd><tt>Update&nbsp;the&nbsp;content&nbsp;of&nbsp;`self.<strong>_errors</strong>`.<br>
+&nbsp;<br>
+The&nbsp;`field`&nbsp;argument&nbsp;is&nbsp;the&nbsp;name&nbsp;of&nbsp;the&nbsp;field&nbsp;to&nbsp;which&nbsp;the&nbsp;errors<br>
+should&nbsp;be&nbsp;added.&nbsp;If&nbsp;it's&nbsp;None,&nbsp;treat&nbsp;the&nbsp;errors&nbsp;as&nbsp;NON_FIELD_ERRORS.<br>
+&nbsp;<br>
+The&nbsp;`error`&nbsp;argument&nbsp;can&nbsp;be&nbsp;a&nbsp;single&nbsp;error,&nbsp;a&nbsp;list&nbsp;of&nbsp;errors,&nbsp;or&nbsp;a<br>
+dictionary&nbsp;that&nbsp;maps&nbsp;field&nbsp;names&nbsp;to&nbsp;lists&nbsp;of&nbsp;errors.&nbsp;An&nbsp;"error"&nbsp;can&nbsp;be<br>
+either&nbsp;a&nbsp;simple&nbsp;string&nbsp;or&nbsp;an&nbsp;instance&nbsp;of&nbsp;ValidationError&nbsp;with&nbsp;its<br>
+message&nbsp;attribute&nbsp;set&nbsp;and&nbsp;a&nbsp;"list&nbsp;or&nbsp;dictionary"&nbsp;can&nbsp;be&nbsp;an&nbsp;actual<br>
+`list`&nbsp;or&nbsp;`dict`&nbsp;or&nbsp;an&nbsp;instance&nbsp;of&nbsp;ValidationError&nbsp;with&nbsp;its<br>
+`error_list`&nbsp;or&nbsp;`error_dict`&nbsp;attribute&nbsp;set.<br>
+&nbsp;<br>
+If&nbsp;`error`&nbsp;is&nbsp;a&nbsp;dictionary,&nbsp;the&nbsp;`field`&nbsp;argument&nbsp;*must*&nbsp;be&nbsp;None&nbsp;and<br>
+errors&nbsp;will&nbsp;be&nbsp;added&nbsp;to&nbsp;the&nbsp;fields&nbsp;that&nbsp;correspond&nbsp;to&nbsp;the&nbsp;keys&nbsp;of&nbsp;the<br>
+dictionary.</tt></dd></dl>
+
+<dl><dt><a name="RegisterForm-add_initial_prefix"><strong>add_initial_prefix</strong></a>(self, field_name)</dt><dd><tt>Add&nbsp;an&nbsp;'initial'&nbsp;prefix&nbsp;for&nbsp;checking&nbsp;dynamic&nbsp;initial&nbsp;values.</tt></dd></dl>
+
+<dl><dt><a name="RegisterForm-add_prefix"><strong>add_prefix</strong></a>(self, field_name)</dt><dd><tt>Return&nbsp;the&nbsp;field&nbsp;name&nbsp;with&nbsp;a&nbsp;prefix&nbsp;appended,&nbsp;if&nbsp;this&nbsp;Form&nbsp;has&nbsp;a<br>
+prefix&nbsp;set.<br>
+&nbsp;<br>
+Subclasses&nbsp;may&nbsp;wish&nbsp;to&nbsp;override.</tt></dd></dl>
+
+<dl><dt><a name="RegisterForm-as_p"><strong>as_p</strong></a>(self)</dt><dd><tt>Return&nbsp;this&nbsp;form&nbsp;rendered&nbsp;as&nbsp;HTML&nbsp;&lt;p&gt;s.</tt></dd></dl>
+
+<dl><dt><a name="RegisterForm-as_table"><strong>as_table</strong></a>(self)</dt><dd><tt>Return&nbsp;this&nbsp;form&nbsp;rendered&nbsp;as&nbsp;HTML&nbsp;&lt;tr&gt;s&nbsp;--&nbsp;excluding&nbsp;the&nbsp;&lt;table&gt;&lt;/table&gt;.</tt></dd></dl>
+
+<dl><dt><a name="RegisterForm-as_ul"><strong>as_ul</strong></a>(self)</dt><dd><tt>Return&nbsp;this&nbsp;form&nbsp;rendered&nbsp;as&nbsp;HTML&nbsp;&lt;li&gt;s&nbsp;--&nbsp;excluding&nbsp;the&nbsp;&lt;ul&gt;&lt;/ul&gt;.</tt></dd></dl>
+
+<strong>changed_data</strong> = &lt;django.utils.functional.cached_property object&gt;
+<dl><dt><a name="RegisterForm-full_clean"><strong>full_clean</strong></a>(self)</dt><dd><tt>Clean&nbsp;all&nbsp;of&nbsp;self.<strong>data</strong>&nbsp;and&nbsp;populate&nbsp;self.<strong>_errors</strong>&nbsp;and&nbsp;self.<strong>cleaned_data</strong>.</tt></dd></dl>
+
+<dl><dt><a name="RegisterForm-get_initial_for_field"><strong>get_initial_for_field</strong></a>(self, field, field_name)</dt><dd><tt>Return&nbsp;initial&nbsp;data&nbsp;for&nbsp;field&nbsp;on&nbsp;form.&nbsp;Use&nbsp;initial&nbsp;data&nbsp;from&nbsp;the&nbsp;form<br>
+or&nbsp;the&nbsp;field,&nbsp;in&nbsp;that&nbsp;order.&nbsp;Evaluate&nbsp;callable&nbsp;values.</tt></dd></dl>
+
+<dl><dt><a name="RegisterForm-has_changed"><strong>has_changed</strong></a>(self)</dt><dd><tt>Return&nbsp;True&nbsp;if&nbsp;data&nbsp;differs&nbsp;from&nbsp;initial.</tt></dd></dl>
+
+<dl><dt><a name="RegisterForm-has_error"><strong>has_error</strong></a>(self, field, code=None)</dt></dl>
+
+<dl><dt><a name="RegisterForm-hidden_fields"><strong>hidden_fields</strong></a>(self)</dt><dd><tt>Return&nbsp;a&nbsp;list&nbsp;of&nbsp;all&nbsp;the&nbsp;BoundField&nbsp;objects&nbsp;that&nbsp;are&nbsp;hidden&nbsp;fields.<br>
+Useful&nbsp;for&nbsp;manual&nbsp;form&nbsp;layout&nbsp;in&nbsp;templates.</tt></dd></dl>
+
+<dl><dt><a name="RegisterForm-is_multipart"><strong>is_multipart</strong></a>(self)</dt><dd><tt>Return&nbsp;True&nbsp;if&nbsp;the&nbsp;form&nbsp;needs&nbsp;to&nbsp;be&nbsp;multipart-encoded,&nbsp;i.e.&nbsp;it&nbsp;has<br>
+FileInput,&nbsp;or&nbsp;False&nbsp;otherwise.</tt></dd></dl>
+
+<dl><dt><a name="RegisterForm-is_valid"><strong>is_valid</strong></a>(self)</dt><dd><tt>Return&nbsp;True&nbsp;if&nbsp;the&nbsp;form&nbsp;has&nbsp;no&nbsp;errors,&nbsp;or&nbsp;False&nbsp;otherwise.</tt></dd></dl>
+
+<dl><dt><a name="RegisterForm-non_field_errors"><strong>non_field_errors</strong></a>(self)</dt><dd><tt>Return&nbsp;an&nbsp;ErrorList&nbsp;of&nbsp;errors&nbsp;that&nbsp;aren't&nbsp;associated&nbsp;with&nbsp;a&nbsp;particular<br>
+field&nbsp;--&nbsp;i.e.,&nbsp;from&nbsp;Form.<a href="#RegisterForm-clean">clean</a>().&nbsp;Return&nbsp;an&nbsp;empty&nbsp;ErrorList&nbsp;if&nbsp;there<br>
+are&nbsp;none.</tt></dd></dl>
+
+<dl><dt><a name="RegisterForm-order_fields"><strong>order_fields</strong></a>(self, field_order)</dt><dd><tt>Rearrange&nbsp;the&nbsp;fields&nbsp;according&nbsp;to&nbsp;field_order.<br>
+&nbsp;<br>
+field_order&nbsp;is&nbsp;a&nbsp;list&nbsp;of&nbsp;field&nbsp;names&nbsp;specifying&nbsp;the&nbsp;order.&nbsp;Append&nbsp;fields<br>
+not&nbsp;included&nbsp;in&nbsp;the&nbsp;list&nbsp;in&nbsp;the&nbsp;default&nbsp;order&nbsp;for&nbsp;backward&nbsp;compatibility<br>
+with&nbsp;subclasses&nbsp;not&nbsp;overriding&nbsp;field_order.&nbsp;If&nbsp;field_order&nbsp;is&nbsp;None,<br>
+keep&nbsp;all&nbsp;fields&nbsp;in&nbsp;the&nbsp;order&nbsp;defined&nbsp;in&nbsp;the&nbsp;class.&nbsp;Ignore&nbsp;unknown<br>
+fields&nbsp;in&nbsp;field_order&nbsp;to&nbsp;allow&nbsp;disabling&nbsp;fields&nbsp;in&nbsp;form&nbsp;subclasses<br>
+without&nbsp;redefining&nbsp;ordering.</tt></dd></dl>
+
+<dl><dt><a name="RegisterForm-visible_fields"><strong>visible_fields</strong></a>(self)</dt><dd><tt>Return&nbsp;a&nbsp;list&nbsp;of&nbsp;BoundField&nbsp;objects&nbsp;that&nbsp;aren't&nbsp;hidden&nbsp;fields.<br>
+The&nbsp;opposite&nbsp;of&nbsp;the&nbsp;<a href="#RegisterForm-hidden_fields">hidden_fields</a>()&nbsp;method.</tt></dd></dl>
+
+<hr>
+Readonly properties inherited from <a href="django.forms.forms.html#BaseForm">django.forms.forms.BaseForm</a>:<br>
+<dl><dt><strong>errors</strong></dt>
+<dd><tt>Return&nbsp;an&nbsp;ErrorDict&nbsp;for&nbsp;the&nbsp;data&nbsp;provided&nbsp;for&nbsp;the&nbsp;form.</tt></dd>
+</dl>
+<hr>
+Data descriptors inherited from <a href="django.forms.forms.html#BaseForm">django.forms.forms.BaseForm</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="django.forms.forms.html#BaseForm">django.forms.forms.BaseForm</a>:<br>
+<dl><dt><strong>default_renderer</strong> = None</dl>
+
+<dl><dt><strong>field_order</strong> = None</dl>
+
+<dl><dt><strong>prefix</strong> = None</dl>
+
+<dl><dt><strong>use_required_attribute</strong> = True</dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-isValid"><strong>isValid</strong></a>(name, surname, password1, password2, email, about_me, job_id, forget_pw_ans, field_of_study)</dt><dd><tt>&nbsp;&nbsp;&nbsp;&nbsp;where&nbsp;'name':&nbsp;string,&nbsp;Name&nbsp;parameter&nbsp;given&nbsp;by&nbsp;user<br>
+&nbsp;&nbsp;&nbsp;&nbsp;where&nbsp;'surname':&nbsp;string,&nbsp;Surname&nbsp;parameter&nbsp;given&nbsp;by&nbsp;user<br>
+&nbsp;&nbsp;&nbsp;&nbsp;where&nbsp;'password1':&nbsp;string,&nbsp;Password1&nbsp;given&nbsp;by&nbsp;user<br>
+&nbsp;&nbsp;&nbsp;&nbsp;where&nbsp;'password2':&nbsp;string,&nbsp;Password2&nbsp;given&nbsp;by&nbsp;user&nbsp;to&nbsp;check&nbsp;whether&nbsp;Password1&nbsp;is&nbsp;matched.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;where&nbsp;'email':&nbsp;string,&nbsp;Email&nbsp;parameter&nbsp;given&nbsp;by&nbsp;user<br>
+&nbsp;&nbsp;&nbsp;&nbsp;where&nbsp;'about_me':&nbsp;string,&nbsp;About&nbsp;me&nbsp;parameter&nbsp;given&nbsp;by&nbsp;user<br>
+&nbsp;&nbsp;&nbsp;&nbsp;where&nbsp;'job_id':&nbsp;string,&nbsp;job&nbsp;id&nbsp;parameter&nbsp;chosen&nbsp;by&nbsp;user<br>
+&nbsp;&nbsp;&nbsp;&nbsp;where&nbsp;'forget_pw_ans':&nbsp;string,&nbsp;forget&nbsp;password&nbsp;answer&nbsp;parameter&nbsp;given&nbsp;by&nbsp;user<br>
+&nbsp;&nbsp;&nbsp;&nbsp;where&nbsp;'field_of_study':&nbsp;string,&nbsp;field&nbsp;of&nbsp;study&nbsp;parameter&nbsp;given&nbsp;by&nbsp;user<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;returns&nbsp;True&nbsp;if&nbsp;given&nbsp;values&nbsp;appropriate&nbsp;to&nbsp;insert&nbsp;in&nbsp;database,&nbsp;else&nbsp;False<br>
+&nbsp;<br>
+This&nbsp;function&nbsp;takes&nbsp;input&nbsp;parameters&nbsp;and&nbsp;checks&nbsp;them&nbsp;if&nbsp;they&nbsp;are&nbsp;valid&nbsp;and&nbsp;return&nbsp;the&nbsp;boolean&nbsp;result.</tt></dd></dl>
+ <dl><dt><a name="-register_api"><strong>register_api</strong></a>(response)</dt><dd><tt>where&nbsp;'response':&nbsp;HttpResponse,&nbsp;Name&nbsp;parameter&nbsp;given&nbsp;by&nbsp;user<br>
+&nbsp;<br>
+returns&nbsp;Json&nbsp;object&nbsp;if&nbsp;'GET'&nbsp;requested&nbsp;else&nbsp;nothing<br>
+&nbsp;<br>
+This&nbsp;function&nbsp;takes&nbsp;Httpresponse&nbsp;object&nbsp;and&nbsp;if&nbsp;'POST'&nbsp;request&nbsp;used,&nbsp;it&nbsp;inserts&nbsp;into&nbsp;database</tt></dd></dl>
+ <dl><dt><a name="-register_form"><strong>register_form</strong></a>(response)</dt><dd><tt>where&nbsp;'response':&nbsp;HttpResponse,&nbsp;Name&nbsp;parameter&nbsp;given&nbsp;by&nbsp;user<br>
+&nbsp;<br>
+returns&nbsp;redirection&nbsp;to&nbsp;another&nbsp;url,&nbsp;or&nbsp;renders&nbsp;a&nbsp;from&nbsp;page<br>
+&nbsp;<br>
+This&nbsp;function&nbsp;takes&nbsp;Httpresponse&nbsp;object&nbsp;and&nbsp;if&nbsp;'POST'&nbsp;request&nbsp;used,&nbsp;it&nbsp;sends&nbsp;the&nbsp;"post"&nbsp;request&nbsp;to&nbsp;a&nbsp;pre-known&nbsp;url&nbsp;to&nbsp;this&nbsp;given&nbsp;HttpResponse&nbsp;object</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>DATABASES</strong> = {'default': {'ATOMIC_REQUESTS': False, 'AUTOCOMMIT': True, 'CONN_MAX_AGE': 0, 'ENGINE': 'django.db.backends.mysql', 'HOST': 'localhost', 'NAME': 'localdb', 'OPTIONS': {}, 'PASSWORD': '179346285', 'PORT': '3306', 'TEST': {'CHARSET': None, 'COLLATION': None, 'MIRROR': None, 'NAME': None}, ...}}<br>
+<strong>JOB_CHOICES</strong> = ((1, 'Student'), (2, 'Academician'), (3, 'Scientist'), (4, 'Accountant'), (5, 'Computer Programmer'), (6, 'President'), (7, 'General Manager'), (8, 'Computer Specialist'), (9, 'Other'))<br>
+<strong>USER_TABLENAME</strong> = 'users'<br>
+<strong>WEBSITE_URL</strong> = 'http://localhost:8000'<br>
+<strong>connection</strong> = &lt;django.db.DefaultConnectionProxy object&gt;</td></tr></table>
+</body></html>

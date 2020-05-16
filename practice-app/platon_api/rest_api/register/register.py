@@ -1,28 +1,81 @@
+"""
+Created on MAY 16, 2020
+
+This script controls the registration api of PLATON_API, using django&mysql backend.
+Endpoint description:
+    http://localhost:8000/api/register/
+    
+    'GET':
+        Produces error
+    'POST':
+        Gets dictionary from body.
+        JSON Format : { 'name': "",                 string, Name parameter given by user
+                        'surname': "",              string, Surname parameter given by user
+                        'password1': "",            string, Password1 given by user
+                        'password2':"",             string, Password2 given by user to check whether Password1 is matched.
+                        'e_mail':"",                string, Email parameter given by user
+                        'about_me':"",              string, About me parameter given by user
+                        'job_id':"",                int, job id parameter chosen by user
+                        'forget_password_ans':"",   string, forget password answer parameter given by user
+                        'field_of_study':"" }       string, field of study parameter given by user
+
+Frontend Endpoint Description:
+    http://localhost:8000/api/register/home/
+    
+    'GET':
+        Form as HTML
+
+@author: Burak Omur, darktheorys
+@company: Group7
+
+"""
+
 from django.db import connection, transaction
-import hashlib
 from django.http import HttpResponse, HttpRequest
 from platon_api.settings import DATABASES, USER_TABLENAME, JOB_CHOICES, WEBSITE_URL
-from rest_api.register import forms
 import requests as req
-from django.shortcuts import redirect
-from django.shortcuts import render
-import re,copy, requests
+from django.shortcuts import redirect,render
+import re,copy, requests, hashlib
 from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+from django import forms
+
 
 
 def isValid(name, surname, password1,password2, email, about_me, job_id, forget_pw_ans, field_of_study):
+    """
+        where 'name': string, Name parameter given by user
+        where 'surname': string, Surname parameter given by user
+        where 'password1': string, Password1 given by user
+        where 'password2': string, Password2 given by user to check whether Password1 is matched.
+        where 'email': string, Email parameter given by user
+        where 'about_me': string, About me parameter given by user
+        where 'job_id': string, job id parameter chosen by user
+        where 'forget_pw_ans': string, forget password answer parameter given by user
+        where 'field_of_study': string, field of study parameter given by user
+        
+        returns True if given values appropriate to insert in database, else False
+    
+    This function takes input parameters and checks them if they are valid and return the boolean result.
+    """
     try:
+        # Length control of input parameters
         if len(name) > 30 or len(surname) > 30 or len(email) > 255 or len(about_me) > 330  or len(forget_pw_ans) > 50  or len(field_of_study) > 50  or int(job_id) > len(JOB_CHOICES):
             return False
         
+        # Password match control
         if password1 != password2:
             return False
         
+        # regular expression for texts
         regex = r"[A-Za-zöçşüığİÖÇĞÜŞ]{2,50}( [A-Za-zöçşüığİÖÇĞÜŞ]{2,50})?"
         
+        # Text type validity check with regex
         if re.match(regex, name) == None or re.match(regex, surname) == None or re.match(regex, field_of_study) == None  or re.match(regex, forget_pw_ans) == None:
             return False
 
+        # Mail type validity check with regex
         if re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email) == None:
             return False
         
@@ -31,43 +84,79 @@ def isValid(name, surname, password1,password2, email, about_me, job_id, forget_
         return False
 
 def register_api(response):
-    resp = HttpResponse()
-    resp.status_code = 200
-    if response.method == "POST":
+    """
+        where 'response': HttpResponse, Name parameter given by user
+
+        returns Json object if 'GET' requested else nothing
+        
+        This function takes Httpresponse object and if 'POST' request used, it inserts into database
+    """
+    resp = HttpResponse()               # create response object
+    resp.status_code = 200              # set status to 200 as default
+    if response.method == "POST":       # if post request sent
         try:
-            form = response.POST
+            form = response.POST        # acquire json
+            # get fields from json
             name, surname, password1,password2, email, about_me, job_id, forget_pw_ans, field_of_study = form.get("name"), form.get("surname"), form.get("password1"),form.get("password2"), form.get("e_mail") , form.get("about_me") , form.get("job_id"), form.get("forget_password_ans") ,form.get("field_of_study") 
-            if isValid(name, surname, password1,password2, email, about_me, job_id, forget_pw_ans, field_of_study):
+            # validity control
+            if isValid(name, surname, password1,password2, email, about_me, job_id, forget_pw_ans, field_of_study): 
                 try:
                     cursor = connection.cursor()
-                    db_name = DATABASES.get("default").get("NAME")
-                    password = hashlib.sha256(password1.encode("utf-8")).hexdigest()
-                    token = hashlib.sha256(name.encode("utf-8")).hexdigest()
+                    db_name = DATABASES.get("default").get("NAME")                          # get database name from settings
+                    password = hashlib.sha256(password1.encode("utf-8")).hexdigest()        # make password hashed
+                    token = hashlib.sha256(name.encode("utf-8")).hexdigest()                # create token from name
+                    # MYsql insertion query
                     query = "INSERT INTO `" + db_name + "`.`" + USER_TABLENAME + "` (`id`, `name`, `surname`, `password_hash`, `e-mail`, `token`, `about_me`, `job_id`, `field_of_study`, `forget_password_ans`) VALUES ("
                     query += "NULL,'" + name + "','" +  surname + "','" + password + "','" + email + "','" + token + "','"  + about_me + "','"+ job_id + "','" + field_of_study + "','" +  forget_pw_ans + "');"
+                    
                     cursor.execute(query)
-                    resp.status_code = 201
+                    resp.status_code = 201      # if successfull, response code 201 CREATED
                 except:
-                    resp.status_code = 501
+                    resp.status_code = 501      # if fail, response code 501 INTERNAL SERVER ERROR
         except:
             pass
-    if resp.status_code == 200:
+    if resp.status_code == 200:                 # if response code still 200 as default, GET REQUEST
         resp["Content-type"] = "application/json"
-        resp.write({"error":"SOME_ERROR_OCCURRED"})
+        resp.write({"error":"SOME_ERROR_OCCURRED"})         # return ERROR AS json
     return resp
 
+
+class RegisterForm(UserCreationForm):
+    name = forms.CharField(label='Name:', max_length=30)
+    surname = forms.CharField(label='Surname:', max_length=30)
+    e_mail = forms.EmailField(label='E-Mail:', max_length=250)
+    field_of_study = forms.CharField(label='Field Of Study:', max_length=50)
+    forget_password_ans = forms.CharField(label='Best teacher at school ( secret question ):', max_length=50)
+    about_me = forms.CharField(widget=forms.Textarea)
+    job_id = forms.ChoiceField(choices=JOB_CHOICES)
+    
+    
+    class Meta:
+        model = User
+        fields = ["name","surname", "e_mail", "password1", "password2", "forget_password_ans", "field_of_study", "job_id", "about_me"]
+    
+
+
 def register_form(response):
+    """
+        where 'response': HttpResponse, Name parameter given by user
+
+        returns redirection to another url, or renders a from page
+        
+        This function takes Httpresponse object and if 'POST' request used, it sends the "post" request to a pre-known url to this given HttpResponse object
+    """
+
     error = ""
     form = ""
     if response.method == "POST": 
-        form = forms.RegisterForm(response.POST)
-        url = WEBSITE_URL + "/api/register/"
-        resp = requests.post(url, response.POST)
-        if resp.status_code == 201:
-            return redirect("/api/index")
-        error = "Some Error Occurred" 
+        form = RegisterForm(response.POST)                          # Construct form from POST
+        url = WEBSITE_URL + "/api/register/"                        # obtain URL
+        resp = requests.post(url, response.POST)                    # send request to api
+        if resp.status_code == 201:                                 # using response
+            return redirect("/api/index")                                   #redirect
+        error = "Some Error Occurred"                               # else print some error
     else:    
-        form = forms.RegisterForm()
+        form = RegisterForm()                                       # if get request, render form
     return render(response, "register/register.html", {"form": form, "error":error})
             
     
