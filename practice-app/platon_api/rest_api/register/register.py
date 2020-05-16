@@ -19,12 +19,6 @@ Endpoint description:
                         'forget_password_ans':"",   string, forget password answer parameter given by user
                         'field_of_study':"" }       string, field of study parameter given by user
 
-Frontend Endpoint Description:
-    http://localhost:8000/api/register/home/
-    
-    'GET':
-        Form as HTML
-
 @author: Burak Omur, darktheorys
 @company: Group7
 
