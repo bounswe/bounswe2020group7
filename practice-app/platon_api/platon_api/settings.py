@@ -133,3 +133,5 @@ JOB_CHOICES =  ((1, "Student"),
                 (7, "General Manager"), 
                 (8, "Computer Specialist"), 
                 (9, "Other"))
+
+STOPWORDS_API_KEY = "a5cb4aeb98msh29ffc5d7378f3d2p136d6cjsn7e882dc52f2a"

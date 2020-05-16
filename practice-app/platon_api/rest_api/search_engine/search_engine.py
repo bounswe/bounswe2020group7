@@ -1,6 +1,6 @@
 import json
 from django.db import connection
-from platon_api.settings import JOB_CHOICES
+from platon_api.settings import JOB_CHOICES, STOPWORDS_API_KEY
 
 import string
 import re
@@ -41,6 +41,8 @@ class searchEngine():
     """ TODO: Update the hardcoded list when it is finished"""
 
     job_list = ["EMPTY_JOB"] + [job_tuple[1].lower() for job_tuple in JOB_CHOICES]
+
+    sotring_criteria_list = ["name_increasing", "name_decreasing", "surname_increasing", "surname_decreasing"]
     
     exact_match_score = 1000000
 
@@ -74,6 +76,9 @@ class searchEngine():
             # Change JSON to Python dictionary
             filter = json.loads(filter_json)
             if "job" in filter:
+                # Control if the job filter is in the job list
+                if filter["job"].lower() not in searchEngine.job_list:
+                    return "Wrong input. Please give an appropriate input!!"
                 # Take the index of the job
                 job_id = searchEngine.job_list.index(filter["job"].lower())
                 # Change job with job id
@@ -87,10 +92,21 @@ class searchEngine():
         if request.GET.get("search_string"):
             # Take the search string from URL
             search_string = request.GET["search_string"].lower()
+            # Make search string only a empty string to return all users
+            if search_string == "":
+                search_string = " "
         else:
-            search_string = ""
+            return "Wrong input. Please give an appropriate input!!"
+        if request.GET.get("sorting_criteria",False):
+            # Take sorting criteria from URL
+            sotring_criteria = request.GET.get("sorting_criteria",False).replace('"',"")
+            if sotring_criteria not in searchEngine.sotring_criteria_list:
+                return "Wrong input. Please give an appropriate input!!"
+        else:
+            # Default sorting criteria
+            sotring_criteria = ""
         # Return parameters as a dictionary
-        return {"filter":filter,"search_string":search_string,"token":token}
+        return {"filter":filter,"search_string":search_string,"token":token,"sorting_criteria":sotring_criteria}
     
     @staticmethod
     def verify_token(token=None):
@@ -106,6 +122,20 @@ class searchEngine():
         result = cursor.fetchall()
         # Validate the token if there is
         return len(result)!=0
+    
+    @staticmethod
+    def sort_output(output_list,sorting_type):
+        # This function sorts the output list according to the given sorting type
+        if sorting_type == "name_increasing":
+            return sorted(output_list, key=lambda x: x["name"],reverse = False)
+        elif sorting_type == "name_decreasing":
+            return sorted(output_list, key=lambda x: x["name"],reverse = True)
+        elif sorting_type == "surname_increasing":
+            return sorted(output_list, key=lambda x: x["surname"],reverse = False)
+        elif sorting_type == "surname_decreasing":
+            return sorted(output_list, key=lambda x: x["surname"],reverse = True)
+        else:
+            return output_list
 
     @staticmethod
     def get_stopwords():
@@ -114,11 +144,14 @@ class searchEngine():
         querystring = {"langs":"en","details":"false"}
         headers = {
             'x-rapidapi-host': "stopwords.p.rapidapi.com",
-            'x-rapidapi-key': "a5cb4aeb98msh29ffc5d7378f3d2p136d6cjsn7e882dc52f2a"
+            'x-rapidapi-key': STOPWORDS_API_KEY
         }
         try: 
             response = requests.request("GET", url, headers=headers, params=querystring)
             resp = json.loads(response.text)
+            # If API gives different message tha expected return None to give an error message
+            if not isinstance(resp,list):
+                return None
             # Return the set of stopwords and punctuation
             return set([res["word"] for res in resp] + list(string.punctuation))
         except:
@@ -129,10 +162,12 @@ class searchEngine():
     def search(request):
         # Generate parameters from URL
         param_dict = searchEngine.get_parameter_list(request)
+        # Control input if there is an error return error message
+        if not isinstance(param_dict,dict): 
+            return "Wrong input. Please give an appropriate input!!"
         # Control the token of the GET request
         if not searchEngine.verify_token(param_dict["token"]):
             return "You have to give your token"
-        # TODO: Ask what will be returned if search string is empty to the group
         # If there is no search string return empty list
         if param_dict["search_string"] == "":
             return []
@@ -183,7 +218,4 @@ class searchEngine():
                     break
             continue
         # Return the search result list
-        return search_result
-             
-
-         
+        return searchEngine.sort_output(search_result,param_dict["sorting_criteria"])
