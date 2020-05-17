@@ -7,7 +7,10 @@ from rest_api.search_engine.search_engine import searchEngine as engine
 class Search(APIView):
 
     def get(self,request):
-        return Response(engine.search(request))
+        try:
+            return Response(engine.search(request))
+        except:
+            return Response("Wrong input. Please give an appropriate input!!")
  
 
 # Create your views here.
