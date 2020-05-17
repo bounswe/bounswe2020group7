@@ -1,3 +1,24 @@
+"""
+Created on MAY 17, 2020
+This script controls the search functionality api of PLATON_API, using django&mysql backend.
+Endpoint description:
+    http://localhost:8000/api/search/
+    
+    'POST':
+        Produces error
+    'GET':
+        Gets dictionary from body.
+        JSON Format : {   
+                        token = "Your token will be here!!",
+                        search_string = "The string that you want to search will be here",
+                        filter = {"job" = "job_filter", "field_of_study" = "field_of_study_filter" },
+                        sorting_criteria = "Sorting criteria will be here"
+                        }
+@author: Halil Umut Ozdemir
+@company: Group7
+"""
+
+
 import json
 from django.db import connection
 from platon_api.settings import JOB_CHOICES, STOPWORDS_API_KEY
@@ -23,22 +44,13 @@ class searchEngine():
         Semantic score of an exact match in search operation
     
     num_of_semantically_related: int
-        Number of words that search engine uses in semantice search foe each token
+        Number of words that search engine uses in semantice search for each token
 
-
-    Methods
-    -------
-    get_parameter_list(request=None)
-        This function is used to split the arguments of the endpoint in the correct order.
-
-    verify_token(token=None)
-        This function verifies the token if there exits.
-    
-    search(request=None)
-        This is the function that searchs the user in our database
+    sotring_criteria_list: list
+        a list of sorting criteria that can be used in the search functionality
     """
 
-    """ TODO: Update the hardcoded list when it is finished"""
+    """ TODO: Update the hardcoded list for the future use of this module"""
 
     job_list = ["EMPTY_JOB"] + [job_tuple[1].lower() for job_tuple in JOB_CHOICES]
 
@@ -50,6 +62,14 @@ class searchEngine():
 
     @staticmethod
     def semantic_related_list(search_tokens,max_num_of_related):
+        """
+            This functions takes a list of tokens and creates the list of semanticly related words for the list of tokens
+
+            where 'search_tokens': List of tokens that are given in a search string
+            where 'max_num_of_related': Number of words that will be chosen for a token
+
+            returns a list of tuples which contails (word,semantic relation point)
+        """
         result_list = [(token,searchEngine.exact_match_score) for token in search_tokens]
         url = "https://api.datamuse.com/words"
         try:
@@ -65,6 +85,13 @@ class searchEngine():
 
     @staticmethod
     def get_parameter_list(request=None):
+        """
+            This function is used to split the arguments of the endpoint in the correct order.
+
+            where 'request': HTTP request that comes from the view class
+
+            returns a dictionary of the paramters if there is no problem about the paramters
+        """
         # Take token from URL
         if request.GET.get("token"):
             token = request.GET["token"]
@@ -110,6 +137,13 @@ class searchEngine():
     
     @staticmethod
     def verify_token(token=None):
+        """
+            This function verifies the token if there exits.
+
+            where 'token': string, 64 characther string that can be token
+
+            returns True if token exists in the DB
+        """
         # If there is no token we cannot validate
         if token is None:
             return False
@@ -125,6 +159,13 @@ class searchEngine():
     
     @staticmethod
     def sort_output(output_list,sorting_type):
+        """
+            This function sorts the output with a given sotring criteria
+            where 'output_list': the list of the results that come without sorting
+            where 'sorting_type': sorting type parameter
+
+            returns sorted version of the search result
+        """
         # This function sorts the output list according to the given sorting type
         if sorting_type == "name_increasing":
             return sorted(output_list, key=lambda x: x["name"],reverse = False)
@@ -139,6 +180,11 @@ class searchEngine():
 
     @staticmethod
     def get_stopwords():
+        """
+            This function returns a list of stopwords for English
+
+            returns list of stopwords + punctuation in English
+        """
         # GET request for the list of stopwords in English
         url = "https://stopwords.p.rapidapi.com/stopwords"
         querystring = {"langs":"en","details":"false"}
@@ -160,6 +206,13 @@ class searchEngine():
 
     @staticmethod
     def search(request):
+        """
+            This is the function that searchs the user in our database
+
+            where 'request' : HTTP Request that comes from the view class
+
+            returns a list of search results.
+        """
         # Generate parameters from URL
         param_dict = searchEngine.get_parameter_list(request)
         # Control input if there is an error return error message
