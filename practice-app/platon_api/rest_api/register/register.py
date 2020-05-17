@@ -50,6 +50,9 @@ def isValid(name, surname, password1,password2, email, about_me, job_id, forget_
     This function takes input parameters and checks them if they are valid and return the boolean result.
     """
     try:
+        if len(name) == 0 or len(surname) == 0 or len(email) == 0 or len(about_me) == 0 or len(forget_pw_ans) == 0 or len(field_of_study)==0 or int(job_id) <= 0:
+            return False
+        
         # Length control of input parameters
         if len(name) > 30 or len(surname) > 30 or len(email) > 255 or len(about_me) > 330  or len(forget_pw_ans) > 50  or len(field_of_study) > 50  or int(job_id) > len(JOB_CHOICES):
             return False
@@ -81,6 +84,7 @@ def register_api(response):
         
         This function takes Httpresponse object and if 'POST' request used, it inserts into database
     """
+    error = ""
     resp = HttpResponse()               # create response object
     resp.status_code = 200              # set status to 200 as default
     if response.method == "POST":       # if post request sent
@@ -98,14 +102,17 @@ def register_api(response):
                     # MYsql insertion query
                     query = "INSERT INTO `" + db_name + "`.`" + USER_TABLENAME + "` (`name`, `surname`, `password_hashed`, `e_mail`, `token`, `about_me`, `job_id`, `field_of_study`, `forget_password_ans`) VALUES ("
                     query += "'" + name + "','" +  surname + "','" + password + "','" + email + "','" + token + "','"  + about_me + "','"+ job_id + "','" + field_of_study + "','" +  forget_pw_ans + "');"
-                    print(query)
                     cursor.execute(query)
                     resp.status_code = 201      # if successfull, response code 201 CREATED
+                    error = "SUCCESSFULL"
                 except:
                     resp.status_code = 503      # if fail, response code 501 INTERNAL SERVER ERROR
+                    error = "SOME_ERROR_WHILE_INSERTION_TO_DB"
+            else:
+                error = "NOT_VALID_INPUT"
+                
         except:
-            pass
-    if resp.status_code == 200:                 # if response code still 200 as default, GET REQUEST
-        resp["Content-type"] = "application/json"
-        resp.write({"error":"SOME_ERROR_OCCURRED"})         # return ERROR AS json
+            error = "VERY_BAD_THING_HAPPENED"
+    resp["Content-type"] = "application/json"
+    resp.write({"response":error})         # return ERROR AS json
     return resp
