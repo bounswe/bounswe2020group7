@@ -7,9 +7,7 @@ from rest_api.search_engine.search_engine import searchEngine as engine
 class Search(APIView):
 
     def get(self,request):
-        try:
-            return Response(engine.search(request))
-        except:
-            return Response("Please Try Again")
+        return Response(engine.search(request))
+ 
 
 # Create your views here.

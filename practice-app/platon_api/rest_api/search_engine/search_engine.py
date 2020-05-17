@@ -214,7 +214,7 @@ class searchEngine():
         for id,score in sorted_index:
             for result in result_list:
                 if result[0]==id:
-                    search_result.append({"name":result[1],"surname":result[2],"e-mail":result[3],"about_me":result[4],"job":searchEngine.job_list[result[5]].title(),"field_of_study":result[6]})
+                    search_result.append({"name":result[1],"surname":result[2],"e-mail":result[3],"about_me":result[4],"job":searchEngine.job_list[result[5]].title(),"field_of_study":result[6].title()})
                     break
             continue
         # Return the search result list
