@@ -18,15 +18,13 @@ Endpoint description:
 @company: Group7
 """
 
-
-import json
 from django.db import connection
 from platon_api.settings import JOB_CHOICES, STOPWORDS_API_KEY
 
+import json
 import string
 import re
 import requests
-
 
 class searchEngine():
 
@@ -63,12 +61,13 @@ class searchEngine():
     @staticmethod
     def semantic_related_list(search_tokens,max_num_of_related):
         """
-            This functions takes a list of tokens and creates the list of semanticly related words for the list of tokens
-
             where 'search_tokens': List of tokens that are given in a search string
             where 'max_num_of_related': Number of words that will be chosen for a token
 
             returns a list of tuples which contails (word,semantic relation point)
+
+            This functions takes a list of tokens and creates the list of semanticly related words for the list of tokens
+
         """
         result_list = [(token,searchEngine.exact_match_score) for token in search_tokens]
         url = "https://api.datamuse.com/words"
@@ -86,11 +85,12 @@ class searchEngine():
     @staticmethod
     def get_parameter_list(request=None):
         """
-            This function is used to split the arguments of the endpoint in the correct order.
-
             where 'request': HTTP request that comes from the view class
 
             returns a dictionary of the paramters if there is no problem about the paramters
+
+            This function is used to split the arguments of the endpoint in the correct order.
+
         """
         # Take token from URL
         if request.GET.get("token"):
@@ -138,11 +138,12 @@ class searchEngine():
     @staticmethod
     def verify_token(token=None):
         """
-            This function verifies the token if there exits.
-
             where 'token': string, 64 characther string that can be token
 
             returns True if token exists in the DB
+
+            This function verifies the token if there exits.
+
         """
         # If there is no token we cannot validate
         if token is None:
@@ -160,11 +161,13 @@ class searchEngine():
     @staticmethod
     def sort_output(output_list,sorting_type):
         """
-            This function sorts the output with a given sotring criteria
             where 'output_list': the list of the results that come without sorting
             where 'sorting_type': sorting type parameter
 
             returns sorted version of the search result
+
+            This function sorts the output with a given sotring criteria
+
         """
         # This function sorts the output list according to the given sorting type
         if sorting_type == "name_increasing":
@@ -181,9 +184,10 @@ class searchEngine():
     @staticmethod
     def get_stopwords():
         """
+            returns list of stopwords + punctuation in English
+
             This function returns a list of stopwords for English
 
-            returns list of stopwords + punctuation in English
         """
         # GET request for the list of stopwords in English
         url = "https://stopwords.p.rapidapi.com/stopwords"
@@ -207,11 +211,12 @@ class searchEngine():
     @staticmethod
     def search(request):
         """
-            This is the function that searchs the user in our database
-
             where 'request' : HTTP Request that comes from the view class
 
             returns a list of search results.
+
+            This is the function that searchs the user in our database
+
         """
         # Generate parameters from URL
         param_dict = searchEngine.get_parameter_list(request)

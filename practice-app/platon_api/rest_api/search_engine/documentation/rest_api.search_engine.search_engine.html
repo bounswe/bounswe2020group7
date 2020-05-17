@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module rest_api.search_engine.search_engine</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="rest_api.html"><font color="#ffffff">rest_api</font></a>.<a href="rest_api.search_engine.html"><font color="#ffffff">search_engine</font></a>.search_engine</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cusers%5Chalil%5Cdesktop%5Cders%5Ccmpe%20352%5Crepository%5Cbounswe2020group7%5Cpractice-app%5Cplaton_api%5Crest_api%5Csearch_engine%5Csearch_engine.py">c:\users\halil\desktop\ders\cmpe 352\repository\bounswe2020group7\practice-app\platon_api\rest_api\search_engine\search_engine.py</a></font></td></tr></table>
+    <p><tt>Created&nbsp;on&nbsp;MAY&nbsp;17,&nbsp;2020<br>
+This&nbsp;script&nbsp;controls&nbsp;the&nbsp;search&nbsp;functionality&nbsp;api&nbsp;of&nbsp;PLATON_API,&nbsp;using&nbsp;django&amp;mysql&nbsp;backend.<br>
+Endpoint&nbsp;description:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://localhost:8000/api/search/">http://localhost:8000/api/search/</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;'POST':<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Produces&nbsp;error<br>
+&nbsp;&nbsp;&nbsp;&nbsp;'GET':<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets&nbsp;dictionary&nbsp;from&nbsp;body.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JSON&nbsp;Format&nbsp;:&nbsp;{&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;token&nbsp;=&nbsp;"Your&nbsp;token&nbsp;will&nbsp;be&nbsp;here!!",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;search_string&nbsp;=&nbsp;"The&nbsp;string&nbsp;that&nbsp;you&nbsp;want&nbsp;to&nbsp;search&nbsp;will&nbsp;be&nbsp;here",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;filter&nbsp;=&nbsp;{"job"&nbsp;=&nbsp;"job_filter",&nbsp;"field_of_study"&nbsp;=&nbsp;"field_of_study_filter"&nbsp;},<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sorting_criteria&nbsp;=&nbsp;"Sorting&nbsp;criteria&nbsp;will&nbsp;be&nbsp;here"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+@author:&nbsp;Halil&nbsp;Umut&nbsp;Ozdemir<br>
+@company:&nbsp;Group7</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="json.html">json</a><br>
+</td><td width="25%" valign=top><a href="re.html">re</a><br>
+</td><td width="25%" valign=top><a href="requests.html">requests</a><br>
+</td><td width="25%" valign=top><a href="string.html">string</a><br>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="rest_api.search_engine.search_engine.html#searchEngine">searchEngine</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="searchEngine">class <strong>searchEngine</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>In&nbsp;this&nbsp;class&nbsp;the&nbsp;Search&nbsp;Engine&nbsp;endpoint&nbsp;is&nbsp;implemented.<br>
+&nbsp;<br>
+...<br>
+&nbsp;<br>
+Attributes<br>
+----------<br>
+job_list&nbsp;:&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;jobs&nbsp;that&nbsp;whose&nbsp;index&nbsp;is&nbsp;written&nbsp;in&nbsp;the&nbsp;database.&nbsp;<br>
+&nbsp;<br>
+exact_match_score:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Semantic&nbsp;score&nbsp;of&nbsp;an&nbsp;exact&nbsp;match&nbsp;in&nbsp;search&nbsp;operation<br>
+&nbsp;<br>
+num_of_semantically_related:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Number&nbsp;of&nbsp;words&nbsp;that&nbsp;search&nbsp;engine&nbsp;uses&nbsp;in&nbsp;semantice&nbsp;search&nbsp;for&nbsp;each&nbsp;token<br>
+&nbsp;<br>
+sotring_criteria_list:&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;list&nbsp;of&nbsp;sorting&nbsp;criteria&nbsp;that&nbsp;can&nbsp;be&nbsp;used&nbsp;in&nbsp;the&nbsp;search&nbsp;functionality<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Static methods defined here:<br>
+<dl><dt><a name="searchEngine-get_parameter_list"><strong>get_parameter_list</strong></a>(request=None)</dt><dd><tt>where&nbsp;'request':&nbsp;HTTP&nbsp;request&nbsp;that&nbsp;comes&nbsp;from&nbsp;the&nbsp;view&nbsp;class<br>
+&nbsp;<br>
+returns&nbsp;a&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;paramters&nbsp;if&nbsp;there&nbsp;is&nbsp;no&nbsp;problem&nbsp;about&nbsp;the&nbsp;paramters<br>
+&nbsp;<br>
+This&nbsp;function&nbsp;is&nbsp;used&nbsp;to&nbsp;split&nbsp;the&nbsp;arguments&nbsp;of&nbsp;the&nbsp;endpoint&nbsp;in&nbsp;the&nbsp;correct&nbsp;order.</tt></dd></dl>
+
+<dl><dt><a name="searchEngine-get_stopwords"><strong>get_stopwords</strong></a>()</dt><dd><tt>returns&nbsp;list&nbsp;of&nbsp;stopwords&nbsp;+&nbsp;punctuation&nbsp;in&nbsp;English<br>
+&nbsp;<br>
+This&nbsp;function&nbsp;returns&nbsp;a&nbsp;list&nbsp;of&nbsp;stopwords&nbsp;for&nbsp;English</tt></dd></dl>
+
+<dl><dt><a name="searchEngine-search"><strong>search</strong></a>(request)</dt><dd><tt>where&nbsp;'request'&nbsp;:&nbsp;HTTP&nbsp;Request&nbsp;that&nbsp;comes&nbsp;from&nbsp;the&nbsp;view&nbsp;class<br>
+&nbsp;<br>
+returns&nbsp;a&nbsp;list&nbsp;of&nbsp;search&nbsp;results.<br>
+&nbsp;<br>
+This&nbsp;is&nbsp;the&nbsp;function&nbsp;that&nbsp;searchs&nbsp;the&nbsp;user&nbsp;in&nbsp;our&nbsp;database</tt></dd></dl>
+
+<dl><dt><a name="searchEngine-semantic_related_list"><strong>semantic_related_list</strong></a>(search_tokens, max_num_of_related)</dt><dd><tt>where&nbsp;'search_tokens':&nbsp;List&nbsp;of&nbsp;tokens&nbsp;that&nbsp;are&nbsp;given&nbsp;in&nbsp;a&nbsp;search&nbsp;string<br>
+where&nbsp;'max_num_of_related':&nbsp;Number&nbsp;of&nbsp;words&nbsp;that&nbsp;will&nbsp;be&nbsp;chosen&nbsp;for&nbsp;a&nbsp;token<br>
+&nbsp;<br>
+returns&nbsp;a&nbsp;list&nbsp;of&nbsp;tuples&nbsp;which&nbsp;contails&nbsp;(word,semantic&nbsp;relation&nbsp;point)<br>
+&nbsp;<br>
+This&nbsp;functions&nbsp;takes&nbsp;a&nbsp;list&nbsp;of&nbsp;tokens&nbsp;and&nbsp;creates&nbsp;the&nbsp;list&nbsp;of&nbsp;semanticly&nbsp;related&nbsp;words&nbsp;for&nbsp;the&nbsp;list&nbsp;of&nbsp;tokens</tt></dd></dl>
+
+<dl><dt><a name="searchEngine-sort_output"><strong>sort_output</strong></a>(output_list, sorting_type)</dt><dd><tt>where&nbsp;'output_list':&nbsp;the&nbsp;list&nbsp;of&nbsp;the&nbsp;results&nbsp;that&nbsp;come&nbsp;without&nbsp;sorting<br>
+where&nbsp;'sorting_type':&nbsp;sorting&nbsp;type&nbsp;parameter<br>
+&nbsp;<br>
+returns&nbsp;sorted&nbsp;version&nbsp;of&nbsp;the&nbsp;search&nbsp;result<br>
+&nbsp;<br>
+This&nbsp;function&nbsp;sorts&nbsp;the&nbsp;output&nbsp;with&nbsp;a&nbsp;given&nbsp;sotring&nbsp;criteria</tt></dd></dl>
+
+<dl><dt><a name="searchEngine-verify_token"><strong>verify_token</strong></a>(token=None)</dt><dd><tt>where&nbsp;'token':&nbsp;string,&nbsp;64&nbsp;characther&nbsp;string&nbsp;that&nbsp;can&nbsp;be&nbsp;token<br>
+&nbsp;<br>
+returns&nbsp;True&nbsp;if&nbsp;token&nbsp;exists&nbsp;in&nbsp;the&nbsp;DB<br>
+&nbsp;<br>
+This&nbsp;function&nbsp;verifies&nbsp;the&nbsp;token&nbsp;if&nbsp;there&nbsp;exits.</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>exact_match_score</strong> = 1000000</dl>
+
+<dl><dt><strong>job_list</strong> = ['EMPTY_JOB', 'student', 'academician', 'scientist', 'accountant', 'computer programmer', 'president', 'general manager', 'computer specialist', 'other']</dl>
+
+<dl><dt><strong>num_of_semantically_related</strong> = 5</dl>
+
+<dl><dt><strong>sotring_criteria_list</strong> = ['name_increasing', 'name_decreasing', 'surname_increasing', 'surname_decreasing']</dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>JOB_CHOICES</strong> = ((1, 'Student'), (2, 'Academician'), (3, 'Scientist'), (4, 'Accountant'), (5, 'Computer Programmer'), (6, 'President'), (7, 'General Manager'), (8, 'Computer Specialist'), (9, 'Other'))<br>
+<strong>STOPWORDS_API_KEY</strong> = 'a5cb4aeb98msh29ffc5d7378f3d2p136d6cjsn7e882dc52f2a'<br>
+<strong>connection</strong> = &lt;django.db.DefaultConnectionProxy object&gt;</td></tr></table>
+</body></html>
