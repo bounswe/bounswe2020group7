@@ -25,7 +25,7 @@ Endpoint&nbsp;description:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'password2':"",&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string,&nbsp;Password2&nbsp;given&nbsp;by&nbsp;user&nbsp;to&nbsp;check&nbsp;whether&nbsp;Password1&nbsp;is&nbsp;matched.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'e_mail':"",&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string,&nbsp;Email&nbsp;parameter&nbsp;given&nbsp;by&nbsp;user<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'about_me':"",&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string,&nbsp;About&nbsp;me&nbsp;parameter&nbsp;given&nbsp;by&nbsp;user<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'job_id':"",&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int,&nbsp;job&nbsp;id&nbsp;parameter&nbsp;chosen&nbsp;by&nbsp;user<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'job_name':"",&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int,&nbsp;job&nbsp;id&nbsp;parameter&nbsp;chosen&nbsp;by&nbsp;user<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'forget_password_ans':"",&nbsp;&nbsp;&nbsp;string,&nbsp;forget&nbsp;password&nbsp;answer&nbsp;parameter&nbsp;given&nbsp;by&nbsp;user<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'field_of_study':""&nbsp;}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string,&nbsp;field&nbsp;of&nbsp;study&nbsp;parameter&nbsp;given&nbsp;by&nbsp;user<br>
 &nbsp;<br>
@@ -51,7 +51,12 @@ Endpoint&nbsp;description:<br>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-isValid"><strong>isValid</strong></a>(name, surname, password1, password2, email, about_me, job_id, forget_pw_ans, field_of_study)</dt><dd><tt>&nbsp;&nbsp;&nbsp;&nbsp;where&nbsp;'name':&nbsp;string,&nbsp;Name&nbsp;parameter&nbsp;given&nbsp;by&nbsp;user<br>
+<td width="100%"><dl><dt><a name="-getJobName"><strong>getJobName</strong></a>(name)</dt><dd><tt>&nbsp;&nbsp;&nbsp;&nbsp;where&nbsp;name&nbsp;is&nbsp;the&nbsp;job&nbsp;name&nbsp;taken&nbsp;from&nbsp;user&nbsp;while&nbsp;registration<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;returns&nbsp;uuid&nbsp;of&nbsp;normalized&nbsp;job,&nbsp;or&nbsp;empty&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+This&nbsp;function&nbsp;takes&nbsp;a&nbsp;string&nbsp;and&nbsp;using&nbsp;an&nbsp;external&nbsp;api&nbsp;it&nbsp;normalizes&nbsp;and&nbsp;returns&nbsp;the&nbsp;uuid&nbsp;of&nbsp;that&nbsp;job.</tt></dd></dl>
+ <dl><dt><a name="-isValid"><strong>isValid</strong></a>(name, surname, password1, password2, email, about_me, job_name, forget_pw_ans, field_of_study)</dt><dd><tt>&nbsp;&nbsp;&nbsp;&nbsp;where&nbsp;'name':&nbsp;string,&nbsp;Name&nbsp;parameter&nbsp;given&nbsp;by&nbsp;user<br>
 &nbsp;&nbsp;&nbsp;&nbsp;where&nbsp;'surname':&nbsp;string,&nbsp;Surname&nbsp;parameter&nbsp;given&nbsp;by&nbsp;user<br>
 &nbsp;&nbsp;&nbsp;&nbsp;where&nbsp;'password1':&nbsp;string,&nbsp;Password1&nbsp;given&nbsp;by&nbsp;user<br>
 &nbsp;&nbsp;&nbsp;&nbsp;where&nbsp;'password2':&nbsp;string,&nbsp;Password2&nbsp;given&nbsp;by&nbsp;user&nbsp;to&nbsp;check&nbsp;whether&nbsp;Password1&nbsp;is&nbsp;matched.<br>
@@ -77,7 +82,7 @@ This&nbsp;function&nbsp;takes&nbsp;Httpresponse&nbsp;object&nbsp;and&nbsp;if&nbs
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><strong>DATABASES</strong> = {'default': {'ATOMIC_REQUESTS': False, 'AUTOCOMMIT': True, 'CONN_MAX_AGE': 0, 'ENGINE': 'django.db.backends.mysql', 'HOST': 'localhost', 'NAME': 'localdb', 'OPTIONS': {}, 'PASSWORD': '179346285', 'PORT': '3306', 'TEST': {'CHARSET': None, 'COLLATION': None, 'MIRROR': None, 'NAME': None}, ...}}<br>
-<strong>JOB_CHOICES</strong> = ((1, 'Student'), (2, 'Academician'), (3, 'Scientist'), (4, 'Accountant'), (5, 'Computer Programmer'), (6, 'President'), (7, 'General Manager'), (8, 'Computer Specialist'), (9, 'Other'))<br>
+<strong>JOB_LIST_API_URL</strong> = 'http://api.dataatwork.org/v1/jobs/normalize?job_title='<br>
 <strong>USER_TABLENAME</strong> = 'rest_api_registereduser'<br>
 <strong>WEBSITE_URL</strong> = 'http://localhost:8000'<br>
 <strong>connection</strong> = &lt;django.db.DefaultConnectionProxy object&gt;</td></tr></table>

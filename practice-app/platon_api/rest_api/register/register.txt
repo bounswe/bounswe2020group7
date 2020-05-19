@@ -18,7 +18,7 @@ DESCRIPTION
                             'password2':"",             string, Password2 given by user to check whether Password1 is matched.
                             'e_mail':"",                string, Email parameter given by user
                             'about_me':"",              string, About me parameter given by user
-                            'job_id':"",                int, job id parameter chosen by user
+                            'job_name':"",              int, job id parameter chosen by user
                             'forget_password_ans':"",   string, forget password answer parameter given by user
                             'field_of_study':"" }       string, field of study parameter given by user
     
@@ -26,7 +26,14 @@ DESCRIPTION
     @company: Group7
 
 FUNCTIONS
-    isValid(name, surname, password1, password2, email, about_me, job_id, forget_pw_ans, field_of_study)
+    getJobName(name)
+            where name is the job name taken from user while registration
+            
+            returns uuid of normalized job, or empty string
+            
+        This function takes a string and using an external api it normalizes and returns the uuid of that job.
+    
+    isValid(name, surname, password1, password2, email, about_me, job_name, forget_pw_ans, field_of_study)
             where 'name': string, Name parameter given by user
             where 'surname': string, Surname parameter given by user
             where 'password1': string, Password1 given by user
@@ -50,7 +57,7 @@ FUNCTIONS
 
 DATA
     DATABASES = {'default': {'ATOMIC_REQUESTS': False, 'AUTOCOMMIT': True,...
-    JOB_CHOICES = ((1, 'Student'), (2, 'Academician'), (3, 'Scientist'), (...
+    JOB_LIST_API_URL = 'http://api.dataatwork.org/v1/jobs/normalize?job_ti...
     USER_TABLENAME = 'rest_api_registereduser'
     WEBSITE_URL = 'http://localhost:8000'
     connection = <django.db.DefaultConnectionProxy object>
