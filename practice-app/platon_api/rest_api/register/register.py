@@ -15,7 +15,7 @@ Endpoint description:
                         'password2':"",             string, Password2 given by user to check whether Password1 is matched.
                         'e_mail':"",                string, Email parameter given by user
                         'about_me':"",              string, About me parameter given by user
-                        'job_id':"",                int, job id parameter chosen by user
+                        'job_name':"",              int, job id parameter chosen by user
                         'forget_password_ans':"",   string, forget password answer parameter given by user
                         'field_of_study':"" }       string, field of study parameter given by user
 
@@ -26,14 +26,30 @@ Endpoint description:
 
 from django.db import connection, transaction
 from django.http import HttpResponse, HttpRequest
-from platon_api.settings import DATABASES, USER_TABLENAME, JOB_CHOICES, WEBSITE_URL
+from platon_api.settings import DATABASES, USER_TABLENAME, WEBSITE_URL, JOB_LIST_API_URL
 import requests as req
 from django.shortcuts import redirect,render
 import re,copy, requests, hashlib
 
 
+def getJobName(name):
+    """
+        where name is the job name taken from user while registration
+        
+        returns uuid of normalized job, or empty string
+        
+    This function takes a string and using an external api it normalizes and returns the uuid of that job.
+    """
+    try:
+        resp = req.get(JOB_LIST_API_URL + name).json()
+        if "error" not in resp:
+            return resp[0].get("uuid")         # getting uuid field
+    except:
+        pass
+    return ""
 
-def isValid(name, surname, password1,password2, email, about_me, job_id, forget_pw_ans, field_of_study):
+
+def isValid(name, surname, password1,password2, email, about_me, job_name, forget_pw_ans, field_of_study):
     """
         where 'name': string, Name parameter given by user
         where 'surname': string, Surname parameter given by user
@@ -50,11 +66,11 @@ def isValid(name, surname, password1,password2, email, about_me, job_id, forget_
     This function takes input parameters and checks them if they are valid and return the boolean result.
     """
     try:
-        if len(name) == 0 or len(surname) == 0 or len(email) == 0 or len(about_me) == 0 or len(forget_pw_ans) == 0 or len(field_of_study)==0 or int(job_id) <= 0:
+        if len(name) == 0 or len(surname) == 0 or len(email) == 0 or len(about_me) == 0 or len(forget_pw_ans) == 0 or len(field_of_study)==0 or len(job_name) == 0:
             return False
         
         # Length control of input parameters
-        if len(name) > 30 or len(surname) > 30 or len(email) > 255 or len(about_me) > 330  or len(forget_pw_ans) > 50  or len(field_of_study) > 50  or int(job_id) > len(JOB_CHOICES):
+        if len(name) > 30 or len(surname) > 30 or len(email) > 255 or len(about_me) > 330  or len(forget_pw_ans) > 50  or len(field_of_study) > 50:
             return False
         
         # Password match control
@@ -91,17 +107,18 @@ def register_api(response):
         try:
             form = response.POST        # acquire json
             # get fields from json
-            name, surname, password1,password2, email, about_me, job_id, forget_pw_ans, field_of_study = form.get("name"), form.get("surname"), form.get("password1"),form.get("password2"), form.get("e_mail") , form.get("about_me") , form.get("job_id"), form.get("forget_password_ans") ,form.get("field_of_study") 
+            name, surname, password1,password2, email, about_me, job_name, forget_pw_ans, field_of_study = form.get("name"), form.get("surname"), form.get("password1"),form.get("password2"), form.get("e_mail") , form.get("about_me") , form.get("job_name"), form.get("forget_password_ans") ,form.get("field_of_study") 
+    
+            job_uuid = getJobName(job_name)   #a short word to describe job
             # validity control
-            if isValid(name, surname, password1,password2, email, about_me, job_id, forget_pw_ans, field_of_study): 
+            if isValid(name, surname, password1,password2, email, about_me, job_uuid, forget_pw_ans, field_of_study): 
                 try:
                     cursor = connection.cursor()
                     db_name = DATABASES.get("default").get("NAME")                          # get database name from settings
                     password = hashlib.sha256(password1.encode("utf-8")).hexdigest()        # make password hashed
-                    token = hashlib.sha256(name.encode("utf-8")).hexdigest()                # create token from name
                     # MYsql insertion query
-                    query = "INSERT INTO `" + db_name + "`.`" + USER_TABLENAME + "` (`name`, `surname`, `password_hashed`, `e_mail`, `token`, `about_me`, `job_id`, `field_of_study`, `forget_password_ans`) VALUES ("
-                    query += "'" + name + "','" +  surname + "','" + password + "','" + email + "','" + token + "','"  + about_me + "','"+ job_id + "','" + field_of_study + "','" +  forget_pw_ans + "');"
+                    query = "INSERT INTO `" + db_name + "`.`" + USER_TABLENAME + "` (`name`, `surname`, `password_hashed`, `e_mail`, `token`, `about_me`, `job_uuid`, `field_of_study`, `forget_password_ans`) VALUES ("
+                    query += "'" + name + "','" +  surname + "','" + password + "','" + email + "','','"  + about_me + "','"+ job_uuid+ "','" + field_of_study + "','" +  forget_pw_ans + "');"
                     cursor.execute(query)
                     resp.status_code = 201      # if successfull, response code 201 CREATED
                     error = "SUCCESSFULL"

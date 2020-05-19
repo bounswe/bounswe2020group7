@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -135,5 +134,4 @@ JOB_CHOICES =  ((1, "Student"),
 
 USER_TABLENAME = "rest_api_registereduser"
 WEBSITE_URL = "http://localhost:8000"
-
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+JOB_LIST_API_URL = "http://api.dataatwork.org/v1/jobs/normalize?job_title="
