@@ -19,7 +19,7 @@ Endpoint description:
 """
 
 from django.db import connection
-from platon_api.settings import JOB_CHOICES, STOPWORDS_API_KEY
+from platon_api.settings import JOB_LIST_API_URL, STOPWORDS_API_KEY, USER_TABLENAME
 
 import json
 import string
@@ -49,8 +49,6 @@ class searchEngine():
     """
 
     """ TODO: Update the hardcoded list for the future use of this module"""
-
-    job_list = ["EMPTY_JOB"] + [job_tuple[1].lower() for job_tuple in JOB_CHOICES]
 
     sotring_criteria_list = ["name_increasing", "name_decreasing", "surname_increasing", "surname_decreasing"]
     
@@ -103,14 +101,16 @@ class searchEngine():
             # Change JSON to Python dictionary
             filter = json.loads(filter_json)
             if "job" in filter:
-                # Control if the job filter is in the job list
-                if filter["job"].lower() not in searchEngine.job_list:
-                    return "Wrong input. Please give an appropriate input!!"
-                # Take the index of the job
-                job_id = searchEngine.job_list.index(filter["job"].lower())
-                # Change job with job id
+                try:
+                    # Get job uuid from the Job list API
+                    response = requests.request("GET",JOB_LIST_API_URL+filter["job"].lower())
+                    job  = json.loads(response.text)
+                    job_uuid = job[0]["uuid"]
+                except:
+                    return "There is a problem about an API. Please try again!!"
+                # Change job with job uuid
                 del filter["job"]
-                filter["job_id"] = job_id
+                filter["job_uuid"] = job_uuid
             # Change field of study to lower case
             if "field_of_study" in filter:
                 filter["field_of_study"] = filter["field_of_study"].lower()
@@ -149,7 +149,7 @@ class searchEngine():
         if token is None:
             return False
         # SQL Query to verify token from database
-        sql = "SELECT token FROM users WHERE token='{}'".format(token)
+        sql = "SELECT token FROM "+ USER_TABLENAME +" WHERE token='{}'".format(token)
         # Create a MySQL cursor
         cursor = connection.cursor()
         # Execute SQL query
@@ -207,6 +207,19 @@ class searchEngine():
         except:
             # If there is an error in the request return a None object
             return None
+    
+    @staticmethod
+    def get_job_name(job_uuid):
+        """
+            where 'job_uuid': job uuid of a job
+
+            returns job name of given uuid
+
+            This function converts a job uuid to its name
+        """
+        response = requests.request("GET","http://api.dataatwork.org/v1/jobs/"+job_uuid)
+        job = json.loads(response.text)
+        return job["title"].title()
 
     @staticmethod
     def search(request):
@@ -239,10 +252,10 @@ class searchEngine():
         # Store teh scores of the results and result list
         result_score = {}
         result_list = []
-        base_sql = "SELECT id,name,surname,`e-mail`,about_me,job_id,field_of_study FROM users WHERE "
+        base_sql = "SELECT id,name,surname,`e_mail`,about_me,job_uuid,field_of_study FROM " + USER_TABLENAME + " WHERE "
         filter_list = []
-        if "job_id" in param_dict["filter"]:
-            filter_list.append("job_id=" + str(param_dict["filter"]["job_id"]))
+        if "job_uuid" in param_dict["filter"]:
+            filter_list.append("job_uuid='{}'".format(param_dict["filter"]["job_uuid"]))
         if "field_of_study" in param_dict["filter"]:
             filter_list.append('field_of_study="{}"'.format(param_dict["filter"]["field_of_study"]))
         # Add filters to the base SQL Query
@@ -255,7 +268,7 @@ class searchEngine():
         for search_tuple in searchEngine.semantic_related_list(search_tokens,searchEngine.num_of_semantically_related):
             search_token = search_tuple[0]
             # Search for the name
-            sql = base_sql + '(LOWER(name) REGEXP ".*{0}.*" OR LOWER(surname) REGEXP ".*{0}.*" OR LOWER(`e-mail`) REGEXP ".*{0}.*" OR LOWER(about_me) REGEXP ".*{0}.*")'.format(search_token)
+            sql = base_sql + '(LOWER(name) REGEXP ".*{0}.*" OR LOWER(surname) REGEXP ".*{0}.*" OR LOWER(`e_mail`) REGEXP ".*{0}.*" OR LOWER(about_me) REGEXP ".*{0}.*")'.format(search_token)
             cursor.execute(sql)
             for result in cursor:
                 # Increase the point of the result
@@ -272,7 +285,7 @@ class searchEngine():
         for id,score in sorted_index:
             for result in result_list:
                 if result[0]==id:
-                    search_result.append({"name":result[1],"surname":result[2],"e-mail":result[3],"about_me":result[4],"job":searchEngine.job_list[result[5]].title(),"field_of_study":result[6].title()})
+                    search_result.append({"name":result[1],"surname":result[2],"e_mail":result[3],"about_me":result[4],"job":searchEngine.get_job_name(result[5]),"field_of_study":result[6].title()})
                     break
             continue
         # Return the search result list

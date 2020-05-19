@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework'
+    'rest_framework',
+    'rest_api',
 ]
 
 MIDDLEWARE = [
@@ -124,14 +125,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-JOB_CHOICES =  ((1, "Student"), 
-                (2, "Academician"), 
-                (3, "Scientist"), 
-                (4, "Accountant"), 
-                (5, "Computer Programmer"), 
-                (6, "President"), 
-                (7, "General Manager"), 
-                (8, "Computer Specialist"), 
-                (9, "Other"))
+USER_TABLENAME = "rest_api_registereduser"
+
+WEBSITE_URL = "http://localhost:8000"
+
+JOB_LIST_API_URL = "http://api.dataatwork.org/v1/jobs/normalize?job_title="
 
 STOPWORDS_API_KEY = "a5cb4aeb98msh29ffc5d7378f3d2p136d6cjsn7e882dc52f2a"

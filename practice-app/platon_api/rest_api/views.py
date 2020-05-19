@@ -10,7 +10,7 @@ class Search(APIView):
         try:
             return Response(engine.search(request))
         except:
-            return Response("Wrong input. Please give an appropriate input!!")
+            return Response("Please give an appropriate input!!")
  
 
 # Create your views here.
