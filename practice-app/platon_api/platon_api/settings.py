@@ -122,16 +122,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-JOB_CHOICES =  ((1, "Student"), 
-                (2, "Academician"), 
-                (3, "Scientist"), 
-                (4, "Accountant"), 
-                (5, "Computer Programmer"), 
-                (6, "President"), 
-                (7, "General Manager"), 
-                (8, "Computer Specialist"), 
-                (9, "Other"))
-
 USER_TABLENAME = "rest_api_registereduser"
 WEBSITE_URL = "http://localhost:8000"
 JOB_LIST_API_URL = "http://api.dataatwork.org/v1/jobs/normalize?job_title="
