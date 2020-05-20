@@ -1,6 +1,7 @@
 from django.test import TestCase,TransactionTestCase,Client
 from django.db import connection,transaction
 from platon_api.settings import USER_TABLENAME 
+from rest_api.search_engine.search_engine import searchEngine
 import json
 import hashlib
 
@@ -126,7 +127,7 @@ class SearchTest(TransactionTestCase):
         resp = SearchTest.client.get('/api/search/',{"token":SearchTest.valid_token,"search_string":search_string,"sorting_criteria":sorting_criteria})
         search_result = json.loads(resp.content)
         for i in range(len(search_result)-1):
-            self.assertGreaterEqual(search_result[i]["name"],search_result[i+1]["name"])
+            self.assertGreaterEqual(search_result[i]["name"],search_result[i+1]["name"],"{} sorting criteria doesn't work".format(sorting_criteria))
     
     # Test if sortinf Functionality works correctly or not
     def test_sorting_name2(self):
@@ -138,7 +139,7 @@ class SearchTest(TransactionTestCase):
         resp = SearchTest.client.get('/api/search/',{"token":SearchTest.valid_token,"search_string":search_string,"sorting_criteria":sorting_criteria})
         search_result = json.loads(resp.content)
         for i in range(len(search_result)-1):
-            self.assertLessEqual(search_result[i]["name"],search_result[i+1]["name"])
+            self.assertLessEqual(search_result[i]["name"],search_result[i+1]["name"],"{} sorting criteria doesn't work".format(sorting_criteria))
 
     # Test if sortinf Functionality works correctly or not
     def test_sorting_surname(self):
@@ -150,7 +151,7 @@ class SearchTest(TransactionTestCase):
         resp = SearchTest.client.get('/api/search/',{"token":SearchTest.valid_token,"search_string":search_string,"sorting_criteria":sorting_criteria})
         search_result = json.loads(resp.content)
         for i in range(len(search_result)-1):
-            self.assertLessEqual(search_result[i]["name"],search_result[i+1]["name"])
+            self.assertLessEqual(search_result[i]["name"],search_result[i+1]["name"],"{} sorting criteria doesn't work".format(sorting_criteria))
     
     # Test if sortinf Functionality works correctly or not
     def test_sorting_surname2(self):
@@ -162,4 +163,13 @@ class SearchTest(TransactionTestCase):
         resp = SearchTest.client.get('/api/search/',{"token":SearchTest.valid_token,"search_string":search_string,"sorting_criteria":sorting_criteria})
         search_result = json.loads(resp.content)
         for i in range(len(search_result)-1):
-            self.assertGreaterEqual(search_result[i]["name"],search_result[i+1]["name"])
+            self.assertGreaterEqual(search_result[i]["name"],search_result[i+1]["name"],"{} sorting criteria doesn't work".format(sorting_criteria))
+    
+    # Test the tokenization is true or not
+    def test_semantic_related_list(self):
+        search_tokens = ["basketball", "computer"]
+        number_of_related = 2
+        expected_output = [(token,1000000) for token in search_tokens] + [("basketball game",87833),("football",73595),("calculator",87500),("figurer",81849)]
+        # Use the function
+        result =  searchEngine.semantic_related_list(search_tokens,number_of_related)
+        self.assertEqual(expected_output,result,"Semantic related list isn't generated correctly")
