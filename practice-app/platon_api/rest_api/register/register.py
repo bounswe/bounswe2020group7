@@ -107,7 +107,7 @@ def register_api(request):
         # get fields from json
         name, surname, password1,password2, email, about_me, job_name, forget_pw_ans, field_of_study = (form.get("name"), form.get("surname"), form.get("password1"),form.get("password2"), 
                                                                                                         form.get("e_mail") , form.get("about_me") , form.get("job_name"), 
-                                                                                                        form.get("forget_password_ans") ,form.get("field_of_study") )
+                                                                                                        form.get("forget_password_ans") ,form.get("field_of_study") )      
         
         job_uuid, password = getJobName(job_name) , hashlib.sha256(password1.encode("utf-8")).hexdigest()   
         form["job_uuid"], form["password_hashed"] =  job_uuid, password 
@@ -119,13 +119,9 @@ def register_api(request):
             json_response["response"] = "SUCCESSFULL"
         else:
             resp.status_code = 400   
-            errors = serializer.errors
-            for each in errors.keys():
-                if each not in json_response:
-                    json_response[each] = errors[each]
-            json_response["response"] = "NOT_VALID_INPUT"    
+            json_response["response"] = "NOT_VALID_INPUT"
     except:
-        resp.status_code = 400  
+        resp.status_code = 403  
         json_response["response"] = "VERY_BAD_THING_HAPPENED"                                                              # return ERROR AS json
         
     resp.data = json_response
