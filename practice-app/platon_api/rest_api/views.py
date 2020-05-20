@@ -1,3 +1,4 @@
-from django.shortcuts import render
+from rest_api.joke.joke import joke_api
 
-# Create your views here.
+def joke(response):
+    return joke_api(response)
