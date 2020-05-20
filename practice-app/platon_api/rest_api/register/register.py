@@ -25,11 +25,12 @@ Endpoint description:
 """
 
 from django.db import connection, transaction
-from django.http import HttpResponse, HttpRequest
 from platon_api.settings import DATABASES, USER_TABLENAME, WEBSITE_URL, JOB_LIST_API_URL
 import requests as req
-from django.shortcuts import redirect,render
-import re,copy, requests, hashlib
+import re,copy, hashlib
+
+from rest_framework.response import Response
+from rest_api.serializers import RegisteredUserSerializer 
 
 
 def getJobName(name):
@@ -69,10 +70,6 @@ def isValid(name, surname, password1,password2, email, about_me, job_name, forge
         if len(name) == 0 or len(surname) == 0 or len(email) == 0 or len(about_me) == 0 or len(forget_pw_ans) == 0 or len(field_of_study)==0 or len(job_name) == 0:
             return False
         
-        # Length control of input parameters
-        if len(name) > 30 or len(surname) > 30 or len(email) > 255 or len(about_me) > 330  or len(forget_pw_ans) > 50  or len(field_of_study) > 50:
-            return False
-        
         # Password match control
         if password1 != password2:
             return False
@@ -91,45 +88,45 @@ def isValid(name, surname, password1,password2, email, about_me, job_name, forge
         return True
     except:
         return False
+      
 
-def register_api(response):
+def register_api(request):
     """
-        where 'response': HttpResponse, Name parameter given by user
+        where 'response': rest_framework response
 
-        returns Json object if 'GET' requested else nothing
+        returns response from rest_framework
         
-        This function takes Httpresponse object and if 'POST' request used, it inserts into database
+        This function only accepts POST requests, and if valid input is necessary inserts into database
     """
-    error = ""
-    resp = HttpResponse()               # create response object
+    json_response = {"response":""}
+    resp = Response()              # create response object
     resp.status_code = 200              # set status to 200 as default
-    if response.method == "POST":       # if post request sent
-        try:
-            form = response.POST        # acquire json
-            # get fields from json
-            name, surname, password1,password2, email, about_me, job_name, forget_pw_ans, field_of_study = form.get("name"), form.get("surname"), form.get("password1"),form.get("password2"), form.get("e_mail") , form.get("about_me") , form.get("job_name"), form.get("forget_password_ans") ,form.get("field_of_study") 
-    
-            job_uuid = getJobName(job_name)   #a short word to describe job
-            # validity control
-            if isValid(name, surname, password1,password2, email, about_me, job_uuid, forget_pw_ans, field_of_study): 
-                try:
-                    cursor = connection.cursor()
-                    db_name = DATABASES.get("default").get("NAME")                          # get database name from settings
-                    password = hashlib.sha256(password1.encode("utf-8")).hexdigest()        # make password hashed
-                    # MYsql insertion query
-                    query = "INSERT INTO `" + db_name + "`.`" + USER_TABLENAME + "` (`name`, `surname`, `password_hashed`, `e_mail`, `token`, `about_me`, `job_uuid`, `field_of_study`, `forget_password_ans`) VALUES ("
-                    query += "'" + name + "','" +  surname + "','" + password + "','" + email + "','','"  + about_me + "','"+ job_uuid+ "','" + field_of_study + "','" +  forget_pw_ans + "');"
-                    cursor.execute(query)
-                    resp.status_code = 201      # if successfull, response code 201 CREATED
-                    error = "SUCCESSFULL"
-                except:
-                    resp.status_code = 503      # if fail, response code 501 INTERNAL SERVER ERROR
-                    error = "SOME_ERROR_WHILE_INSERTION_TO_DB"
-            else:
-                error = "NOT_VALID_INPUT"
-                
-        except:
-            error = "VERY_BAD_THING_HAPPENED"
     resp["Content-type"] = "application/json"
-    resp.write({"response":error})         # return ERROR AS json
+    try:
+        form = copy.deepcopy(request.data)        # acquire json
+        # get fields from json
+        name, surname, password1,password2, email, about_me, job_name, forget_pw_ans, field_of_study = (form.get("name"), form.get("surname"), form.get("password1"),form.get("password2"), 
+                                                                                                        form.get("e_mail") , form.get("about_me") , form.get("job_name"), 
+                                                                                                        form.get("forget_password_ans") ,form.get("field_of_study") )
+        
+        job_uuid, password = getJobName(job_name) , hashlib.sha256(password1.encode("utf-8")).hexdigest()   
+        form["job_uuid"], form["password_hashed"] =  job_uuid, password 
+        serializer = RegisteredUserSerializer(data = form)
+        # validity control
+        if isValid(name, surname, password1, password2, email, about_me, job_uuid, forget_pw_ans, field_of_study) and serializer.is_valid(): 
+            serializer.save()
+            resp.status_code = 201                                                                  # if successfull, response code 201 CREATED
+            json_response["response"] = "SUCCESSFULL"
+        else:
+            resp.status_code = 400   
+            errors = serializer.errors
+            for each in errors.keys():
+                if each not in json_response:
+                    json_response[each] = errors[each]
+            json_response["response"] = "NOT_VALID_INPUT"    
+    except:
+        resp.status_code = 400  
+        json_response["response"] = "VERY_BAD_THING_HAPPENED"                                                              # return ERROR AS json
+        
+    resp.data = json_response
     return resp

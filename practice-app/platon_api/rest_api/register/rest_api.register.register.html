@@ -42,8 +42,7 @@ Endpoint&nbsp;description:<br>
 <a href="hashlib.html">hashlib</a><br>
 </td><td width="25%" valign=top><a href="re.html">re</a><br>
 <a href="requests.html">requests</a><br>
-</td><td width="25%" valign=top><a href="requests.html">requests</a><br>
-<a href="django.db.transaction.html">django.db.transaction</a><br>
+</td><td width="25%" valign=top><a href="django.db.transaction.html">django.db.transaction</a><br>
 </td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#eeaa77">
@@ -69,11 +68,11 @@ This&nbsp;function&nbsp;takes&nbsp;a&nbsp;string&nbsp;and&nbsp;using&nbsp;an&nbs
 &nbsp;&nbsp;&nbsp;&nbsp;returns&nbsp;True&nbsp;if&nbsp;given&nbsp;values&nbsp;appropriate&nbsp;to&nbsp;insert&nbsp;in&nbsp;database,&nbsp;else&nbsp;False<br>
 &nbsp;<br>
 This&nbsp;function&nbsp;takes&nbsp;input&nbsp;parameters&nbsp;and&nbsp;checks&nbsp;them&nbsp;if&nbsp;they&nbsp;are&nbsp;valid&nbsp;and&nbsp;return&nbsp;the&nbsp;boolean&nbsp;result.</tt></dd></dl>
- <dl><dt><a name="-register_api"><strong>register_api</strong></a>(response)</dt><dd><tt>where&nbsp;'response':&nbsp;HttpResponse,&nbsp;Name&nbsp;parameter&nbsp;given&nbsp;by&nbsp;user<br>
+ <dl><dt><a name="-register_api"><strong>register_api</strong></a>(request)</dt><dd><tt>where&nbsp;'response':&nbsp;rest_framework&nbsp;response<br>
 &nbsp;<br>
-returns&nbsp;Json&nbsp;object&nbsp;if&nbsp;'GET'&nbsp;requested&nbsp;else&nbsp;nothing<br>
+returns&nbsp;response&nbsp;from&nbsp;rest_framework<br>
 &nbsp;<br>
-This&nbsp;function&nbsp;takes&nbsp;Httpresponse&nbsp;object&nbsp;and&nbsp;if&nbsp;'POST'&nbsp;request&nbsp;used,&nbsp;it&nbsp;inserts&nbsp;into&nbsp;database</tt></dd></dl>
+This&nbsp;function&nbsp;only&nbsp;accepts&nbsp;POST&nbsp;requests,&nbsp;and&nbsp;if&nbsp;valid&nbsp;input&nbsp;is&nbsp;necessary&nbsp;inserts&nbsp;into&nbsp;database</tt></dd></dl>
 </td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#55aa55">

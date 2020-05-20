@@ -48,12 +48,12 @@ FUNCTIONS
         
         This function takes input parameters and checks them if they are valid and return the boolean result.
     
-    register_api(response)
-        where 'response': HttpResponse, Name parameter given by user
+    register_api(request)
+        where 'response': rest_framework response
         
-        returns Json object if 'GET' requested else nothing
+        returns response from rest_framework
         
-        This function takes Httpresponse object and if 'POST' request used, it inserts into database
+        This function only accepts POST requests, and if valid input is necessary inserts into database
 
 DATA
     DATABASES = {'default': {'ATOMIC_REQUESTS': False, 'AUTOCOMMIT': True,...
