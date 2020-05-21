@@ -1,8 +1,5 @@
-from django.test import testcases
-import requests
 from rest_framework.test import APITestCase
 from rest_framework import status
-from rest_framework.response import Response
 
 class JokeTest(APITestCase):
 
