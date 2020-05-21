@@ -1,11 +1,10 @@
-from django.db import connection, transaction
-from django.http import HttpResponse, HttpRequest
-
-from django.shortcuts import redirect, render
-import re, copy, requests, hashlib
+import requests
+from django.db import connection
+from django.http import JsonResponse
 
 
-@staticmethod
+
+
 def verify_token(token=None):
     """
         where 'token': string, 64 characther string that can be token
@@ -25,48 +24,39 @@ def verify_token(token=None):
     # Validate the token if there is
     return len(result) != 0
 
-@staticmethod
+
 def get_joke():
+
     url = 'https://api.jokes.one/jod'
-    api_token = "KEY"
+    api_token = "zaCELgL.0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx"
     headers = {'content-type': 'application/json',
                'X-JokesOne-Api-Secret': format(api_token)}
+
     response = requests.get(url, headers=headers)
-    return response.json()['contents']['jokes'][0]
 
-def joke_api(response):
-    """
-        where 'response': HttpResponse, Name parameter given by user
+    return response.json()['contents']['jokes'][0]['joke']
 
-        returns Json object if 'GET' requested else nothing
+def joke_api(request):
 
-        This function takes Httpresponse object and if 'POST' request used, it inserts into database
-    """
-    error = ""
-    resp = HttpResponse()  # create response object
-    resp.status_code = 200  # set status to 200 as default
-    if response.method == "GET":  # if post request sent
+    response = JsonResponse({'status': 'bad_request'}, status=500, safe=False)
+    print(request.method)
+    if request.method == "GET":  # if get request sent
         try:
-            print(1)
-            form = response.GET  # acquire json
-            print(2)
-            # get fields from json
+            form = request.GET  # acquire json
             token = form.get("token")
-            print(token)
+            joke = get_joke()
+
             # validity control
-
-            #if verify_token(token=token):
-            if True:
-                #resp[""] = get_joke()
-                print(get_joke())
-                resp.status_code = 201  # if successfull, response code 201 CREATED
-                error = "SUCCESSFULL"
+            if verify_token(token=token):
+                # Successful request
+                response = JsonResponse({'status' : 'success','token': token,'title' : joke['title'],'joke' : joke['text']},status=200, safe=False)
             else:
-                resp.status_code = 503  # if fail, response code 501 INTERNAL SERVER ERROR
-                error = "SOME_ERROR_WHILE_INSERTION_TO_DB"
-
+                # Unauthorized client
+                response = JsonResponse({'status' : 'invalid_token'},status=401, safe=False)
         except:
-            error = "VERY_BAD_THING_HAPPENED"
-    resp["token"] = token
-    resp.write({"response": error})  # return ERROR AS json
-    return resp
+            # Internal error
+            response = JsonResponse({'status': 'bad_request'}, status=500, safe=False)
+    else:
+        print(request.method)
+
+    return response
