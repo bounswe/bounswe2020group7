@@ -5,7 +5,10 @@
 
 {% block content %}
 <div style="display: flex;">
+    
     <div style="flex: 70%;">
+        <h2 style="color: red;text-align: center;font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">{{error}}</h2>
+
         <h2 class="card-title" style="text-align: center; color: blue;">Register</h2>
         {% csrf_token %}
         {% crispy form %}
