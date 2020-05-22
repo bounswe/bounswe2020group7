@@ -18,5 +18,6 @@ from rest_api import views
 
 
 urlpatterns = [
-    path('api/register/', views.register, name="register")
+    path('api/register/', views.register, name="register"),
+    path('api/register/fe', views.register_fe, name="register_fe"),
 ]

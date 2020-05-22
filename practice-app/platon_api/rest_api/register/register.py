@@ -23,12 +23,12 @@ Endpoint description:
 @company: Group7
 
 """
-
+from django.shortcuts import render, redirect
 from django.db import connection, transaction
-from platon_api.settings import DATABASES, USER_TABLENAME, WEBSITE_URL, JOB_LIST_API_URL
+from platon_api.settings import DATABASES, USER_TABLENAME, WEBSITE_URL, JOB_LIST_API_URL,HOME_PAGE
 import requests as req
 import re,copy, hashlib, random, json
-
+from .forms import RegisteredUserForm
 from rest_framework.response import Response
 from rest_api.serializers import RegisteredUserSerializer 
 
@@ -47,7 +47,7 @@ def getPoem():
         rq = req.get(url).json()                                            # requesting it
         poem = copy.deepcopy(random.choice(list(rq)))                       # random choice
         resp["Wow"] = "You should not be using GET for registration."       # message to user
-        resp["Luck"] = "Well, Here a random poem for you."                  # message to user
+        resp["Luck"] = "Well, Here a poem for you."                  # message to user
         
         if "content" in poem:                                               # arrangements
             poem["poem"] = poem["content"]
@@ -162,3 +162,48 @@ def register_api(request):
         json_response = getPoem()    
     resp.data = json_response
     return resp
+
+
+def register_page(request):
+    """
+        where request HttpRequest to carry post and get requests
+    
+        This function takes a request and if POST, then it registers into system using another endpoint of this api
+        If get, it renders a form to register and also a random poem.
+    """    
+    form, resp_api, error =  {}, {}, ""                                     # initialization
+    if request.method == "POST":                                            # if post
+        form = RegisteredUserForm(request.POST)                             # acquire form
+        try:
+            resp_api = req.post(WEBSITE_URL + "/api/register/", request.data )             # send post request to another endpoint to register into system 
+            if resp_api.status_code == 201:                                                # if successful
+                return redirect(HOME_PAGE)                                                    # redirect home
+            else:
+                error = "FAIL TO REGISTER - CHECK YOUR FIELDS"                                  # error
+        except:
+            pass
+    try: 
+        form = RegisteredUserForm()                                                         # create empty form
+        resp_apis = dict(req.get(WEBSITE_URL + "/api/register/").json())                    # get poem
+        resp_api = []
+        for key,value in resp_apis.items():                                                 # parse poem
+            if key == "Content":
+                dt = dict(value)
+                if "title" in dt:
+                    resp_api.append(dt["title"])
+                if "poem" in dt:
+                    poem = str(dt["poem"])
+                    for par in poem.split("\n\n"):
+                        resp_api.append("-")
+                        for each in par.split("\n"):
+                            resp_api.append(each)
+                        
+                if "poet" in dt:
+                    resp_api.append("-------------")
+                    resp_api.append(dt["poet"])
+            if key != "Wow":
+                resp_api.append(key + " : " + value)
+                resp_api.append("-------------")
+    except:
+        pass
+    return render(request, 'register/register_form.html', {"error":error, "resp": resp_api, 'form':form})

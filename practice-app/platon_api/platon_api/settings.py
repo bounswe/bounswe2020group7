@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "rest_framework",
+    "crispy_forms"
 ]
 
 MIDDLEWARE = [
@@ -56,7 +57,7 @@ ROOT_URLCONF = 'platon_api.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, "templates/")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -127,6 +128,8 @@ STATIC_URL = '/static/'
 USER_TABLENAME = "rest_api_registereduser"
 WEBSITE_URL = "http://localhost:8000"
 JOB_LIST_API_URL = "http://api.dataatwork.org/v1/jobs/normalize?job_title="
+HOME_PAGE = "/home"
+
 
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
