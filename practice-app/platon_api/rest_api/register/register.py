@@ -6,7 +6,7 @@ Endpoint description:
     http://localhost:8000/api/register/
     
     'GET':
-        Produces error
+        Returns a random poem using external api
     'POST':
         Gets dictionary from body.
         JSON Format : { 'name': "",                 string, Name parameter given by user
@@ -27,10 +27,43 @@ Endpoint description:
 from django.db import connection, transaction
 from platon_api.settings import DATABASES, USER_TABLENAME, WEBSITE_URL, JOB_LIST_API_URL
 import requests as req
-import re,copy, hashlib
+import re,copy, hashlib, random, json
 
 from rest_framework.response import Response
 from rest_api.serializers import RegisteredUserSerializer 
+
+def getPoem():
+    """
+    
+        return a python dictionary, json that includes random poem
+    
+    This function returns a random poet using an external api.
+    
+    """
+    
+    resp = {}
+    try:
+        url ="https://www.poemist.com/api/v1/randompoems"                   # url of external api
+        rq = req.get(url).json()                                            # requesting it
+        poem = copy.deepcopy(random.choice(list(rq)))                       # random choice
+        resp["Wow"] = "You should not be using GET for registration."       # message to user
+        resp["Luck"] = "Well, Here a random poem for you."                  # message to user
+        
+        if "content" in poem:                                               # arrangements
+            poem["poem"] = poem["content"]
+            del poem["content"]
+            
+        if "url" in poem:                                                   # arrangements
+            del poem["url"]
+        
+        if "poet" in poem:                                                  # arrangements
+            pt = poem["poet"]
+            poem["poet"] = pt["name"]
+        
+        resp["Content"] = poem 
+    except:
+        pass
+    return resp
 
 
 def getJobName(name):
@@ -102,27 +135,30 @@ def register_api(request):
     resp = Response()              # create response object
     resp.status_code = 200              # set status to 200 as default
     resp["Content-type"] = "application/json"
-    try:
-        form = copy.deepcopy(request.data)        # acquire json
-        # get fields from json
-        name, surname, password1,password2, email, about_me, job_name, forget_pw_ans, field_of_study = (form.get("name"), form.get("surname"), form.get("password1"),form.get("password2"), 
-                                                                                                        form.get("e_mail") , form.get("about_me") , form.get("job_name"), 
-                                                                                                        form.get("forget_password_ans") ,form.get("field_of_study") )      
-        
-        job_uuid, password = getJobName(job_name) , hashlib.sha256(password1.encode("utf-8")).hexdigest()   
-        form["job_uuid"], form["password_hashed"] =  job_uuid, password 
-        serializer = RegisteredUserSerializer(data = form)
-        # validity control
-        if isValid(name, surname, password1, password2, email, about_me, job_uuid, forget_pw_ans, field_of_study) and serializer.is_valid(): 
-            serializer.save()
-            resp.status_code = 201                                                                  # if successfull, response code 201 CREATED
-            json_response["response"] = "SUCCESSFULL"
-        else:
-            resp.status_code = 400   
-            json_response["response"] = "NOT_VALID_INPUT"
-    except:
-        resp.status_code = 403  
-        json_response["response"] = "VERY_BAD_THING_HAPPENED"                                                              # return ERROR AS json
-        
+    
+    if request.method == "POST":
+        try:
+            form = copy.deepcopy(request.data)        # acquire json
+            # get fields from json
+            name, surname, password1,password2, email, about_me, job_name, forget_pw_ans, field_of_study = (form.get("name"), form.get("surname"), form.get("password1"),form.get("password2"), 
+                                                                                                            form.get("e_mail") , form.get("about_me") , form.get("job_name"), 
+                                                                                                            form.get("forget_password_ans") ,form.get("field_of_study") )      
+            
+            job_uuid, password = getJobName(job_name) , hashlib.sha256(password1.encode("utf-8")).hexdigest()           # obtaining pw and job name
+            form["job_uuid"], form["password_hashed"] =  job_uuid, password                                             # setting values
+            serializer = RegisteredUserSerializer(data = form)                                                          # defining serializer for modal
+           
+            if isValid(name, surname, password1, password2, email, about_me, job_uuid, forget_pw_ans, field_of_study) and serializer.is_valid():     # validity control
+                serializer.save()
+                resp.status_code = 201                                                                  # if successfull, response code 201 CREATED
+                json_response["response"] = "SUCCESSFULL"
+            else:
+                resp.status_code = 400   
+                json_response["response"] = "NOT_VALID_INPUT"
+        except:
+            resp.status_code = 403  
+            json_response["response"] = "VERY_BAD_THING_HAPPENED"                                                              # return ERROR AS json
+    else:
+        json_response = getPoem()    
     resp.data = json_response
     return resp
