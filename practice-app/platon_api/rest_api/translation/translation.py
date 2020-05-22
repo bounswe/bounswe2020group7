@@ -4,13 +4,15 @@ from django.urls import reverse
 
 from rest_api.models import RegisteredUser
 
+import requests as req
+
 def translate(request, token):
     regUser = get_object_or_404(RegisteredUser,token = token)
 
-    #url ="https://api.funtranslations.com/translate/yoda.json?text=" + regUser.about_me
-    #rq = req.get(url).json()
+    url ="https://api.funtranslations.com/translate/yoda.json?text=" + regUser.about_me
+    rq = req.get(url).json()
 
     context = {
-        'ru': regUser,
+        'translated': rq["contents"]["translated"],
     }
-    return render(request,"translation.html",context)
+    return context
