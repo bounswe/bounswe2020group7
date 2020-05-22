@@ -1,3 +1,7 @@
 from django.shortcuts import render
 
-# Create your views here.
+from rest_api.translation.translation import translate
+
+def translation(response,token):
+    return translate(response,token)
+     
