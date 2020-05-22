@@ -1,3 +1,4 @@
 from django.test import TestCase
+from .joke.test_joke import JokeTest
 
-# Create your tests here.
+test_joke = JokeTest

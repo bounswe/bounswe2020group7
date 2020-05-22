@@ -12,5 +12,3 @@ class RegisteredUser(models.Model):
     field_of_study = models.CharField(max_length=50)
     forget_password_ans = models.CharField(max_length=50)
 
-    def save(self, *args, **kwargs):
-        super(RegisteredUser, self).save(*args, **kwargs)

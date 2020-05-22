@@ -1,6 +1,11 @@
 import requests
 from django.db import connection
 from django.http import JsonResponse
+from django.db import connection
+
+
+from rest_framework.response import Response
+
 
 
 
@@ -32,14 +37,18 @@ def get_joke():
     headers = {'content-type': 'application/json',
                'X-JokesOne-Api-Secret': format(api_token)}
 
-    response = requests.get(url, headers=headers)
+    try:
+        joke = requests.get(url, headers=headers).json()['contents']['jokes'][0]['joke']
+    except:
+        joke = False
 
-    return response.json()['contents']['jokes'][0]['joke']
+    return joke
 
 def joke_api(request):
 
-    response = JsonResponse({'status': 'bad_request'}, status=500, safe=False)
-    print(request.method)
+    response = Response()
+    response["Content-type"] = "application/json"
+    json = {}
     if request.method == "GET":  # if get request sent
         try:
             form = request.GET  # acquire json
@@ -49,14 +58,21 @@ def joke_api(request):
             # validity control
             if verify_token(token=token):
                 # Successful request
-                response = JsonResponse({'status' : 'success','token': token,'title' : joke['title'],'joke' : joke['text']},status=200, safe=False)
+                if joke != False:
+                    json = {'status' : 'success','token': token,'title' : joke['title'],'joke' : joke['text']}
+                else:
+                    json = {'status' : 'success','token': token,'title' : 'No Joke','joke' : 'The joke will be ready in just an hour'}
+
+                response.status_code = 200
             else:
                 # Unauthorized client
-                response = JsonResponse({'status' : 'invalid_token'},status=401, safe=False)
+                json = {'status' : 'invalid_token'}
+                response.status_code = 401
+
         except:
             # Internal error
-            response = JsonResponse({'status': 'bad_request'}, status=500, safe=False)
-    else:
-        print(request.method)
+            json = {'status': 'bad_request'}
+            response.status_code = 500
 
+    response.data = json
     return response
