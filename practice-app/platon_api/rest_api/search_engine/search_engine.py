@@ -217,9 +217,12 @@ class searchEngine():
 
             This function converts a job uuid to its name
         """
-        response = requests.request("GET","http://api.dataatwork.org/v1/jobs/"+job_uuid)
-        job = json.loads(response.text)
-        return job["title"].title()
+        try:
+            response = requests.request("GET","http://api.dataatwork.org/v1/jobs/"+job_uuid)
+            job = json.loads(response.text)
+            return job["title"].title()
+        except:
+            return "To see the job. Please try at another time"
 
     @staticmethod
     def search(request):
