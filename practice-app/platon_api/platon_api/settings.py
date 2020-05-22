@@ -128,8 +128,8 @@ STATIC_URL = '/static/'
 USER_TABLENAME = "rest_api_registereduser"
 WEBSITE_URL = "http://localhost:8000"
 JOB_LIST_API_URL = "http://api.dataatwork.org/v1/jobs/normalize?job_title="
-HOME_PAGE = "/home"
-
+HOME_PAGE = "/register/api/fe"
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,

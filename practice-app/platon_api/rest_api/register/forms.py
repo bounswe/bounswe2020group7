@@ -1,5 +1,6 @@
 from django import forms
-
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Submit, Row, Column
 from rest_api.models import RegisteredUser
 
 class RegisteredUserForm(forms.ModelForm):
@@ -20,3 +21,36 @@ class RegisteredUserForm(forms.ModelForm):
                     "job_name",
                     "field_of_study",
                     "about_me",]
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Row(
+                
+                Column('name', css_class='form-group col-md-6'),
+                Column('surname', css_class='form-group col-md-6'),
+                css_class='form-row'
+            ),
+            Row(
+                Column('e_mail', css_class='form-group col-sm-6'),
+                Column('password1', css_class='form-group col-sm-3'),
+                Column('password2', css_class='form-group col-sm-3'),
+                css_class='form-row'
+            ),
+            Row(
+                Column('forget_password_ans', css_class='form-group col-md-4'),
+                Column('field_of_study', css_class='form-group col-md-4'),
+                Column('job_name', css_class='form-group col-md-4'),
+                css_class='form-row'
+            ),
+            Row(
+                Column('about_me', css_class='form-group col-md-12'),
+                css_class='form-row'
+            ),
+            Row(
+                Submit('submit', 'Register', css_class='form-group col-md-12'),
+                css_class='form-row'
+            ),
+            
+        )    
