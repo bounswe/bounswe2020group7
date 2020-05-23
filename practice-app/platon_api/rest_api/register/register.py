@@ -104,7 +104,7 @@ def isValid(name, surname, password1,password2, email, about_me, job_name, forge
             return False
         
         # Password match control
-        if password1 != password2:
+        if password1 != password2 or len(password1) == 0:
             return False
         
         # regular expression for texts
