@@ -9,24 +9,24 @@ from rest_api.models import RegisteredUser
 
 class TestForForgotPassword(APITestCase):
     # Testing for creation of user with valid input
-    def test_validRegistration(self):
-        data = {"name":"testcase", "surname":"testcase_sur", "e_mail":"testcase@rest.api",
+    def test_validToken(self):
+        data = {"name":"testname", "surname":"testsurname", "e_mail":"testname@rest.api",
                 "password1":"testcaseValid", "password2":"testcaseValid", "about_me":"right now testing via unittest",
                 "forget_password_ans":"favouriteteacher", "job_name":"tester", "field_of_study":"test"}
         response = self.client.post("/api/forgotpassword/", data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
     
     # Testing for creation of user with valid input, and one more item that is irrelevant
-    def test_validRegistrationExtraItem(self):
-        data = {"test":"helo", "name":"testcase", "surname":"testcase_sur", "e_mail":"testcase@rest.api",
+    def test_answer_secret_question(self):
+        data = {"name":"testname", "surname":"testsurname", "e_mail":"testname@rest.api",
                 "password1":"testcaseValid", "password2":"testcaseValid", "about_me":"right now testing via unittest",
-                "forget_password_ans":"favouriteteacher", "job_name":"tester", "field_of_study":"test"}
+                "forget_password_ans":"teacher", "job_name":"tester", "field_of_study":"test"}
         response = self.client.post("/api/forgotpassword/", data)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_ REQUEST)
     
     # Testing for creation of user with valid input, except that passwords doesnot match  
     def test_unmatchingPassword(self):
-        data = {"name":"testcase", "surname":"testcase_sur", "e_mail":"testcase@rest.api",
+        data = {"name":"testname", "surname":"testsurname", "e_mail":"testname@rest.api",
                 "password1":"testcaseValid1", "password2":"testcaseValid2", "about_me":"right now testing via unittest",
                 "forget_password_ans":"favouriteteacher", "job_name":"tester", "field_of_study":"test"}
         response = self.client.post("/api/forgotpassword/", data)
@@ -34,7 +34,7 @@ class TestForForgotPassword(APITestCase):
     
     # Testing for creation of user with valid input, except that email is wrong in terms of regex   
     def test_wrongMail(self):
-        data = {"name":"testcase", "surname":"testcase_sur", "e_mail":"testcaserestapi",
+        data = {"name":"testname", "surname":"testsurname", "e_mail":"testnamerestapi",
                 "password1":"testcaseValid", "password2":"testcaseValid", "about_me":"right now testing via unittest",
                 "forget_password_ans":"favouriteteacher", "job_name":"tester", "field_of_study":"test"}
         response = self.client.post("/api/forgotpassword/", data)
@@ -50,16 +50,10 @@ class TestForForgotPassword(APITestCase):
         
     # Testing for creation of user with valid input except that one field is missing   
     def test_deficientPost(self):
-        data = {"surname":"testcase_sur", "e_mail":"testcase@rest.api",
+        data = {"surname":"testsurname", "e_mail":"testname@rest.api",
                 "password1":"testcaseValid", "password2":"testcaseValid", "about_me":"right now testing via unittest",
                 "forget_password_ans":"favouriteteacher", "job_name":"tester", "field_of_study":"test"}
         response = self.client.post("/api/forgotpassword/", data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         
      # Testing for creation of user with valid input except that one field is wrongly named 
-    def test_wrongPostItemName(self):
-        data = {"nema":"testcase", "surname":"testcase_sur", "e_mail":"testcase@rest.api",
-                "password1":"testcaseValid1", "password2":"testcaseValid2", "about_me":"right now testing via unittest",
-                "forget_password_ans":"favouriteteacher", "job_name":"tester", "field_of_study":"test"}
-        response = self.client.post("/api/forgotpassword/", data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
