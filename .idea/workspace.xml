@@ -20,10 +20,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1450b895-4eed-43ce-a867-e0fa5e341fc2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/practice-app/platon_api/rest_api/joke/joke.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/practice-app/platon_api/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/practice-app/platon_api/requirements.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/practice-app/platon_api/rest_api/joke/joke.py" beforeDir="false" afterPath="$PROJECT_DIR$/practice-app/platon_api/rest_api/joke/joke.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/practice-app/platon_api/rest_api/joke/test_joke.py" beforeDir="false" afterPath="$PROJECT_DIR$/practice-app/platon_api/rest_api/joke/test_joke.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/Django-3.0.6.dist-info/RECORD" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/Django-3.0.6.dist-info/RECORD" afterDir="false" />

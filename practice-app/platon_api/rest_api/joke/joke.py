@@ -19,6 +19,15 @@ from django.db import connection
 from django.http import JsonResponse
 import json
 from django.db import connection
+from django.shortcuts import render, redirect
+from django.db import connection, transaction
+
+import requests as req
+import re,copy, hashlib, random, json
+
+from rest_framework.response import Response
+
+
 
 
 from rest_framework.response import Response
@@ -72,14 +81,14 @@ def joke_api(request):
 
            This function only accepts GET requests, and valid token is neccessary to return joke
     """
+    form = copy.deepcopy(request.data)
+    token = form.get("token")
 
     response = Response()
     response["Content-type"] = "application/json"
     json = {}
     if request.method == "GET":  # if get request sent
         try:
-
-            token = request.GET.get("token")
 
             joke = get_joke()
 
