@@ -16,10 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_api import views
-from django.contrib.auth import views as auth_views
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-   # path('api/forgot_password/', views.forgot_password, name="forgot_password"),
-    path('account/', include('django.contrib.auth.urls')),
+ 
+    path('api/forgotpassword/', views.Forgot_password.as_view()),
 ]

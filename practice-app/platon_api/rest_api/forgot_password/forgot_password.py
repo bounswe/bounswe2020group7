@@ -8,7 +8,10 @@ from rest_framework.response import Response
  if request.GET.get("token"):
         token = request.GET["token"]
 
-@staticmethod
+
+class Forgot_Password:
+
+    @staticmethod
     def verify_token(token=None):
         """
             where 'token': string, 64 characther string that can be token
@@ -31,3 +34,8 @@ from rest_framework.response import Response
         result = cursor.fetchall()
         # Validate the token if there is
         return len(result)!=0
+
+    def forgot_password:
+
+
+        
