@@ -20,14 +20,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1450b895-4eed-43ce-a867-e0fa5e341fc2" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/practice-app/platon_api/rest_api/joke/joke.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/practice-app/platon_api/platon_api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/practice-app/platon_api/platon_api/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/practice-app/platon_api/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/practice-app/platon_api/requirements.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/practice-app/platon_api/rest_api/joke/joke.py" beforeDir="false" afterPath="$PROJECT_DIR$/practice-app/platon_api/rest_api/joke/joke.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/practice-app/platon_api/rest_api/joke/test_joke.py" beforeDir="false" afterPath="$PROJECT_DIR$/practice-app/platon_api/rest_api/joke/test_joke.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/practice-app/platon_api/rest_api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/practice-app/platon_api/rest_api/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/practice-app/platon_api/rest_api/tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/practice-app/platon_api/rest_api/tests.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/practice-app/platon_api/rest_api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/practice-app/platon_api/rest_api/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/Django-3.0.6.dist-info/RECORD" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/Django-3.0.6.dist-info/RECORD" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/Flask-1.1.2.dist-info/INSTALLER" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/Flask-1.1.2.dist-info/LICENSE.rst" beforeDir="false" />
@@ -36,19 +34,15 @@
       <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/Flask-1.1.2.dist-info/WHEEL" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/Flask-1.1.2.dist-info/entry_points.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/Flask-1.1.2.dist-info/top_level.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/Jinja2-2.11.2.dist-info/INSTALLER" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/Jinja2-2.11.2.dist-info/LICENSE.rst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/Jinja2-2.11.2.dist-info/METADATA" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/Jinja2-2.11.2.dist-info/RECORD" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/Jinja2-2.11.2.dist-info/WHEEL" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/Jinja2-2.11.2.dist-info/entry_points.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/Jinja2-2.11.2.dist-info/top_level.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/MarkupSafe-1.1.1.dist-info/INSTALLER" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/MarkupSafe-1.1.1.dist-info/LICENSE.rst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/MarkupSafe-1.1.1.dist-info/METADATA" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/MarkupSafe-1.1.1.dist-info/RECORD" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/MarkupSafe-1.1.1.dist-info/WHEEL" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/MarkupSafe-1.1.1.dist-info/top_level.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/Jinja2-2.11.2.dist-info/INSTALLER" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/Jinja2-2.11.2.dist-info/INSTALLER" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/Jinja2-2.11.2.dist-info/LICENSE.rst" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/Jinja2-2.11.2.dist-info/LICENSE.rst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/Jinja2-2.11.2.dist-info/METADATA" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/Jinja2-2.11.2.dist-info/METADATA" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/Jinja2-2.11.2.dist-info/WHEEL" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/Jinja2-2.11.2.dist-info/WHEEL" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/Jinja2-2.11.2.dist-info/entry_points.txt" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/Jinja2-2.11.2.dist-info/entry_points.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/Jinja2-2.11.2.dist-info/top_level.txt" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/Jinja2-2.11.2.dist-info/top_level.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/MarkupSafe-1.1.1.dist-info/INSTALLER" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/MarkupSafe-1.1.1.dist-info/INSTALLER" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/MarkupSafe-1.1.1.dist-info/METADATA" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/MarkupSafe-1.1.1.dist-info/METADATA" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/MarkupSafe-1.1.1.dist-info/top_level.txt" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/MarkupSafe-1.1.1.dist-info/top_level.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/Werkzeug-1.0.1.dist-info/INSTALLER" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/Werkzeug-1.0.1.dist-info/LICENSE.rst" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/Werkzeug-1.0.1.dist-info/METADATA" beforeDir="false" />
@@ -589,33 +583,33 @@
       <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/itsdangerous/signer.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/itsdangerous/timed.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/itsdangerous/url_safe.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/_compat.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/_identifier.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/asyncfilters.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/asyncsupport.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/bccache.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/compiler.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/constants.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/debug.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/defaults.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/environment.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/exceptions.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/ext.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/filters.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/idtracking.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/lexer.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/loaders.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/meta.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/nativetypes.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/nodes.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/optimizer.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/parser.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/runtime.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/sandbox.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/tests.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/utils.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/visitor.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/_compat.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/_compat.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/_identifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/_identifier.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/asyncfilters.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/asyncfilters.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/asyncsupport.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/asyncsupport.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/bccache.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/bccache.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/compiler.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/compiler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/constants.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/constants.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/debug.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/debug.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/defaults.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/defaults.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/environment.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/environment.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/exceptions.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/exceptions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/ext.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/ext.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/filters.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/filters.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/idtracking.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/idtracking.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/lexer.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/lexer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/loaders.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/loaders.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/meta.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/meta.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/nativetypes.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/nativetypes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/nodes.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/nodes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/optimizer.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/optimizer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/parser.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/parser.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/runtime.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/runtime.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/sandbox.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/sandbox.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/tests.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/visitor.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/jinja2/visitor.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/legacy-0.1.6.dist-info/DESCRIPTION.rst" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/legacy-0.1.6.dist-info/INSTALLER" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/legacy-0.1.6.dist-info/METADATA" beforeDir="false" />
@@ -624,11 +618,6 @@
       <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/legacy-0.1.6.dist-info/metadata.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/legacy-0.1.6.dist-info/top_level.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/legacy.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/markupsafe/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/markupsafe/_compat.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/markupsafe/_constants.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/markupsafe/_native.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/markupsafe/_speedups.cp38-win_amd64.pyd" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/models/__init__.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/models/base.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/Lib/site-packages/models/build.py" beforeDir="false" />

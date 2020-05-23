@@ -11,16 +11,18 @@ from rest_framework import status
 class JokeTest(APITestCase):
 
 
+
     def test_valid_token(self):
         c = Client()
-        data = { 'token' : ''}
-        response = c.get("http://127.0.0.1:8000/api/joke?token=03684b7c7efc7ba7ffe53f32f3c9346d8383fcc13eddd1272705c746ba986f2f")
+        data = { "token" : "03684b7c7efc7ba7ffe53f32f3c9346d8383fcc13eddd1272705c746ba986f2f"}
+        response = c.get("http://127.0.0.1:8000/api/joke",data,follow=True , secure=True)
+        print(response)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_invalid_token(self):
         c = Client()
         data = {'token': 'invalid'}
-        response = c.get('http://127.0.0.1:8000/api/joke?token=invalid',follow=True, secure=True)
+        response = c.get('http://127.0.0.1:8000/api/joke?token=ert',follow=True , secure=True)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_without_token(self):

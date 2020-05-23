@@ -1,13 +1,27 @@
+"""
+Created on MAY 22, 2020
+This script controls the registration api of PLATON_API, using django&mysql backend.
+Endpoint description:
+    http://localhost:8000/api/register/
+
+    'GET':
+        Returns a joke from https://api.jokes.one/jod api.
+        JSON Format : { 'token': "" }   #token of the user
+
+
+@author: Ertugrul Bulbul, ertbulbul
+@company: Group7
+"""
+import copy
+
 import requests
 from django.db import connection
 from django.http import JsonResponse
+import json
 from django.db import connection
 
 
 from rest_framework.response import Response
-
-
-
 
 
 def verify_token(token=None):
@@ -31,6 +45,13 @@ def verify_token(token=None):
 
 
 def get_joke():
+    """
+
+        return a python dictionary, json that includes joke of the day
+
+        This function returns a joke using an external api.
+
+    """
 
     url = 'https://api.jokes.one/jod'
     api_token = "zaCELgL.0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx"
@@ -45,14 +66,21 @@ def get_joke():
     return joke
 
 def joke_api(request):
+    """
+           where 'response': rest_framework response
+           returns response from rest_framework
+
+           This function only accepts GET requests, and valid token is neccessary to return joke
+    """
 
     response = Response()
     response["Content-type"] = "application/json"
     json = {}
     if request.method == "GET":  # if get request sent
         try:
-            form = request.GET  # acquire json
-            token = form.get("token")
+
+            token = request.GET.get("token")
+
             joke = get_joke()
 
             # validity control
@@ -66,6 +94,7 @@ def joke_api(request):
                 response.status_code = 200
             else:
                 # Unauthorized client
+
                 json = {'status' : 'invalid_token'}
                 response.status_code = 401
 
