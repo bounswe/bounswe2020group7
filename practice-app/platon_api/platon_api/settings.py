@@ -25,7 +25,7 @@ SECRET_KEY = 'bxlyt7e)p4u@3#!6f)v3&mel_a*+w-#r$!7s(=tna4k0xsm0wq'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
@@ -80,9 +80,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', 
         'NAME': 'localdb',
-        'USER': 'root',
-        'PASSWORD': '179346285',
-        'HOST': 'localhost',   
+        'USER': 'admin',
+        'PASSWORD': 'Localhost.123',
+        'HOST': '192.168.2.241',   
         'PORT': '3306',
     }    
 }
@@ -128,7 +128,7 @@ STATIC_URL = '/static/'
 USER_TABLENAME = "rest_api_registereduser"
 WEBSITE_URL = "http://localhost:8000"
 JOB_LIST_API_URL = "http://api.dataatwork.org/v1/jobs/normalize?job_title="
-HOME_PAGE = "/register/api/fe"
+HOME_PAGE = "/api/register/fe"
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 REST_FRAMEWORK = {
