@@ -21,7 +21,6 @@ from rest_api import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    #path('api/joke/', v.joke, name="joke"),
     path('api/joke/', views.joke, name="joke"),
 
 ]
