@@ -26,12 +26,17 @@ def isValid(name, surname, password1, token, e_mail, about_me, job_name, forget_
     
     This function takes input parameters and checks them if they are valid and return the boolean result.
     """
-    
+    #finds user from database with primary key, token
     user = RegisteredUser.objects.get(token = token)
+
+    # checks if the user entered the password or not
     if len(password1) == 0:
         return False
+
+    # hashes the given password to update user information
     hash_password = hashlib.sha256(password1.encode("utf-8")).hexdigest()
 
+    # check if the given password is equal the password on the database or not (in hashed form)
     if(user.password_hashed != hash_password):
         return False
     
@@ -50,36 +55,35 @@ def isValid(name, surname, password1, token, e_mail, about_me, job_name, forget_
     
       
 def updateUser(request):
-    print("burak")
     
     if request.method == "POST":
     
         try:
            
             form = copy.deepcopy(request.POST)       # acquire json
-            #return HttpResponse("-1")
             # get fields from json
             name, surname, password1,e_mail, about_me, job_name, forget_pw_ans, field_of_study = (form.get("name"), form.get("surname"), form.get("password1"),
                                                                                                             form.get("e_mail") ,form.get("about_me") , form.get("job_name"), 
                                                                                                             form.get("forget_password_ans") ,form.get("field_of_study") )      
-            #return HttpResponse("0")
+
             token = form.get("token")
-            #password_hashed = request.user.password_hashed
-            #return HttpResponse("1")
+           
             
             if not isValid(name, surname, password1,token, e_mail, about_me, job_name, forget_pw_ans, field_of_study):
-                return HttpResponse("not valid")
+                return HttpResponse("Not valid input. Check password or give valid inputs to the fields!")
 
             
             user = RegisteredUser.objects.get(token = token)
-            #return HttpResponse("tokenn")
+            
+            #Checks the inputs one by one. 
+            #If any input is given to the fields, updates associated fields on the database, 
+            #else, the field on the database remains the same
             if(len(name) != 0):
                 user.name = name
                 user.save()
             if(len(surname) != 0):
                 user.surname = surname
                 user.save()
-            
             if(len(e_mail)!= 0):
                 user.e_mail = e_mail
                 user.save()
@@ -95,6 +99,8 @@ def updateUser(request):
             if(len(job_name) != 0):
                 user.job_name = job_name
                 user.save()
-            return HttpResponse("ifff")
+            #If program reaches at this point, returns confirmation message.
+            return HttpResponse("User information is updated!")
         except:
-            return HttpResponse("Error")    
+            #If program fails, it returns this message.
+            return HttpResponse("Error! Information could not be changed.")    

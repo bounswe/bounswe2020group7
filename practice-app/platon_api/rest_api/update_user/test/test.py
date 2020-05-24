@@ -26,5 +26,7 @@ class SearchTest(TransactionTestCase):
             sql = 'INSERT INTO `'+ USER_TABLENAME +'` (`name`, `surname`, `password_hashed`, `e_mail`, `token`, `about_me`, `job_uuid`, `field_of_study`, `forget_password_ans`) VALUES'
             for test_user in SearchTest.user_list:
                 cursor.execute(sql + "('"+"','".join([str(x) for x in test_user])+"');")
-                  
+
+
+
     
