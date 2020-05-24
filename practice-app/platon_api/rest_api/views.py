@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_api.update_user.update_user import updateUser
 from rest_api.register.register import register_api,register_page
 from rest_framework.views import APIView
@@ -7,11 +6,17 @@ from rest_framework import permissions
 from rest_framework.decorators import api_view,permission_classes
 from rest_api.search_engine.search_engine import searchEngine as engine
 from rest_api.delete_user_t.delete_user_f import DeleteUser
+from django.http import HttpResponse
+from rest_api.news.news import news_api
+from django.shortcuts import render
 
 # Create your views here.
 def update(request):
     return updateUser(request)
 
+def news(request, token):
+    return HttpResponse(news_api(request, token))
+  
 class Delete(APIView):
 
     def post(self,request):

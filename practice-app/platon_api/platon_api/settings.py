@@ -124,8 +124,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+NEWS_API_KEY = "1d2f2e6696174ffca8668a0f26322f41"
 CSRF_COOKIE_SECURE = True
-
 BS_BOOK_KEY = "xbhiQLcE4RXylpV9Ke5WH9A13A8tgOjO"
 USER_TABLENAME = "rest_api_registereduser"
 WEBSITE_URL = "http://localhost:8000"

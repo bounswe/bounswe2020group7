@@ -13,10 +13,9 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-
 from django.urls import path, include
 from rest_api import views
-
+from rest_api import views as v_rest_api
 
 urlpatterns = [
     path('api/updateUser/', views.updateUser),
@@ -24,4 +23,5 @@ urlpatterns = [
     path('api/register/fe', views.register_fe, name="register_fe"),
     path('api/search/',views.Search.as_view()),
     path('api/deleteuser/', views.Delete.as_view()),
+    path('api/news/<str:token>/', v_rest_api.news, name="news"),
 ]
