@@ -12,7 +12,7 @@ class DeleteTest(TransactionTestCase):
 
     
     """
-    In this class, the unit tests of the search engine is implemented.
+    In this class, the unit tests of the delete user endpoint is implemented.
     ...
     Attributes
     ----------
