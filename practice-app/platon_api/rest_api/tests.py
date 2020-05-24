@@ -1,11 +1,11 @@
 from django.test import TestCase
-<<<<<<< HEAD
+from rest_api.delete_user_t.unit_test import DeleteTest
 from .register.test import TestRegisterApi
+from rest_api.search_engine.test.test_search import SearchTest
+
+DeleteTest()
 
 test_register = TestRegisterApi
-=======
-from rest_api.search_engine.test.test_search import SearchTest
->>>>>>> origin/practice-app-development
 
 SearchTest()
-# Add your unit test classes here to create a full test suite for the project
+
