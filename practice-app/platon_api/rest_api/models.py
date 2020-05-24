@@ -9,6 +9,10 @@ class RegisteredUser(models.Model):
     about_me = models.TextField(max_length=330)
     job_uuid = models.CharField(max_length=32)
     field_of_study = models.CharField(max_length=50)
+<<<<<<< HEAD
     forget_password_ans = models.CharField(max_length=50)
     
 # Create your models here.
+=======
+    forget_password_ans = models.CharField(max_length=50)    
+>>>>>>> origin/practice-app-development
