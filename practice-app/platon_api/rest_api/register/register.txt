@@ -9,7 +9,7 @@ DESCRIPTION
         http://localhost:8000/api/register/
         
         'GET':
-            Produces error
+            Returns a random poem using external api
         'POST':
             Gets dictionary from body.
             JSON Format : { 'name': "",                 string, Name parameter given by user
@@ -33,6 +33,11 @@ FUNCTIONS
             
         This function takes a string and using an external api it normalizes and returns the uuid of that job.
     
+    getPoem()
+            return a python dictionary, json that includes random poem
+        
+        This function returns a random poet using an external api.
+    
     isValid(name, surname, password1, password2, email, about_me, job_name, forget_pw_ans, field_of_study)
             where 'name': string, Name parameter given by user
             where 'surname': string, Surname parameter given by user
@@ -54,9 +59,16 @@ FUNCTIONS
         returns response from rest_framework
         
         This function only accepts POST requests, and if valid input is necessary inserts into database
+    
+    register_page(request)
+        where request HttpRequest to carry post and get requests
+        
+        This function takes a request and if POST, then it registers into system using another endpoint of this api
+        If get, it renders a form to register and also a random poem.
 
 DATA
     DATABASES = {'default': {'ATOMIC_REQUESTS': False, 'AUTOCOMMIT': True,...
+    HOME_PAGE = '/api/register/fe'
     JOB_LIST_API_URL = 'http://api.dataatwork.org/v1/jobs/normalize?job_ti...
     USER_TABLENAME = 'rest_api_registereduser'
     WEBSITE_URL = 'http://localhost:8000'

@@ -16,7 +16,7 @@ Endpoint&nbsp;description:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="http://localhost:8000/api/register/">http://localhost:8000/api/register/</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;'GET':<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Produces&nbsp;error<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns&nbsp;a&nbsp;random&nbsp;poem&nbsp;using&nbsp;external&nbsp;api<br>
 &nbsp;&nbsp;&nbsp;&nbsp;'POST':<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets&nbsp;dictionary&nbsp;from&nbsp;body.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JSON&nbsp;Format&nbsp;:&nbsp;{&nbsp;'name':&nbsp;"",&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string,&nbsp;Name&nbsp;parameter&nbsp;given&nbsp;by&nbsp;user<br>
@@ -40,10 +40,12 @@ Endpoint&nbsp;description:<br>
 <tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="copy.html">copy</a><br>
 <a href="hashlib.html">hashlib</a><br>
+</td><td width="25%" valign=top><a href="json.html">json</a><br>
+<a href="random.html">random</a><br>
 </td><td width="25%" valign=top><a href="re.html">re</a><br>
 <a href="requests.html">requests</a><br>
 </td><td width="25%" valign=top><a href="django.db.transaction.html">django.db.transaction</a><br>
-</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+</td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#eeaa77">
 <td colspan=3 valign=bottom>&nbsp;<br>
@@ -55,6 +57,9 @@ Endpoint&nbsp;description:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;returns&nbsp;uuid&nbsp;of&nbsp;normalized&nbsp;job,&nbsp;or&nbsp;empty&nbsp;string<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<br>
 This&nbsp;function&nbsp;takes&nbsp;a&nbsp;string&nbsp;and&nbsp;using&nbsp;an&nbsp;external&nbsp;api&nbsp;it&nbsp;normalizes&nbsp;and&nbsp;returns&nbsp;the&nbsp;uuid&nbsp;of&nbsp;that&nbsp;job.</tt></dd></dl>
+ <dl><dt><a name="-getPoem"><strong>getPoem</strong></a>()</dt><dd><tt>&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;a&nbsp;python&nbsp;dictionary,&nbsp;json&nbsp;that&nbsp;includes&nbsp;random&nbsp;poem<br>
+&nbsp;<br>
+This&nbsp;function&nbsp;returns&nbsp;a&nbsp;random&nbsp;poet&nbsp;using&nbsp;an&nbsp;external&nbsp;api.</tt></dd></dl>
  <dl><dt><a name="-isValid"><strong>isValid</strong></a>(name, surname, password1, password2, email, about_me, job_name, forget_pw_ans, field_of_study)</dt><dd><tt>&nbsp;&nbsp;&nbsp;&nbsp;where&nbsp;'name':&nbsp;string,&nbsp;Name&nbsp;parameter&nbsp;given&nbsp;by&nbsp;user<br>
 &nbsp;&nbsp;&nbsp;&nbsp;where&nbsp;'surname':&nbsp;string,&nbsp;Surname&nbsp;parameter&nbsp;given&nbsp;by&nbsp;user<br>
 &nbsp;&nbsp;&nbsp;&nbsp;where&nbsp;'password1':&nbsp;string,&nbsp;Password1&nbsp;given&nbsp;by&nbsp;user<br>
@@ -73,6 +78,10 @@ This&nbsp;function&nbsp;takes&nbsp;input&nbsp;parameters&nbsp;and&nbsp;checks&nb
 returns&nbsp;response&nbsp;from&nbsp;rest_framework<br>
 &nbsp;<br>
 This&nbsp;function&nbsp;only&nbsp;accepts&nbsp;POST&nbsp;requests,&nbsp;and&nbsp;if&nbsp;valid&nbsp;input&nbsp;is&nbsp;necessary&nbsp;inserts&nbsp;into&nbsp;database</tt></dd></dl>
+ <dl><dt><a name="-register_page"><strong>register_page</strong></a>(request)</dt><dd><tt>where&nbsp;request&nbsp;HttpRequest&nbsp;to&nbsp;carry&nbsp;post&nbsp;and&nbsp;get&nbsp;requests<br>
+&nbsp;<br>
+This&nbsp;function&nbsp;takes&nbsp;a&nbsp;request&nbsp;and&nbsp;if&nbsp;POST,&nbsp;then&nbsp;it&nbsp;registers&nbsp;into&nbsp;system&nbsp;using&nbsp;another&nbsp;endpoint&nbsp;of&nbsp;this&nbsp;api<br>
+If&nbsp;get,&nbsp;it&nbsp;renders&nbsp;a&nbsp;form&nbsp;to&nbsp;register&nbsp;and&nbsp;also&nbsp;a&nbsp;random&nbsp;poem.</tt></dd></dl>
 </td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#55aa55">
@@ -80,7 +89,8 @@ This&nbsp;function&nbsp;only&nbsp;accepts&nbsp;POST&nbsp;requests,&nbsp;and&nbsp
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>DATABASES</strong> = {'default': {'ATOMIC_REQUESTS': False, 'AUTOCOMMIT': True, 'CONN_MAX_AGE': 0, 'ENGINE': 'django.db.backends.mysql', 'HOST': 'localhost', 'NAME': 'localdb', 'OPTIONS': {}, 'PASSWORD': '179346285', 'PORT': '3306', 'TEST': {'CHARSET': None, 'COLLATION': None, 'MIRROR': None, 'NAME': None}, ...}}<br>
+<td width="100%"><strong>DATABASES</strong> = {'default': {'ATOMIC_REQUESTS': False, 'AUTOCOMMIT': True, 'CONN_MAX_AGE': 0, 'ENGINE': 'django.db.backends.mysql', 'HOST': '192.168.2.241', 'NAME': 'localdb', 'OPTIONS': {}, 'PASSWORD': 'Localhost.123', 'PORT': '3306', 'TEST': {'CHARSET': None, 'COLLATION': None, 'MIRROR': None, 'NAME': None}, ...}}<br>
+<strong>HOME_PAGE</strong> = '/api/register/fe'<br>
 <strong>JOB_LIST_API_URL</strong> = 'http://api.dataatwork.org/v1/jobs/normalize?job_title='<br>
 <strong>USER_TABLENAME</strong> = 'rest_api_registereduser'<br>
 <strong>WEBSITE_URL</strong> = 'http://localhost:8000'<br>
