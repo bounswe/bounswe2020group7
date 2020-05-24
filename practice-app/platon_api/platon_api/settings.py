@@ -115,6 +115,9 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+USER_TABLENAME = "rest_api_registereduser"
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
