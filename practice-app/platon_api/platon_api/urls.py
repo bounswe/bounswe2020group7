@@ -15,7 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from rest_api import views as v_rest_api
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/news/<str:token>/', v_rest_api.news, name="news"),
 ]

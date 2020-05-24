@@ -1,0 +1,10 @@
+asgiref==3.2.7
+Django==3.0.6
+django-crispy-forms==1.9.0
+djangorestframework==3.11.0
+idna==2.8
+Jinja2==2.10.1
+mysql-connector-python==8.0.20
+mysqlclient==1.4.6
+newsapi-python==0.2.6
+requests==2.22.0
