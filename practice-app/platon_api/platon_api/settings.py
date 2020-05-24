@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_api',
 ]
 
 MIDDLEWARE = [
@@ -75,9 +77,13 @@ WSGI_APPLICATION = 'platon_api.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+        'ENGINE': 'django.db.backends.mysql', 
+        'NAME': 'localdb',
+        'USER': 'root',
+        'PASSWORD': 'Umut1998',
+        'HOST': 'localhost',   
+        'PORT': '3306',
+    }    
 }
 
 
@@ -118,3 +124,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+USER_TABLENAME = "rest_api_registereduser"
+
+WEBSITE_URL = "http://localhost:8000"
+
+JOB_LIST_API_URL = "http://api.dataatwork.org/v1/jobs/normalize?job_title="
+
+STOPWORDS_API_KEY = "a5cb4aeb98msh29ffc5d7378f3d2p136d6cjsn7e882dc52f2a"
