@@ -7,6 +7,7 @@ from rest_api.models import RegisteredUser
 import requests as req
 
 def translate(request, token):
+    #find user with respect to token or send 404 error
     regUser = get_object_or_404(RegisteredUser,token = token)
 
     url ="https://api.funtranslations.com/translate/yoda.json?text=" + regUser.about_me
