@@ -1,7 +1,5 @@
 from django.db import models
 
-# Create your models here.
-from django.db import models
 
 class RegisteredUser(models.Model):
     name = models.CharField(max_length=30)
@@ -13,6 +11,3 @@ class RegisteredUser(models.Model):
     job_uuid = models.CharField(max_length=32)
     field_of_study = models.CharField(max_length=50)
     forget_password_ans = models.CharField(max_length=50)
-    
-    def save(self, *args, **kwargs):
-        super(RegisteredUser, self).save(*args, **kwargs)

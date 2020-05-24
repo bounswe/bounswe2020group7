@@ -125,4 +125,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 USER_TABLENAME = "rest_api_registereduser"
-BS_BOOK_KEY = "xbhiQLcE4RXylpV9Ke5WH9A13A8tgOjO";
+BS_BOOK_KEY = "xbhiQLcE4RXylpV9Ke5WH9A13A8tgOjO"
+SECRET_KEY = 'bxlyt7e)p4u@3#!6f)v3&mel_a*+w-#r$!7s(=tna4k0xsm0wq'

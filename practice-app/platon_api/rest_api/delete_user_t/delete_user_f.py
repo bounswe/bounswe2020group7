@@ -5,9 +5,9 @@ This script controls the delete user api of PLATON_API, using django&mysql backe
 Endpoint description:
     http://localhost:8000/api/deleteuser/
     
-    Anything other then 'DELETE':
+    Anything other than 'POST':
         Returns error
-    'DELETE':
+    'POST':
         Deletes the logged in user.
         JSON Format : {   
                         token = "Token given by the system when you log in",
@@ -38,16 +38,22 @@ class DeleteUser:
             This function returns a message including a book recomendation taken by NYT bestseller list.
         """
 
-
+        #initialize message to return
         mes = ""
         try:
+            #url of the best seller book api
             url = "https://api.nytimes.com/svc/books/v3/lists/current/hardcover-fiction.json"
             res = requests.get(url, {"api-key" : BS_BOOK_KEY})
+            #turn this into json form
             allList = json.loads(res.text)
+            #get the books dictionary from the result
             books = allList["results"]["books"]
+            #if there is no books returned from the API return empty string
             if(len(books) == 0):
                 return ""
+            #randomly select a book from the list
             book = random.choice(list(books))
+            #create the message
             mes = "Not interested in research anymore? Maybe a book can help you refresh yourself."
             mes += "Here is a bestseller book recommendation by New York Times"
             mes += book["title"] + " by " + book["author"] 
@@ -69,17 +75,20 @@ class DeleteUser:
             This function verifies if both the mail and token exist in the database.
 
         """
-
+        #return false if either parameters is empty
         if token is None or email is None:
             return False
-        
+        #create the sql query
         stmt = "SELECT `e_mail` FROM " + USER_TABLENAME 
         stmt += " WHERE `token` = \"" +  token + "\"" 
+        #execute the query
         cursor = connection.cursor()
         cursor.execute(stmt)
         records = cursor.fetchall()
+        #if there is more than one user whith the same token it should return false
         if len(records) != 1:
             return False
+        #returns true if a user has the given token and mail adress, returns false otherwise
         return records[0][0] == email
     
     @staticmethod   
@@ -95,8 +104,9 @@ class DeleteUser:
 
 
 
-
+        #initialize sql query
         stmt = ""
+        #returns an error message if the request != "POST"
         if request.method == 'POST':
             try:
                 if request.POST.get("token"):
@@ -115,6 +125,6 @@ class DeleteUser:
                     cursor.execute(stmt)
                     return DeleteUser.bestsellers()
             except:
-                return "Cannot perform the request."
+                return "Cannot retrieve your token or your mail at the moment, sorry."
         else:
-            return "Wrong Request."
+            return "You have to send a post request to perform deletion."
