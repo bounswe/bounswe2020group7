@@ -19,7 +19,10 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1450b895-4eed-43ce-a867-e0fa5e341fc2" name="Default Changelist" comment="" />
+    <list default="true" id="1450b895-4eed-43ce-a867-e0fa5e341fc2" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/practice-app/platon_api/rest_api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/practice-app/platon_api/rest_api/views.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
