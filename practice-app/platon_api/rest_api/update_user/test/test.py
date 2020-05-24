@@ -2,7 +2,7 @@
 from django.test import TestCase,TransactionTestCase,Client
 from django.db import connection,transaction
 from platon_api.settings import USER_TABLENAME 
-from rest_api.update_user.update_user import searchEngine
+from rest_api.update_user.update_user import updateUser
 from rest_api.models import RegisteredUser
 import json
 import hashlib
@@ -25,12 +25,13 @@ class UpdateTest(TransactionTestCase):
         with connection.cursor() as cursor:
             # Add some test users
             sql = 'INSERT INTO `'+ USER_TABLENAME +'` (`name`, `surname`, `password_hashed`, `e_mail`, `token`, `about_me`, `job_uuid`, `field_of_study`, `forget_password_ans`) VALUES'
-            for test_user in SearchTest.user_list:
+            for test_user in UpdateTest.user_list:
                 cursor.execute(sql + "('"+"','".join([str(x) for x in test_user])+"');")
 
     def test_isUpdated(self):
-        resp = UpdateTest.client.post('/api/updateUser/',{"name":"Meltem", "surname": "Arslan","password_hashed": hashlib.sha256("123456".encode("utf-8")).hexdigest(), "e_mail":"umut@gmail.com","about_me":"I am a just a huwoman","0aa64c1575f51c91930095311b536477","forget_password_ans":"Meltem"})
         token = hashlib.sha256("umut@gmail.com".encode("utf-8")).hexdigest()
+        resp = UpdateTest.client.post('/api/updateUser/',{"name":"Meltem", "surname": "Arslan","password1": "123456", "token":token,"field_of_study": "" ,"e_mail":"umut@gmail.com","about_me":"I am a just a huwoman","job_uuid":"0aa64c1575f51c91930095311b536477","forget_password_ans":"Meltem"})
+
         user = RegisteredUser.objects.get(token = token)
-        self.assertEqual(user.name, "Meltem" ,"Name could not be changed!")
-    
+        newInfo = (user.name == "Meltem" and user.surname == "Arslan" and user.field_of_study == "Computer Engineering" and user.about_me == "I am a just a huwoman" and user.forget_password_ans == "Meltem" )
+        self.assertEqual(newInfo, True ,"User information could not be changed!")

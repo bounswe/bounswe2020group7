@@ -46,22 +46,21 @@ def isValid(name, surname, password1, token, e_mail, about_me, job_name, forget_
 
     # hashes the given password to update user information
     hash_password = hashlib.sha256(password1.encode("utf-8")).hexdigest()
-
+    
     # check if the given password is equal the password on the database or not (in hashed form)
     if(user.password_hashed != hash_password):
         return False
     
     # regular expression for texts
     regex = r"[A-Za-zöçşüığİÖÇĞÜŞ]{0,50}( [A-Za-zöçşüığİÖÇĞÜŞ]{0,50})?"
-    
+
     # Text type validity check with regex
     if re.match(regex, name) == None or re.match(regex, surname) == None or re.match(regex, field_of_study) == None  or re.match(regex, forget_pw_ans) == None:
         return False
-
-    # Mail type validity check with regex
-    if len(e_mail) != 0  and re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email) == None:
-        return False
     
+    # Mail type validity check with regex
+    if len(e_mail) != 0  and re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", e_mail) == None:
+        return False
     return True
     
       
@@ -81,9 +80,10 @@ def updateUser(request):
             name, surname, password1,e_mail, about_me, job_name, forget_pw_ans, field_of_study = (form.get("name"), form.get("surname"), form.get("password1"),
                                                                                                             form.get("e_mail") ,form.get("about_me") , form.get("job_name"), 
                                                                                                             form.get("forget_password_ans") ,form.get("field_of_study") )      
-
+           
             token = form.get("token")
            
+            
             
             if not isValid(name, surname, password1,token, e_mail, about_me, job_name, forget_pw_ans, field_of_study):
                 return HttpResponse("Not valid input. Check password or give valid inputs to the fields!")
@@ -99,9 +99,6 @@ def updateUser(request):
                 user.save()
             if(len(surname) != 0):
                 user.surname = surname
-                user.save()
-            if(len(e_mail)!= 0):
-                user.e_mail = e_mail
                 user.save()
             if(len(about_me) != 0):
                 user.about_me = about_me
