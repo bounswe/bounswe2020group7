@@ -34,21 +34,16 @@ def isValid(name, surname, password1, token, e_mail, about_me, job_name, forget_
 
     if(user.password_hashed != hash_password):
         return False
-    # Password match control
-    #if password2 != password3:
-        #   return False
     
-    
-        
     # regular expression for texts
-    regex = r"[A-Za-zöçşüığİÖÇĞÜŞ]{2,50}( [A-Za-zöçşüığİÖÇĞÜŞ]{2,50})?"
+    regex = r"[A-Za-zöçşüığİÖÇĞÜŞ]{0,50}( [A-Za-zöçşüığİÖÇĞÜŞ]{0,50})?"
     
     # Text type validity check with regex
     if re.match(regex, name) == None or re.match(regex, surname) == None or re.match(regex, field_of_study) == None  or re.match(regex, forget_pw_ans) == None:
         return False
 
     # Mail type validity check with regex
-    if re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email) == None:
+    if len(e_mail) != 0  and re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email) == None:
         return False
     
     return True
@@ -61,19 +56,23 @@ def updateUser(request):
     
         try:
            
-            form = request.data       # acquire json
-            return HttpResponse("-1")
+            form = copy.deepcopy(request.POST)       # acquire json
+            #return HttpResponse("-1")
             # get fields from json
             name, surname, password1,e_mail, about_me, job_name, forget_pw_ans, field_of_study = (form.get("name"), form.get("surname"), form.get("password1"),
                                                                                                             form.get("e_mail") ,form.get("about_me") , form.get("job_name"), 
                                                                                                             form.get("forget_password_ans") ,form.get("field_of_study") )      
-            return HttpResponse("0")
-            token = request.user.token
+            #return HttpResponse("0")
+            token = form.get("token")
             #password_hashed = request.user.password_hashed
-            return HttpResponse("1")
-            isValid(name, surname, password1,token, e_mail, about_me, job_name, forget_pw_ans, field_of_study)
-            return HttpResponse("2")
+            #return HttpResponse("1")
+            
+            if not isValid(name, surname, password1,token, e_mail, about_me, job_name, forget_pw_ans, field_of_study):
+                return HttpResponse("not valid")
+
+            
             user = RegisteredUser.objects.get(token = token)
+            #return HttpResponse("tokenn")
             if(len(name) != 0):
                 user.name = name
                 user.save()
@@ -96,5 +95,6 @@ def updateUser(request):
             if(len(job_name) != 0):
                 user.job_name = job_name
                 user.save()
+            return HttpResponse("ifff")
         except:
-            return HttpResponse("hata")
+            return HttpResponse("Error")    
