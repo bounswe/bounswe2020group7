@@ -51,14 +51,14 @@ class SearchTest(TransactionTestCase):
             Test for if there is no input given to the request. In must give Wrong input. Please give an appropriate input!! error
         """
         resp = SearchTest.client.get('/api/search/')
-        self.assertEqual(json.loads(resp.content),"Wrong input. Please give an appropriate input!!","No Input Test Error")
+        self.assertEqual(json.loads(resp.content),"You give your input in wrong format. Please check the API documentation for the appropriate input format!!","No Input Test Error")
 
     def test_no_search_string(self):
         """
             Test for if there is no search string given to the request   
         """
         resp = SearchTest.client.get('/api/search/',{'token':SearchTest.valid_token})
-        self.assertEqual(json.loads(resp.content),"Wrong input. Please give an appropriate input!!","No Search String Test Error")
+        self.assertEqual(json.loads(resp.content),"You give your input in wrong format. Please check the API documentation for the appropriate input format!!","No Search String Test Error")
 
     def test_wrong_search_criteria(self):
         """
@@ -71,7 +71,7 @@ class SearchTest(TransactionTestCase):
         # Search For all users
         resp = SearchTest.client.get('/api/search/',{"token":SearchTest.valid_token,"search_string":search_string,"sorting_criteria":sorting_criteria})
         search_result = json.loads(resp.content)
-        self.assertEqual(json.loads(resp.content),"Wrong input. Please give an appropriate input!!","Sorting Critera Input Control Doesn't Work")
+        self.assertEqual(json.loads(resp.content),"You give your input in wrong format. Please check the API documentation for the appropriate input format!!","Sorting Critera Input Control Doesn't Work")
     
     def test_wrong_token(self):
         """

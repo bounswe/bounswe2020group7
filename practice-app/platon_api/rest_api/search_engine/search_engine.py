@@ -85,7 +85,7 @@ class searchEngine():
         """
             where 'request': HTTP request that comes from the view class
 
-            returns a dictionary of the paramters if there is no problem about the paramters
+            returns a dictionary of the paramters if there is no problem about the parameters
 
             This function is used to split the arguments of the endpoint in the correct order.
 
@@ -238,7 +238,7 @@ class searchEngine():
         param_dict = searchEngine.get_parameter_list(request)
         # Control input if there is an error return error message
         if not isinstance(param_dict,dict): 
-            return "Wrong input. Please give an appropriate input!!"
+            return "You give your input in wrong format. Please check the API documentation for the appropriate input format!!"
         # Control the token of the GET request
         if not searchEngine.verify_token(param_dict["token"]):
             return "You have to give your token"
@@ -249,7 +249,7 @@ class searchEngine():
         stopwords = searchEngine.get_stopwords()
         # If there is a problem return an information about the problem
         if stopwords is None:
-            return "There is a problem about an API. Please try again!!"
+            return "There is a problem about the 3rd party APIs that I used. Please try again!!"
         # Tokenize the search string and remove stopwords from it
         search_tokens = set(re.findall(r"[\w']+|[.,!?;}{)(\"]", param_dict["search_string"].lower())).difference(stopwords)
         # Store teh scores of the results and result list
