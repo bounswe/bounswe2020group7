@@ -25,9 +25,20 @@ import requests, json, random
 from rest_framework.response import Response
 
 class DeleteUser:
+    """
+    In this class, delete user endpoint is implemented
+    """
+
     
     @staticmethod
     def bestsellers():
+        """
+            returns a message including a book recommendation in the format "NAME OF THE BOOK " by "AUTHOR". "DESCRIPTION".
+
+            This function returns a message including a book recomendation taken by NYT bestseller list.
+        """
+
+
         mes = ""
         try:
             url = "https://api.nytimes.com/svc/books/v3/lists/current/hardcover-fiction.json"
@@ -48,6 +59,21 @@ class DeleteUser:
 
     @staticmethod
     def verifyTokenAndMail(token=None, email=None):
+        """
+            where 'token': string, 64 characther string that can be token
+
+            where 'email': string
+
+            returns TRUE if the token and the email belongs to a specific user in the database
+
+            This function verifies if both the mail and token exist in the database.
+
+        """
+
+
+
+
+
         if token is None or email is None:
             return False
         
@@ -62,6 +88,18 @@ class DeleteUser:
     
     @staticmethod   
     def deleteUser2(request):
+        """
+            where 'request': HTTP request that is from the view class
+
+            returns nothing if everything goes right, returns an error message otherwise.
+
+            This function deletes the logged in user.
+            
+        """
+
+
+
+
         stmt = ""
         if request.method == 'DELETE':
             try:
