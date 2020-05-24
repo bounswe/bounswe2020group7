@@ -1,5 +1,19 @@
+"""
+Created on MAY 18, 2020
+This script controls the translate functionality api of PLATON_API, using django mvc model.
+Endpoint description:
+    http://localhost:8000/api/translate/<str:token>
+    
+    'GET':
+        Gets token from url.
+        token = "Your token will be in url",
+                    
+@author: Hasan Ramazan Yurt
+@company: Group7
+"""
+
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, Http404, HttpResponseRedirect
+from django.http import HttpResponse, HttpRequest, Http404, HttpResponseRedirect
 from django.urls import reverse
 
 from rest_api.models import RegisteredUser
@@ -7,13 +21,31 @@ from rest_api.models import RegisteredUser
 import requests as req
 
 def translate(request, token):
+    """
+    This function returns a translated about me part of user whose token is given by using an external api.
+    
+    """
+
     #find user with respect to token or send 404 error
     regUser = get_object_or_404(RegisteredUser,token = token)
 
+    #general response
+    resp = HttpResponse()
+    resp["content-type"] = "application/json"
+
+    #url for request
     url ="https://api.funtranslations.com/translate/yoda.json?text=" + regUser.about_me
     rq = req.get(url).json()
 
-    context = {
-        'translated': rq["contents"]["translated"],
-    }
-    return context
+    if("error" in rq):
+        #if there is a key error
+        resp.write(rq)
+        resp.status_code = 200
+    else:
+        #no error
+        context = {
+            'translated': rq["contents"]["translated"],
+        }
+        resp.write(context)
+        resp.status_code = 200
+    return resp
