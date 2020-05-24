@@ -46,7 +46,6 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -85,7 +84,6 @@ DATABASES = {
         'HOST': '192.168.2.241',   
         'PORT': '3306',
     }    
-
 }
 
 
@@ -126,6 +124,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+CSRF_COOKIE_SECURE = True
+
 BS_BOOK_KEY = "xbhiQLcE4RXylpV9Ke5WH9A13A8tgOjO"
 USER_TABLENAME = "rest_api_registereduser"
 WEBSITE_URL = "http://localhost:8000"
@@ -133,4 +133,3 @@ JOB_LIST_API_URL = "http://api.dataatwork.org/v1/jobs/normalize?job_title="
 HOME_PAGE = "/api/register/fe"
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 STOPWORDS_API_KEY = "a5cb4aeb98msh29ffc5d7378f3d2p136d6cjsn7e882dc52f2a"
-

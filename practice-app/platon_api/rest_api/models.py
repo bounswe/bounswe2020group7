@@ -10,4 +10,3 @@ class RegisteredUser(models.Model):
     job_uuid = models.CharField(max_length=32)
     field_of_study = models.CharField(max_length=50)
     forget_password_ans = models.CharField(max_length=50)
-

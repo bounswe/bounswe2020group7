@@ -19,9 +19,9 @@ from rest_api import views
 
 
 urlpatterns = [
+    path('api/updateUser/', views.updateUser),
     path('api/register/', views.register, name="register"),
     path('api/register/fe', views.register_fe, name="register_fe"),
     path('api/search/',views.Search.as_view()),
     path('api/deleteuser/', views.Delete.as_view()),
-
 ]
