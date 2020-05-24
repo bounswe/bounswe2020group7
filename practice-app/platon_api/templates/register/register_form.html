@@ -1,0 +1,29 @@
+
+{% extends "./base.html" %}
+
+{% load crispy_forms_tags  %}
+
+{% block content %}
+<div style="display: flex;">
+    
+    <div style="flex: 70%;">
+        <h2 style="color: red;text-align: center;font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">{{error}}</h2>
+
+        <h2 class="card-title" style="text-align: center; color: blue;">Register</h2>
+        {% csrf_token %}
+        {% crispy form %}
+    </div>
+
+    <div style="flex: 30%;">
+        <h4>
+            {% for res in resp %}
+                {% if res == "Luck : Well, Here a poem for you." %}
+                    <ul style="color: orangered; text-align: center; font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font: 500;">{{ res }}</ul>   
+                    {%else%}
+                    <ul style="color: blueviolet; text-align: left; font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font: 500;">{{ res }}</ul>   
+                    {%endif%}
+            {% endfor %}
+        </h4>
+    </div>
+</div>
+{% endblock%}
