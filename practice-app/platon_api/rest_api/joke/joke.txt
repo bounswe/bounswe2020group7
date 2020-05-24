@@ -11,7 +11,7 @@ DESCRIPTION
 
         'GET':
             Returns a joke from https://api.jokes.one/jod api.
-            Get token from request body.
+            Get token from request header.
             JSON Format : { 'token': "" }   #token of the user
 
 

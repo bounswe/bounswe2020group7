@@ -9,7 +9,7 @@ Endpoint description:
 
     'GET':
         Returns a joke from https://api.jokes.one/jod api.
-        Get token from request body.
+        Get token from request header.
         JSON Format : { 'token': "" }   #token of the user
 
 
@@ -19,8 +19,9 @@ Endpoint description:
 
 import requests
 from django.db import connection
-import copy
 from rest_framework.response import Response
+from platon_api.settings import USER_TABLENAME
+
 
 
 def verify_token(token=None):
@@ -33,7 +34,7 @@ def verify_token(token=None):
     if token is None:
         return False
     # SQL Query to verify token from database
-    sql = "SELECT token FROM users WHERE token='{}'".format(token)
+    sql = "SELECT token FROM "+USER_TABLENAME+" WHERE token='{}'".format(token)
     # Create a MySQL cursor
     cursor = connection.cursor()
     # Execute SQL query
@@ -71,47 +72,35 @@ def joke_api(request):
 
            This function only accepts GET requests, and valid token is neccessary to return joke
     """
-    #form = copy.deepcopy(request.data)
-    #token = form.get("token")
+
     if request.GET.get("token"):
         token = request.GET["token"]
     else:
         token = None
-    print("here here here here here here here here")
-    print(token)
+
     response = Response()
     response["Content-type"] = "application/json"
     json = {}
     if request.method == "GET":  # if get request sent
         try:
-
             joke = get_joke()
-
             # validity control
             if verify_token(token=token):
                 # Successful request
-
-
                 if joke != False:
                     json = {'status' : 'success','token': token,'title' : joke['title'],'joke' : joke['text']}
-                    print(1)
                 else:
+                    # Since the API that I used only accepts 10 requests in an hour, it returns this data if it exceeds 10 requests
                     json = {'status' : 'success','token': token,'title' : 'No Joke','joke' : 'The joke will be ready in just an hour'}
-                    print(2)
 
                 response.status_code = 200
             else:
                 # Unauthorized client
-
                 json = {'status' : 'invalid_token'}
                 response.status_code = 401
-
         except:
             # Internal error
-            json = {'status': 'bad_request'}
             response.status_code = 500
 
-    print("data")
-    print(json)
     response.data = json
     return response
