@@ -2,12 +2,13 @@
 from django.test import TestCase,TransactionTestCase,Client
 from django.db import connection,transaction
 from platon_api.settings import USER_TABLENAME 
-from rest_api.search_engine.search_engine import searchEngine
+from rest_api.update_user.update_user import searchEngine
+from rest_api.models import RegisteredUser
 import json
 import hashlib
 
 # Create your tests here.
-class SearchTest(TransactionTestCase):
+class UpdateTest(TransactionTestCase):
 
     client = Client()
 
@@ -27,6 +28,9 @@ class SearchTest(TransactionTestCase):
             for test_user in SearchTest.user_list:
                 cursor.execute(sql + "('"+"','".join([str(x) for x in test_user])+"');")
 
-
-
+    def test_isUpdated(self):
+        resp = UpdateTest.client.post('/api/updateUser/',{"name":"Meltem", "surname": "Arslan","password_hashed": hashlib.sha256("123456".encode("utf-8")).hexdigest(), "e_mail":"umut@gmail.com","about_me":"I am a just a huwoman","0aa64c1575f51c91930095311b536477","forget_password_ans":"Meltem"})
+        token = hashlib.sha256("umut@gmail.com".encode("utf-8")).hexdigest()
+        user = RegisteredUser.objects.get(token = token)
+        self.assertEqual(user.name, "Meltem" ,"Name could not be changed!")
     

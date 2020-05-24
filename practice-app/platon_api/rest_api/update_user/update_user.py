@@ -1,3 +1,13 @@
+"""
+Created on May 24, 2020
+This script controls the update user api of PLATON_API, using django&mysql backend.
+Endpoint description:
+    http://localhost:8000/api/updateUser/
+  
+
+@author: Meltem Arslan
+@company: Group7
+"""
 
 from django.shortcuts import render, redirect
 from django.db import connection, transaction
@@ -26,6 +36,7 @@ def isValid(name, surname, password1, token, e_mail, about_me, job_name, forget_
     
     This function takes input parameters and checks them if they are valid and return the boolean result.
     """
+
     #finds user from database with primary key, token
     user = RegisteredUser.objects.get(token = token)
 
@@ -57,7 +68,12 @@ def isValid(name, surname, password1, token, e_mail, about_me, job_name, forget_
 def updateUser(request):
     
     if request.method == "POST":
-    
+        
+        """
+            where 'request': HTTP request that is from the view class
+            This function updates the information of logged in user.
+        """
+
         try:
            
             form = copy.deepcopy(request.POST)       # acquire json

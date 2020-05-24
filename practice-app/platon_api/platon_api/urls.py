@@ -19,5 +19,5 @@ from rest_api import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('/api/updateUser/', views.updateUser)
+    path('api/updateUser/', views.updateUser)
 ]
