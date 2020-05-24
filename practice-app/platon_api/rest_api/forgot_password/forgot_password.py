@@ -1,59 +1,32 @@
-from django.db import connection
-from platon_api.settings import DATABASES, USER_TABLENAME, WEBSITE_URL, JOB_LIST_API_URL
-from django.http import JsonResponse
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-
+from rest_api.forgot_password.forms import ForgotForm
 import re,copy, hashlib, random, json, string, requests
-
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponseRedirect
+from rest_api.models import RegisteredUser
 from rest_framework.response import Response
 
-if request.GET.get("token"):
-    token = request.GET["token"]
 
 
-class Forgot_Password:
+def forgot_password(request):
+    
+    # create a form instance and populate it with data from the request:
+    form = ForgotForm(request.POST)
+    # check whether it's valid:
+    if form.is_valid():
+      
+        ru = get_object_or_404(RegisteredUser,e_mail = form.cleaned_data['e_mail'])
+        ru.save()
+        if form.cleaned_data['forget_password_ans'] == ru.forget_password_ans:
+            print(ru.password_hashed)
+            if form.cleaned_data['password'] == form.cleaned_data['password_again']:
+                ru.password_hashed = hashlib.sha256(form.cleaned_data['password'].encode("utf-8")).hexdigest()
+                ru.save()
+            print(ru.password_hashed)
+           
+        return HttpResponseRedirect('/index/')
 
-    @staticmethod
-    def test_validate_token(token=None):
-        """
-            where 'token': string, 64 characther string that can be token
+    return render(request, 'forgot.html', {'form': form})
 
-            returns True if token exists in the DB
-
-            This function verifies the token if there exits.
-
-        """
-        # If there is no token we cannot validate
-        if token is None:
-            return False
-        # SQL Query to verify token from database
-        sql = "SELECT token FROM "+ USER_TABLENAME +" WHERE token='{}'".format(token)
-        sql_update = "SELECT token FROM "+ USER_TABLENAME +" WHERE token='{}'".format(token)
-        # Create a MySQL cursor
-        cursor = connection.cursor()
-        # Execute SQL query
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        # Validate the token if there is
-        return len(result)!=0
-
-
-    def get_reset_token(self,expires_sec=1800):
-        s = serializer(app.config['SECRET_KEY'], expires_sec)
-        return s.dumps({'user_id': self.id}).decode('utf-8')
-
-    @staticmethod
-    def verify_reset_token(token):
-        s = Serializer(appiconfig['SECRET_KEY'])
-        try: 
-            user_is = s.loads(token)['user_is'] 
-        except:
-            return None
-        return User.query.get(user_id)
-
-
-
-    def forgot_password:
-
+     
 
         

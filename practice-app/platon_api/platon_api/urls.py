@@ -20,6 +20,6 @@ from rest_api import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
- 
-    path('api/forgotpassword/', views.Forgot_password.as_view()),
+    path('api/forgotpassword/', views.forgot_password),
+
 ]

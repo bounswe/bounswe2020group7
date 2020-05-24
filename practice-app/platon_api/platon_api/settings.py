@@ -37,13 +37,16 @@ SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY")
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_api',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_api',
+    "rest_framework",
+    
+
    
 ]
 
@@ -86,7 +89,7 @@ DATABASES = {
         'NAME': 'localdb',
         'USER': 'root',
         'PASSWORD': 'asdfg159',
-        'HOST': 'localhost',   
+        'HOST': '127.0.0.1',   
         'PORT': '3306',
     }    
 }
