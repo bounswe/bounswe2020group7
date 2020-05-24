@@ -12,9 +12,9 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -25,20 +25,26 @@ SECRET_KEY = 'bxlyt7e)p4u@3#!6f)v3&mel_a*+w-#r$!7s(=tna4k0xsm0wq'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_api',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+<<<<<<< HEAD
+    "rest_framework",
+    "crispy_forms"
+=======
     'rest_framework',
     'rest_api',
+>>>>>>> origin/practice-app-development
 ]
 
 MIDDLEWARE = [
@@ -56,7 +62,7 @@ ROOT_URLCONF = 'platon_api.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, "templates/")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -79,9 +85,15 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', 
         'NAME': 'localdb',
+<<<<<<< HEAD
+        'USER': 'admin',
+        'PASSWORD': 'Localhost.123',
+        'HOST': '192.168.2.241',   
+=======
         'USER': 'root',
         'PASSWORD': 'Umut1998',
         'HOST': 'localhost',   
+>>>>>>> origin/practice-app-development
         'PORT': '3306',
     }    
 }
@@ -119,16 +131,30 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
 
 USER_TABLENAME = "rest_api_registereduser"
+<<<<<<< HEAD
+WEBSITE_URL = "http://localhost:8000"
+JOB_LIST_API_URL = "http://api.dataatwork.org/v1/jobs/normalize?job_title="
+HOME_PAGE = "/api/register/fe"
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
+=======
 
 WEBSITE_URL = "http://localhost:8000"
 
 JOB_LIST_API_URL = "http://api.dataatwork.org/v1/jobs/normalize?job_title="
 
 STOPWORDS_API_KEY = "a5cb4aeb98msh29ffc5d7378f3d2p136d6cjsn7e882dc52f2a"
+>>>>>>> origin/practice-app-development
