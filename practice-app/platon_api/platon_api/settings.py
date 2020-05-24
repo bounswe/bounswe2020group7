@@ -38,15 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-<<<<<<< HEAD
     "rest_framework",
-    "crispy_forms"
-=======
-    'rest_framework',
-    'rest_api',
->>>>>>> origin/practice-app-development
+    "crispy_forms",
 ]
-
+    
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -85,15 +80,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', 
         'NAME': 'localdb',
-<<<<<<< HEAD
         'USER': 'admin',
         'PASSWORD': 'Localhost.123',
         'HOST': '192.168.2.241',   
-=======
-        'USER': 'root',
-        'PASSWORD': 'Umut1998',
-        'HOST': 'localhost',   
->>>>>>> origin/practice-app-development
         'PORT': '3306',
     }    
 }
@@ -137,24 +126,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 USER_TABLENAME = "rest_api_registereduser"
-<<<<<<< HEAD
 WEBSITE_URL = "http://localhost:8000"
 JOB_LIST_API_URL = "http://api.dataatwork.org/v1/jobs/normalize?job_title="
 HOME_PAGE = "/api/register/fe"
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ]
-}
-=======
-
-WEBSITE_URL = "http://localhost:8000"
-
-JOB_LIST_API_URL = "http://api.dataatwork.org/v1/jobs/normalize?job_title="
 
 STOPWORDS_API_KEY = "a5cb4aeb98msh29ffc5d7378f3d2p136d6cjsn7e882dc52f2a"
->>>>>>> origin/practice-app-development
