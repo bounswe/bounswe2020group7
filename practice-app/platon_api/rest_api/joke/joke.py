@@ -71,9 +71,14 @@ def joke_api(request):
 
            This function only accepts GET requests, and valid token is neccessary to return joke
     """
-    form = copy.deepcopy(request.data)
-    token = form.get("token")
-    
+    #form = copy.deepcopy(request.data)
+    #token = form.get("token")
+    if request.GET.get("token"):
+        token = request.GET["token"]
+    else:
+        token = None
+    print("here here here here here here here here")
+    print(token)
     response = Response()
     response["Content-type"] = "application/json"
     json = {}
@@ -89,8 +94,10 @@ def joke_api(request):
 
                 if joke != False:
                     json = {'status' : 'success','token': token,'title' : joke['title'],'joke' : joke['text']}
+                    print(1)
                 else:
                     json = {'status' : 'success','token': token,'title' : 'No Joke','joke' : 'The joke will be ready in just an hour'}
+                    print(2)
 
                 response.status_code = 200
             else:
@@ -104,5 +111,7 @@ def joke_api(request):
             json = {'status': 'bad_request'}
             response.status_code = 500
 
+    print("data")
+    print(json)
     response.data = json
     return response
