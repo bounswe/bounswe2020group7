@@ -1,16 +1,17 @@
 Help on module rest_api.joke.joke in rest_api.joke:
 
 NAME
-    rest_api.register.register - Created on MAY 20, 2020
+    rest_api.joke.joke - Created on MAY 22, 2020
 
 DESCRIPTION
-    This script controls the registration api of PLATON_API, using django&mysql backend.
+    This script controls the joke api of PLATON_API, using django&mysql backend.
 
     Endpoint description:
-        http://localhost:8000/api/register/
+        http://localhost:8000/api/joke/
 
         'GET':
             Returns a joke from https://api.jokes.one/jod api.
+            Get token from request body.
             JSON Format : { 'token': "" }   #token of the user
 
 
@@ -35,7 +36,6 @@ FUNCTIONS
 
 
     get_joke():
-
 
             return a python dictionary, json that includes joke of the day
 

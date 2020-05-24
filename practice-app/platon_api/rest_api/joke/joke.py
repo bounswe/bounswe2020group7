@@ -1,35 +1,25 @@
 """
 Created on MAY 22, 2020
-This script controls the registration api of PLATON_API, using django&mysql backend.
+This script controls the joke api of PLATON_API, using django&mysql backend.
 Endpoint description:
-    http://localhost:8000/api/register/
+    http://localhost:8000/api/joke/
+
+    'POST':
+        Produces error
 
     'GET':
         Returns a joke from https://api.jokes.one/jod api.
+        Get token from request body.
         JSON Format : { 'token': "" }   #token of the user
 
 
 @author: Ertugrul Bulbul, ertbulbul
 @company: Group7
 """
-import copy
 
 import requests
 from django.db import connection
-from django.http import JsonResponse
-import json
-from django.db import connection
-from django.shortcuts import render, redirect
-from django.db import connection, transaction
-
-import requests as req
-import re,copy, hashlib, random, json
-
-from rest_framework.response import Response
-
-
-
-
+import copy
 from rest_framework.response import Response
 
 
@@ -83,7 +73,7 @@ def joke_api(request):
     """
     form = copy.deepcopy(request.data)
     token = form.get("token")
-
+    
     response = Response()
     response["Content-type"] = "application/json"
     json = {}
@@ -95,6 +85,8 @@ def joke_api(request):
             # validity control
             if verify_token(token=token):
                 # Successful request
+
+
                 if joke != False:
                     json = {'status' : 'success','token': token,'title' : joke['title'],'joke' : joke['text']}
                 else:
