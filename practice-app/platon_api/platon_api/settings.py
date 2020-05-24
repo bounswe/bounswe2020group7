@@ -12,35 +12,36 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '2dg#r)dw%#vrq%5ky4ec$i-jy3qh6d6thekry(v=w(^nqtx^y-'
+SECRET_KEY = 'bxlyt7e)p4u@3#!6f)v3&mel_a*+w-#r$!7s(=tna4k0xsm0wq'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_api',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
-    'rest_api',
+    "rest_framework",
+    "crispy_forms",
 ]
-
+    
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -56,7 +57,7 @@ ROOT_URLCONF = 'platon_api.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, "templates/")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -78,12 +79,13 @@ WSGI_APPLICATION = 'platon_api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', 
-        'NAME': 'demo',
-        'USER': 'root',
-        'PASSWORD': 'xcxcxc',
-        'HOST': 'localhost',   
+        'NAME': 'localdb',
+        'USER': 'admin',
+        'PASSWORD': 'Localhost.123',
+        'HOST': '192.168.2.241',   
         'PORT': '3306',
-    } 
+    }    
+
 }
 
 
@@ -119,11 +121,16 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-USER_TABLENAME = "rest_api_registereduser"
+
 BS_BOOK_KEY = "xbhiQLcE4RXylpV9Ke5WH9A13A8tgOjO"
-SECRET_KEY = 'bxlyt7e)p4u@3#!6f)v3&mel_a*+w-#r$!7s(=tna4k0xsm0wq'
+USER_TABLENAME = "rest_api_registereduser"
+WEBSITE_URL = "http://localhost:8000"
+JOB_LIST_API_URL = "http://api.dataatwork.org/v1/jobs/normalize?job_title="
+HOME_PAGE = "/api/register/fe"
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+STOPWORDS_API_KEY = "a5cb4aeb98msh29ffc5d7378f3d2p136d6cjsn7e882dc52f2a"
+
