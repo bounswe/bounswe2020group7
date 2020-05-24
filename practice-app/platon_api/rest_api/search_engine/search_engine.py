@@ -44,13 +44,13 @@ class searchEngine():
     num_of_semantically_related: int
         Number of words that search engine uses in semantice search for each token
 
-    sotring_criteria_list: list
+    sorting_criteria_list: list
         a list of sorting criteria that can be used in the search functionality
     """
 
     """ TODO: Update the hardcoded list for the future use of this module"""
 
-    sotring_criteria_list = ["name_increasing", "name_decreasing", "surname_increasing", "surname_decreasing"]
+    sorting_criteria_list = ["name_increasing", "name_decreasing", "surname_increasing", "surname_decreasing"]
     
     exact_match_score = 1000000
 
@@ -126,14 +126,14 @@ class searchEngine():
             return "Wrong input. Please give an appropriate input!!"
         if request.GET.get("sorting_criteria",False):
             # Take sorting criteria from URL
-            sotring_criteria = request.GET.get("sorting_criteria",False).replace('"',"")
-            if sotring_criteria not in searchEngine.sotring_criteria_list:
+            sorting_criteria = request.GET.get("sorting_criteria",False).replace('"',"")
+            if sorting_criteria not in searchEngine.sorting_criteria_list:
                 return "Wrong input. Please give an appropriate input!!"
         else:
             # Default sorting criteria
-            sotring_criteria = ""
+            sorting_criteria = ""
         # Return parameters as a dictionary
-        return {"filter":filter,"search_string":search_string,"token":token,"sorting_criteria":sotring_criteria}
+        return {"filter":filter,"search_string":search_string,"token":token,"sorting_criteria":sorting_criteria}
     
     @staticmethod
     def verify_token(token=None):
@@ -166,7 +166,7 @@ class searchEngine():
 
             returns sorted version of the search result
 
-            This function sorts the output with a given sotring criteria
+            This function sorts the output with a given sorting criteria
 
         """
         # This function sorts the output list according to the given sorting type
