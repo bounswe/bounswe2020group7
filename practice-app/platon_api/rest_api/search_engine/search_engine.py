@@ -54,7 +54,7 @@ class searchEngine():
     
     exact_match_score = 1000000
 
-    num_of_semantically_related = 5
+    num_of_semantically_related = 8
 
     @staticmethod
     def semantic_related_list(search_tokens,max_num_of_related):
