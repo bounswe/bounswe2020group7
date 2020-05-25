@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.urls import path, include
 from rest_api import views
+from rest_api import views as v_rest_api
 
 urlpatterns = [
     path('api/updateUser/', views.updateUser),
