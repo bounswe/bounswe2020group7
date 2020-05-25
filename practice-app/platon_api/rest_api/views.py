@@ -14,6 +14,7 @@ from rest_api.news.news import news_api
 from django.shortcuts import render
 from rest_api.logout import logout as lg
 from rest_api.translation.translation import translate
+from rest_api.login.login import login 
 
 
 def translation(response,token):
@@ -79,4 +80,8 @@ def register(request):
 @permission_classes((permissions.AllowAny,))
 def register_fe(request):
     return register_page(request)
+
+class Login(APIView):
+    def get(self,request):
+        return Response(login.login(request))
 
