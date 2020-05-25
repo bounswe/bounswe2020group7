@@ -30,5 +30,16 @@ urlpatterns = [
     path('api/news/<str:token>/', v_rest_api.news, name="news"),
     path('api/logout/', views.logout, name="logout"),
     path('api/translation/<str:token>', views.translation),
-    path('api/login/',views.Login.as_view())
+    path('api/login/',views.Login.as_view()),
+
+    #Frontend starts
+    path('', views.index, name='index'),
+    path('register/', views.register_f, name='register_f'),
+    path('login/', views.login_f, name='login_f'),
+    path('home/<str:token>/', views.home, name="home"),
+    path('about/<str:token>/', views.about, name="about"),
+    path('logout/<str:token>/', views.logout_f, name="logout_f"),
+    path('resetpassword/', views.resetpassword_f, name="resetpassword_f"),
+    path('forgotpassword/', views.forgotpassword_f, name="forgotpassword_f"),
+    path('joke/<str:token>/', views.joke_f, name="joke_f"),
 ]
