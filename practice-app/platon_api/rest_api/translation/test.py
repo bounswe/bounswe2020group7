@@ -35,7 +35,7 @@ class TestTranslation(TransactionTestCase):
         response = self.client.get("/api/translation/"+self.validToken)
         self.assertEqual(response.status_code, 200)
 
-    # Testing for translation of about me with unvalid input
+    # Testing for translation of about me with invalid input
     def test_noTokenInDb(self):
         response = self.client.get("/api/translation/" + self.unvalidToken)
         self.assertEqual(response.status_code, 404)
