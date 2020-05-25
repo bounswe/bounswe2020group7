@@ -124,6 +124,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+
 NEWS_API_KEY = "1d2f2e6696174ffca8668a0f26322f41"
 CSRF_COOKIE_SECURE = True
 BS_BOOK_KEY = "xbhiQLcE4RXylpV9Ke5WH9A13A8tgOjO"
@@ -133,3 +134,4 @@ JOB_LIST_API_URL = "http://api.dataatwork.org/v1/jobs/normalize?job_title="
 HOME_PAGE = "/api/register/fe"
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 STOPWORDS_API_KEY = "a5cb4aeb98msh29ffc5d7378f3d2p136d6cjsn7e882dc52f2a"
+

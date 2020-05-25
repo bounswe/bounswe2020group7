@@ -1,3 +1,5 @@
+
+from rest_api.joke.joke import joke_api
 from rest_api.update_user.update_user import updateUser
 from rest_api.register.register import register_api,register_page
 from rest_framework.views import APIView
@@ -9,9 +11,19 @@ from rest_api.delete_user_t.delete_user_f import DeleteUser
 from django.http import HttpResponse
 from rest_api.news.news import news_api
 from django.shortcuts import render
-from rest_api.logout import logout
+from rest_api.logout import logout as lg
 
 # Create your views here.
+
+def logout(request):
+    return lg.logout(request)
+
+
+@api_view(["GET"])
+def joke(request):
+    return joke_api(request)
+  
+  
 def update(request):
     return updateUser(request)
 
