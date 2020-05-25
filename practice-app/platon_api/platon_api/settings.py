@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'platon_api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', 
-        'NAME': 'localdb',
+        'NAME': 'localdb',  
         'USER': 'admin',
         'PASSWORD': 'Localhost.123',
         'HOST': '192.168.2.241',   

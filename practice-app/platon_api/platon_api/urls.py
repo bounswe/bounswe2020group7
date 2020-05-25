@@ -25,5 +25,6 @@ urlpatterns = [
     path('api/search/',views.Search.as_view()),
     path('api/deleteuser/', views.Delete.as_view()),
     path('api/news/<str:token>/', v_rest_api.news, name="news"),
-    path('api/logout/', views.logout, name="logout")
+    path('api/logout/', views.logout, name="logout"),
+    path('api/translation/<str:token>', views.translation),
 ]

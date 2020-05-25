@@ -12,7 +12,13 @@ from django.http import HttpResponse
 from rest_api.news.news import news_api
 from django.shortcuts import render
 from rest_api.logout import logout as lg
+from rest_api.translation.translation import translate
 
+def translation(response,token):
+    #takes http response and returns it
+    context = translate(response,token)
+    return context
+     
 # Create your views here.
 
 def logout(request):
