@@ -12,7 +12,7 @@ class TestTranslation(TransactionTestCase):
     client = Client()
 
     validToken = hashlib.sha256("oyku@gmail.com".encode("utf-8")).hexdigest()
-    unvalidToken = "asfdasgsgfsdfsfqdf"
+    invalidToken = "asfdasgsgfsdfsfqdf"
 
     #creates and saves registered users for test
     def setUp(self):
@@ -37,5 +37,5 @@ class TestTranslation(TransactionTestCase):
 
     # Testing for translation of about me with invalid input
     def test_noTokenInDb(self):
-        response = self.client.get("/api/translation/" + self.unvalidToken)
+        response = self.client.get("/api/translation/" + self.invalidToken)
         self.assertEqual(response.status_code, 404)
