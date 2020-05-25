@@ -5,6 +5,8 @@ from django.http import HttpResponse
 from rest_api.models import RegisteredUser
 from rest_framework.response import Response
 
+#I think it is not necessary to import them: re,copy, random, json, requests, render, Response
+
 
 
 def forgot_password(request):
