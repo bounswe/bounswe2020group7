@@ -1,11 +1,8 @@
 from rest_api.forgot_password.forms import ForgotForm
-import re,copy, hashlib, random, json, string, requests
-from django.shortcuts import render, get_object_or_404
+import hashlib, string
+from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from rest_api.models import RegisteredUser
-from rest_framework.response import Response
-
-#I think it is not necessary to import them: re,copy, random, json, requests, render, Response
 
 
 
