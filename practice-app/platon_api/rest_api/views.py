@@ -1,3 +1,5 @@
+
+from rest_api.joke.joke import joke_api
 from rest_api.update_user.update_user import updateUser
 from rest_api.register.register import register_api,register_page
 from rest_framework.views import APIView
@@ -11,6 +13,14 @@ from rest_api.news.news import news_api
 from django.shortcuts import render
 
 # Create your views here.
+
+
+
+@api_view(["GET"])
+def joke(request):
+    return joke_api(request)
+  
+  
 def update(request):
     return updateUser(request)
 
@@ -44,3 +54,4 @@ def register(request):
 @permission_classes((permissions.AllowAny,))
 def register_fe(request):
     return register_page(request)
+
