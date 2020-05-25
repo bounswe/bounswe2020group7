@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     "crispy_forms",
 
 ]
-    
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -79,13 +79,13 @@ WSGI_APPLICATION = 'platon_api.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', 
-        'NAME': 'localdb',  
-        'USER': 'admin',
-        'PASSWORD': 'Localhost.123',
-        'HOST': '192.168.2.241',   
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'localdb',
+        'USER': 'root',
+        'PASSWORD': '1234',
+        'HOST': 'localhost',
         'PORT': '3306',
-    }    
+    }
 }
 
 
