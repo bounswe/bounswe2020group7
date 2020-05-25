@@ -18,7 +18,7 @@ class LogoutTestCase(TestCase):
     def test_logout_without_token(self):
         """A logout request without token parameter is sent and an error message is sent in return."""
         client = Client()
-        response = client.get('/api/logout')
+        response = client.get('/api/logout/')
         self.assertEqual(response.status_code, 400)
 
 
@@ -26,7 +26,7 @@ class LogoutTestCase(TestCase):
         """An already logged-in user successfully logs out."""
         test_token = "husnu_senlendirici_logged_in"
         client = Client()
-        response = client.get('/api/logout' + '?' + 'token=' + test_token)
+        response = client.get('/api/logout/' + '?' + 'token=' + test_token)
         self.assertEqual(response.status_code, 200)
 
 
@@ -34,6 +34,6 @@ class LogoutTestCase(TestCase):
         """An user who is not logged in or non-existent tries to log out and receives error message."""
         test_token = "invalid_token"
         client = Client()
-        response = client.get('/api/logout' + '?' + 'token=' + test_token)
+        response = client.get('/api/logout/' + '?' + 'token=' + test_token)
         self.assertEqual(response.status_code, 401)
 

@@ -11,7 +11,8 @@ from rest_api.delete_user_t.delete_user_f import DeleteUser
 from django.http import HttpResponse
 from rest_api.news.news import news_api
 from django.shortcuts import render
-from rest_api.logout import logout as lg
+from rest_api.logout import logout
+from rest_api.login import login
 from rest_api.translation.translation import translate
 
 def translation(response,token):
@@ -22,8 +23,10 @@ def translation(response,token):
 # Create your views here.
 
 def logout(request):
-    return lg.logout(request)
+    return logout.logout(request)
 
+def login(request):
+    return login.Login.login(request)
 
 @api_view(["GET"])
 def joke(request):
