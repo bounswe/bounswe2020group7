@@ -9,6 +9,7 @@ from rest_api.delete_user_t.delete_user_f import DeleteUser
 from django.http import HttpResponse
 from rest_api.news.news import news_api
 from django.shortcuts import render
+from rest_api.logout import logout
 
 # Create your views here.
 def update(request):
