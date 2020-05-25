@@ -1,4 +1,5 @@
-
+from rest_api.forgot_password.forgot_password import forgot_password
+from rest_api.forgot_password.forms import ForgotForm
 from rest_api.joke.joke import joke_api
 from rest_api.update_user.update_user import updateUser
 from rest_api.register.register import register_api,register_page
@@ -14,12 +15,27 @@ from django.shortcuts import render
 from rest_api.logout import logout as lg
 from rest_api.translation.translation import translate
 
+
 def translation(response,token):
     #takes http response and returns it
     context = translate(response,token)
     return context
      
 # Create your views here.
+
+def forgotpassword(request):
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = forgot_password(request)
+        
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = ForgotForm()
+
+    return render(request, 'forgot.html', {'form': form})
+    
+
+
 
 def logout(request):
     return lg.logout(request)
@@ -63,3 +79,4 @@ def register(request):
 @permission_classes((permissions.AllowAny,))
 def register_fe(request):
     return register_page(request)
+
