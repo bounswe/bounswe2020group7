@@ -117,3 +117,5 @@ def updateUser(request):
         except:
             #If program fails, it returns this message.
             return HttpResponse("Error! Information could not be changed.")    
+    else:
+        return HttpResponse("Get is not supported.")  
