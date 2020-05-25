@@ -11,9 +11,12 @@ from rest_api.delete_user_t.delete_user_f import DeleteUser
 from django.http import HttpResponse
 from rest_api.news.news import news_api
 from django.shortcuts import render
+from rest_api.logout import logout as lg
 
 # Create your views here.
 
+def logout(request):
+    return lg.logout(request)
 
 
 @api_view(["GET"])
@@ -54,4 +57,3 @@ def register(request):
 @permission_classes((permissions.AllowAny,))
 def register_fe(request):
     return register_page(request)
-
