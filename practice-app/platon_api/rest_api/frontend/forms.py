@@ -27,3 +27,18 @@ class ForgotForm(forms.Form):
     forget_password_ans = forms.CharField(label='Answer', max_length=50)
     password = forms.CharField(label='Password', max_length=50, widget=forms.PasswordInput)
     password_again = forms.CharField(label='Password again', max_length=50, widget=forms.PasswordInput)
+
+class UpdateForm(forms.Form):
+    name = forms.CharField(label='Name', max_length=30, required=False)
+    surname = forms.CharField(label='Surname', max_length=30, required=False)
+    e_mail = forms.EmailField(label='E-Mail', max_length=250)
+    password1 = forms.CharField(label='Password', max_length=50, widget=forms.PasswordInput)
+    field_of_study = forms.CharField(label='Field Of Study', max_length=50, required=False)
+    forget_password_ans = forms.CharField(label='Best teacher at school ( secret question )', max_length=50, required=False)
+    about_me = forms.CharField(widget=forms.Textarea, max_length=5000, required=False)
+    job_name = forms.CharField(label='Job',max_length=32, required=False)
+
+    class Meta:
+        model = User
+        fields = ["name","surname", "e_mail", "password1", "forget_password_ans", "field_of_study", "job_name", "about_me"]
+

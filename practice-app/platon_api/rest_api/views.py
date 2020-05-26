@@ -15,7 +15,7 @@ from django.shortcuts import render
 from rest_api.logout import logout as lg
 from rest_api.translation.translation import translate
 from rest_api.login.login import login
-
+from rest_api.models import RegisteredUser
 
 def translation(response,token):
     #takes http response and returns it
@@ -87,7 +87,7 @@ class Login(APIView):
 
 ######## Frontend starts
 from django.shortcuts import render, redirect
-from rest_api.frontend.forms import RegisterForm, LoginForm, ForgotForm
+from rest_api.frontend.forms import RegisterForm, LoginForm, ForgotForm, UpdateForm
 
 def index(request):
     register_form = RegisterForm()
@@ -181,3 +181,27 @@ def search_f(request):
 
 def error_f(request):
     return render(request, 'error.html')
+
+def update_f(request, token):
+    if request.method == 'POST':
+        request.POST = request.POST.copy()
+        request.POST["token"] = token
+        request.method = "POST"
+        resp = updateUser(request)
+        if resp.status_code == 201:
+            update_form = UpdateForm()
+            return render(request, 'update.html', {'updated': resp.status_code, 'update_form': update_form, 'token': token})
+        else:
+            update_form = UpdateForm()
+            return render(request, 'update.html', {'updated': resp.status_code, 'update_form': update_form, 'token': token})
+    update_form = UpdateForm()
+    return render(request, 'update.html', {'update_form': update_form, 'token': token})
+
+def delete_f(request, token):
+    request.POST = request.POST.copy()
+    request.POST["token"] = token
+    request.method = "POST"
+    user = RegisteredUser.objects.get(token=token)
+    request.POST["email"] = user.e_mail
+    DeleteUser.deleteUser2(request)
+    return redirect('index')

@@ -43,4 +43,6 @@ urlpatterns = [
     path('joke/<str:token>/', views.joke_f, name="joke_f"),
     path('search/', views.search_f, name="search_f"),
     path('error/', views.error_f, name="error_f"),
+    path('update/<str:token>/', views.update_f, name="update_f"),
+    path('delete/<str:token>/', views.delete_f, name="delete_f"),
 ]

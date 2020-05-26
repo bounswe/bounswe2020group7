@@ -3,12 +3,12 @@ Created on MAY 17, 2020
 This script controls the search functionality api of PLATON_API, using django&mysql backend.
 Endpoint description:
     http://localhost:8000/api/search/
-    
+
     'POST':
         Produces error
     'GET':
         Gets dictionary from body.
-        JSON Format : {   
+        JSON Format : {
                         token = "Your token will be here!!",
                         search_string = "The string that you want to search will be here",
                         filter = {"job" = "job_filter", "field_of_study" = "field_of_study_filter" },
@@ -36,11 +36,11 @@ class searchEngine():
     Attributes
     ----------
     job_list : list
-        a list of jobs that whose index is written in the database. 
-    
+        a list of jobs that whose index is written in the database.
+
     exact_match_score: int
         Semantic score of an exact match in search operation
-    
+
     num_of_semantically_related: int
         Number of words that search engine uses in semantice search for each token
 
@@ -51,7 +51,7 @@ class searchEngine():
     """ TODO: Update the hardcoded list for the future use of this module"""
 
     sorting_criteria_list = ["name_increasing", "name_decreasing", "surname_increasing", "surname_decreasing"]
-    
+
     exact_match_score = 1000000
 
     num_of_semantically_related = 8
@@ -134,7 +134,7 @@ class searchEngine():
             sorting_criteria = ""
         # Return parameters as a dictionary
         return {"filter":filter,"search_string":search_string,"token":token,"sorting_criteria":sorting_criteria}
-    
+
     @staticmethod
     def verify_token(token=None):
         """
@@ -157,7 +157,7 @@ class searchEngine():
         result = cursor.fetchall()
         # Validate the token if there is
         return len(result)!=0
-    
+
     @staticmethod
     def sort_output(output_list,sorting_type):
         """
@@ -196,7 +196,7 @@ class searchEngine():
             'x-rapidapi-host': "stopwords.p.rapidapi.com",
             'x-rapidapi-key': STOPWORDS_API_KEY
         }
-        try: 
+        try:
             response = requests.request("GET", url, headers=headers, params=querystring)
             resp = json.loads(response.text)
             # If API gives different message tha expected return None to give an error message
@@ -207,7 +207,7 @@ class searchEngine():
         except:
             # If there is an error in the request return a None object
             return None
-    
+
     @staticmethod
     def get_job_name(job_uuid):
         """
@@ -237,7 +237,7 @@ class searchEngine():
         # Generate parameters from URL
         param_dict = searchEngine.get_parameter_list(request)
         # Control input if there is an error return error message
-        if not isinstance(param_dict,dict): 
+        if not isinstance(param_dict,dict):
             return "You give your input in wrong format. Please check the API documentation for the appropriate input format!!"
         # Control the token of the GET request
         if not searchEngine.verify_token(param_dict["token"]):
