@@ -42,4 +42,5 @@ urlpatterns = [
     path('resetpassword/', views.resetpassword_f, name="resetpassword_f"),
     path('joke/<str:token>/', views.joke_f, name="joke_f"),
     path('search/', views.search_f, name="search_f"),
+    path('error/', views.error_f, name="error_f"),
 ]
