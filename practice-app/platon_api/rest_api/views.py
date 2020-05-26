@@ -97,14 +97,16 @@ def login_f(request):
 import copy, json
 
 def home(request, token):
-    context = json.loads(news_api(request, token).data)
-    context["token"] = token
-    if context != 404:
-        context['token'] = token
-        return render(request, 'home.html', context)
-    else:
-        return {'error_message': 'Invalid Token'}
-
+    try:
+        context = json.loads(news_api(request, token).data)
+        context["token"] = token
+        if context != 404:
+            context['token'] = token
+            return render(request, 'home.html', context)
+        else:
+            return {'error_message': 'Invalid Token'}
+    except:
+        return HttpResponse("Unauthorized Request",status=401)
 def about(request, token):
     data = translate(request, token).data
     print(data)
@@ -179,3 +181,7 @@ def delete_f(request, token):
     request.POST["email"] = user.e_mail
     DeleteUser.deleteUser2(request)
     return redirect('index')
+
+def book_f(request,token):
+    book_recommendation = DeleteUser.bestsellers()
+    return render(request,'book.html',{'book_recommendation':book_recommendation, 'token':token})

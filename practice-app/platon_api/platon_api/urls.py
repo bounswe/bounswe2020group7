@@ -22,7 +22,7 @@ from rest_api import views as v_rest_api
 urlpatterns = [
     path('api/forgotpassword/', views.forgotpassword),
     path('api/joke/', views.joke, name="joke"),
-    path('api/updateUser/', views.ud),
+    path('api/updateUser/', views.update),
     path('api/register/', views.register, name="register"),
     path('api/register/fe', views.register_fe, name="register_fe"),
     path('api/search/',views.search_in),
@@ -45,4 +45,6 @@ urlpatterns = [
     path('error/', views.error_f, name="error_f"),
     path('update/<str:token>/', views.update_f, name="update_f"),
     path('delete/<str:token>/', views.delete_f, name="delete_f"),
+    path('book/<str:token>/', views.book_f, name="book_f"),
+
 ]

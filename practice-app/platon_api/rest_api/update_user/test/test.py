@@ -36,3 +36,5 @@ class UpdateTest(TransactionTestCase):
         user = RegisteredUser.objects.get(token = token)
         newInfo = (user.name == "Meltem" and user.surname == "Arslan" and user.field_of_study == "Computer Engineering" and user.about_me == "I am a just a huwoman" and user.forget_password_ans == "Meltem" )
         self.assertEqual(newInfo, True ,"User information could not be changed!")
+
+        
