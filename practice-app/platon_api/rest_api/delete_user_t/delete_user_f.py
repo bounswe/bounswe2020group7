@@ -107,24 +107,21 @@ class DeleteUser:
         #initialize sql query
         stmt = ""
         #returns an error message if the request != "POST"
-        if request.method == 'POST':
-            try:
-                if request.POST.get("token"):
-                    token = request.POST.get("token")
-                else:
-                    return "No token found."
-                if request.POST.get("email"):
-                    email = request.POST.get("email")
-                else:
-                    return "No e-mail address found."
-                if not DeleteUser.verifyTokenAndMail(token, email):
-                    return "No user found."
-                else:
-                    stmt = "DELETE FROM `" + USER_TABLENAME + "` WHERE token = \"" + token +"\""
-                    cursor = connection.cursor()
-                    cursor.execute(stmt)
-                    return DeleteUser.bestsellers()
-            except:
-                return "Cannot retrieve your token or your mail at the moment, sorry."
-        else:
-            return "You have to send a post request to perform deletion."
+        try:
+            if request.POST.get("token"):
+                token = request.POST.get("token")
+            else:
+                return Response("No token found.", 403)
+            if request.POST.get("email"):
+                email = request.POST.get("email")
+            else:
+                return Response("No e-mail address found.", 403)
+            if not DeleteUser.verifyTokenAndMail(token, email):
+                return Response("No user found.", 403)
+            else:
+                stmt = "DELETE FROM `" + USER_TABLENAME + "` WHERE token = \"" + token +"\""
+                cursor = connection.cursor()
+                cursor.execute(stmt)
+                return Response(DeleteUser.bestsellers(), 200)
+        except:
+            return Response("Cannot retrieve your token or your mail at the moment, sorry.", 403)

@@ -5,5 +5,6 @@
 <form id="registerForm" method="POST" class="form-group" validate action="{% url 'register_f' %}">
   {{ register_form | crispy }}
   <input class="btn btn-primary" name="registerButton" type="submit" value="Register" />
+  <a href="{% url 'register_fe' %}" style="margin-left: 10px;">You want another fancy register?</a>
 </form>
 

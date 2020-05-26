@@ -20,17 +20,17 @@ from rest_api import views
 from rest_api import views as v_rest_api
 
 urlpatterns = [
-    path('api/forgotpassword/', views.forgot_password),
+    path('api/forgotpassword/', views.forgotpassword),
     path('api/joke/', views.joke, name="joke"),
-    path('api/updateUser/', views.updateUser),
+    path('api/updateUser/', views.ud),
     path('api/register/', views.register, name="register"),
     path('api/register/fe', views.register_fe, name="register_fe"),
-    path('api/search/',views.Search.as_view()),
-    path('api/deleteuser/', views.Delete.as_view()),
+    path('api/search/',views.search_in),
+    path('api/deleteuser/', views.delete_user),
     path('api/news/<str:token>/', v_rest_api.news, name="news"),
     path('api/logout/', views.logout, name="logout"),
     path('api/translation/<str:token>', views.translation),
-    path('api/login/',views.Login.as_view()),
+    path('api/login/',views.login_sys),
 
     #Frontend starts
     path('', views.index, name='index'),

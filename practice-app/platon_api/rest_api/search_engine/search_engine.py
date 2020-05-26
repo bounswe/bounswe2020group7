@@ -234,62 +234,65 @@ class searchEngine():
             This is the function that searchs the user in our database
 
         """
-        # Generate parameters from URL
-        param_dict = searchEngine.get_parameter_list(request)
-        # Control input if there is an error return error message
-        if not isinstance(param_dict,dict): 
-            return "You give your input in wrong format. Please check the API documentation for the appropriate input format!!",400
-        # Control the token of the GET request
-        if not searchEngine.verify_token(param_dict["token"]):
-            return "You have to give your token",401
-        # If there is no search string return empty list
-        if param_dict["search_string"] == "":
-            return []
-        # Tokenize the search string without stopwords and punctuation
-        stopwords = searchEngine.get_stopwords()
-        # If there is a problem return an information about the problem
-        if stopwords is None:
-            return "There is a problem about the 3rd party APIs that I used. Please try again!!",500
-        # Tokenize the search string and remove stopwords from it
-        search_tokens = set(re.findall(r"[\w']+|[.,!?;}{)(\"]", param_dict["search_string"].lower())).difference(stopwords)
-        # Store teh scores of the results and result list
-        result_score = {}
-        result_list = []
-        base_sql = "SELECT id,name,surname,`e_mail`,about_me,job_uuid,field_of_study FROM " + USER_TABLENAME + " WHERE "
-        filter_list = []
-        if "job_uuid" in param_dict["filter"]:
-            filter_list.append("job_uuid='{}'".format(param_dict["filter"]["job_uuid"]))
-        if "field_of_study" in param_dict["filter"]:
-            filter_list.append('field_of_study="{}"'.format(param_dict["filter"]["field_of_study"]))
-        # Add filters to the base SQL Query
-        base_sql += " AND ".join(filter_list) + (" AND " if len(filter_list)>0 else "")
-        # Create MySQL cursor
-        cursor = connection.cursor()
-        # If search token is empty then search for all strings
-        if len(search_tokens) == 0:
-            search_tokens.add("")
-        for search_tuple in searchEngine.semantic_related_list(search_tokens,searchEngine.num_of_semantically_related):
-            search_token = search_tuple[0]
-            # Search for the name
-            sql = base_sql + '(LOWER(name) REGEXP ".*{0}.*" OR LOWER(surname) REGEXP ".*{0}.*" OR LOWER(`e_mail`) REGEXP ".*{0}.*" OR LOWER(about_me) REGEXP ".*{0}.*")'.format(search_token)
-            cursor.execute(sql)
-            for result in cursor:
-                # Increase the point of the result
-                if result in result_list:
-                    result_score[result[0]] += search_tuple[1]
-                # Add to the dictionary if it is not found before
-                else:
-                    result_list.append(result)
-                    result_score[result[0]] = search_tuple[1]
-        # Sort result according to their total points
-        sorted_index = sorted(result_score.items(), key=lambda x: x[1],reverse=True)
-        search_result = []
-        # Create the search list with the decreasing order according to total semantic points
-        for id,score in sorted_index:
-            for result in result_list:
-                if result[0]==id:
-                    search_result.append({"name":result[1],"surname":result[2],"e_mail":result[3],"about_me":result[4],"job":searchEngine.get_job_name(result[5]),"field_of_study":result[6].title()})
-                    break
-            continue
-        # Return the search result list
-        return searchEngine.sort_output(search_result,param_dict["sorting_criteria"]),200
+        try:
+            # Generate parameters from URL
+            param_dict = searchEngine.get_parameter_list(request)
+            # Control input if there is an error return error message
+            if not isinstance(param_dict,dict): 
+                return "You give your input in wrong format. Please check the API documentation for the appropriate input format!!",400
+            # Control the token of the GET request
+            if not searchEngine.verify_token(param_dict["token"]):
+                return "You have to give your token",401
+            # If there is no search string return empty list
+            if param_dict["search_string"] == "":
+                return [], 200
+            # Tokenize the search string without stopwords and punctuation
+            stopwords = searchEngine.get_stopwords()
+            # If there is a problem return an information about the problem
+            if stopwords is None:
+                return "There is a problem about the 3rd party APIs that I used. Please try again!!",500
+            # Tokenize the search string and remove stopwords from it
+            search_tokens = set(re.findall(r"[\w']+|[.,!?;}{)(\"]", param_dict["search_string"].lower())).difference(stopwords)
+            # Store teh scores of the results and result list
+            result_score = {}
+            result_list = []
+            base_sql = "SELECT id,name,surname,`e_mail`,about_me,job_uuid,field_of_study FROM " + USER_TABLENAME + " WHERE "
+            filter_list = []
+            if "job_uuid" in param_dict["filter"]:
+                filter_list.append("job_uuid='{}'".format(param_dict["filter"]["job_uuid"]))
+            if "field_of_study" in param_dict["filter"]:
+                filter_list.append('field_of_study="{}"'.format(param_dict["filter"]["field_of_study"]))
+            # Add filters to the base SQL Query
+            base_sql += " AND ".join(filter_list) + (" AND " if len(filter_list)>0 else "")
+            # Create MySQL cursor
+            cursor = connection.cursor()
+            # If search token is empty then search for all strings
+            if len(search_tokens) == 0:
+                search_tokens.add("")
+            for search_tuple in searchEngine.semantic_related_list(search_tokens,searchEngine.num_of_semantically_related):
+                search_token = search_tuple[0]
+                # Search for the name
+                sql = base_sql + '(LOWER(name) REGEXP ".*{0}.*" OR LOWER(surname) REGEXP ".*{0}.*" OR LOWER(`e_mail`) REGEXP ".*{0}.*" OR LOWER(about_me) REGEXP ".*{0}.*")'.format(search_token)
+                cursor.execute(sql)
+                for result in cursor:
+                    # Increase the point of the result
+                    if result in result_list:
+                        result_score[result[0]] += search_tuple[1]
+                    # Add to the dictionary if it is not found before
+                    else:
+                        result_list.append(result)
+                        result_score[result[0]] = search_tuple[1]
+            # Sort result according to their total points
+            sorted_index = sorted(result_score.items(), key=lambda x: x[1],reverse=True)
+            search_result = []
+            # Create the search list with the decreasing order according to total semantic points
+            for id,score in sorted_index:
+                for result in result_list:
+                    if result[0]==id:
+                        search_result.append({"name":result[1],"surname":result[2],"e_mail":result[3],"about_me":result[4],"job":searchEngine.get_job_name(result[5]),"field_of_study":result[6].title()})
+                        break
+                continue
+            # Return the search result list
+            return searchEngine.sort_output(search_result,param_dict["sorting_criteria"]),200
+        except:
+            return "Please provide appropriate input.", 403
