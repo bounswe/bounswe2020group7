@@ -177,7 +177,7 @@ def search_f(request):
         elif request.GET["field_of_study"] != "":
             request.GET["filter"] = json.dumps({'field_of_study': request.GET["field_of_study"]})
     resp = engine.search(request)
-    return render(request, "search_result.html", {'search_result': resp, 'token': token})
+    return render(request, "search_result.html", {'search_result': resp[0], 'token': token})
 
 def error_f(request):
     return render(request, 'error.html')
