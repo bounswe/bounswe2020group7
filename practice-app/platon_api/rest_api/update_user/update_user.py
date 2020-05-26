@@ -93,7 +93,7 @@ def updateUser(request):
         user = RegisteredUser.objects.get(token = token)
         
         if not isValid(name, surname, password1,token, e_mail, about_me, job_name, forget_pw_ans, field_of_study, user):
-            return Response("Not valid input. Check password or give valid inputs to the fields!", 403)
+            return Response("Not valid input. Check password or give valid inputs to the fields!", status=403)
 
         job_uuid = getJobName(job_name)
         #Checks the inputs one by one.
@@ -121,4 +121,4 @@ def updateUser(request):
         return Response("User information is updated!", status=201)
     except:
         #If program fails, it returns this message.
-        return Response("Error! Information could not be changed.", 403)
+        return Response("Error! Information could not be changed.",status=403)

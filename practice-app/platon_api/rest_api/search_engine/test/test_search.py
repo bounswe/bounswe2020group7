@@ -156,7 +156,6 @@ class SearchTest(TransactionTestCase):
         resp = SearchTest.client.get('/api/search/',{"token":SearchTest.valid_token,"search_string":search_string,"filter":json.dumps(job_filter)})
         search_result = json.loads(resp.content)
         for user in search_result:
-
             self.assertIn(job_filter.title(),user['job'],"Job filter doesn't run correctly")
 
 

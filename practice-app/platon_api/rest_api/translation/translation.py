@@ -22,12 +22,12 @@ def translate(request, token):
     This function returns a translated about me part of user whose token is given by using an external api.
     
     """
+    resp = Response()
     try:
         #find user with respect to token
         regUser = RegisteredUser.objects.get(token = token)
 
         #general response
-        resp = Response()
         resp["content-type"] = "application/json"
 
         #url for request
@@ -47,5 +47,5 @@ def translate(request, token):
             resp.status_code = 200
     except:
         resp.data = {"error": "Unauthorized access"}
-        resp.status_code = 403
+        resp.status_code = 404
     return resp

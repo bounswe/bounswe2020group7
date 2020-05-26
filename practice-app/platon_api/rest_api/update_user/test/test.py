@@ -30,7 +30,8 @@ class UpdateTest(TransactionTestCase):
 
     def test_isUpdated(self):
         token = hashlib.sha256("umut@gmail.com".encode("utf-8")).hexdigest()
-        resp = UpdateTest.client.post('/api/updateUser/',{"name":"Meltem", "surname": "Arslan","password1": "123456", "token":token,"field_of_study": "" ,"e_mail":"umut@gmail.com","about_me":"I am a just a huwoman","job_uuid":"0aa64c1575f51c91930095311b536477","forget_password_ans":"Meltem"})
+        data = {"name":"Meltem", "surname": "Arslan","password1": "123456", "token":token,"field_of_study": "" ,"e_mail":"umut@gmail.com","about_me":"I am a just a huwoman","job_name":"Engineer","forget_password_ans":"Meltem"}
+        resp = UpdateTest.client.post('/api/updateUser/',data)
 
         user = RegisteredUser.objects.get(token = token)
         newInfo = (user.name == "Meltem" and user.surname == "Arslan" and user.field_of_study == "Computer Engineering" and user.about_me == "I am a just a huwoman" and user.forget_password_ans == "Meltem" )

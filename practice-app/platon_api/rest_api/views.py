@@ -48,7 +48,8 @@ def delete_user(request):
 
 @api_view(["GET"])
 def search_in(request):
-    return Response(engine.search(request))
+    search_result,status = engine.search(request)
+    return Response(search_result,status=status)
 
 @api_view(["POST", "GET"])
 def register(request):

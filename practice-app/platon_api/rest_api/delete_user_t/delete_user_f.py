@@ -55,8 +55,8 @@ class DeleteUser:
             book = random.choice(list(books))
             #create the message
             mes = "Not interested in research anymore? Maybe a book can help you refresh yourself."
-            mes += "Here is a bestseller book recommendation by New York Times"
-            mes += book["title"] + " by " + book["author"] 
+            mes += " Here is a bestseller book recommendation by New York Times "
+            mes += book["title"] + " by " + book["author"] + " "
             if("description" in book):
                 mes += book["description"]
         except:

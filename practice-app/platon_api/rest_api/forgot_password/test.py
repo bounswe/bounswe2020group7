@@ -46,7 +46,7 @@ class TestForForgotPassword(TransactionTestCase):
         data = {"e_mail":"umutgmail.com",
                 "password":"123456", "password_again":"123456", "forget_password_ans":"Umut"}
         response = self.client.post("/api/forgotpassword/", data)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
     
     # Testing for creation of user with empty input  
     def test_empty(self):
