@@ -99,7 +99,6 @@ def index(request):
 @permission_classes((permissions.AllowAny,))
 def register_f(request):
     resp =  register_api(request)
-    print("h", resp.status_code)
     register_form = RegisterForm()
     login_form = LoginForm()
     context =  {'register_form': register_form, 'login_form': login_form}
@@ -109,7 +108,14 @@ def register_f(request):
 
 def login_f(request):
     resp = login.login(request)
-    return redirect('../home/'+ resp.content.decode("UTF-8"))
+    if resp.status_code == 200:
+        return redirect('../home/'+ resp.content.decode("UTF-8"))
+    else:
+        register_form = RegisterForm()
+        login_form = LoginForm()
+        context =  {'register_form': register_form, 'login_form': login_form}
+        context["login_fail"] = True
+        return render(request, 'index.html', context)
 
 import copy, json
 
@@ -144,13 +150,15 @@ def logout_f(request, token):
     return redirect('index')
 
 def resetpassword_f(request):
-    forgot_password_message = "Your password has been changed successfully!"
-    forgot_password_form= ForgotForm()
-    return render(request, 'password_reset.html', {'forgot_password_message': forgot_password_message, 'forgot_password_form':forgot_password_form})
-
-def forgotpassword_f(request):
-    forgot_password(request)
-    return redirect('index')
+    if request.method == 'POST':
+        resp = forgot_password(request)
+        if resp.status_code == 201:
+            return redirect('index')
+        else:
+            forgot_password_form = ForgotForm()
+            return render(request, 'password_reset.html', {'reset_fail': resp.status_code, 'forgot_password_form':forgot_password_form})
+    forgot_password_form = ForgotForm()
+    return render(request, 'password_reset.html', {'forgot_password_form':forgot_password_form})
 
 def joke_f(request, token):
     request.GET = request.GET.copy()
@@ -158,3 +166,15 @@ def joke_f(request, token):
     resp = joke_api(request)
     return render(request, "joke.html", {'token': token, 'title': resp.data["title"], 'joke': resp.data["joke"]})
 
+def search_f(request):
+    token = request.GET["token"]
+    if "job" and "field_of_study" in request.GET:
+        request.GET = request.GET.copy()
+        if request.GET["job"] != "" and request.GET["field_of_study"]!="":
+            request.GET["filter"] = json.dumps({'job': request.GET["job"], 'field_of_study': request.GET["field_of_study"] })
+        elif request.GET["job"] != "":
+            request.GET["filter"] = json.dumps({'job': request.GET["job"]})
+        elif request.GET["field_of_study"] != "":
+            request.GET["filter"] = json.dumps({'field_of_study': request.GET["field_of_study"]})
+    resp = engine.search(request)
+    return render(request, "search_result.html", {'search_result': resp, 'token': token})

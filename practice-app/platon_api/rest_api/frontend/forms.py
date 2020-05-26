@@ -10,7 +10,7 @@ class RegisterForm(UserCreationForm):
     e_mail = forms.EmailField(label='E-Mail', max_length=250)
     field_of_study = forms.CharField(label='Field Of Study', max_length=50)
     forget_password_ans = forms.CharField(label='Best teacher at school ( secret question )', max_length=50)
-    about_me = forms.CharField(widget=forms.Textarea)
+    about_me = forms.CharField(widget=forms.Textarea, max_length=5000)
     job_name = forms.CharField(label='Job',max_length=32)
 
     class Meta:

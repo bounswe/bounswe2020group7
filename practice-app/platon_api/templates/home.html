@@ -19,7 +19,7 @@
 </div>
 
         <div class="flex-grow-1 d-flex">
-            <form class="form-inline flex-nowrap mx-0 mx-lg-auto rounded" method="GET" action="#">
+            <form class="form-inline flex-nowrap mx-0 mx-lg-auto rounded" method="GET" action="{% url 'search_f' %}">
                 <input class="form-control mr-sm-2" type="search" placeholder="Search" name="search_string" value="{{request.GET.search_string}}" aria-label="Search">
                 <input type="hidden" id="token_hidden" name="token" value={{token}}>
                 <button class="btn btn-outline-success" type="submit">Search</button>

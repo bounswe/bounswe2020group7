@@ -40,6 +40,6 @@ urlpatterns = [
     path('about/<str:token>/', views.about, name="about"),
     path('logout/<str:token>/', views.logout_f, name="logout_f"),
     path('resetpassword/', views.resetpassword_f, name="resetpassword_f"),
-    path('forgotpassword/', views.forgotpassword_f, name="forgotpassword_f"),
     path('joke/<str:token>/', views.joke_f, name="joke_f"),
+    path('search/', views.search_f, name="search_f"),
 ]

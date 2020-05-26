@@ -26,11 +26,24 @@
                 </nav>
                 <div class="d-flex justify-content-around" style="margin-top: 20px">
                     <div class="col-6">
+                        {% if login_fail %}
+                        <div class="alert alert-danger" role="alert">
+                            <h4 class="alert-heading">Login Failed</h4>
+                            <p>You haven't successfully logined. Please give valid input.</p>
+                        </div>
+                        {% endif %}
                         {% if resp %}
+                        {% if status_code is 201 %}
                         <div class="alert alert-success" role="alert">
                             <h4 class="alert-heading">Well done! Registered Completed</h4>
                             <p>You have successfully registered. Please login to continue.</p>
                         </div>
+                        {% else %}
+                        <div class="alert alert-danger" role="alert">
+                            <h4 class="alert-heading">Registered Failed</h4>
+                            <p>You haven't successfully registered. Please give valid input.</p>
+                        </div>
+                        {% endif %}
                         {% endif %}
                         {% include "login.html" %}
                     </div>
