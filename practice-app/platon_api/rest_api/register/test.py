@@ -64,3 +64,8 @@ class TestRegisterApi(APITestCase):
                 "forget_password_ans":"testingisgood", "job_name":"tester", "field_of_study":"test"}
         response = self.client.post("/api/register/", data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+       
+       # testing for get request
+    def test_getRequest(self):
+        response = self.client.get("/api/register/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
