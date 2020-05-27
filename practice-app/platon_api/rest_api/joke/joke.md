@@ -4,8 +4,8 @@ NAME
     rest_api.joke.joke - Created on MAY 22, 2020
 
 DESCRIPTION
+    
     This script controls the joke api of PLATON_API, using django&mysql backend.
-
     Endpoint description:
         http://localhost:8000/api/joke/
 
@@ -20,7 +20,8 @@ DESCRIPTION
 
 
 FUNCTIONS
-    verify_token(token=None)
+   
+   verify_token(token=None)
            where 'token': string, 64 characther string that can be token
 
            returns True if token exists in the DB
@@ -44,6 +45,7 @@ FUNCTIONS
 
 
 DATA
+    
     USER_TABLENAME = 'rest_api_registereduser'
     connection = <django.db.DefaultConnectionProxy object>
 
