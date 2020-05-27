@@ -8,7 +8,7 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="rest_api.html"><font color="#ffffff">rest_api</font></a>.<a href="rest_api.news.html"><font color="#ffffff">news</font></a>.news</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cusers%5Cahmet%5Cdesktop%5C352api_%5Cgithub%5Cplaton_api%5Crest_api%5Cnews%5Cnews.py">c:\users\ahmet\desktop\352api_\github\platon_api\rest_api\news\news.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cusers%5Cahmet%5Cdesktop%5Cfe%5Cpractice-app%5Cplaton_api%5Crest_api%5Cnews%5Cnews.py">c:\users\ahmet\desktop\fe\practice-app\platon_api\rest_api\news\news.py</a></font></td></tr></table>
     <p><tt>Created&nbsp;on&nbsp;MAY&nbsp;15,&nbsp;2020<br>
 Controls&nbsp;recommended&nbsp;news&nbsp;api&nbsp;of&nbsp;PLATON_API,&nbsp;using&nbsp;django&amp;mysql&nbsp;backend.<br>
 Endpoint&nbsp;description:<br>
@@ -41,6 +41,11 @@ Endpoint&nbsp;description:<br>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><dl><dt><a name="-news_api"><strong>news_api</strong></a>(request, token)</dt><dd><tt>returns&nbsp;featured&nbsp;news&nbsp;article&nbsp;for&nbsp;the&nbsp;user's&nbsp;field&nbsp;of&nbsp;study</tt></dd></dl>
+ <dl><dt><a name="-verify_token"><strong>verify_token</strong></a>(token=None)</dt><dd><tt>where&nbsp;'token':&nbsp;string,&nbsp;64&nbsp;characther&nbsp;string&nbsp;that&nbsp;can&nbsp;be&nbsp;token<br>
+&nbsp;<br>
+returns&nbsp;True&nbsp;if&nbsp;token&nbsp;exists&nbsp;in&nbsp;the&nbsp;DB<br>
+&nbsp;<br>
+This&nbsp;function&nbsp;verifies&nbsp;the&nbsp;token&nbsp;if&nbsp;there&nbsp;exits.</tt></dd></dl>
 </td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#55aa55">
