@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  <h2 style="margin-top: 20px;">Search Results</h2>
+{% if search_result %}
+    <form class="form-inline flex-nowrap mx-0 mx-lg-auto rounded" method="GET" action="{% url 'search_f' %}">
+        <input  type="hidden" placeholder="Search" name="search_string" value="{{request.GET.search_string}}" aria-label="Search">
+        <input type="hidden" id="token_hidden" name="token" value={{request.GET.token}}>
+        <label for="job">Job: </label>
+        <select style="margin-left: 5px;"id="job" name="job">
+            <option id="all-j" value="">All</option>
+            {% regroup search_result|dictsort:'job' by job as job_list %}
+            {% for job in job_list %}
+                <option id="{{job.0}}" value="{{job.0}}">{{job.0}}</option>
+            {% endfor %}
+        </select>
+
+        <label style="margin-left: 10px;"for="field_of_study">Field of Study: </label>
+        <select style="margin-left: 5px;" id="field_of_study" name="field_of_study">
+            <option id="all-f" value="">All</option>
+            {% regroup search_result|dictsort:'field_of_study' by field_of_study as field_of_study_list %}
+            {% for field_of_study in field_of_study_list %}
+                <option id="{{field_of_study.0}}" value="{{field_of_study.0}}">{{field_of_study.0}}</option>
+            {% endfor %}
+        </select>
+        <button style="margin-left: 5px;" class="btn btn-outline-success" type="submit">Filter</button>
+    </form>
+    <form class="form-inline flex-nowrap mx-0 mx-lg-auto rounded" method="GET" action="{% url 'search_f' %}" >
+        <input  type="hidden" name="search_string" value="{{request.GET.search_string}}">
+        <input type="hidden"  name="token" value={{request.GET.token}}>
+        <input  type="hidden" name="job" value="{{request.GET.job}}">
+        <input type="hidden"  name="field_of_study" value={{request.GET.field_of_study}}>
+        <label for="sort">Sort: </label>
+        <select style="margin-left: 5px;" id="sorting_criteria" name="sorting_criteria">
+          <option value="name_increasing">Name A-Z</option>
+          <option value="name_decreasing">Name Z-A</option>
+          <option value="surname_increasing">Surname A-Z</option>
+          <option value="surname_decreasing">Surname Z-A</option>
+        </select>
+        <button style="margin-left: 5px;" class="btn btn-outline-success" type="submit">Sort</button>
+    </form>
+<div>
+    <ul>
+    {% for result in search_result %}
+        <li style="text-transform: uppercase; margin-top: 20px;" >
+            <b>Name:</b> {{ result.name}}
+            <br>
+            <b>Surname:</b> {{ result.surname}}
+            <br>
+            <b>Job:</b> {{ result.job}}
+            <br>
+            <b>Field Of Study:</b> {{result.field_of_study}}
+            <br>
+            <b>About: </b> {{result.about_me}}
+        </li>
+    {% endfor%}
+    </ul>
+</div>
+{% else %}
+<h3>No Search Result Found</h3>
+{% endif %}
+{% endblock %}

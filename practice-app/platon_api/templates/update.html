@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags  %}
+
+
+
+{% block content %}
+
+<h2 style="margin-top: 20px;">Update</h2>
+{% if updated %}
+{% if updated is 201 %}
+<div class="alert alert-success" role="alert">
+  <h4 class="alert-heading">Well done! Update Completed</h4>
+  <p>You have successfully updated.</p>
+</div>
+{% else %}
+<div class="alert alert-danger" role="alert">
+  <h4 class="alert-heading">Update Failed</h4>
+  <p>You haven't successfully updated. Please try again</p>
+</div>
+{% endif %}
+{% endif %}
+<form id="updateForm" method="POST" class="form-group" validate action="{% url 'update_f' token %}">
+  {{ update_form | crispy }}
+  <input class="btn btn-primary" name="registerButton" type="submit" value="Update" />
+</form>
+
+
+{% endblock %}

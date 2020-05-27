@@ -1,0 +1,10 @@
+{
+    "AWSEBDockerrunVersion": "1",
+    
+    "Image": {
+        "Name": "darktheory/platonapi"
+    },
+    "Ports": [{
+        "ContainerPort": "8000"
+    }]
+}

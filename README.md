@@ -1,6 +1,8 @@
 # BOUNSWE 2020 GROUP 7
 
-This project repository was prepared by the 7th group for CMPE 352 course. 
+This project repository was prepared by the 7th group for CMPE 352 course.
+
+To see our first application click [here](http://platonapi-env.eba-uiumcp2a.eu-central-1.elasticbeanstalk.com/).
 
 You can find more information on the [Wiki page](https://github.com/bounswe/bounswe2020group7/wiki) of our repository.
 
