@@ -20,7 +20,6 @@ DESCRIPTION
 
 
 FUNCTIONS
-   
    verify_token(token=None)
            where 'token': string, 64 characther string that can be token
 
