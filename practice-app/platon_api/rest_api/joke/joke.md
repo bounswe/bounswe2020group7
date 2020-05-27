@@ -50,4 +50,5 @@ DATA
     connection = <django.db.DefaultConnectionProxy object>
 
 FILE
+    
     C:\Users\asus\Documents\bounswe2020group7\practice-app\platon_api\rest_api\joke\joke.py
