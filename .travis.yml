@@ -3,7 +3,7 @@ node_js:
 - 12.10.0
 cache: npm
 
-before_install: cd project
+before_install: cd frontend
 
 install:
   - npm install
