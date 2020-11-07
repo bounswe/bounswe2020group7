@@ -10,3 +10,9 @@ before_install: cd frontend
 script:
   - npm install
   - npm run build
+  
+deploy:
+  provider: heroku
+  app: platon-frontend
+  api_key:
+    secure: "e95280c1-4fb9-4571-89c7-552876c14c74"
