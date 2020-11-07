@@ -5,8 +5,8 @@ cache: npm
 
 before_install: cd frontend
 
-install:
-  - npm install
+
 
 script:
+  - npm install
   - npm run build

@@ -1,5 +1,4 @@
 import logo_icon from './logo/platon_logo_icon_orijinal.svg';
-import logo from './logo/platon_logo_orijinal.svg';
 
 import './App.css';
 
