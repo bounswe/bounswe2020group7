@@ -1,11 +1,10 @@
 language: node_js
-
 node_js:
-  - "12"
-
+- 12.10.0
+cache: npm
 
 install:
   - npm install
 
 script:
-  - npm run build || true
+  - npm run build
