@@ -15,4 +15,4 @@ deploy:
   provider: heroku
   app: platon-frontend
   api_key:
-    secure: "e95280c1-4fb9-4571-89c7-552876c14c74"
+    secure: 1e6a47d6-6d55-4a98-b89e-7956ebc29f2c
