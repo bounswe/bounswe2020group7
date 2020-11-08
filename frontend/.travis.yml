@@ -1,0 +1,13 @@
+language: node_js
+node_js:
+- 12.10.0
+cache: npm
+before_install: cd frontend
+script:
+- npm install
+- npm run build
+deploy:
+  provider: heroku
+  app: platon-frontend
+  api_key:
+    secure: r2FMDbXVSXikIHEBs8hj0MttadNBNnKk/62b0e1wu+gaaTEghz7noRCw4Lwtgntnx+J3KYRiHoF9Y6JE1DUN7LSVQmZxXSaQAwvaX2EKU9opQEvTHC68ZzyDH9RzSeYhOumYvdRug0krQpy26O0qa50l6MRmA3a24Y7ne0z2fd9xUhqswr0/wbgFXtb3qgYUTlkWZXMeeN3K+tb70EDhEwTAmsEnIy7pMl9vU6Y08e3uh0mr64RgJFGLgNxY2Uz4/m1pElcUhlPvjhBiN+mUAGR38VZkDNZBg17wH7lCeIF/xdNWM9HfY6VlF3kZ7QfepdH83cofLnFQlW0/FkFTkUIwL5KpWRZ6N5bqkyqJKkJs2cMIlgBiap02ws4sxd96GyI9fVu/ALj57M817JGplmkYInJA82DooBZyEqGSXshbxFhqsTUu/MPktzuUiE7bmBjlz1uQb2nQDzX96wm8htCtSp+L6BU5ytm548EGox/rlVBgNgz4i7dR/8t85iYAJe96Jwz0xzKRWHhV6UQY6Vw7i8zmp24/l4I+sL2T0gUT5F/5v3hbk0vC5Ji69SE6uhr1hsOYbBew0W2k/QEQV9iLHi9Jf7NvPMhCAPKsQA1uajydZrqumXe2rnl+I3PGmM2kTuiuLZ6HJM9NPwjjlx9GT8zvVsLbNEv0tFxfNXI=
