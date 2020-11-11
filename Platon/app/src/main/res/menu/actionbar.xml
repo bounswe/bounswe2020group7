@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/register_btn"
+        android:title="@string/register_str"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/login_btn"
+        android:title="@string/login_str"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/app_bar_search"
+        android:icon="@drawable/ic_search_black_24dp"
+        android:title="@string/search_str"
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="ifRoom" />
+</menu>

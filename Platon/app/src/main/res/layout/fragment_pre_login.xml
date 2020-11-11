@@ -4,38 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
+    android:background="@color/primary_light"
     tools:context=".page.activity.LoginActivity">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/top_menu">
-
-        <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@mipmap/ic_launcher">
-
-        </ImageView>
-
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            app:menu="@menu/fragment_pre_login_top">
-
-        </com.google.android.material.bottomnavigation.BottomNavigationView>
-    </LinearLayout>
-
-
-
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/top_menu">
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -45,39 +23,39 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="75dp"
                 android:layout_marginStart="20dp"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginLeft="10dp">
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="75dp"
+                android:orientation="vertical"
+                app:layout_constraintTop_toTopOf="parent">
 
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="35sp"
-                    android:textColor="#1e2843"
-                    android:lineSpacingExtra="6sp"
                     android:fontFamily="@font/dm_sans_regular"
+                    android:lineSpacingExtra="6sp"
                     android:padding="3dp"
-                    android:text="Hello!"/>
+                    android:text="Hello!"
+                    android:textColor="#1e2843"
+                    android:textSize="35sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
-                    android:textSize="18sp"
-                    android:lineSpacingExtra="6sp"
                     android:fontFamily="@font/dm_sans_bold"
+                    android:lineSpacingExtra="6sp"
+                    android:padding="3dp"
+                    android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
                     android:textColor="#1e2843"
-                    android:padding="3dp"/>
+                    android:textSize="18sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/pre_login_trending_projects_recycler_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    app:layout_constraintStart_toStartOf="parent"/>
+                    app:layout_constraintStart_toStartOf="parent" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/pre_login_upcoming_events_recycler_view"
@@ -85,8 +63,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/pre_login_trending_projects_recycler_view"/>
-
+                    app:layout_constraintTop_toBottomOf="@id/pre_login_trending_projects_recycler_view" />
 
 
             </LinearLayout>
