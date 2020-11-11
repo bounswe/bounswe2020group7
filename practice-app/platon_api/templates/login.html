@@ -1,8 +1,0 @@
-
-{% load crispy_forms_tags %}
-<h2>Login</h2>
-<form class="form-group" method="POST" novalidate action="{% url 'login_f' %}">
-	{{login_form|crispy}}
-	<button type="submit" class="btn btn-success">Login</button>
-	<a href="{% url 'resetpassword_f' %}" style="margin-left: 10px;">Forgot your password?</a>
-</form>
