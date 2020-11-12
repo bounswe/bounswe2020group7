@@ -6,7 +6,7 @@ import os
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))  
 
 # Define the database - we are working with
-DATABASE_URL = "admin:platon1234@platondbms.cchkgthejclc.eu-central-1.rds.amazonaws.com:3306"
+DATABASE_URL = "write-db-address-here"
 SQLALCHEMY_DATABASE_URI = 'mysql://' + DATABASE_URL + '/platon_db'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
