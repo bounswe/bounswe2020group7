@@ -14,11 +14,3 @@ class User(db.Model):
     profile_photo = db.Column(db.String(50))
     google_scholar_name = db.Column(db.String(50))
     researchgate_name = db.Column(db.String(50))
-
-class ResearchInformation(db.Model):
-    __tablename__ = 'researchinformation'
-    id = db.Column(db.Integer,primary_key=True,autoincrement=True)
-    user_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"))
-    research_title = db.Column(db.String(250),nullable=False)
-    description = db.Column(db.String(500))
-    type = db.Column(db.SmallInteger,nullable=False)
