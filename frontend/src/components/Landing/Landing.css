@@ -1,0 +1,6 @@
+.Landing {
+    display: flex;
+    justify-content: center;
+    background-color: #313638;
+    height: 100vh;
+}
