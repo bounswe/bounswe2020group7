@@ -14,15 +14,32 @@
         <!-- Customize your theme here. -->
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
-
         <item name="actionBarStyle">@style/CustomActionBar</item>
+        <item name="actionMenuTextAppearance">@style/CustomMenuText</item>
+        <item name="actionMenuTextColor">@color/primary_light</item>
     </style>
 
     <style name="CustomActionBar" parent="Widget.AppCompat.Light.ActionBar.Solid.Inverse">
         <item name="background">@color/primary_dark</item>
-        <item name="displayOptions">useLogo|showHome|showTitle</item>
-        <item name="logo">@drawable/ic_o_logo</item>
+        <item name="displayOptions">showHome|showTitle</item>
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <item name="titleTextStyle">@style/CustomTitleText</item>
+        <item name="colorControlNormal">@color/primary_light</item>
+
     </style>
 
+    <style name="DrawerArrowStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@color/primary_light</item>
+    </style>
+
+    <style name="CustomTitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/primary_light</item>
+        <item name="fontFamily">@font/comfortaa</item>
+    </style>
+
+    <style name="CustomMenuText" parent="TextAppearance.AppCompat.Widget.ActionBar.Subtitle">
+        <item name="fontFamily">@font/comfortaa</item>
+    </style>
 
 </resources>
