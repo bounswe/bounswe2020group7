@@ -6,7 +6,7 @@ import os
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))  
 
 # Define the database - we are working with
-DATABASE_URL = "write-db-address-here"
+DATABASE_URL = "write-db-url-here"
 SQLALCHEMY_DATABASE_URI = 'mysql://' + DATABASE_URL + '/platon_db'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 

@@ -1,6 +1,7 @@
 from flask_testing import TestCase
 from app import create_app, db
 import unittest
+import datetime
 
 class TestConfig:
 
@@ -24,12 +25,18 @@ class TestConfig:
     # operations using the other.
     THREADS_PER_PAGE = 2
 
-    # Use a secure, unique and absolutely secret key for
-    # signing the data. 
-    CSRF_SESSION_KEY = "secret"
-
     # Secret key for signing cookies
     SECRET_KEY = "secret"
+
+    # Use a secure, unique and absolutely secret key for
+    # signing the data. 
+    JWT_SESSION_KEY = "35c55c78ea5f90c0087020ab49ba78f96eedbec3a04640234719b6dad8849769"
+    
+    JWT_ALGORITHM = 'HS256'
+    
+    SESSION_DURATION = datetime.timedelta(minutes=10)
+
+
 
 class BaseTest(TestCase):
 
