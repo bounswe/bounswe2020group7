@@ -11,7 +11,6 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import colors from '../../utils/colors';
-import Affinities from './Affinities';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
 const StyledTextField = withStyles({
