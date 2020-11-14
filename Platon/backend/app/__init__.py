@@ -5,8 +5,11 @@ from flask_restful import Api
  
 db = SQLAlchemy()
 migrate = Migrate()
+api = Api()
 
 def create_app(config_class='config'):
+    global api
+
     app = Flask(__name__)
     app.config.from_object(config_class)
     api = Api(app,prefix = '/api')

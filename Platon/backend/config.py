@@ -1,3 +1,4 @@
+import datetime
 # Statement for enabling the development environment
 DEBUG = True
 
@@ -16,9 +17,11 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 # operations using the other.
 THREADS_PER_PAGE = 2
 
-# Use a secure, unique and absolutely secret key for
-# signing the data. 
-CSRF_SESSION_KEY = "secret"
+JWT_SESSION_KEY = "secret"
+    
+WT_ALGORITHM = 'HS256'
+    
+SESSION_DURATION = datetime.timedelta(minutes=10)
 
 # Secret key for signing cookies
 SECRET_KEY = "secret"

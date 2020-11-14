@@ -1,9 +1,10 @@
 from tests.base_test import BaseTest
-from tests.base_test.TestConfig import JWT_SESSION_KEY,JWT_ALGORITHM,SESSION_DURATION
+from tests.base_test import TestConfig
 from app.auth_system.models import User
 from app import db
 import jwt
 import datetime
+import json
 
 class LoginTest(BaseTest):
     """
@@ -21,26 +22,27 @@ class LoginTest(BaseTest):
         db.session.commit()
 
     def test_valid_login(self):
-        expected_response = jwt.encode({'id':1,'expire_time':datetime.datetime.now()+SESSION_DURATION},JWT_SESSION_KEY,JWT_ALGORITHM)
-        actual_response = ""
-    
-        actual_info = jwt.decode(actual_response['token'], JWT_SESSION_KEY, algorithms=[JWT_ALGORITHM])
-        expected_info = jwt.decode(expected_response, JWT_SESSION_KEY, algorithms=[JWT_ALGORITHM])
-    
-        self.assertEqual(actual_response.code,200,'Incorrect HTTP Response Code')
+        data = {'e_mail' : 'umut@deneme.com', 'password' : 'umut1234'}
+        actual_response = self.client.post('/api/login',data = data)
+
+        actual_info = jwt.decode(json.loads(actual_response.data)['token'], TestConfig.JWT_SESSION_KEY, algorithms=[TestConfig.JWT_ALGORITHM])
+        expected_info = {'id':1,'expire_time':(datetime.datetime.now()+TestConfig.SESSION_DURATION).isoformat()}
+
+        self.assertEqual(actual_response.status_code,200,'Incorrect HTTP Response Code')
         self.assertEqual(actual_info['id'],expected_info['id'],'Incorrect ID')
 
     def test_invalid_login(self):
         expected_response = {'error' : 'Wrong e-mail or password'}
-        actual_response = ""
-        
-        self.assertEqual(actual_response.code,401,'Incorrect HTTP Response Code')
-        self.assertEqual(actual_response['error'],expected_response['error'],'Incorrect Error Message')
+        data = {'e_mail' : 'umut@deneme.com', 'password' : 'umut14'}
+        actual_response = self.client.post('/api/login',data = data)
+
+        self.assertEqual(actual_response.status_code,401,'Incorrect HTTP Response Code')
+        self.assertEqual(json.loads(actual_response.data)['error'],expected_response['error'],'Incorrect Error Message')
     
     def test_not_activated_user(self):
         expected_response = {'error' : 'Please activate your account'}
-        actual_response = ""
-        
-        self.assertEqual(actual_response.code,401,'Incorrect HTTP Response Code')
-        self.assertEqual(actual_response['error'],expected_response['error'],'Incorrect Error Message')
-        
+        data = {'e_mail' : 'can@deneme.com', 'password' : 'can1234'}
+        actual_response = self.client.post('/api/login',data = data)
+
+        self.assertEqual(actual_response.status_code,401,'Incorrect HTTP Response Code')
+        self.assertEqual(json.loads(actual_response.data)['error'],expected_response['error'],'Incorrect Error Message')

@@ -41,7 +41,6 @@ class TestConfig:
 class BaseTest(TestCase):
 
     def create_app(self):
-
         # pass in test configuration
         return create_app(TestConfig)
 
