@@ -1,10 +1,12 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_restful import Api
 
 app = Flask(__name__)
 
 app.config.from_object('config')
+api = Api(app,prefix="/api")
 
 db = SQLAlchemy(app)
 migrate = Migrate(app,db)
@@ -16,14 +18,14 @@ def not_found(error):
     return "404 Error", 404
 
 # Import a module / component using its blueprint handler variable (mod_auth)
-from app.auth_system.views import mod_auth as auth_module
-from app.follow_system.views import mod_follow as follow_module
-from app.profile_management.views import mod_profile as profile_module
+from app.auth_system.views import register_resources as auth_module
+from app.follow_system.views import register_resources as follow_module
+from app.profile_management.views import register_resources as profile_module
 
 # Register blueprint(s)
-app.register_blueprint(auth_module)
-app.register_blueprint(follow_module)
-app.register_blueprint(profile_module)
+auth_module()
+follow_module()
+profile_module()
 
 # This will create the database file using SQLAlchemy
 db.create_all()

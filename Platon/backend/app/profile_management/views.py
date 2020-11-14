@@ -1,8 +1,11 @@
-from flask import Blueprint
-from app import db
+from flask import Response
+from app import api
+from flask_restful import Resource
 
-mod_profile = Blueprint('profile_management', __name__, url_prefix='/profile')
+class ProfileAPI(Resource):
+    def get(self):
+        return Response("Platon API is under development!!",200)
 
-@mod_profile.route('/', methods=['GET'])
-def index():
-    return "PlatonAPI Profile Management System is in the development process!!!"
+
+def register_resources():
+    api.add_resource(ProfileAPI,"/profile")

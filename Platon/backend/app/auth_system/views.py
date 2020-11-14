@@ -1,9 +1,12 @@
-from flask import Blueprint
-from app import db
+from flask import Response
+from app import api
+from flask_restful import Resource
 
-mod_auth = Blueprint('auth', __name__, url_prefix='/auth')
+class LoginAPI(Resource):
+    def get(self):
+        return Response("Platon API is under development!!",200)
 
-@mod_auth.route('/', methods=['GET'])
-def index():
-    return "PlatonAPI Auth is in the development process!!!"
+
+def register_resources():
+    api.add_resource(LoginAPI,"/login")
  

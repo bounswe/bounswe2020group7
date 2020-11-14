@@ -1,8 +1,11 @@
-from flask import Blueprint
-from app import db
+from flask import Response
+from app import api
+from flask_restful import Resource
 
-mod_follow = Blueprint('follow_system', __name__, url_prefix='/follow_system')
+class FollowAPI(Resource):
+    def get(self):
+        return Response("Platon API is under development!!",200)
 
-@mod_follow.route('/', methods=['GET'])
-def index():
-    return "PlatonAPI Follow System is in the development process!!!"
+
+def register_resources():
+    api.add_resource(FollowAPI,"/follow")
