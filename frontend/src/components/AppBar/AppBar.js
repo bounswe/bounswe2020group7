@@ -4,7 +4,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import InputBase from '@material-ui/core/InputBase';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
-import Logo from '../../Logo/Logo';
+import Logo from '../Logo/Logo';
 import colors from '../../utils/colors';
 const useStyles = makeStyles((theme) => ({
   root: {

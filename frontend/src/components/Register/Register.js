@@ -115,8 +115,8 @@ export default function Register() {
   const [value, setValue] = React.useState([]);
   const handleKeyDown = event => {
     switch (event.key) {
-      case ",":
-      case " ": {
+
+      case ",": {
         event.preventDefault();
         event.stopPropagation();
         if (event.target.value.length > 0) {

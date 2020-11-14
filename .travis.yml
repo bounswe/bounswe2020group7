@@ -2,6 +2,8 @@ language: node_js
 node_js:
 - 12.10.0
 cache: npm
+env: 
+- NODE_PATH = src
 before_install: cd frontend
 script:
 - npm install
