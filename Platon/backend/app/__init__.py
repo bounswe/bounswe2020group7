@@ -5,13 +5,11 @@ from flask_restful import Api
  
 db = SQLAlchemy()
 migrate = Migrate()
-api = Api()
 
 def create_app(config_class='config'):
     app = Flask(__name__)
     app.config.from_object(config_class)
-    api.init_app(app)
-    api.prefix = '/api'
+    api = Api(app,prefix = '/api')
     db.init_app(app)
     migrate.init_app(app,db)
     
@@ -27,17 +25,12 @@ def create_app(config_class='config'):
     from app.profile_management.views import register_resources as profile_module
 
     # Register blueprint(s)
-    auth_module()
-    follow_module()
-    profile_module()
+    auth_module(api)
+    follow_module(api)
+    profile_module(api)
 
     with app.app_context():
         # This will create the database file using SQLAlchemy
         db.create_all()
     
     return app
-
-
-
-
-

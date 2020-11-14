@@ -1,5 +1,4 @@
 from flask import Response
-from app import api
 from flask_restful import Resource
 
 class LoginAPI(Resource):
@@ -7,6 +6,6 @@ class LoginAPI(Resource):
         return Response("Platon API is under development!!",200)
 
 
-def register_resources():
+def register_resources(api):
     api.add_resource(LoginAPI,"/login")
  
