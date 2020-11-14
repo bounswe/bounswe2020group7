@@ -1,9 +1,69 @@
 import React from "react";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import {makeStyles, withStyles } from '@material-ui/core/styles';
+import colors from '../../utils/colors';
 
-export default function Tags() {
-  const [value, setValue] = React.useState([top100Films[13]]);
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    marginTop: theme.spacing(8),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  inputColor:{
+    color: colors.secondary,
+  },
+  typography:{
+    color: colors.secondary,
+  },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: colors.tertiary,
+    color: colors.secondary,
+  },
+
+  form: {
+    width: '100%', // Fix IE 11 issue.
+    marginTop: theme.spacing(3),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+}));
+const StyledTextField = withStyles({
+  root: {
+
+    '& .MuiInputBase-input': {
+      color: colors.secondary,
+    },
+    "& .Mui-required": {
+      color: colors.primaryLight,
+    },
+    '& label.Mui-focused': {
+      color: colors.tertiary,
+    },
+    '& .MuiInput-underline:after': {
+      borderBottomColor: colors.tertiary,
+    },
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: colors.secondaryLight,
+      },
+      '&:hover fieldset': {
+        borderColor: colors.secondaryDark,
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: colors.tertiary,
+      },
+    },
+  },
+})(TextField);
+
+
+export default function Affinities(props) {
+  const classes = useStyles();
+  const [value, setValue] = React.useState([]);
   const handleKeyDown = event => {
     switch (event.key) {
       case ",":
@@ -19,7 +79,7 @@ export default function Tags() {
     }
   };
   return (
-    <div style={{ width: 500 }}>
+    <div>
       <Autocomplete
         multiple
         freeSolo
@@ -32,11 +92,14 @@ export default function Tags() {
         renderInput={params => {
           params.inputProps.onKeyDown = handleKeyDown;
           return (
-            <TextField
+            <StyledTextField
               {...params}
               variant="outlined"
-              label="filterSelectedOptions"
-              placeholder="Favorites"
+              required
+              name="affinities"
+              label={props.label}
+              placeholder={props.label}
+              id="affinities"
               margin="normal"
               fullWidth
             />
