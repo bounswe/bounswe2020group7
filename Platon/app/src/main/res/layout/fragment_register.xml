@@ -4,80 +4,129 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/home_background"
+    android:background="@drawable/register_back"
     tools:context=".page.activity.LoginActivity">
 
-
-    <LinearLayout
-        android:layout_width="match_parent"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:layout_gravity="center"
+        android:gravity="center">
 
-        <EditText
-            android:id="@+id/editTextTextPersonName"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:autofillHints=""
-            android:ems="10"
-            android:hint="@string/prompt_name"
-            android:inputType="textPersonName" />
 
-        <EditText
-            android:id="@+id/editTextTextEmailAddress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/prompt_email"
-            android:inputType="textEmailAddress"
-            android:autofillHints="" />
+            android:background="@drawable/radius"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="@dimen/inner_frame_layout_padding_2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <EditText
-            android:id="@+id/editTextPhone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@android:string/emptyPhoneNumber"
-            android:inputType="phone"
-            android:autofillHints="" />
+            <EditText
+                android:id="@+id/fullname_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:autofillHints=""
+                android:ems="10"
+                android:hint="@string/prompt_name"
+                android:inputType="textPersonName|textAutoComplete"
+                android:textColor="@color/primary_dark"
+                android:textColorHighlight="@color/primary_dark"
+                android:textColorHint="@color/primary_dark_lighter"
+                android:textColorLink="@color/primary_dark_lighter" />
 
-        <EditText
-            android:id="@+id/editTextTextPassword"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/prompt_password"
-            android:inputType="textPassword"
-            android:autofillHints="" />
+            <EditText
+                android:id="@+id/username_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:autofillHints=""
+                android:ems="10"
+                android:hint="@string/username_str"
+                android:inputType="textPersonName"
+                android:textColor="@color/primary_dark"
+                android:textColorHighlight="@color/primary_dark"
+                android:textColorHint="@color/primary_dark_lighter"
+                android:textColorLink="@color/primary_dark_lighter"/>
 
-        <EditText
-            android:id="@+id/editTextTextPassword2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/prompt_password"
-            android:inputType="textPassword"
-            android:autofillHints="" />
+            <EditText
+                android:id="@+id/mail_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:autofillHints=""
+                android:ems="10"
+                android:hint="@string/prompt_email"
+                android:inputType="textEmailAddress"
+                android:textColor="@color/primary_dark"
+                android:textColorHighlight="@color/primary_dark"
+                android:textColorHint="@color/primary_dark_lighter"
+                android:textColorLink="@color/primary_dark_lighter" />
 
-        <CheckBox
-            android:id="@+id/terms_chk"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/acceptterms_str" />
+            <EditText
+                android:id="@+id/phone_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:autofillHints=""
+                android:ems="10"
+                android:hint="@android:string/emptyPhoneNumber"
+                android:inputType="phone"
+                android:textColor="@color/primary_dark"
+                android:textColorHighlight="@color/primary_dark"
+                android:textColorHint="@color/primary_dark_lighter"
+                android:textColorLink="@color/primary_dark_lighter" />
 
-        <Button
-            android:id="@+id/register_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/register_str" />
+            <EditText
+                android:id="@+id/pw1_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:autofillHints=""
+                android:ems="10"
+                android:hint="@string/prompt_password"
+                android:inputType="textPassword"
+                android:textColor="@color/primary_dark"
+                android:textColorHighlight="@color/primary_dark"
+                android:textColorHint="@color/primary_dark_lighter"
+                android:textColorLink="@color/primary_dark_lighter" />
 
-        <TextView
-            android:id="@+id/alread_have_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:text="@string/already_have_str"
-            android:focusable="true" />
-    </LinearLayout>
+            <EditText
+                android:id="@+id/pw2_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:autofillHints=""
+                android:ems="10"
+                android:hint="@string/prompt_password"
+                android:inputType="textPassword"
+                android:textColor="@color/primary_dark"
+                android:textColorHighlight="@color/primary_dark"
+                android:textColorHint="@color/primary_dark_lighter"
+                android:textColorLink="@color/primary_dark_lighter" />
+
+            <CheckBox
+                android:id="@+id/terms_chk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/acceptterms_str"
+                android:textColor="@color/primary_dark" />
+
+            <Button
+                android:id="@+id/register_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/register_str" />
+
+            <TextView
+                android:id="@+id/alread_have_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="@string/already_have_str"
+                android:textColor="@color/primary_dark" />
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
 

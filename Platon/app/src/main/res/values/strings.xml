@@ -35,4 +35,5 @@
     <string name="already_have_str">Already have an account?</string>
     <string name="prompt_name">Name</string>
     <string name="remember_me_str">Remember me</string>
+    <string name="username_str">Username</string>
 </resources>

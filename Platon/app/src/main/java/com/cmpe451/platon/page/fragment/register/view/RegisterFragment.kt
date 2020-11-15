@@ -8,20 +8,23 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.cmpe451.platon.R
 import com.cmpe451.platon.`interface`.FragmentChangeListener
+import com.cmpe451.platon.databinding.FragmentRegisterBinding
 import com.cmpe451.platon.page.activity.LoginActivity
 import com.cmpe451.platon.page.fragment.register.contract.RegisterContract
+import com.cmpe451.platon.page.fragment.register.model.RegisterRepository
+import com.cmpe451.platon.page.fragment.register.presenter.RegisterPresenter
 
 class RegisterFragment : Fragment(), RegisterContract.View  {
 
-    private var presenter: RegisterContract.Presenter? = null
+    private lateinit var presenter: RegisterContract.Presenter
     private lateinit var fragmentChangeListener: FragmentChangeListener
 
+    private lateinit var binding: FragmentRegisterBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        (activity as LoginActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
         setHasOptionsMenu(true)
+
     }
 
     override fun onCreateView(
@@ -29,16 +32,26 @@ class RegisterFragment : Fragment(), RegisterContract.View  {
             savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_register, container, false)
+        binding = FragmentRegisterBinding.inflate(inflater)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initViews(view)
+        //initViews(view)
+        initializePresenter()
         setFragmentChangeListener()
         setListeners()
-        initializePresenter()
+
+    }
+
+
+    private fun initializePresenter(){
+        val sharedPreferences = requireContext().getSharedPreferences("token_file", 0)
+        val repository = RegisterRepository(sharedPreferences)
+        //setPresenter(LoginPresenter(this, repository, sharedPreferences))
+        presenter = RegisterPresenter(this, repository, sharedPreferences, (activity as LoginActivity).navController)
     }
 
     private fun initViews(root: View) {
@@ -50,6 +63,22 @@ class RegisterFragment : Fragment(), RegisterContract.View  {
     }
 
     private fun setListeners() {
+        binding.registerBtn.setOnClickListener {
+            val username = binding.usernameTv.text.toString().trim()
+            val mail = binding.mailTv.text.toString().trim()
+            val pass1 = binding.pw1Tv.text.toString().trim()
+            val pass2 = binding.pw2Tv.text.toString().trim()
+            val phone = binding.phoneTv.text.toString().trim()
+            val fullName = binding.fullnameTv.text.toString().trim()
+            val terms = binding.termsChk.isChecked
+
+            presenter.onRegisterButtonClicked(fullName, username, mail, pass1, pass2, phone, terms)
+        }
+
+        binding.alreadHaveBtn.setOnClickListener {
+            presenter.onAlreadyHaveAccountClicked()
+        }
+
         //loginButton.setOnClickListener {
         //    showProgressBar()
         //    val username = username.text.toString().trim()
@@ -60,11 +89,7 @@ class RegisterFragment : Fragment(), RegisterContract.View  {
         //password.addTextChangedListener(textWatcher)
     }
 
-    private fun initializePresenter(){
-        val sharedPreferences = requireContext().getSharedPreferences("token_file", 0)
-        //val repository = LoginRepository(sharedPreferences)
-        //setPresenter(LoginPresenter(this, repository, sharedPreferences))
-    }
+
 
 
     override fun setPresenter(presenter: RegisterContract.Presenter) {
@@ -73,13 +98,7 @@ class RegisterFragment : Fragment(), RegisterContract.View  {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-        menu.findItem(R.id.login_menu_btn).isVisible = false
-        menu.findItem(R.id.register_menu_btn).isVisible = false
-    }
-
-
-    override fun onDestroy() {
-        super.onDestroy()
-        (activity as LoginActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        menu.findItem(R.id.registerFragment).isVisible = false
+        menu.findItem(R.id.loginFragment).isVisible = false
     }
 }

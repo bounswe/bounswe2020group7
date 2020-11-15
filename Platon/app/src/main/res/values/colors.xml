@@ -11,6 +11,8 @@
 
     <!-- Chosen application colors -->
     <color name="primary_dark">#313638</color>
+
+    <color name="primary_light_transparent">#88e0dfd5</color>
     <color name="primary_light">#e0dfd5</color>
     <color name="secondary_purple">#8f9dd3</color>
     <color name="secondary_green">#b0db06</color>

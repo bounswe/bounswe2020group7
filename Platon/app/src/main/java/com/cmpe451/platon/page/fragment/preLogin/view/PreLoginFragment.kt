@@ -6,7 +6,11 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat.invalidateOptionsMenu
 import androidx.fragment.app.Fragment
+import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
@@ -28,15 +32,10 @@ class PreLoginFragment : Fragment(), PreLoginContract.View, TrendingProjectsAdap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-
     }
 
 
-    override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_pre_login, container, false)
     }
@@ -49,6 +48,7 @@ class PreLoginFragment : Fragment(), PreLoginContract.View, TrendingProjectsAdap
         setListeners()
         initializePresenter()
     }
+
 
     private fun initViews(root: View) {
 
@@ -87,19 +87,11 @@ class PreLoginFragment : Fragment(), PreLoginContract.View, TrendingProjectsAdap
         TODO("Not yet implemented")
     }
 
-
-
     override fun onUpcomingButtonClicked(buttonName: String) {
         TODO("Not yet implemented")
     }
 
     override fun onTrendingProjectButtonClicked(buttonName: String) {
         TODO("Not yet implemented")
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        menu.findItem(R.id.login_menu_btn).isVisible = true
-        menu.findItem(R.id.register_menu_btn).isVisible = true
-        super.onPrepareOptionsMenu(menu)
     }
 }

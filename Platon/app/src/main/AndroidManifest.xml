@@ -10,9 +10,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Platon">
-        <activity android:name=".page.activity.LoginActivity"
-            android:theme="@style/Theme.Platon">
+        android:theme="@style/SplashTheme">
+        <activity android:name=".page.activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

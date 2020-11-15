@@ -13,8 +13,8 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="317" />
-                            <option name="y" value="-163" />
+                            <option name="x" value="189" />
+                            <option name="y" value="-187" />
                           </Point>
                         </option>
                       </LayoutPositions>
@@ -25,13 +25,18 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="21" />
-                            <option name="y" value="-26" />
+                            <option name="x" value="-202" />
+                            <option name="y" value="18" />
                           </Point>
                         </option>
                         <option name="myPositions">
                           <map>
                             <entry key="action_preLoginFragment_to_loginFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_preLoginFragment_to_registerFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -46,30 +51,9 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="312" />
-                            <option name="y" value="182" />
+                            <option name="x" value="138" />
+                            <option name="y" value="300" />
                           </Point>
-                        </option>
-                      </LayoutPositions>
-                    </value>
-                  </entry>
-                  <entry key="splashFragment">
-                    <value>
-                      <LayoutPositions>
-                        <option name="myPosition">
-                          <Point>
-                            <option name="x" value="-238" />
-                            <option name="y" value="-26" />
-                          </Point>
-                        </option>
-                        <option name="myPositions">
-                          <map>
-                            <entry key="action_splashFragment_to_preLoginFragment">
-                              <value>
-                                <LayoutPositions />
-                              </value>
-                            </entry>
-                          </map>
                         </option>
                       </LayoutPositions>
                     </value>
