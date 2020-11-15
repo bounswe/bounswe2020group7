@@ -1,6 +1,7 @@
 package com.cmpe451.platon.page.fragment.home.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -10,6 +11,7 @@ import com.cmpe451.platon.R
 import com.cmpe451.platon.`interface`.FragmentChangeListener
 import com.cmpe451.platon.databinding.FragmentHomeBinding
 import com.cmpe451.platon.databinding.FragmentLoginBinding
+import com.cmpe451.platon.page.activity.HomeActivity
 import com.cmpe451.platon.page.activity.LoginActivity
 import com.cmpe451.platon.page.fragment.home.contract.HomeContract
 import com.cmpe451.platon.page.fragment.home.model.HomeRepository
@@ -20,12 +22,12 @@ class HomeFragment : Fragment(), HomeContract.View  {
     private lateinit var presenter: HomeContract.Presenter
     private lateinit var fragmentChangeListener: FragmentChangeListener
 
-
     private lateinit var binding: FragmentHomeBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -36,16 +38,16 @@ class HomeFragment : Fragment(), HomeContract.View  {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initializePresenter()
         setFragmentChangeListener()
         setListeners()
+
     }
 
     private fun initializePresenter(){
         val sharedPreferences = requireContext().getSharedPreferences("token_file", 0)
         val repository = HomeRepository(sharedPreferences)
-        presenter = HomePresenter(this, repository, sharedPreferences, (activity as LoginActivity).navController )
+        presenter = HomePresenter(this, repository, sharedPreferences, (activity as HomeActivity).navController )
     }
 
     private fun initViews(root: View) {
@@ -61,8 +63,6 @@ class HomeFragment : Fragment(), HomeContract.View  {
 
         //password.addTextChangedListener(textWatcher)
     }
-
-
 
 
     override fun onPrepareOptionsMenu(menu: Menu) {

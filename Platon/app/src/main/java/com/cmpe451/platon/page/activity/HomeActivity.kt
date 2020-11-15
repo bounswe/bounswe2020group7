@@ -1,47 +1,44 @@
 package com.cmpe451.platon.page.activity
 
-import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.SearchView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import com.cmpe451.platon.R
-import com.cmpe451.platon.`interface`.FragmentChangeListener
-import com.cmpe451.platon.core.BaseActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.onNavDestinationSelected
-import com.cmpe451.platon.`interface`.ActivityChangeListener
+import com.cmpe451.platon.R
+import com.cmpe451.platon.`interface`.FragmentChangeListener
+import com.cmpe451.platon.core.BaseActivity
 
-class LoginActivity :BaseActivity(), FragmentChangeListener {
+class HomeActivity : BaseActivity(), FragmentChangeListener {
 
     lateinit var toolbar: Toolbar
     lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
-        setTheme(R.style.Theme_Platon)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        setContentView(R.layout.activity_home)
+
 
         toolbar = findViewById(R.id.toolbar)
 
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.login_nav_host_fragment) as NavHostFragment
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.home_nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
         setSupportActionBar(toolbar)
         NavigationUI.setupActionBarWithNavController(this, navController)
+
     }
 
     override fun addFragment(fragment: Fragment, bundle: Bundle?) {
         TODO("Not yet implemented")
     }
-
 
     override fun destroyCurrentFragment() {
         TODO("Not yet implemented")
@@ -76,4 +73,5 @@ class LoginActivity :BaseActivity(), FragmentChangeListener {
         navController.navigateUp()
         return super.onSupportNavigateUp()
     }
+
 }
