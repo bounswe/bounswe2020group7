@@ -1,29 +1,20 @@
 package com.cmpe451.platon.page.activity
 
-import android.content.Context
 import android.os.Bundle
-import android.util.AttributeSet
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import androidx.appcompat.widget.SearchView
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import com.cmpe451.platon.R
 import com.cmpe451.platon.`interface`.FragmentChangeListener
 import com.cmpe451.platon.core.BaseActivity
-import com.cmpe451.platon.page.fragment.login.view.LoginFragment
-import com.cmpe451.platon.page.fragment.register.view.RegisterFragment
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.onNavDestinationSelected
-import androidx.navigation.ui.setupWithNavController
-import androidx.transition.TransitionManager
-import com.cmpe451.platon.page.fragment.preLogin.view.PreLoginFragmentDirections
+
 
 class LoginActivity :BaseActivity(), FragmentChangeListener {
 
@@ -42,7 +33,6 @@ class LoginActivity :BaseActivity(), FragmentChangeListener {
 
         setSupportActionBar(toolbar)
         NavigationUI.setupActionBarWithNavController(this, navController)
-
     }
 
 
@@ -62,27 +52,23 @@ class LoginActivity :BaseActivity(), FragmentChangeListener {
         return super.onCreateOptionsMenu(menu)
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        val search = menu?.findItem(R.id.search_btn)?.actionView as SearchView
+        search.setOnQueryTextListener( object: SearchView.OnQueryTextListener{
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return Log.println(Log.ERROR, "SEARCH:", newText.toString().trim())*0 == 0
+            }
+
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return Log.println(Log.ERROR, "SEARCH:", query.toString().trim())*0 == 0
+            }
+        }
+        )
+        return super.onPrepareOptionsMenu(menu)
+    }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-
-        // todo
-        if (item.itemId == R.id.search_btn){
-            val search = findViewById<SearchView>(item.itemId)
-            search.setOnQueryTextListener( object:
-                    SearchView.OnQueryTextListener{
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    return Log.println(Log.ERROR, "SEARCH:", newText.toString().trim())*0 == 0
-                }
-
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    return Log.println(Log.ERROR, "SEARCH:", query.toString().trim())*0 == 0
-                }
-            }
-            )
-            return super.onOptionsItemSelected(item)
-        }
-
         return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
     }
 
