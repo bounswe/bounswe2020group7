@@ -19,7 +19,7 @@ THREADS_PER_PAGE = 2
 
 JWT_SESSION_KEY = "secret"
     
-WT_ALGORITHM = 'HS256'
+JWT_ALGORITHM = 'HS256'
     
 SESSION_DURATION = datetime.timedelta(minutes=10)
 
