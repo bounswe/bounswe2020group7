@@ -1,55 +1,41 @@
-import React from 'react';
+import { React, Component } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
 import LockOpenOutlinedIcon from '@material-ui/icons/LockOpenOutlined';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import {  withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-
-const colorPrimary = "#313638";
-const colorPrimaryDark = "#222527";
-const colorPrimaryLight = "#5A5E5F";
-const colorSecondary = "#E0DFD5";
-const colorSecondaryDark = "#9C9C95";
-const colorSecondaryLight = "#E6E5DD";
-const colorTertiary = "#8F9DD3";
-const colorTertiaryDark = "#646D93";
-const colorTertiaryLight = "#A5B0DB";
-const colorQuaternary = "#B0DB06";
-const colorQuaternaryDark = "#7B9904";
-const colorQuaternaryLight = "#BFE237";
-const colorQuinary = "#FF8B33";
-const colorQuinaryDark = "#B26123";
-const colorQuinaryLight = "#FFA25B";
+import colors from '../../utils/colors';
+import MuiAlert from "@material-ui/lab/Alert";
+import axios from "axios";
 
 const CssTextField = withStyles({
   root: {
     '& .MuiInputBase-input': {
-      color: colorSecondary,
+      color: colors.secondary,
     },
     "& .Mui-required": {
-      color: colorPrimaryLight,
+      color: colors.primaryLight,
     },
     '& label.Mui-focused': {
-      color: colorTertiary,
+      color: colors.tertiary,
     },
     '& .MuiInput-underline:after': {
-      borderBottomColor: colorTertiary,
+      borderBottomColor: colors.tertiary,
     },
     '& .MuiOutlinedInput-root': {
       '& fieldset': {
-        borderColor: colorSecondaryLight,
+        borderColor: colors.secondaryLight,
       },
       '&:hover fieldset': {
-        borderColor: colorSecondaryDark,
+        borderColor: colors.secondaryDark,
       },
       '&.Mui-focused fieldset': {
-        borderColor: colorTertiary,
+        borderColor: colors.tertiary,
       },
     },
   },
@@ -57,23 +43,23 @@ const CssTextField = withStyles({
 
 const StyledButton = withStyles({
   root: {
-    background: colorTertiary,
-    color: colorSecondary,
+    background: colors.tertiary,
+    color: colors.secondary,
     '&:hover': {
-      backgroundColor: colorTertiaryDark,
+      backgroundColor: colors.tertiaryDark,
     }
   }
 })(Button);
 
 const StyledLink = withStyles({
   root: {
-    color: colorTertiary,
+    color: colors.tertiary,
   }
 })(Link);
 
 
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = (theme) => ({
   paper: {
     marginTop: theme.spacing(8),
     display: 'flex',
@@ -81,14 +67,13 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
 
-
-  typography:{
-    color: colorSecondary,
+  typography: {
+    color: colors.secondary,
   },
   avatar: {
     margin: theme.spacing(1),
-    backgroundColor: colorTertiary,
-    color: colorSecondary,
+    backgroundColor: colors.tertiary,
+    color: colors.secondary,
   },
   form: {
     width: '100%', // Fix IE 11 issue.
@@ -97,63 +82,127 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
-}));
+});
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
-export default function Login() {
-  const classes = useStyles();
+class Login extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      email: '',
+      password: '',
+      error:'',
 
-  return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOpenOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5" className={classes.typography}>
-          Login
+    }
+  }
+
+
+
+  handleSubmit  = () => {
+
+
+    if (this.state.email === "" || this.state.password === "") {
+      this.setState({error: "Fields are required"});
+      return;
+    }
+    const url = "https://react-my-burger-78df4.firebaseio.com/users.json";
+    const data = { email: this.state.email, password: this.state.password }
+   fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(data)
+    }).then(response => {
+        if (response.status === 200) {
+          console.log("asiye")
+          this.props.handlerIsAuthenticated();
+        }
+        return response.json();
+      }).catch(err=> {
+          console.log(err);
+      });
+    //const data = { email: this.state.email, password: this.state.password }
+    /*axios.post(url, { email: this.state.email, password: this.state.password })
+    .then( (response) => {
+      //if(response.statusCode === 200){
+      debugger;
+      if(response){
+        this.props.handlerIsAuthenticated();      // Your function call
+      }
+    })
+    .catch( (error) =>{
+      debugger;
+      console.log(error);
+    });*/
+
+  }
+  render() {
+    const { classes } = this.props;
+    return (
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <div className={classes.paper}>
+          <Avatar className={classes.avatar}>
+            <LockOpenOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5" className={classes.typography}>
+            Login
         </Typography>
-        <form className={classes.form} noValidate>
-          <CssTextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            autoFocus
-          />
-          <CssTextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-          />
-          <StyledButton
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-          >
-            Sign In
+            <CssTextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              value={this.state.email}
+              onChange={(e) => this.setState({ email: e.target.value })}
+              autoComplete="email"
+              autoFocus
+            />
+            <CssTextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              value={this.state.password}
+              onChange={(e) => this.setState({ password: e.target.value })}
+              autoComplete="current-password"
+            />
+            <StyledButton
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+              onClick={this.handleSubmit}
+
+            >
+              Sign In
           </StyledButton>
-          <Grid container>
-            <Grid item xs>
-              <StyledLink href="#" variant="body2">
-                Forgot password?
+            <Grid container>
+              <Grid item xs>
+                <StyledLink href="#" variant="body2">
+                  Forgot password?
               </StyledLink>
+              </Grid>
+
             </Grid>
 
-          </Grid>
-        </form>
-      </div>
-    </Container>
-  );
+            {this.state.error && (
+        <Alert severity="error" onClick={() => this.setState({error:null})}>
+          {this.props.error || this.state.error}
+        </Alert>
+      )}
+        </div>
+      </Container>
+    );
+  }
 }
+
+export default withStyles(useStyles, CssTextField)(Login);

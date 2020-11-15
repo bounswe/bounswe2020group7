@@ -80,7 +80,6 @@ const StyledCheckbox = withStyles({
   checked: {},
 })(Checkbox);
 
-
 const useStyles = makeStyles((theme) => ({
 
   paper: {
@@ -88,7 +87,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-
   },
   typography: {
     color: colors.secondary,
@@ -98,7 +96,6 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: colors.tertiary,
     color: colors.secondary,
   },
-
   form: {
     width: '100%', // Fix IE 11 issue.
     marginTop: theme.spacing(3),
@@ -109,13 +106,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-
-
 export default function Register() {
   const [value, setValue] = React.useState([]);
   const handleKeyDown = event => {
     switch (event.key) {
-
       case ",": {
         event.preventDefault();
         event.stopPropagation();

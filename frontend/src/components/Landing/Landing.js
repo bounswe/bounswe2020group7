@@ -3,7 +3,7 @@ import Login from '../Login/Login';
 import AppBar from '../AppBar/AppBar';
 import React from 'react';
 import './Landing.css'
-const Landing = () => {
+const Landing = (props) => {
     return (
 
         <div className="Landing">
@@ -11,8 +11,8 @@ const Landing = () => {
                 <AppBar/>
             </div>
             <div className="LoginRegister">
-                <Login/>
-                <Register/>
+                <Login {...props}/>
+                <Register {...props}/>
             </div>
         </div>
     );
