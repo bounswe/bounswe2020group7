@@ -11,7 +11,7 @@ const Landing = (props) => {
             </div>
             <div className="LoginRegister">
                 <Login {...props}/>
-                <Register {...props}/>
+                <Register/>
             </div>
         </div>
     );

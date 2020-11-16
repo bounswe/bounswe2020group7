@@ -1,92 +1,85 @@
-import React from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Grid from '@material-ui/core/Grid';
-import CreateIcon from '@material-ui/icons/Create';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
-import colors from '../../utils/colors';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import React, { Component } from "react";
+import Avatar from "@material-ui/core/Avatar";
+import Button from "@material-ui/core/Button";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import TextField from "@material-ui/core/TextField";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
+import Grid from "@material-ui/core/Grid";
+import CreateIcon from "@material-ui/icons/Create";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
+import Container from "@material-ui/core/Container";
+import colors from "../../utils/colors";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import MuiAlert from "@material-ui/lab/Alert";
 
 const StyledTextField = withStyles({
   root: {
-
-
-    '& .MuiInputBase-input': {
+    "& .MuiInputBase-input": {
       color: colors.secondary,
     },
     "& .Mui-required": {
       color: colors.primaryLight,
     },
-    '& label.Mui-focused': {
+    "& label.Mui-focused": {
       color: colors.tertiary,
     },
-    '& .MuiInput-underline:after': {
+    "& .MuiInput-underline:after": {
       borderBottomColor: colors.tertiary,
     },
-    '& .MuiOutlinedInput-root': {
-      '& fieldset': {
+    "& .MuiOutlinedInput-root": {
+      "& fieldset": {
         borderColor: colors.secondaryLight,
       },
-      '&:hover fieldset': {
+      "&:hover fieldset": {
         borderColor: colors.secondaryDark,
       },
-      '&.Mui-focused fieldset': {
+      "&.Mui-focused fieldset": {
         borderColor: colors.tertiary,
       },
     },
   },
 })(TextField);
 
-
-
 const StyledButton = withStyles({
   root: {
     background: colors.tertiary,
     color: colors.secondary,
-    '&:hover': {
+    "&:hover": {
       backgroundColor: colors.tertiaryDark,
-    }
-  }
+    },
+  },
 })(Button);
-
 
 const StyledFormControlLabel = withStyles({
   root: {
     color: colors.tertiary,
-    '& .MuiFormControlLabel-label	': {
+    "& .MuiFormControlLabel-label	": {
       color: colors.secondary,
     },
-    '&$checked': {
-      color: colors.quinary
+    "&$checked": {
+      color: colors.quinary,
     },
-  }
+  },
 })(FormControlLabel);
-
 
 const StyledCheckbox = withStyles({
   root: {
     color: colors.tertiary,
-    '&$checked': {
+    "&$checked": {
       color: colors.quaternary,
     },
-
   },
   checked: {},
 })(Checkbox);
 
-const useStyles = makeStyles((theme) => ({
-
+const useStyles = (theme) => ({
   paper: {
     marginTop: theme.spacing(8),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
   },
   typography: {
     color: colors.secondary,
@@ -97,41 +90,109 @@ const useStyles = makeStyles((theme) => ({
     color: colors.secondary,
   },
   form: {
-    width: '100%', // Fix IE 11 issue.
+    width: "100%", // Fix IE 11 issue.
     marginTop: theme.spacing(3),
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
-}));
+});
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
-export default function Register() {
-  const [value, setValue] = React.useState([]);
-  const handleKeyDown = event => {
+class Register extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      researchAreas: [],
+      checkbox: "",
+      showSuccess: "",
+      showError: "",
+    };
+  }
+
+  handleSubmit = () => {
+    if (
+      this.state.firstName === "" ||
+      this.state.lastName === "" ||
+      this.state.email === "" ||
+      this.state.password === "" ||
+      this.state.researchAreas.length === 0
+    ) {
+      this.setState({ showError: "Fields are required" });
+      return;
+    }
+    const url = "https://react-my-burger-78df4.firebaseio.com/register.json";
+    const data = {
+      firstName: this.state.firstName,
+      lastName: this.state.lastName,
+      email: this.state.email,
+      password: this.state.password,
+      researchAreas: this.state.researchAreas,
+    };
+    fetch(url, {
+      method: "POST",
+      body: JSON.stringify(data),
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          console.log("hello");
+        }
+        return response.json();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  handleKeyDown = (event) => {
     switch (event.key) {
       case ",": {
         event.preventDefault();
         event.stopPropagation();
         if (event.target.value.length > 0) {
-          setValue([...value, event.target.value]);
+          this.setState({
+            researchAreas: [...this.state.researchAreas, event.target.value],
+          });
         }
         break;
       }
       default:
     }
   };
-  const classes = useStyles();
-  return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <CreateIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5" className={classes.typography}>
-          Register
-        </Typography>
+
+  render() {
+    const { classes } = this.props;
+    console.log(
+      this.state.firstName,
+      this.state.lastName,
+      this.state.email,
+      this.state.password,
+      this.state.researchAreas,
+      this.state.checkbox,
+      this.state.showSuccess,
+      this.state.showError
+    );
+    return (
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <div className={classes.paper}>
+          <Avatar className={classes.avatar}>
+            <CreateIcon />
+          </Avatar>
+          <Typography
+            component="h1"
+            variant="h5"
+            className={classes.typography}
+          >
+            Register
+          </Typography>
 
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
@@ -144,6 +205,8 @@ export default function Register() {
                 id="firstName"
                 label="First Name"
                 autoFocus
+                value={this.state.firstName}
+                onChange={(e) => this.setState({ firstName: e.target.value })}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -155,65 +218,70 @@ export default function Register() {
                 id="lastName"
                 label="Last Name"
                 name="lastName"
+                value={this.state.lastName}
+                onChange={(e) => this.setState({ lastName: e.target.value })}
               />
             </Grid>
-            </Grid>
+          </Grid>
 
-            <Grid item xs={12}>
-              <StyledTextField
-                variant="outlined"
-                required
-                fullWidth
-                id="email"
-                margin="normal"
-                label="Email Address"
-                name="email"
-              />
-              <StyledTextField
-                variant="outlined"
-                required
-                fullWidth
-                margin="normal"
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-              />
-              <Autocomplete
-                multiple
-                freeSolo
+          <Grid item xs={12}>
+            <StyledTextField
+              variant="outlined"
+              required
+              fullWidth
+              id="email"
+              margin="normal"
+              label="Email Address"
+              name="email"
+              value={this.state.email}
+              onChange={(e) => this.setState({ email: e.target.value })}
+            />
+            <StyledTextField
+              variant="outlined"
+              required
+              fullWidth
+              margin="normal"
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              value={this.state.password}
+              onChange={(e) => this.setState({ password: e.target.value })}
+            />
+            <Autocomplete
+              multiple
+              freeSolo
+              id="tags-outlined"
+              options={researchAreaList}
+              getOptionLabel={(option) => option.title || option}
+              value={this.state.researchAreas}
+              onChange={(e, newValue) =>
+                this.setState({ researchAreas: [...newValue] })
+              }
+              filterSelectedOptions
+              renderInput={(params) => {
+                params.inputProps.onKeyDown = this.handleKeyDown;
+                return (
+                  <StyledTextField
+                    {...params}
+                    margin="normal"
+                    variant="outlined"
+                    required
+                    name="researchAreas"
+                    label="Research Areas"
+                    placeholder="Use ',' as a delimeter"
+                    id="researchAreas"
+                    fullWidth
+                  />
+                );
+              }}
+            />
+          </Grid>
 
-                id="tags-outlined"
-                options={top100Films}
-                getOptionLabel={option => option.title || option}
-                value={value}
-                onChange={(event, newValue) => setValue(newValue)}
-                filterSelectedOptions
-                renderInput={params => {
-                  params.inputProps.onKeyDown = handleKeyDown;
-                  return (
-                    <StyledTextField
-                      {...params}
-                      margin="normal"
-                      variant="outlined"
-                      required
-                      name="affinities"
-                      label="Affinities"
-                      placeholder="Use ',' as a delimeter"
-                      id="affinities"
-
-                      fullWidth
-                    />
-                  );
-                }}
-              />
-            </Grid>
-
-
-              <StyledFormControlLabel
-                control={<StyledCheckbox value="allowExtraEmails" />}
-                label="I accept the terms and conditions"
-              />
+          <StyledFormControlLabel
+            control={<StyledCheckbox required value="allowExtraEmails" />}
+            label="I accept the terms and conditions"
+          />
 
           <StyledButton
             type="submit"
@@ -221,120 +289,602 @@ export default function Register() {
             variant="contained"
             color="primary"
             className={classes.submit}
+            onClick={this.handleSubmit}
           >
             Register
           </StyledButton>
-
-
-      </div>
-    </Container>
-  );
+          {this.state.showError && (
+            <Alert
+              style={{ backgroundColor: colors.quinary }}
+              severity="error"
+              onClick={() => this.setState({ showError: null })}
+            >
+              {this.props.showError || this.state.showError}
+            </Alert>
+          )}
+        </div>
+      </Container>
+    );
+  }
 }
 
-
-const top100Films = [
-  { title: "The Shawshank Redemption", year: 1994 },
-  { title: "The Godfather", year: 1972 },
-  { title: "The Godfather: Part II", year: 1974 },
-  { title: "The Dark Knight", year: 2008 },
-  { title: "12 Angry Men", year: 1957 },
-  { title: "Schindler's List", year: 1993 },
-  { title: "Pulp Fiction", year: 1994 },
-  { title: "The Lord of the Rings: The Return of the King", year: 2003 },
-  { title: "The Good, the Bad and the Ugly", year: 1966 },
-  { title: "Fight Club", year: 1999 },
-  { title: "The Lord of the Rings: The Fellowship of the Ring", year: 2001 },
-  { title: "Star Wars: Episode V - The Empire Strikes Back", year: 1980 },
-  { title: "Forrest Gump", year: 1994 },
-  { title: "Inception", year: 2010 },
-  { title: "The Lord of the Rings: The Two Towers", year: 2002 },
-  { title: "One Flew Over the Cuckoo's Nest", year: 1975 },
-  { title: "Goodfellas", year: 1990 },
-  { title: "The Matrix", year: 1999 },
-  { title: "Seven Samurai", year: 1954 },
-  { title: "Star Wars: Episode IV - A New Hope", year: 1977 },
-  { title: "City of God", year: 2002 },
-  { title: "Se7en", year: 1995 },
-  { title: "The Silence of the Lambs", year: 1991 },
-  { title: "It's a Wonderful Life", year: 1946 },
-  { title: "Life Is Beautiful", year: 1997 },
-  { title: "The Usual Suspects", year: 1995 },
-  { title: "Léon: The Professional", year: 1994 },
-  { title: "Spirited Away", year: 2001 },
-  { title: "Saving Private Ryan", year: 1998 },
-  { title: "Once Upon a Time in the West", year: 1968 },
-  { title: "American History X", year: 1998 },
-  { title: "Interstellar", year: 2014 },
-  { title: "Casablanca", year: 1942 },
-  { title: "City Lights", year: 1931 },
-  { title: "Psycho", year: 1960 },
-  { title: "The Green Mile", year: 1999 },
-  { title: "The Intouchables", year: 2011 },
-  { title: "Modern Times", year: 1936 },
-  { title: "Raiders of the Lost Ark", year: 1981 },
-  { title: "Rear Window", year: 1954 },
-  { title: "The Pianist", year: 2002 },
-  { title: "The Departed", year: 2006 },
-  { title: "Terminator 2: Judgment Day", year: 1991 },
-  { title: "Back to the Future", year: 1985 },
-  { title: "Whiplash", year: 2014 },
-  { title: "Gladiator", year: 2000 },
-  { title: "Memento", year: 2000 },
-  { title: "The Prestige", year: 2006 },
-  { title: "The Lion King", year: 1994 },
-  { title: "Apocalypse Now", year: 1979 },
-  { title: "Alien", year: 1979 },
-  { title: "Sunset Boulevard", year: 1950 },
-  {
-    title:
-      "Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb",
-    year: 1964
-  },
-  { title: "The Great Dictator", year: 1940 },
-  { title: "Cinema Paradiso", year: 1988 },
-  { title: "The Lives of Others", year: 2006 },
-  { title: "Grave of the Fireflies", year: 1988 },
-  { title: "Paths of Glory", year: 1957 },
-  { title: "Django Unchained", year: 2012 },
-  { title: "The Shining", year: 1980 },
-  { title: "WALL·E", year: 2008 },
-  { title: "American Beauty", year: 1999 },
-  { title: "The Dark Knight Rises", year: 2012 },
-  { title: "Princess Mononoke", year: 1997 },
-  { title: "Aliens", year: 1986 },
-  { title: "Oldboy", year: 2003 },
-  { title: "Once Upon a Time in America", year: 1984 },
-  { title: "Witness for the Prosecution", year: 1957 },
-  { title: "Das Boot", year: 1981 },
-  { title: "Citizen Kane", year: 1941 },
-  { title: "North by Northwest", year: 1959 },
-  { title: "Vertigo", year: 1958 },
-  { title: "Star Wars: Episode VI - Return of the Jedi", year: 1983 },
-  { title: "Reservoir Dogs", year: 1992 },
-  { title: "Braveheart", year: 1995 },
-  { title: "M", year: 1931 },
-  { title: "Requiem for a Dream", year: 2000 },
-  { title: "Amélie", year: 2001 },
-  { title: "A Clockwork Orange", year: 1971 },
-  { title: "Like Stars on Earth", year: 2007 },
-  { title: "Taxi Driver", year: 1976 },
-  { title: "Lawrence of Arabia", year: 1962 },
-  { title: "Double Indemnity", year: 1944 },
-  { title: "Eternal Sunshine of the Spotless Mind", year: 2004 },
-  { title: "Amadeus", year: 1984 },
-  { title: "To Kill a Mockingbird", year: 1962 },
-  { title: "Toy Story 3", year: 2010 },
-  { title: "Logan", year: 2017 },
-  { title: "Full Metal Jacket", year: 1987 },
-  { title: "Dangal", year: 2016 },
-  { title: "The Sting", year: 1973 },
-  { title: "2001: A Space Odyssey", year: 1968 },
-  { title: "Singin' in the Rain", year: 1952 },
-  { title: "Toy Story", year: 1995 },
-  { title: "Bicycle Thieves", year: 1948 },
-  { title: "The Kid", year: 1921 },
-  { title: "Inglourious Basterds", year: 2009 },
-  { title: "Snatch", year: 2000 },
-  { title: "3 Idiots", year: 2009 },
-  { title: "Monty Python and the Holy Grail", year: 1975 }
+const researchAreaList = [
+  "3D Integrated Circuits",
+  "4D Printing",
+  "5G",
+  "6G",
+  "Accounting & Financing",
+  "Activism",
+  "Activism on Campus",
+  "Adaptive Technologies",
+  "Addictions",
+  "Additive Manufacturing",
+  "Adolescent Psychiatry",
+  "Adult Education",
+  "Aerospace Engineering",
+  "African American Studies",
+  "Aging Workforce",
+  "Agricultural & Food Technologies",
+  "Agricultural Technologies",
+  "AI & Mental Health",
+  "Air Taxis",
+  "Algorithms",
+  "Alternative Funding Models",
+  "Alternative Pain Management",
+  "Animal Rights",
+  "Animal Rights",
+  "Anthropology & Archaeology",
+  "Anxiety Treatment & Care",
+  "Aquaculture",
+  "Architecture",
+  "Archival Management",
+  "Archival Preservation",
+  "Archival Studies",
+  "Art & Design",
+  "Artificial Intelligence",
+  "Artificial Intelligence",
+  "Artificial Intelligence in Libraries",
+  "Assistive Technologies",
+  "Assistive Technologies",
+  "Astronomy",
+  "Astronomy Computing",
+  "Augmented Airports",
+  "Authentication Technology",
+  "Autoimmune Disorders",
+  "Automated Business",
+  "Automated Driving & Connected Vehicles",
+  "Automated Voice Spam Protection",
+  "Autonomous Things",
+  "Autonomous Vehicle Regulations",
+  "Aviation Engineering",
+  "Aviation Systems",
+  "Banned Literature",
+  "Bio-Chips",
+  "Bio-Printing",
+  "Biocrime and Biosecurity",
+  "Biodiversity",
+  "Bioinformatics",
+  "Biological Anthropology",
+  "Biology",
+  "Biomedical Technologies",
+  "Biometrics",
+  "Black Market",
+  "Blockchain Technology",
+  "Blogs and Blogging",
+  "Brain-Computer Interface",
+  "Business & Organizational Research",
+  "Business Education",
+  "Business Ethics & Law",
+  "Business Information Systems",
+  "Business Intelligence",
+  "Cancel Culture",
+  "Cannabis Industry",
+  "Cannabis Studies",
+  "Cannabis Studies",
+  "Carbon Dioxide Catchers",
+  "Career Pathways",
+  "Charter Schools",
+  "Chatbots",
+  "Chemical Engineering",
+  "Chemical Weapons",
+  "Chemical Weapons",
+  "Chemistry",
+  "Chemistry",
+  "Child Abuse Reporting",
+  "Childhood Care",
+  "Civic Engagement",
+  "Civic Engagement",
+  "Civil Engineering",
+  "Classroom Design",
+  "CleanOS",
+  "Climate Change",
+  "Clinical Science",
+  "Cloud Computing",
+  "Cloud-Based Services",
+  "Cognitive Government",
+  "Cognitive Informatics",
+  "College Accessibility",
+  "Communications Theory",
+  "Community Engagement",
+  "Community-School Partnerships",
+  "Complementary & Alternative Medicine",
+  "Computational Biology & Bioinformatics",
+  "Computational Biology & Bioinformatics",
+  "Computational Intelligence",
+  "Computer Engineering",
+  "Computer Graphics & Art",
+  "Computer Science Education",
+  "Computer Vision",
+  "Connected Home",
+  "Connected Learning",
+  "Conservation",
+  "Consulting & Mentorship",
+  "Consumer Anxiety",
+  "Criminal Science & Forensics",
+  "Criminology",
+  "Crisis Communications",
+  "Crisis Response & Management",
+  "CRISPR Research",
+  "Cross-Government",
+  "Crowdfunding Platforms",
+  "Crowdfunding Platforms",
+  "Crowdsourced Crime Prevention",
+  "Cryptocurrencies",
+  "Cryptography",
+  "Cultural Competence",
+  "Cultural Storytelling",
+  "Cultured Meat Processing",
+  "Customer-Centric Human Services",
+  "Cyber & Network Security",
+  "Cyber Behavior",
+  "Cyber Physical Systems",
+  "Cyberbullying & Cyberharassment",
+  "Cybernetics",
+  "Cyberpsychology",
+  "Cyberterrorism",
+  "Cyberwarfare",
+  "Dark Web & Deep Web",
+  "Data Breaches",
+  "Data Encryption",
+  "Data Privacy Legislation",
+  "Data Visualization",
+  "Data-Smart Government",
+  "Databases & Data Analysis",
+  "Decarbonization Engineering",
+  "Decision Support Systems",
+  "Deep Learning",
+  "Deep Reinforcement Learning",
+  "Deep Sea Mining",
+  "Deep Sea Mining",
+  "Defense and Military Ethics",
+  "Demographic Pressure on Economy",
+  "Dentistry",
+  "Depression and Anxiety During Pregnancy",
+  "Digital Communications",
+  "Digital Humanities",
+  "Digital Libraries",
+  "Digital Media",
+  "Digital Twin",
+  "Digitization of Services",
+  "Disaster Management & Preparedness",
+  "Disaster Relief & Management",
+  "Disruptive Technology",
+  "Disruptive Technology",
+  "Distributed Governance",
+  "Distributed Systems",
+  "DNA Digital Storage",
+  "Documentary Filmmaking",
+  "Domestic Abuse",
+  "Drones",
+  "Drones",
+  "Drug Trafficking",
+  "Drug Use in Libraries",
+  "E-Books and Audiobooks",
+  "E-Commerce",
+  "Earth Science",
+  "Economic Interconnectedness",
+  "Economics & Economic Theory",
+  "Edge Computing",
+  "Educational Administration & Leadership",
+  "Educational Marketing",
+  "Election Monitoring/Security",
+  "Electrical Engineering",
+  "Electronic Government",
+  "Embedded Systems",
+  "Emergency Medicine",
+  "Emerging Market Economies",
+  "End-User Computing",
+  "Energy Grids",
+  "Engineering Education",
+  "Engineering Science",
+  "Entomophagy",
+  "Entrepreneurship",
+  "Environmental & Agricultural Informatics",
+  "Environmental Consulting Services",
+  "Environmental Engineering",
+  "Environmental Monitoring & Sensors",
+  "Environmental Policies",
+  "Environmental Science",
+  "Environmental Technologies",
+  "Environmentally Friendly Production",
+  "Equality in Education",
+  "Equity of Access",
+  "eSports",
+  "eSports Industry",
+  "Ethics & Social Responsibility",
+  "Ethics and Governance of AI",
+  "Ethnic Conflict",
+  "Facial Recognition",
+  "False Information",
+  "Fashion Studies",
+  "Feminism",
+  "Feminist Film Theory",
+  "Flatter Organizations",
+  "Flexible Mobile Devices",
+  "Flexible Seating Classrooms",
+  "Food Production",
+  "Food Safety",
+  "Food Security",
+  "Forensic Biology",
+  "Freedom of Speech",
+  "Funding",
+  "Fusion Power",
+  "Future of Librarian Roles",
+  "Game-Based Learning",
+  "Gaming",
+  "Gender & Diversity",
+  "Gender & Diversity",
+  "Gender Discrimination",
+  "Gender Discrimination",
+  "Gender Diversity",
+  "Gender Economics & Consumption",
+  "Genealogy",
+  "Generation Alpha Studies",
+  "Generation Z Studies",
+  "Genetic Engineering",
+  "Genetic Engineering",
+  "Genetic Testing",
+  "Genetically Modified Organism (GMOs)",
+  "Genetics & Genomics",
+  "Genome Sequencing",
+  "Geographic Borders & Conflicts",
+  "Geriatric Care",
+  "GIS & Geospatial Technology",
+  "Global Branding",
+  "Global Business",
+  "Global Citizens",
+  "Global Information Technology",
+  "Global Labor Standards",
+  "Global Mobility",
+  "Government Inclusiveness",
+  "Government Intervention in Business",
+  "Government Regulations",
+  "Government Technology Ethics",
+  "Government Transparency",
+  "Grid Computing",
+  "Hacking & Hacktivism",
+  "Hate Crimes",
+  "Hate Crimes & Hate Speech",
+  "Health Information Systems",
+  "Health Psychology",
+  "Health Technology Use",
+  "Healthcare Administration",
+  "Healthcare Policy & Reform",
+  "High Performance Computing",
+  "Higher Education",
+  "Holocaust Cinema",
+  "Holography-Assisted Surgery",
+  "Home Schooling",
+  "Homeland Secuity",
+  "Hospitality, Travel, & Tourism Management",
+  "Human Augmentation",
+  "Human Computer Interaction",
+  "Human Resources Development",
+  "Human Trafficking",
+  "Human Trafficking in the Hospitality Industry",
+  "Hydrology",
+  "Hyper Local Social Media",
+  "Hyperconnected Citizens vs. Barely Connected",
+  "Hyperconnectivity",
+  "Identity Appeals",
+  "Immersive Technologies",
+  "Immigrant & Refugee Education",
+  "Immigration & Refugees",
+  "Industrial Engineering",
+  "Information Resources Management",
+  "Information Retrieval",
+  "Information Security",
+  "Instructional Design",
+  "Intellectual Freedom",
+  "Intelligent Automation",
+  "Intelligent Automation",
+  "Interactive Technologies",
+  "Internal Communications",
+  "International Conflict and Negotiation",
+  "International Importing/Exporting Regulations",
+  "International Journalist Protection",
+  "International Law & Lawmaking",
+  "International Trade Policies",
+  "Internet Censorship Tools",
+  "Internet Law",
+  "Internet of Machines",
+  "Internet of Things",
+  "Internet Safety",
+  "Internet, Data, & Social Media Privacy",
+  "IT Policy & Standardization",
+  "IT Research & Theory",
+  "IT Security & Ethics",
+  "Japanese Popular Culture",
+  "Journalism",
+  "K-12 Distance Learning",
+  "K-12 Education",
+  "Knowledge Discovery",
+  "Knowledge Management",
+  "Lab On a Chip",
+  "Lab-Grown Products",
+  "Lab-Grown Products",
+  "Land Transportation",
+  "Law",
+  "Learning Assessment & Measurement",
+  "Learning Disabilities",
+  "LGBTQ+ Studies",
+  "Library Administration",
+  "Library Apps",
+  "Library Information Systems",
+  "Library Management",
+  "Library Programs",
+  "Library Science",
+  "Library Training",
+  "Lifelong Learning in the Workforce",
+  "Linguistics",
+  "Local Government",
+  "Machine Learning",
+  "Macroscope Systems",
+  "Management Science",
+  "Manufacturing",
+  "Marketing",
+  "Marriage & Health",
+  "Mass Communications",
+  "Mass Communications Law",
+  "Mass Customization",
+  "Mass Customization",
+  "Materials Science",
+  "Maternal Health",
+  "Mathematics",
+  "Mechanical Engineering",
+  "Media Bias",
+  "Media Consumption",
+  "Media Fandom",
+  "Media Representation",
+  "Medical Diagnosis & Treatment",
+  "Medical Education",
+  "Medical Engineering",
+  "Medical Ethics",
+  "Medical Screening Tests",
+  "Medical Technologies",
+  "Megacities",
+  "Micro-Enterprises",
+  "Micro-Entrepreneurship",
+  "Military Technology",
+  "Military Technology",
+  "Millennials",
+  "Mining Engineering",
+  "Misinformation",
+  "Mobile & Wireless Computing",
+  "Mobile Apps",
+  "Mobile Apps",
+  "Mobile Computing",
+  "Mobile Devices in Education",
+  "Mobile Devices in Healthcare",
+  "Mobile Libraries",
+  "Mobile Network Security",
+  "Mobile Payment Systems",
+  "Mobile Payment Systems",
+  "Mobile Wallets",
+  "Montessori Education",
+  "Multicore",
+  "Multicultural Instruction",
+  "Multimedia Technology",
+  "Munitions",
+  "Museums as Learning Hubs",
+  "Music",
+  "Nanotechnology",
+  "National Security",
+  "Natural Language Processing",
+  "Negotiation Tactics",
+  "Net Zero Emissions Policies",
+  "Network Architecture",
+  "Networking & Telecommunications",
+  "Neurodiversity",
+  "Neuromorphic Computing",
+  "Neuromorphic Engineering",
+  "Neuromorphic Engineering",
+  "Neuroscience",
+  "New Media",
+  "Next-Generation Apprenticeships",
+  "Nuclear Science",
+  "Nuclear Science",
+  "Nursing",
+  "Nursing Home/Long-Term Care Facility Ethics",
+  "Nutrigenomics",
+  "Nutrition & Food Science",
+  "Obesity",
+  "Obsessive Compulsive Disorder Research",
+  "Off-Grid Living",
+  "Open Government",
+  "Open Intellectual Property Movement",
+  "Open Source Software",
+  "Operations & Service Management",
+  "Optical Engineering",
+  "Optometry/Ophthalmology",
+  "Organ Donors",
+  "Organizational Behavior",
+  "Out of School Learning",
+  "Overfishing/Fish Farming",
+  "Palliative Care",
+  "Peer-to-Peer Learning",
+  "Peer-to-Peer Networks",
+  "Penology & Corrections",
+  "Personalized Learning",
+  "Personalized Medicine",
+  "Petroleum & Gas Engineering",
+  "Pharmaceutical Sciences",
+  "Pharmacology",
+  "Pharmacy Ethics",
+  "Philosophy",
+  "Photonics",
+  "Physician Ethics",
+  "Physics",
+  "Play/Recess",
+  "Police Science",
+  "Political Correctness",
+  "Political Science",
+  "Postpartum Recovery",
+  "Predictive Analytics",
+  "Preservice & Inservice Teaching",
+  "Preventative Health Care",
+  "Product Development",
+  "Professionalism",
+  "Programming",
+  "Propaganda & Misinformation",
+  "Psychiatry & Mental Health",
+  "Psychology",
+  "Psychology-Influenced Policy",
+  "Public & Sector Management",
+  "Public Broadcasting",
+  "Public Debt",
+  "Public Health",
+  "Public Health & Welfare",
+  "Public Programs",
+  "Public Service Digitization (Digital Citizenship)",
+  "Quantum Computing",
+  "Quantum Computing",
+  "Racial Equity",
+  "Ransomware",
+  "Rapid Urbanization",
+  "Reclamation",
+  "Reconstructive Transplantation",
+  "Religion & Business",
+  "Religion & Government",
+  "Religious Studies",
+  "Remote Monitoring",
+  "Remote Sensing",
+  "Rendering Algorithms",
+  "Reproductive Health",
+  "Research Ethics",
+  "Research Methods",
+  "Reshoring",
+  "Risk Assessment",
+  "Robotic Surgery",
+  "Robotics",
+  "Robotics",
+  "Schizophrenia and Bipolar Genetics Research",
+  "School Counseling",
+  "School Crime",
+  "School Safety",
+  "School Violence",
+  "School-Business Collaboration",
+  "Seawater as Renewable Energy",
+  "Self-Healing Materials",
+  "Sensor Technologies",
+  "Sensor Technology",
+  "Sensor Technology",
+  "Sensor Technology",
+  "Small & Medium Enterprises",
+  "Smart Cities",
+  "Smart Cities",
+  "Smart Dust",
+  "Smart Dust",
+  "Smart Farming",
+  "Smart Homes",
+  "Smart Spaces",
+  "Social Computing",
+  "Social Entrepreneurship",
+  "Social Justice",
+  "Social Media",
+  "Social Media & Business",
+  "Social Media & Politics",
+  "Social Media & Social Networking",
+  "Social Media Misinformation",
+  "Social Media Privacy",
+  "Social Media Security",
+  "Social Networking & Public Safety",
+  "Social Networking & Public Safety",
+  "Social Psychology",
+  "Social TV",
+  "Social Welfare",
+  "Social-Emotional Learning",
+  "Socially Conscious Consumers",
+  "Socio-Economic Development",
+  "Sociology",
+  "Software-Defined Networks",
+  "Soldier Nanotechnologies",
+  "Special Education",
+  "Sports Management Studies",
+  "Sports Psychology",
+  "Startup Business",
+  "Stem Cell Treatment/Therapy",
+  "Student & Faculty Engagement",
+  "Student Creativity",
+  "Student Well-Being",
+  "Substance Abuse Treatment",
+  "Substance Abuse Treatment",
+  "Super-Aged Nations",
+  "Supply Chain Management",
+  "Surveillance & Monitoring",
+  "Surveillance Systems",
+  "Surveys & Measurement Systems",
+  "Sustainability & Sustainable Development",
+  "Sustainable Business",
+  "Sustainable Infrastructure",
+  "Sustainable Infrastructure",
+  "Systems & Software Engineering",
+  "T Cell Research",
+  "Tariffs",
+  "Teacher Achievement or Teacher Equity",
+  "Teacher-Student Relationships",
+  "Teacherpreneuers",
+  "Technology Augmentation",
+  "Technology Misuse",
+  "Technology Regulation",
+  "Terrorism",
+  "Theoretical Computer Science",
+  "Traceability",
+  "Training & Retention",
+  "Transformed Weapons Procurement",
+  "Ubiquitous Computing",
+  "Universal Memory",
+  "Unmanned Aerial Vehicles",
+  "Unmanned Aerial Vehicles",
+  "Urban & Regional Development",
+  "Urban Agriculture",
+  "Urban Poverty",
+  "Urban Studies",
+  "Vaccines",
+  "Veterinary Science",
+  "Victimology",
+  "Violence in Libraries",
+  "Virology",
+  "Virtual Incarceration",
+  "Voice Technology",
+  "Vulnerable Populations",
+  "Wartime Media",
+  "Waste Management",
+  "Water Networks",
+  "Water Resource Management",
+  "Water Scarcity",
+  "Wearable Technology",
+  "Wearable Technology",
+  "Web Technologies",
+  "Welding",
+  "Wireless Sensor Networks",
+  "Wireless Systems",
+  "Women in IT",
+  "Women's Rights",
+  "Women's Health",
+  "World Religions",
+  "Youth and Teen Services",
+  "Zero-Carbon Natural Gas",
 ];
+
+export default withStyles(useStyles)(Register);

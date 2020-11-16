@@ -6,6 +6,7 @@ import { fade, makeStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
 import Logo from '../Logo/Logo';
 import colors from '../../utils/colors';
+import {Link} from 'react-router-dom'
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -72,12 +73,12 @@ export default function SearchAppBar() {
     <div className={classes.root}>
       <AppBar  style={{ background: colors.primaryDark }} position="fixed">
         <Toolbar style={{justifyContent: "space-around"}}>
-
+<Link to ='/'>
             <Logo
             height='5vh'
             width='15vh'
             fill={colors.secondary}
-             />
+             /></Link>
           <div className={classes.search}>
             <div className={classes.searchIcon}>
               <SearchIcon />
