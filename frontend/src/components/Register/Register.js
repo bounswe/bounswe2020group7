@@ -8,7 +8,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Grid from "@material-ui/core/Grid";
 import CreateIcon from "@material-ui/icons/Create";
 import Typography from "@material-ui/core/Typography";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import {  withStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import colors from "../../utils/colors";
 import Autocomplete from "@material-ui/lab/Autocomplete";

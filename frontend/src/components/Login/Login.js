@@ -11,7 +11,6 @@ import { withStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import colors from "../../utils/colors";
 import MuiAlert from "@material-ui/lab/Alert";
-import axios from "axios";
 import { Link as RouteLink } from "react-router-dom";
 import Snackbar from "@material-ui/core/Snackbar";
 

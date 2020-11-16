@@ -1,7 +1,7 @@
 import './App.css';
 import Landing from './components/Landing/Landing';
 import React, { Component } from 'react';
-import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
+import {BrowserRouter as Router, Route} from 'react-router-dom'
 import ForgotPassword from './components/ForgotPassword/ForgotPassword'
 
 class App extends Component {

@@ -5,6 +5,7 @@ cache: npm
 
 before_install: cd frontend
 script:
+- npm cache clean --force
 - npm install
 - npm run build
 deploy:
