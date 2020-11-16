@@ -1,10 +1,13 @@
 package com.cmpe451.platon.page.activity
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.AttributeSet
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -16,18 +19,29 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.onNavDestinationSelected
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.`interface`.ActivityChangeListener
+import com.cmpe451.platon.adapter.SearchElementsAdapter
+import com.cmpe451.platon.adapter.TrendingProjectsAdapter
+import com.cmpe451.platon.databinding.ActivityLoginBinding
 
-class LoginActivity :BaseActivity(), FragmentChangeListener {
+class LoginActivity :BaseActivity(), FragmentChangeListener, SearchElementsAdapter.SearchButtonClickListener {
 
     lateinit var toolbar: Toolbar
     lateinit var navController: NavController
+    private lateinit var searchRecyclerView: RecyclerView
+    val myDataset = ArrayList<String>()
+
+    lateinit var binding : ActivityLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         setTheme(R.style.Theme_Platon)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         toolbar = findViewById(R.id.toolbar)
 
@@ -36,7 +50,17 @@ class LoginActivity :BaseActivity(), FragmentChangeListener {
 
         setSupportActionBar(toolbar)
         NavigationUI.setupActionBarWithNavController(this, navController)
+
+        initViews()
     }
+
+    private fun initViews() {
+        searchRecyclerView = binding.searchElementRecyclerView
+        searchRecyclerView.adapter = SearchElementsAdapter(myDataset,this, this)
+        searchRecyclerView.layoutManager = LinearLayoutManager(this)
+        (searchRecyclerView.adapter as SearchElementsAdapter).notifyDataSetChanged()
+    }
+
 
     override fun addFragment(fragment: Fragment, bundle: Bundle?) {
         TODO("Not yet implemented")
@@ -60,10 +84,18 @@ class LoginActivity :BaseActivity(), FragmentChangeListener {
             }
 
             override fun onQueryTextSubmit(query: String?): Boolean {
-                return Log.println(Log.ERROR, "SEARCH:", query.toString().trim())*0 == 0
+                myDataset.add(0, query.toString())
+                searchRecyclerView.adapter?.notifyItemInserted(0)
+                return Log.println(Log.ERROR, "SEARCH:",(query + searchRecyclerView.adapter?.itemCount.toString()+ myDataset.toString()).trim())*0 == 0
             }
         }
         )
+        search.setOnCloseListener {
+            myDataset.clear()
+            searchRecyclerView.adapter?.notifyDataSetChanged()
+            search.onActionViewCollapsed()
+            true
+        }
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -75,5 +107,9 @@ class LoginActivity :BaseActivity(), FragmentChangeListener {
     override fun onSupportNavigateUp(): Boolean {
         navController.navigateUp()
         return super.onSupportNavigateUp()
+    }
+
+    override fun onSearchButtonClicked(buttonName: String) {
+        TODO("Not yet implemented")
     }
 }

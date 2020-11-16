@@ -2,14 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/navigation_home"
-        android:icon="@drawable/ic_o_logo_24dp"
+        android:icon="@drawable/ic_home_24px"
         android:title="@string/home_str" />
     <item
-        android:id="@+id/navigation_notifications"
-        android:icon="@drawable/ic_o_logo_24dp"
-        android:title="@string/from_str" />
+        android:id="@+id/navigation_workspaces"
+        android:icon="@drawable/ic_work_24px"
+        android:title="@string/workspaces_str" />
     <item
-        android:id="@+id/navigation_dashboard"
-        android:icon="@drawable/ic_register_24dp"
-        android:title="@string/title_activity_login" />
+        android:id="@+id/navigation_profile"
+        android:icon="@drawable/ic_profile_24px"
+        android:title="@string/profile_str" />
 </menu>

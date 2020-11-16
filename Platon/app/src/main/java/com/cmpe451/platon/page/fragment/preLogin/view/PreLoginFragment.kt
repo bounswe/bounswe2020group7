@@ -17,6 +17,7 @@ import com.cmpe451.platon.R
 import com.cmpe451.platon.`interface`.FragmentChangeListener
 import com.cmpe451.platon.adapter.TrendingProjectsAdapter
 import com.cmpe451.platon.adapter.UpcomingEventsAdapter
+import com.cmpe451.platon.databinding.FragmentPreLoginBinding
 import com.cmpe451.platon.page.activity.LoginActivity
 import com.cmpe451.platon.page.fragment.preLogin.contract.PreLoginContract
 
@@ -29,6 +30,8 @@ class PreLoginFragment : Fragment(), PreLoginContract.View, TrendingProjectsAdap
     val myDataset = arrayOf<Int>(8, 7, 6, 5, 4, 3, 2, 1, -1, -2, -3, -4)
     private lateinit var textHello: TextView
 
+    lateinit var binding: FragmentPreLoginBinding
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +40,8 @@ class PreLoginFragment : Fragment(), PreLoginContract.View, TrendingProjectsAdap
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_pre_login, container, false)
+        binding = FragmentPreLoginBinding.inflate(layoutInflater)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -52,11 +56,11 @@ class PreLoginFragment : Fragment(), PreLoginContract.View, TrendingProjectsAdap
 
     private fun initViews(root: View) {
 
-        trendingProjectsRecyclerView = root.findViewById(R.id.pre_login_trending_projects_recycler_view)
+        trendingProjectsRecyclerView = binding.preLoginTrendingProjectsRecyclerView
         trendingProjectsRecyclerView.adapter = TrendingProjectsAdapter(myDataset,requireContext(), this)
         trendingProjectsRecyclerView.layoutManager = LinearLayoutManager(context)
 
-        upcomingEventsRecyclerView = root.findViewById(R.id.pre_login_upcoming_events_recycler_view)
+        upcomingEventsRecyclerView = binding.preLoginUpcomingEventsRecyclerView
         upcomingEventsRecyclerView.adapter = UpcomingEventsAdapter(myDataset,requireContext(), this)
         upcomingEventsRecyclerView.layoutManager = LinearLayoutManager(context)
     }

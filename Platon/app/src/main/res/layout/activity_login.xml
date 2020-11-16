@@ -9,14 +9,22 @@
     android:orientation="vertical"
     tools:context=".page.activity.LoginActivity">
 
-    <include layout="@layout/toolbar" />
+        <include layout="@layout/toolbar" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/search_element_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </androidx.recyclerview.widget.RecyclerView>
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/login_nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         app:defaultNavHost="true"
+        app:layout_constraintTop_toBottomOf="@+id/search_element_recycler_view"
         app:navGraph="@navigation/nav_graph" />
 
-</LinearLayout>
+        </LinearLayout>
