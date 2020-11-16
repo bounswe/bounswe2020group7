@@ -209,7 +209,6 @@ class Register extends Component {
 
   render() {
     const { classes } = this.props;
-    console.log("tikim var", this.state.checkbox)
     return (
       <Container component="main" maxWidth="xs">
         <CssBaseline />

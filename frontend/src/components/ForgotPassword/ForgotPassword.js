@@ -13,6 +13,8 @@ import MuiAlert from "@material-ui/lab/Alert";
 import HomeIcon from "@material-ui/icons/Home";
 import { Link as RouteLink } from "react-router-dom";
 import "./ForgotPassword.css";
+import Snackbar from "@material-ui/core/Snackbar";
+
 const CssTextField = withStyles({
   root: {
     "& .MuiInputBase-input": {
@@ -87,11 +89,19 @@ class ForgotPassword extends Component {
     this.state = {
       email: "",
       showSuccess: false,
+      fieldEmptyError: false,
     };
   }
+  handleCloseFieldEmpty = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    this.setState({ fieldEmptyError: false });
+  };
   handleSubmit = () => {
     if (this.state.email === "") {
-      this.setState({ error: "Fields are required" });
+      this.setState({ fieldEmptyError: "Fields are required" });
       return;
     }
     const url =
@@ -169,27 +179,26 @@ class ForgotPassword extends Component {
                   </StyledButton>
                 </div>
 
-                {this.state.error && (
+                {this.state.fieldEmptyError && (
+                  <Snackbar
+                  open={this.state.fieldEmptyError}
+                  autoHideDuration={3000}
+                  onClose={this.handleCloseFieldEmpty}
+                >
                   <Alert
                     style={{ backgroundColor: colors.quinary }}
                     severity="error"
-                    onClick={() => this.setState({ error: null })}
+                    onClose={this.handleCloseFieldEmpty}
                   >
-                    {this.props.error || this.state.error}
+                    {this.props.fieldEmptyError || this.state.fieldEmptyError}
                   </Alert>
+                  </Snackbar>
                 )}
               </div>
             </Container>
           ) : (
             <div className={classes.paper}>
-              <Alert
-                style={{ backgroundColor: colors.quaternary }}
-                severity="success"
-              >
-                {this.props.showSuccess || this.state.showSuccess}
-              </Alert>
-              <div className={classes.paper}>
-                <RouteLink to="/" style={{ textDecoration: "none" }}>
+              <RouteLink to="/" style={{ textDecoration: "none" }}>
                   <Button
                     variant="contained"
                     style={{ backgroundColor: colors.secondary }}
@@ -199,7 +208,21 @@ class ForgotPassword extends Component {
                     GO TO MAIN PAGE
                   </Button>
                 </RouteLink>
-              </div>
+              <Snackbar
+              open={this.state.showSuccess}
+              autoHideDuration={3000}
+              onClose={this.handleCloseSuccess}
+            >
+              <Alert
+                style={{ backgroundColor: colors.quaternary }}
+                severity="success"
+                onClose={this.handleCloseSuccess}
+              >
+                {this.props.showSuccess || this.state.showSuccess}
+              </Alert>
+              </Snackbar>
+
+
             </div>
           )}
         </div>
