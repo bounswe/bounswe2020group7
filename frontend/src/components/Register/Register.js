@@ -13,6 +13,7 @@ import Container from "@material-ui/core/Container";
 import colors from "../../utils/colors";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import MuiAlert from "@material-ui/lab/Alert";
+import Snackbar from "@material-ui/core/Snackbar";
 
 const StyledTextField = withStyles({
   root: {
@@ -111,12 +112,38 @@ class Register extends Component {
       email: "",
       password: "",
       researchAreas: [],
-      checkbox: "",
-      showSuccess: "",
-      fieldEmptyError: "",
-
+      checkbox: false,
+      showError: false,
+      showSuccess: false,
+      fieldEmptyError: false,
     };
   }
+  handleCheck = (event) => {
+    this.setState({ checkbox: event.target.checked });
+  }
+  handleCloseFieldEmpty = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    this.setState({ fieldEmptyError: false });
+  };
+
+  handleCloseError = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    this.setState({ showError: false });
+  };
+
+  handleCloseSuccess = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    this.setState({ showSuccess: false });
+  };
 
   handleSubmit = () => {
     if (
@@ -144,20 +171,22 @@ class Register extends Component {
     })
       .then((response) => {
         if (response.status === 200) {
-          this.setState({showSuccess: "Successfully registered. Please login to continue."})
+          this.setState({
+            showSuccess: "Successfully registered. Please login to continue.",
+          });
           this.setState({
             firstName: "",
             lastName: "",
             email: "",
             password: "",
             researchAreas: [],
-            checkbox: "",
-          })
+            checkbox: false,
+          });
         }
         return response.json();
       })
       .catch((err) => {
-        this.setState({showError: "Error occured. Check your credientials."})
+        this.setState({ showError: "Error occured. Check your credientials." });
         console.log(err);
       });
   };
@@ -180,7 +209,7 @@ class Register extends Component {
 
   render() {
     const { classes } = this.props;
-
+    console.log("tikim var", this.state.checkbox)
     return (
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -281,9 +310,9 @@ class Register extends Component {
           </Grid>
 
           <StyledFormControlLabel
-            control={<StyledCheckbox required value="allowExtraEmails" />}
+            control={<StyledCheckbox checked={this.state.checkbox} onChange={this.handleCheck} required value="allowExtraEmails" />}
             label="I accept the terms and conditions"
-            onChange={(event)=>{this.setState({checkbox: event.target.checked})}}
+
           />
 
           <StyledButton
@@ -297,31 +326,49 @@ class Register extends Component {
             Register
           </StyledButton>
           {this.state.fieldEmptyError && (
-            <Alert
-              style={{ backgroundColor: colors.quinary }}
-              severity="error"
-              onClick={() => this.setState({ fieldEmptyError: null })}
+            <Snackbar
+              open={this.state.fieldEmptyError}
+              autoHideDuration={3000}
+              onClose={this.handleCloseFieldEmpty}
             >
-              {this.props.fieldEmptyError || this.state.fieldEmptyError}
-            </Alert>
+              <Alert
+                style={{ backgroundColor: colors.quinary }}
+                severity="error"
+                onClose={this.handleCloseFieldEmpty}
+              >
+                {this.props.fieldEmptyError || this.state.fieldEmptyError}
+              </Alert>
+            </Snackbar>
           )}
           {this.state.showError && (
-            <Alert
-              style={{ backgroundColor: colors.quinary }}
-              severity="error"
-              onClick={() => this.setState({ showError: null })}
+            <Snackbar
+              open={this.state.showError}
+              autoHideDuration={3000}
+              onClose={this.handleCloseError}
             >
-              {this.props.showError || this.state.showError}
-            </Alert>
+              <Alert
+                style={{ backgroundColor: colors.quinary }}
+                severity="error"
+                onClose={this.handleCloseError}
+              >
+                {this.props.showError || this.state.showError}
+              </Alert>
+            </Snackbar>
           )}
           {this.state.showSuccess && (
-            <Alert
-              style={{ backgroundColor: colors.quaternary }}
-              severity="success"
-              onClick={() => this.setState({ showSuccess: null })}
+            <Snackbar
+              open={this.state.showSuccess}
+              autoHideDuration={3000}
+              onClose={this.handleCloseSuccess}
             >
-              {this.props.showSuccess || this.state.showSuccess}
-            </Alert>
+              <Alert
+                style={{ backgroundColor: colors.quaternary }}
+                severity="success"
+                onClose={this.handleCloseSuccess}
+              >
+                {this.props.showSuccess || this.state.showSuccess}
+              </Alert>
+            </Snackbar>
           )}
         </div>
       </Container>
