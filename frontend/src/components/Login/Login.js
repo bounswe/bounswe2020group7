@@ -12,6 +12,7 @@ import Container from '@material-ui/core/Container';
 import colors from '../../utils/colors';
 import MuiAlert from "@material-ui/lab/Alert";
 import axios from "axios";
+import { Link as RouteLink} from 'react-router-dom';
 
 const CssTextField = withStyles({
   root: {
@@ -110,7 +111,6 @@ class Login extends Component {
       body: JSON.stringify(data)
     }).then(response => {
         if (response.status === 200) {
-          console.log("asiye")
           this.props.handlerIsAuthenticated();
         }
         return response.json();
@@ -183,9 +183,11 @@ class Login extends Component {
           </StyledButton>
             <Grid container>
               <Grid item xs>
+              <RouteLink to="/forgotpassword">
                 <StyledLink href="#" variant="body2">
                   Forgot password?
               </StyledLink>
+              </RouteLink>
               </Grid>
 
             </Grid>
@@ -201,4 +203,4 @@ class Login extends Component {
   }
 }
 
-export default withStyles(useStyles, CssTextField)(Login);
+export default withStyles(useStyles)(Login);

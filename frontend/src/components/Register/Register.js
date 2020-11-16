@@ -136,7 +136,7 @@ export default function Register() {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <StyledTextField
-                autoComplete="fname"
+                margin="normal"
                 name="firstName"
                 variant="outlined"
                 required
@@ -144,48 +144,45 @@ export default function Register() {
                 id="firstName"
                 label="First Name"
                 autoFocus
-
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <StyledTextField
+                margin="normal"
                 variant="outlined"
                 required
                 fullWidth
                 id="lastName"
                 label="Last Name"
                 name="lastName"
-                autoComplete="lname"
               />
             </Grid>
+            </Grid>
+
             <Grid item xs={12}>
               <StyledTextField
                 variant="outlined"
                 required
                 fullWidth
                 id="email"
+                margin="normal"
                 label="Email Address"
                 name="email"
-                autoComplete="email"
               />
-            </Grid>
-            <Grid item xs={12}>
               <StyledTextField
                 variant="outlined"
                 required
                 fullWidth
+                margin="normal"
                 name="password"
                 label="Password"
                 type="password"
                 id="password"
-                autoComplete="current-password"
               />
-            </Grid>
-            <Grid item xs={12}>
               <Autocomplete
-
                 multiple
                 freeSolo
+
                 id="tags-outlined"
                 options={top100Films}
                 getOptionLabel={option => option.title || option}
@@ -196,15 +193,15 @@ export default function Register() {
                   params.inputProps.onKeyDown = handleKeyDown;
                   return (
                     <StyledTextField
-
                       {...params}
+                      margin="normal"
                       variant="outlined"
                       required
                       name="affinities"
                       label="Affinities"
                       placeholder="Use ',' as a delimeter"
                       id="affinities"
-                      margin="normal"
+
                       fullWidth
                     />
                   );
@@ -212,13 +209,12 @@ export default function Register() {
               />
             </Grid>
 
-            <Grid item xs={12}>
+
               <StyledFormControlLabel
                 control={<StyledCheckbox value="allowExtraEmails" />}
                 label="I accept the terms and conditions"
               />
-            </Grid>
-          </Grid>
+
           <StyledButton
             type="submit"
             fullWidth
@@ -228,6 +224,7 @@ export default function Register() {
           >
             Register
           </StyledButton>
+
 
       </div>
     </Container>
