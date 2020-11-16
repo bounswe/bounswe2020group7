@@ -1,27 +1,15 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="Theme.Platon.FullScreen" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <style name="Theme.Platon" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">@color/primary_dark</item>
         <!-- Customize your theme here. -->
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
-
-    <style name="Theme.Platon" parent="Theme.AppCompat.DayNight">
-        <!-- Customize your theme here. -->
-        <item name="android:windowFullscreen">true</item>
-        <item name="android:windowContentOverlay">@null</item>
-
-        <item name="actionBarStyle">@style/CustomActionBar</item>
-    </style>
-
-    <style name="CustomActionBar" parent="Widget.AppCompat.Light.ActionBar.Solid.Inverse">
-        <item name="background">@color/primary_dark</item>
-        <item name="displayOptions">useLogo|showHome|showTitle</item>
-        <item name="logo">@drawable/ic_o_logo</item>
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_background</item>
     </style>
 
 

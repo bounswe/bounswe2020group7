@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/ic_o_logo_24dp"
+        android:title="@string/home_str" />
+    <item
+        android:id="@+id/navigation_notifications"
+        android:icon="@drawable/ic_o_logo_24dp"
+        android:title="@string/from_str" />
+    <item
+        android:id="@+id/navigation_dashboard"
+        android:icon="@drawable/ic_register_24dp"
+        android:title="@string/title_activity_login" />
+</menu>

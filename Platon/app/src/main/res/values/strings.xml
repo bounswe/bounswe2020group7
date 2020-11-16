@@ -23,7 +23,17 @@
     <string name="plat_str">PLAT</string>
     <string name="n_str">N</string>
     <string name="from_str">from</string>
-    <string name="search_str">Search Button</string>
+    <string name="search_str">Search</string>
     <string name="register_str">Register</string>
     <string name="login_str">Login</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="home_str">Home</string>
+    <string name="logout_str">Logout</string>
+    <string name="acceptterms_str">I accept the terms and conditions</string>
+    <string name="dontHave_str">Don\'t have an account?</string>
+    <string name="already_have_str">Already have an account?</string>
+    <string name="prompt_name">Name</string>
+    <string name="remember_me_str">Remember me</string>
+    <string name="username_str">Username</string>
 </resources>
