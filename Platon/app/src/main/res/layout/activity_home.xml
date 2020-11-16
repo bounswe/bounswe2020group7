@@ -11,12 +11,34 @@
 
     <include layout="@layout/toolbar" />
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/home_nav_host_fragment"
-        android:name="androidx.navigation.fragment.NavHostFragment"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:defaultNavHost="true"
-        app:navGraph="@navigation/nav_graph_home"/>
+        android:layout_height="match_parent">
 
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/home_nav_host_fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:defaultNavHost="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:navGraph="@navigation/nav_graph_home">
+
+        </androidx.fragment.app.FragmentContainerView>
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_nav_bar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/nav_bar_height"
+            android:background="@color/primary_dark"
+            app:itemTextColor="@color/primary_light"
+            app:layout_constraintBottom_toBottomOf="@+id/home_nav_host_fragment"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:menu="@menu/bottom_nav_bar" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

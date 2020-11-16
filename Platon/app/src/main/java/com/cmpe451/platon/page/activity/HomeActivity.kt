@@ -15,17 +15,22 @@ import androidx.navigation.ui.onNavDestinationSelected
 import com.cmpe451.platon.R
 import com.cmpe451.platon.`interface`.FragmentChangeListener
 import com.cmpe451.platon.core.BaseActivity
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationView
 
 class HomeActivity : BaseActivity(), FragmentChangeListener {
 
     lateinit var toolbar: Toolbar
     lateinit var navController: NavController
+    lateinit var bottomNavBar : BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.Theme_Platon)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
 
+        bottomNavBar = findViewById(R.id.bottom_nav_bar)
         toolbar = findViewById(R.id.toolbar)
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.home_nav_host_fragment) as NavHostFragment
@@ -33,7 +38,7 @@ class HomeActivity : BaseActivity(), FragmentChangeListener {
 
         setSupportActionBar(toolbar)
         NavigationUI.setupActionBarWithNavController(this, navController)
-
+        NavigationUI.setupWithNavController(bottomNavBar, navController)
     }
 
     override fun addFragment(fragment: Fragment, bundle: Bundle?) {
@@ -73,5 +78,7 @@ class HomeActivity : BaseActivity(), FragmentChangeListener {
         navController.navigateUp()
         return super.onSupportNavigateUp()
     }
+
+
 
 }
