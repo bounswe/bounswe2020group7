@@ -1,5 +1,5 @@
 from flask import Response
-from flask_restful import Resource
+from flask_restplus import Resource
 
 class ProfileAPI(Resource):
     def get(self):

@@ -1,17 +1,29 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_restful import Api
- 
+from flask_restplus import Api
+from flask_mail import Mail
+
 db = SQLAlchemy()
 migrate = Migrate()
+api = Api()
+mail = Mail()
 
 def create_app(config_class='config'):
+    global api
+
     app = Flask(__name__)
     app.config.from_object(config_class)
-    api = Api(app,prefix = '/api')
+    api = Api(app,
+              version="0.1",
+              title = "Platon RESTful API",
+              description = "An Academic Collaboration Platform Backend",
+              default="Platon API Endpoints",
+              doc = "/documentation",
+              prefix = '/api')
     db.init_app(app)
     migrate.init_app(app,db)
+    mail.init_app(app)
     
     from app import models
 

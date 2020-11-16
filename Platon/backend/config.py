@@ -1,3 +1,4 @@
+import datetime
 # Statement for enabling the development environment
 DEBUG = True
 
@@ -6,7 +7,7 @@ import os
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))  
 
 # Define the database - we are working with
-DATABASE_URL = "write-db-address-here"
+DATABASE_URL = "write-db-url-here"
 SQLALCHEMY_DATABASE_URI = 'mysql://' + DATABASE_URL + '/platon_db'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
@@ -16,9 +17,18 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 # operations using the other.
 THREADS_PER_PAGE = 2
 
-# Use a secure, unique and absolutely secret key for
-# signing the data. 
-CSRF_SESSION_KEY = "secret"
+JWT_SESSION_KEY = "secret" 
+JWT_ALGORITHM = 'HS256'
+SESSION_DURATION = datetime.timedelta(minutes=10)
+
+LINK_DURATION = datetime.timedelta(minutes=5)
+
+MAIL_SERVER = 'smtp.gmail.com'
+MAIL_PORT = 465
+MAIL_USE_SSL = True
+MAIL_USERNAME = 'platon.group7@gmail.com'
+MAIL_PASSWORD = 'hddyynymjbtbaxaf'
+MAIL_DEFAULT_SENDER = ('Platon','platon.group7@gmail.com')
 
 # Secret key for signing cookies
 SECRET_KEY = "secret"
