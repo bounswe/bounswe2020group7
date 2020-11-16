@@ -113,7 +113,8 @@ class Register extends Component {
       researchAreas: [],
       checkbox: "",
       showSuccess: "",
-      showError: "",
+      fieldEmptyError: "",
+
     };
   }
 
@@ -126,7 +127,7 @@ class Register extends Component {
       this.state.researchAreas.length === 0 ||
       !this.state.checkbox
     ) {
-      this.setState({ showError: "Fields are required" });
+      this.setState({ fieldEmptyError: "Fields are required" });
       return;
     }
     const url = "https://react-my-burger-78df4.firebaseio.com/register.json";
@@ -143,11 +144,20 @@ class Register extends Component {
     })
       .then((response) => {
         if (response.status === 200) {
-          console.log("hello");
+          this.setState({showSuccess: "Successfully registered. Please login to continue."})
+          this.setState({
+            firstName: "",
+            lastName: "",
+            email: "",
+            password: "",
+            researchAreas: [],
+            checkbox: "",
+          })
         }
         return response.json();
       })
       .catch((err) => {
+        this.setState({showError: "Error occured. Check your credientials."})
         console.log(err);
       });
   };
@@ -170,16 +180,7 @@ class Register extends Component {
 
   render() {
     const { classes } = this.props;
-    console.log(
-      this.state.firstName,
-      this.state.lastName,
-      this.state.email,
-      this.state.password,
-      this.state.researchAreas,
-      this.state.checkbox,
-      this.state.showSuccess,
-      this.state.showError
-    );
+
     return (
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -295,6 +296,15 @@ class Register extends Component {
           >
             Register
           </StyledButton>
+          {this.state.fieldEmptyError && (
+            <Alert
+              style={{ backgroundColor: colors.quinary }}
+              severity="error"
+              onClick={() => this.setState({ fieldEmptyError: null })}
+            >
+              {this.props.fieldEmptyError || this.state.fieldEmptyError}
+            </Alert>
+          )}
           {this.state.showError && (
             <Alert
               style={{ backgroundColor: colors.quinary }}
@@ -302,6 +312,15 @@ class Register extends Component {
               onClick={() => this.setState({ showError: null })}
             >
               {this.props.showError || this.state.showError}
+            </Alert>
+          )}
+          {this.state.showSuccess && (
+            <Alert
+              style={{ backgroundColor: colors.quaternary }}
+              severity="success"
+              onClick={() => this.setState({ showSuccess: null })}
+            >
+              {this.props.showSuccess || this.state.showSuccess}
             </Alert>
           )}
         </div>
