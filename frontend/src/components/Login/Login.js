@@ -94,14 +94,15 @@ class Login extends Component {
     this.state = {
       email: '',
       password: '',
-      error:'',
+      fieldEmptyError:'',
+      showError:'',
 
     }
   }
 
   handleSubmit  = () => {
     if (this.state.email === "" || this.state.password === "") {
-      this.setState({error: "Fields are required"});
+      this.setState({fieldEmptyError: "Fields are required"});
       return;
     }
     const url = "https://react-my-burger-78df4.firebaseio.com/users.json";
@@ -115,6 +116,7 @@ class Login extends Component {
         }
         return response.json();
       }).catch(err=> {
+        this.setState({showError: "Error occured. Check your credientials."})
           console.log(err);
       });
     //const data = { email: this.state.email, password: this.state.password }
@@ -192,11 +194,20 @@ class Login extends Component {
 
             </Grid>
 
-            {this.state.error && (
-        <Alert style={{backgroundColor: colors.quinary}} severity="error" onClick={() => this.setState({error:null})}>
-          {this.props.error || this.state.error}
+            {this.state.fieldEmptyError && (
+        <Alert style={{backgroundColor: colors.quinary}} severity="error" onClick={() => this.setState({fieldEmptyError:null})}>
+          {this.props.fieldEmptyError || this.state.fieldEmptyError}
         </Alert>
       )}
+      {this.state.showError && (
+            <Alert
+              style={{ backgroundColor: colors.quinary }}
+              severity="error"
+              onClick={() => this.setState({ showError: null })}
+            >
+              {this.props.showError || this.state.showError}
+            </Alert>
+          )}
         </div>
       </Container>
     );
