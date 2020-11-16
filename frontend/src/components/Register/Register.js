@@ -123,7 +123,8 @@ class Register extends Component {
       this.state.lastName === "" ||
       this.state.email === "" ||
       this.state.password === "" ||
-      this.state.researchAreas.length === 0
+      this.state.researchAreas.length === 0 ||
+      !this.state.checkbox
     ) {
       this.setState({ showError: "Fields are required" });
       return;
@@ -281,6 +282,7 @@ class Register extends Component {
           <StyledFormControlLabel
             control={<StyledCheckbox required value="allowExtraEmails" />}
             label="I accept the terms and conditions"
+            onChange={(event)=>{this.setState({checkbox: event.target.checked})}}
           />
 
           <StyledButton
