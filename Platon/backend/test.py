@@ -1,5 +1,5 @@
 import unittest
-from tests.login_test import LoginTest
+from tests.auth_system_test import LoginTest,ReserPasswordTest
 
 if __name__ == "__main__":
     unittest.main()
