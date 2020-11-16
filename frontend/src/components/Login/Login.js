@@ -98,11 +98,7 @@ class Login extends Component {
     }
   }
 
-
-
   handleSubmit  = () => {
-
-
     if (this.state.email === "" || this.state.password === "") {
       this.setState({error: "Fields are required"});
       return;
@@ -195,7 +191,7 @@ class Login extends Component {
             </Grid>
 
             {this.state.error && (
-        <Alert severity="error" onClick={() => this.setState({error:null})}>
+        <Alert style={{backgroundColor: colors.quinary}} severity="error" onClick={() => this.setState({error:null})}>
           {this.props.error || this.state.error}
         </Alert>
       )}

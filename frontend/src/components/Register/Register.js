@@ -15,7 +15,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 
 const StyledTextField = withStyles({
   root: {
-    margin: 0,
+
 
     '& .MuiInputBase-input': {
       color: colors.secondary,
@@ -132,7 +132,7 @@ export default function Register() {
         <Typography component="h1" variant="h5" className={classes.typography}>
           Register
         </Typography>
-        <form className={classes.form} noValidate>
+
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <StyledTextField
@@ -228,7 +228,7 @@ export default function Register() {
           >
             Register
           </StyledButton>
-        </form>
+
       </div>
     </Container>
   );

@@ -22,7 +22,6 @@ class App extends Component {
         render ={ () => !this.state.isAuthenticated ?
               <Landing handlerIsAuthenticated={this.handlerIsAuthenticated}/>
               : <h1>Home</h1>}/>
-
     </div>
     </Router>
      );
