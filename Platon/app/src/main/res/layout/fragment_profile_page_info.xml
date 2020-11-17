@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/primary_dark"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/name_block"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/profile_page_margin"
+        android:layout_marginTop="@dimen/profile_page_margin"
+        android:layout_marginEnd="@dimen/profile_page_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/profile_photo"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginLeft="@dimen/profile_page_margin"
+            android:layout_marginTop="@dimen/profile_page_margin"
+            android:layout_marginBottom="@dimen/profile_page_margin"
+            android:contentDescription="ProfilePhoto"
+            app:layout_constraintBottom_toTopOf="@id/button_edit_profile"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@drawable/ic_launcher_foreground" />
+
+        <Button
+            android:id="@+id/button_followers"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/profile_page_margin"
+            android:layout_marginEnd="@dimen/profile_margin_half"
+            android:layout_marginBottom="@dimen/profile_page_margin"
+            android:text="@string/text_follower"
+            app:layout_constraintBottom_toBottomOf="@id/profile_photo"
+            app:layout_constraintEnd_toStartOf="@+id/button_following"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/profile_photo" />
+
+        <Button
+            android:id="@+id/button_following"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/profile_margin_half"
+            android:layout_marginEnd="@dimen/profile_page_margin"
+            android:text="@string/text_following"
+            app:layout_constraintBottom_toBottomOf="@id/button_followers"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/button_followers"
+            tools:layout_editor_absoluteY="30dp" />
+
+        <Button
+            android:id="@+id/button_edit_profile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/text_edit_profile"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_photo" />
+
+        <TextView
+            android:id="@+id/text_name_surname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/profile_page_margin"
+            android:layout_marginBottom="9dp"
+            android:text="Suzan Uskudarli"
+            app:layout_constraintBottom_toTopOf="@+id/button_followers"
+            app:layout_constraintLeft_toRightOf="@id/profile_photo"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/profile_photo" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/profile_page_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/name_block"
+        app:layout_constraintVertical_bias="0.6" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

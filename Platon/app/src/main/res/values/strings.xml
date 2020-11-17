@@ -36,4 +36,7 @@
     <string name="prompt_name">Name</string>
     <string name="remember_me_str">Remember me</string>
     <string name="username_str">Username</string>
+    <string name="text_follower">Followers</string>
+    <string name="text_following">Following</string>
+    <string name="text_edit_profile">Edit Profile</string>
 </resources>
