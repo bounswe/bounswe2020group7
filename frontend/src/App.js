@@ -3,6 +3,7 @@ import Landing from './components/Landing/Landing';
 import React, { Component } from 'react';
 import {BrowserRouter as Router, Route} from 'react-router-dom'
 import ForgotPassword from './components/ForgotPassword/ForgotPassword'
+import ResetPassword from './components/ResetPassword/ResetPassword'
 
 class App extends Component {
   constructor(props) {
@@ -18,8 +19,8 @@ class App extends Component {
     })
   }
   render() {
-    return (
 
+    return (
       <Router>
       <div className="App">
       <Route path='/' exact
@@ -27,6 +28,7 @@ class App extends Component {
               <Landing handlerIsAuthenticated={this.handlerIsAuthenticated}/>
               : <h1>Home</h1>}/>
       <Route path='/forgotpassword' exact component={ForgotPassword}/>
+      <Route path='/resetpassword'  component={ResetPassword}/>
       </div>
     </Router>
      );

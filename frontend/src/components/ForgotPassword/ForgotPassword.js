@@ -175,7 +175,7 @@ class ForgotPassword extends Component {
                     className={classes.submit}
                     onClick={this.handleSubmit}
                   >
-                    Reset My Password
+                    Send Reset Password Link
                   </StyledButton>
                 </div>
 
