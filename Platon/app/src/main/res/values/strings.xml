@@ -41,4 +41,5 @@
     <string name="profile_str">Profile</string>
     <string name="workspaces_str">Workspaces</string>
     <string name="phone_str">Phone</string>
+    <string name="forgot_password_str">Forgot password?</string>
 </resources>

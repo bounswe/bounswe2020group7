@@ -21,10 +21,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <TextView
+            android:id="@+id/alread_have_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:text="@string/already_have_str"
+            android:textColor="@color/primary_dark" />
+
         <EditText
             android:id="@+id/fullname_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:autofillHints=""
             android:ems="15"
             android:hint="@string/prompt_name"
@@ -103,8 +113,9 @@
             android:id="@+id/terms_chk"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:text="@string/acceptterms_str"
-            android:textColor="@color/primary_dark" />
+            android:textColor="@color/primary_dark_lighter" />
 
         <Button
             android:id="@+id/register_btn"
@@ -112,17 +123,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:backgroundTint="@color/secondary_purple"
-            android:text="@string/register_str" />
-
-        <TextView
-            android:id="@+id/alread_have_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:clickable="true"
-            android:focusable="true"
-            android:text="@string/already_have_str"
-            android:textColor="@color/primary_dark" />
+            android:text="@string/register_str"
+            android:textColor="@color/primary_light" />
 
     </LinearLayout>
 </ScrollView>

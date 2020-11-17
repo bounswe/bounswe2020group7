@@ -20,10 +20,21 @@
         android:padding="@dimen/inner_frame_layout_padding_2">
 
 
+        <TextView
+            android:id="@+id/dont_have_acc_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:hapticFeedbackEnabled="true"
+            android:text="@string/dontHave_str"
+            android:textColor="@color/primary_dark" />
+
         <EditText
             android:id="@+id/email_et"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:autofillHints=""
             android:backgroundTint="@color/primary_dark"
             android:ems="15"
@@ -53,7 +64,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/remember_me_str"
-            android:textColor="@color/primary_dark" />
+            android:textColor="@color/primary_dark_lighter" />
 
         <Button
             android:id="@+id/login_btn"
@@ -61,17 +72,18 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:backgroundTint="@color/secondary_purple"
-            android:text="@string/login_str" />
+            android:text="@string/login_str"
+            android:textColor="@color/primary_light" />
 
         <TextView
-            android:id="@+id/dont_have_acc_btn"
+            android:id="@+id/forgot_pw_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:clickable="true"
             android:focusable="true"
             android:hapticFeedbackEnabled="true"
-            android:text="@string/dontHave_str"
+            android:text="@string/forgot_password_str"
             android:textColor="@color/primary_dark" />
 
     </LinearLayout>

@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
+import android.widget.Toast
 import androidx.navigation.NavController
 import com.cmpe451.platon.page.activity.HomeActivity
 import com.cmpe451.platon.page.activity.LoginActivity
@@ -32,6 +33,10 @@ class LoginPresenter(private var view: LoginContract.View?, private var reposito
         }
         navController.navigate(action)
 
+    }
+
+    override fun onForgotPasswordClicked(mail: String) {
+        Toast.makeText((view as LoginFragment).activity, "Forgot Pw pressed!" + mail, Toast.LENGTH_LONG).show()
     }
 
     override fun onStart() {

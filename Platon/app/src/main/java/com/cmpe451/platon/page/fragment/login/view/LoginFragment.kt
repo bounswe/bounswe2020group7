@@ -18,8 +18,6 @@ class LoginFragment : Fragment(), LoginContract.View  {
 
     private lateinit var presenter: LoginContract.Presenter
     private lateinit var fragmentChangeListener: FragmentChangeListener
-
-
     private lateinit var binding: FragmentLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,6 +65,11 @@ class LoginFragment : Fragment(), LoginContract.View  {
 
         binding.dontHaveAccBtn.setOnClickListener {
             presenter.onAlreadyHaveAccountClicked()
+        }
+
+        binding.forgotPwBtn.setOnClickListener {
+            val mail = binding.emailEt.text.toString().trim()
+            presenter.onForgotPasswordClicked(mail)
         }
 
         //password.addTextChangedListener(textWatcher)

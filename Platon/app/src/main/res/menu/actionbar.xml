@@ -24,6 +24,6 @@
         android:id="@+id/search_btn"
         android:icon="@drawable/ic_search_24dp"
         android:title="@string/search_str"
-        app:actionViewClass="android.widget.SearchView"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="always" />
 </menu>

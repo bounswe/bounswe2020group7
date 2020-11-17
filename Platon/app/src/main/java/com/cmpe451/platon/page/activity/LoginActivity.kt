@@ -1,5 +1,6 @@
 package com.cmpe451.platon.page.activity
 
+import android.animation.LayoutTransition
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -10,8 +11,9 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.SearchView
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import com.cmpe451.platon.R
 import com.cmpe451.platon.`interface`.FragmentChangeListener
@@ -21,6 +23,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.onNavDestinationSelected
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.`interface`.ActivityChangeListener
@@ -63,7 +66,6 @@ class LoginActivity :BaseActivity(), FragmentChangeListener, SearchElementsAdapt
         (searchRecyclerView.adapter as SearchElementsAdapter).notifyDataSetChanged()
     }
 
-
     override fun addFragment(fragment: Fragment, bundle: Bundle?) {
         TODO("Not yet implemented")
     }
@@ -75,11 +77,11 @@ class LoginActivity :BaseActivity(), FragmentChangeListener, SearchElementsAdapt
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.actionbar, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
+        val search = (menu?.findItem(R.id.search_btn)?.actionView as SearchView)
+        val searchBar = search.findViewById<LinearLayout>(R.id.search_bar)
 
-    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        val search = menu?.findItem(R.id.search_btn)?.actionView as SearchView
+        searchBar.layoutTransition = LayoutTransition()
+
         search.setOnQueryTextListener( object: SearchView.OnQueryTextListener{
             override fun onQueryTextChange(newText: String?): Boolean {
                 return Log.println(Log.ERROR, "SEARCH:", newText.toString().trim())*0 == 0
@@ -98,9 +100,9 @@ class LoginActivity :BaseActivity(), FragmentChangeListener, SearchElementsAdapt
             search.onActionViewCollapsed()
             true
         }
-        return super.onPrepareOptionsMenu(menu)
-    }
 
+        return super.onCreateOptionsMenu(menu)
+    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)

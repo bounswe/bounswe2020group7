@@ -13,13 +13,13 @@
 
         <include layout="@layout/toolbar" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/search_element_recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/primary_dark">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/search_element_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary_dark">
 
-            </androidx.recyclerview.widget.RecyclerView>
+    </androidx.recyclerview.widget.RecyclerView>
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/login_nav_host_fragment"

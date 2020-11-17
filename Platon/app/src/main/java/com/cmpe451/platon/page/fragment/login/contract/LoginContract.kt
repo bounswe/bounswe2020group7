@@ -12,6 +12,7 @@ interface LoginContract {
     interface Presenter : BasePresenter {
         fun onLoginButtonClicked(mail: String, pass: String, remember: Boolean)
         fun onAlreadyHaveAccountClicked()
+        fun onForgotPasswordClicked(mail: String)
 
     }
 

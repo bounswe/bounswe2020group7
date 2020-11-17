@@ -4,16 +4,19 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.TextView
-import androidx.appcompat.view.menu.MenuView
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.cmpe451.platon.R
 
 
 class SearchElementsAdapter(private val myDataset: ArrayList<String>, private val context: Context, private val searchButtonClickListener: SearchButtonClickListener) :
 
         RecyclerView.Adapter<SearchElementsAdapter.MyViewHolder>() {
+
+    interface SearchButtonClickListener{
+        fun onSearchButtonClicked(buttonName: String)
+    }
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -30,20 +33,12 @@ class SearchElementsAdapter(private val myDataset: ArrayList<String>, private va
     }
 
 
-    interface SearchButtonClickListener{
-        fun onSearchButtonClicked(buttonName: String)
-    }
-
     // Create new views (invoked by the layout manager)
-    override fun onCreateViewHolder(parent: ViewGroup,
-                                    viewType: Int): MyViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         // create a new view
-        val textView = MyViewHolder(
-                LayoutInflater.from(parent.context)
-                        .inflate(R.layout.search_element_cell, parent, false)
-        )
+        val textView = MyViewHolder(LayoutInflater.from(parent.context)
+                .inflate(R.layout.search_element_cell, parent, false))
         // set the view's size, margins, paddings and layout parameters
-
         return textView
     }
 
@@ -54,7 +49,7 @@ class SearchElementsAdapter(private val myDataset: ArrayList<String>, private va
         holder.myTextView.text = "SE: " + myDataset[position].toString()
         holder.bindData(myDataset[position].toString(), searchButtonClickListener)
     }
-
+    
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = myDataset.size
 }
