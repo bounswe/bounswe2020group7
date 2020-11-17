@@ -20,6 +20,8 @@ import com.cmpe451.platon.adapter.UpcomingEventsAdapter
 import com.cmpe451.platon.databinding.FragmentPreLoginBinding
 import com.cmpe451.platon.page.activity.LoginActivity
 import com.cmpe451.platon.page.fragment.preLogin.contract.PreLoginContract
+import com.cmpe451.platon.page.fragment.preLogin.model.PreLoginRepository
+import com.cmpe451.platon.page.fragment.preLogin.presenter.PreLoginPresenter
 
 class PreLoginFragment : Fragment(), PreLoginContract.View, TrendingProjectsAdapter.TrendingProjectButtonClickListener, UpcomingEventsAdapter.UpcomingButtonClickListener  {
 
@@ -47,10 +49,15 @@ class PreLoginFragment : Fragment(), PreLoginContract.View, TrendingProjectsAdap
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+        initializePresenter()
         initViews(view)
         setFragmentChangeListener()
         setListeners()
-        initializePresenter()
+
+
+        presenter?.onPreLoginMade()
+
     }
 
 
@@ -70,20 +77,15 @@ class PreLoginFragment : Fragment(), PreLoginContract.View, TrendingProjectsAdap
     }
 
     private fun setListeners() {
-        //loginButton.setOnClickListener {
-        //    showProgressBar()
-        //    val username = username.text.toString().trim()
-        //    val password = password.text.toString().trim()
-        //    presenter?.login(username, password)
-        //}
 
         //password.addTextChangedListener(textWatcher)
     }
 
     private fun initializePresenter(){
         val sharedPreferences = requireContext().getSharedPreferences("token_file", 0)
-        //val repository = LoginRepository(sharedPreferences)
-        //setPresenter(LoginPresenter(this, repository, sharedPreferences))
+        val repository = PreLoginRepository(sharedPreferences)
+
+        presenter = PreLoginPresenter(this,repository, sharedPreferences )
     }
 
 

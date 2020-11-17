@@ -15,13 +15,41 @@ import com.cmpe451.platon.page.fragment.login.contract.LoginContract
 import com.cmpe451.platon.page.fragment.login.model.LoginRepository
 import com.cmpe451.platon.page.fragment.login.view.LoginFragment
 import com.cmpe451.platon.page.fragment.login.view.LoginFragmentDirections
+import com.cmpe451.platon.page.fragment.preLogin.view.PreLoginFragment
+import com.cmpe451.platon.page.fragment.preLogin.view.PreLoginFragmentDirections
 
 
 class LoginPresenter(private var view: LoginContract.View?, private var repository: LoginRepository, private var sharedPreferences: SharedPreferences, private var navController: NavController) : LoginContract.Presenter {
 
-    override fun onLoginButtonClicked(mail: String, pass: String, remember: Boolean, flag: Boolean) {
 
+    override fun onPreLoginAutomated(){
+        val rememberMe = sharedPreferences.getBoolean("remember_me", false)
+
+        if (rememberMe){
+
+            Toast.makeText((view as LoginFragment).activity, "Autologin..2", Toast.LENGTH_LONG).show()
+
+            val mailPass = sharedPreferences.getStringSet("login_values", setOf()) as Set<String>
+
+            if (mailPass.size == 2){
+                val it = mailPass.iterator()
+                val mail = it.next()
+                val pass = it.next()
+
+                (view as LoginFragment).setFields(mail, pass, true)
+
+                (view as LoginFragment).clickLogin()
+            }
+        }
+    }
+
+
+    override fun onLoginButtonClicked(mail: String, pass: String, remember: Boolean, flag: Boolean) {
         if (!flag){
+            sharedPreferences.edit().putBoolean("remember_me", remember).apply()
+
+            sharedPreferences.edit().putStringSet("login_values", setOf(mail, pass)).apply()
+
             (view as LoginFragment).startActivity(Intent((view as LoginFragment).activity, HomeActivity::class.java))
             (view as LoginFragment).activity?.finish()
         }

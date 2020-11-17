@@ -6,6 +6,8 @@ import com.cmpe451.platon.core.BaseView
 interface LoginContract {
 
     interface View : BaseView<Presenter> {
+        fun setFields(mail: String, pass: String, b: Boolean)
+        fun clickLogin()
 
     }
 
@@ -13,6 +15,7 @@ interface LoginContract {
         fun onLoginButtonClicked(mail: String, pass: String, remember: Boolean, flag: Boolean)
         fun onAlreadyHaveAccountClicked()
         fun onForgotPasswordClicked(mail: String)
+        fun onPreLoginAutomated()
 
     }
 

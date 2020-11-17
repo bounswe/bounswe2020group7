@@ -37,6 +37,8 @@ class LoginFragment : Fragment(), LoginContract.View  {
         initializePresenter()
         setFragmentChangeListener()
         setListeners()
+
+        presenter.onPreLoginAutomated()
     }
 
     private fun initializePresenter(){
@@ -94,6 +96,16 @@ class LoginFragment : Fragment(), LoginContract.View  {
         super.onPrepareOptionsMenu(menu)
         menu.findItem(R.id.registerFragment).isVisible = false
         menu.findItem(R.id.loginFragment).isVisible = false
+    }
+
+    override fun setFields(mail: String, pass: String, b: Boolean) {
+        binding.emailEt.setText(mail)
+        binding.passEt.setText(pass)
+        binding.rememberChk.isChecked = b
+    }
+
+    override fun clickLogin() {
+        binding.loginBtn.performClick()
     }
 
     override fun setPresenter(presenter: LoginContract.Presenter) {

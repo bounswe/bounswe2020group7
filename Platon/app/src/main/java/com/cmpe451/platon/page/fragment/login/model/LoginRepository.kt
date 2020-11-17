@@ -4,8 +4,6 @@ import android.content.SharedPreferences
 //import com.cmpe451.elevator.HttpRequest
 
 
-class LoginRepository(sharedPreferences: SharedPreferences){
-
-
+class LoginRepository(val sharedPreferences: SharedPreferences){
 
 }

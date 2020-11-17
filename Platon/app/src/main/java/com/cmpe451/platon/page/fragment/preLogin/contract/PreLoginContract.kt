@@ -10,6 +10,7 @@ interface PreLoginContract {
     }
 
     interface Presenter : BasePresenter {
+        fun onPreLoginMade()
 
     }
 

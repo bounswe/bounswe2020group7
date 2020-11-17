@@ -2,10 +2,7 @@ package com.cmpe451.platon.page.fragment.home.view
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
 import com.cmpe451.platon.R
 import com.cmpe451.platon.`interface`.FragmentChangeListener
@@ -59,8 +56,6 @@ class HomeFragment : Fragment(), HomeContract.View  {
     }
 
     private fun setListeners() {
-
-
         //password.addTextChangedListener(textWatcher)
     }
 
@@ -70,6 +65,16 @@ class HomeFragment : Fragment(), HomeContract.View  {
         menu.findItem(R.id.registerFragment).isVisible = false
         menu.findItem(R.id.loginFragment).isVisible = false
         menu.findItem(R.id.logout_menu_btn).isVisible = true
+    }
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        if (item.itemId == R.id.logout_menu_btn){
+            presenter.onLogOutButtonClicked()
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 
     override fun setPresenter(presenter: HomeContract.Presenter) {
