@@ -28,9 +28,12 @@ class RegisterPresenter(private var view: RegisterContract.View?, private var re
         navController.navigate(action)
     }
 
-    override fun onRegisterButtonClicked(fullName: String, username: String, mail: String, pass1: String, pass2: String, phone: String, terms: Boolean) {
+    override fun onRegisterButtonClicked(firstName: String, lastName: String, mail: String, pass1: String, pass2: String,  flag: Boolean) {
 
-        Log.println(Log.INFO,"IMPORTANT:",fullName + username + mail + pass1 + pass2 + phone + terms.toString())
+        if (flag) {
+            Toast.makeText((view as RegisterFragment).activity, "Error", Toast.LENGTH_LONG).show()
+        }
+        Log.println(Log.INFO,"IMPORTANT:",firstName + lastName + mail + pass1 + pass2  + flag.toString())
     }
 
     override fun onStart() {

@@ -3,6 +3,7 @@ package com.cmpe451.platon.page.fragment.login.presenter
 import android.content.Context.VIBRATOR_SERVICE
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
@@ -18,10 +19,13 @@ import com.cmpe451.platon.page.fragment.login.view.LoginFragmentDirections
 
 class LoginPresenter(private var view: LoginContract.View?, private var repository: LoginRepository, private var sharedPreferences: SharedPreferences, private var navController: NavController) : LoginContract.Presenter {
 
-    override fun onLoginButtonClicked(mail: String, pass: String, remember: Boolean) {
+    override fun onLoginButtonClicked(mail: String, pass: String, remember: Boolean, flag: Boolean) {
 
-        (view as LoginFragment).startActivity(Intent((view as LoginFragment).activity, HomeActivity::class.java))
-        (view as LoginFragment).activity?.finish()
+        if (!flag){
+            (view as LoginFragment).startActivity(Intent((view as LoginFragment).activity, HomeActivity::class.java))
+            (view as LoginFragment).activity?.finish()
+        }
+
         Log.println(Log.INFO, "Important:", mail + pass + remember.toString())
     }
 
@@ -36,7 +40,9 @@ class LoginPresenter(private var view: LoginContract.View?, private var reposito
     }
 
     override fun onForgotPasswordClicked(mail: String) {
-        Toast.makeText((view as LoginFragment).activity, "Forgot Pw pressed!" + mail, Toast.LENGTH_LONG).show()
+        val action = LoginFragmentDirections.actionLoginFragmentToForgotPasswordFragment()
+        ((view as LoginFragment).activity as LoginActivity).navController.navigate(action)
+
     }
 
     override fun onStart() {

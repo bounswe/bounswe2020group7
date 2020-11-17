@@ -11,7 +11,7 @@ interface RegisterContract {
 
     interface Presenter : BasePresenter {
         fun onAlreadyHaveAccountClicked()
-        fun onRegisterButtonClicked(fullName: String, username: String, mail: String, pass1: String, pass2: String, phone: String, terms: Boolean)
+        fun onRegisterButtonClicked(firstName: String, lastName: String, mail: String, pass1: String, pass2: String,  flag: Boolean)
 
     }
 

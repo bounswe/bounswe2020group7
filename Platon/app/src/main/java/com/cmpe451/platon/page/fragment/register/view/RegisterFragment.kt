@@ -14,7 +14,7 @@ import com.cmpe451.platon.page.fragment.register.contract.RegisterContract
 import com.cmpe451.platon.page.fragment.register.model.RegisterRepository
 import com.cmpe451.platon.page.fragment.register.presenter.RegisterPresenter
 
-class RegisterFragment : Fragment(), RegisterContract.View  {
+class RegisterFragment : Fragment(), RegisterContract.View {
 
     private lateinit var presenter: RegisterContract.Presenter
     private lateinit var fragmentChangeListener: FragmentChangeListener
@@ -47,7 +47,7 @@ class RegisterFragment : Fragment(), RegisterContract.View  {
     }
 
 
-    private fun initializePresenter(){
+    private fun initializePresenter() {
         val sharedPreferences = requireContext().getSharedPreferences("token_file", 0)
         val repository = RegisterRepository(sharedPreferences)
         //setPresenter(LoginPresenter(this, repository, sharedPreferences))
@@ -64,15 +64,41 @@ class RegisterFragment : Fragment(), RegisterContract.View  {
 
     private fun setListeners() {
         binding.registerBtn.setOnClickListener {
-            val username = binding.usernameTv.text.toString().trim()
+            var flag = false
+
+            if (binding.firstnameTv.text.isNullOrEmpty()){
+                binding.firstnameTv.error = "Required"
+                flag = true
+            }
+            if( binding.lastnameTv.text.isNullOrEmpty()){
+                binding.lastnameTv.error = "Required"
+                flag = true
+            }
+            if( binding.mailTv.text.isNullOrEmpty()){
+                binding.mailTv.error = "Required"
+                flag = true
+            }
+            if( binding.pw1Tv.text.isNullOrEmpty()){
+                binding.pw1Tv.error = "Required"
+                flag = true
+            }
+            if( binding.pw2Tv.text.isNullOrEmpty()){
+                binding.pw2Tv.error = "Required"
+                flag = true
+            }
+            if (!binding.termsChk.isChecked){
+                flag = true
+            }
+
+
+            val firstName = binding.firstnameTv.text.toString().trim()
+            val lastName = binding.lastnameTv.text.toString().trim()
             val mail = binding.mailTv.text.toString().trim()
             val pass1 = binding.pw1Tv.text.toString().trim()
             val pass2 = binding.pw2Tv.text.toString().trim()
-            val phone = binding.phoneTv.text.toString().trim()
-            val fullName = binding.fullnameTv.text.toString().trim()
-            val terms = binding.termsChk.isChecked
 
-            presenter.onRegisterButtonClicked(fullName, username, mail, pass1, pass2, phone, terms)
+            presenter.onRegisterButtonClicked(firstName, lastName, mail, pass1, pass2, flag)
+
         }
 
         binding.alreadHaveBtn.setOnClickListener {
@@ -90,8 +116,6 @@ class RegisterFragment : Fragment(), RegisterContract.View  {
     }
 
 
-
-
     override fun setPresenter(presenter: RegisterContract.Presenter) {
         TODO("Not yet implemented")
     }
@@ -102,3 +126,4 @@ class RegisterFragment : Fragment(), RegisterContract.View  {
         menu.findItem(R.id.loginFragment).isVisible = false
     }
 }
+

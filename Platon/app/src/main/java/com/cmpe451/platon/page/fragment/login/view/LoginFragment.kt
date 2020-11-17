@@ -56,11 +56,23 @@ class LoginFragment : Fragment(), LoginContract.View  {
     private fun setListeners() {
 
         binding.loginBtn.setOnClickListener {
+            var flag = false
+
+            if (binding.emailEt.text.isNullOrEmpty()){
+                binding.emailEt.error = "Required"
+                flag = true
+            }
+            if( binding.passEt.text.isNullOrEmpty()){
+                binding.passEt.error = "Required"
+                flag = true
+            }
+
+
             val mail = binding.emailEt.text.toString().trim()
             val pass = binding.passEt.text.toString().trim()
             val remember = binding.rememberChk.isChecked
 
-            presenter.onLoginButtonClicked(mail, pass, remember)
+            presenter.onLoginButtonClicked(mail, pass, remember, flag)
         }
 
         binding.dontHaveAccBtn.setOnClickListener {

@@ -30,32 +30,39 @@
             android:text="@string/already_have_str"
             android:textColor="@color/primary_dark" />
 
-        <EditText
-            android:id="@+id/fullname_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:autofillHints=""
-            android:ems="15"
-            android:hint="@string/prompt_name"
-            android:inputType="textPersonName|textAutoComplete"
-            android:textColor="@color/primary_dark"
-            android:textColorHighlight="@color/primary_dark"
-            android:textColorHint="@color/primary_dark_lighter"
-            android:textColorLink="@color/primary_dark_lighter" />
+            android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/username_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:autofillHints=""
-            android:ems="15"
-            android:hint="@string/username_str"
-            android:inputType="textPersonName"
-            android:textColor="@color/primary_dark"
-            android:textColorHighlight="@color/primary_dark"
-            android:textColorHint="@color/primary_dark_lighter"
-            android:textColorLink="@color/primary_dark_lighter" />
+            <EditText
+                android:id="@+id/firstname_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autofillHints=""
+                android:hint="@string/firstName_str"
+                android:inputType="textPersonName|textAutoComplete"
+                android:textColor="@color/primary_dark"
+                android:textColorHighlight="@color/primary_dark"
+                android:textColorHint="@color/primary_dark_lighter"
+                android:textColorLink="@color/primary_dark_lighter" />
+
+            <EditText
+                android:id="@+id/lastname_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autofillHints=""
+                android:ems="15"
+                android:hint="@string/lastName_str"
+                android:inputType="textPersonName"
+                android:textColor="@color/primary_dark"
+                android:textColorHighlight="@color/primary_dark"
+                android:textColorHint="@color/primary_dark_lighter"
+                android:textColorLink="@color/primary_dark_lighter" />
+        </LinearLayout>
 
         <EditText
             android:id="@+id/mail_tv"
@@ -65,19 +72,6 @@
             android:ems="15"
             android:hint="@string/prompt_email"
             android:inputType="textEmailAddress"
-            android:textColor="@color/primary_dark"
-            android:textColorHighlight="@color/primary_dark"
-            android:textColorHint="@color/primary_dark_lighter"
-            android:textColorLink="@color/primary_dark_lighter" />
-
-        <EditText
-            android:id="@+id/phone_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:autofillHints=""
-            android:ems="15"
-            android:hint="@string/phone_str"
-            android:inputType="phone"
             android:textColor="@color/primary_dark"
             android:textColorHighlight="@color/primary_dark"
             android:textColorHint="@color/primary_dark_lighter"
@@ -122,7 +116,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:backgroundTint="@color/secondary_purple"
+            android:backgroundTint="@color/secondary_purple2"
             android:text="@string/register_str"
             android:textColor="@color/primary_light" />
 
