@@ -1,7 +1,10 @@
 package com.cmpe451.platon.page.fragment.login.presenter
 
+import android.content.Context.VIBRATOR_SERVICE
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.Log
 import androidx.navigation.NavController
 import com.cmpe451.platon.page.activity.HomeActivity
@@ -22,8 +25,13 @@ class LoginPresenter(private var view: LoginContract.View?, private var reposito
     }
 
     override fun onAlreadyHaveAccountClicked() {
+        val vib = ((view as LoginFragment).activity as LoginActivity).getSystemService(VIBRATOR_SERVICE) as Vibrator
         val action = LoginFragmentDirections.actionLoginFragmentToRegisterFragment()
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            vib.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
+        }
         navController.navigate(action)
+
     }
 
     override fun onStart() {

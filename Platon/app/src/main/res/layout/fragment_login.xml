@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@drawable/radius"
+        android:background="@drawable/view_back"
         android:gravity="center"
         android:orientation="vertical"
         android:padding="@dimen/inner_frame_layout_padding_2">
@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:autofillHints=""
             android:backgroundTint="@color/primary_dark"
-            android:ems="10"
+            android:ems="15"
             android:hint="@string/prompt_email"
             android:inputType="textEmailAddress"
             android:textColor="@color/primary_dark"
@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:autofillHints=""
             android:backgroundTint="@color/primary_dark"
-            android:ems="10"
+            android:ems="15"
             android:hint="@string/prompt_password"
             android:inputType="textPassword"
             android:textColor="@color/primary_dark"
@@ -57,14 +57,17 @@
 
         <Button
             android:id="@+id/login_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:backgroundTint="@color/secondary_purple"
             android:text="@string/login_str" />
 
         <TextView
             android:id="@+id/dont_have_acc_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:clickable="true"
             android:focusable="true"
             android:hapticFeedbackEnabled="true"
