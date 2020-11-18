@@ -11,10 +11,10 @@ import { withStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import colors from "../../utils/colors";
 import MuiAlert from "@material-ui/lab/Alert";
-import { Link as RouteLink, Redirect  } from "react-router-dom";
+import { Link as RouteLink, Redirect } from "react-router-dom";
 import Snackbar from "@material-ui/core/Snackbar";
-import AppBar from '../AppBar/AppBar'
-import './Login.css'
+import AppBar from "../AppBar/AppBar";
+import "./Login.css";
 const CssTextField = withStyles({
   root: {
     "& .MuiInputBase-input": {
@@ -128,10 +128,8 @@ class Login extends Component {
     })
       .then((response) => {
         if (response.status === 200) {
-          this.setState({isLoggedIn: true})
+          this.setState({ isLoggedIn: true });
           this.props.handlerIsAuthenticated();
-
-
         }
         return response.json();
       })
@@ -154,104 +152,108 @@ class Login extends Component {
     });*/
   };
   render() {
-
-    if(this.state.isLoggedIn){
-      return <Redirect to ='/'/>
+    if (this.state.isLoggedIn) {
+      return <Redirect to="/" />;
     }
 
     const { classes } = this.props;
 
     return (
-      <div className="LoginPage"><AppBar/>
-      <div>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <div className={classes.paper}>
-          <Avatar className={classes.avatar}>
-            <LockOpenOutlinedIcon />
-          </Avatar>
-          <Typography
-            component="h1"
-            variant="h5"
-            className={classes.typography}
-          >
-            Login
-          </Typography>
-          <CssTextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            value={this.state.email}
-            onChange={(e) => this.setState({ email: e.target.value })}
-            autoComplete="email"
-            autoFocus
-          />
-          <CssTextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            value={this.state.password}
-            onChange={(e) => this.setState({ password: e.target.value })}
-            autoComplete="current-password"
-          />
-          <StyledButton
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-            onClick={this.handleSubmit}
-          >
-            Sign In
-          </StyledButton>
-          <Grid container>
-            <Grid item xs>
-              <RouteLink to="/forgotpassword">
-                <StyledLink href="#" variant="body2">
-                  Forgot password?
-                </StyledLink>
-              </RouteLink>
-            </Grid>
-          </Grid>
+      <div className="LoginPage">
+        <AppBar />
+        <div>
+          <Container component="main" maxWidth="xs">
+            <CssBaseline />
+            <div className={classes.paper}>
+              <Avatar className={classes.avatar}>
+                <LockOpenOutlinedIcon />
+              </Avatar>
+              <Typography
+                component="h1"
+                variant="h5"
+                className={classes.typography}
+              >
+                Login
+              </Typography>
+              <CssTextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                value={this.state.email}
+                onChange={(e) => this.setState({ email: e.target.value })}
+                autoComplete="email"
+                autoFocus
+              />
+              <CssTextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                value={this.state.password}
+                onChange={(e) => this.setState({ password: e.target.value })}
+                autoComplete="current-password"
+              />
+              <StyledButton
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+                onClick={this.handleSubmit}
+              >
+                Sign In
+              </StyledButton>
+              <Grid container>
+                <Grid item xs>
+                  <RouteLink to="/forgotpassword">
+                    <StyledLink href="#" variant="body2">
+                      Forgot password?
+                    </StyledLink>
+                  </RouteLink>
+                </Grid>
+              </Grid>
 
-          {this.state.fieldEmptyError && (
-            <Snackbar
-              open={this.state.fieldEmptyError}
-              autoHideDuration={3000}
-              onClose={this.handleCloseFieldEmpty}
-            >
-              <Alert
-                style={{ backgroundColor: colors.quinary }}
-                severity="error"
-                onClose={this.handleCloseFieldEmpty}
-              >
-                {this.props.fieldEmptyError || this.state.fieldEmptyError}
-              </Alert>
-            </Snackbar>
-          )}
-          {this.state.showError && (
-            <Snackbar open={this.state.showError} autoHideDuration={3000} onClose={this.handleCloseError}>
-              <Alert
-                style={{ backgroundColor: colors.quinary }}
-                severity="error"
-                onClose={this.handleCloseError}
-              >
-              {this.props.showError || this.state.showError}
-              </Alert>
-            </Snackbar>
-          )}
+              {this.state.fieldEmptyError && (
+                <Snackbar
+                  open={this.state.fieldEmptyError}
+                  autoHideDuration={3000}
+                  onClose={this.handleCloseFieldEmpty}
+                >
+                  <Alert
+                    style={{ backgroundColor: colors.quinary }}
+                    severity="error"
+                    onClose={this.handleCloseFieldEmpty}
+                  >
+                    {this.props.fieldEmptyError || this.state.fieldEmptyError}
+                  </Alert>
+                </Snackbar>
+              )}
+              {this.state.showError && (
+                <Snackbar
+                  open={this.state.showError}
+                  autoHideDuration={3000}
+                  onClose={this.handleCloseError}
+                >
+                  <Alert
+                    style={{ backgroundColor: colors.quinary }}
+                    severity="error"
+                    onClose={this.handleCloseError}
+                  >
+                    {this.props.showError || this.state.showError}
+                  </Alert>
+                </Snackbar>
+              )}
+            </div>
+          </Container>
         </div>
-      </Container>
-      </div>
       </div>
     );
   }

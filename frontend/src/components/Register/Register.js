@@ -8,14 +8,14 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Grid from "@material-ui/core/Grid";
 import CreateIcon from "@material-ui/icons/Create";
 import Typography from "@material-ui/core/Typography";
-import {  withStyles } from "@material-ui/core/styles";
+import { withStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import colors from "../../utils/colors";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import MuiAlert from "@material-ui/lab/Alert";
 import Snackbar from "@material-ui/core/Snackbar";
-import AppBar from '../AppBar/AppBar'
-import './Register.css'
+import AppBar from "../AppBar/AppBar";
+import "./Register.css";
 const StyledTextField = withStyles({
   root: {
     "& .MuiInputBase-input": {
@@ -121,7 +121,7 @@ class Register extends Component {
   }
   handleCheck = (event) => {
     this.setState({ checkbox: event.target.checked });
-  }
+  };
   handleCloseFieldEmpty = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -211,168 +211,175 @@ class Register extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <div className="RegisterPage"><AppBar/>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <div className={classes.paper}>
-          <Avatar className={classes.avatar}>
-            <CreateIcon />
-          </Avatar>
-          <Typography
-            component="h1"
-            variant="h5"
-            className={classes.typography}
-          >
-            Register
-          </Typography>
-
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <StyledTextField
-                margin="normal"
-                name="firstName"
-                variant="outlined"
-                required
-                fullWidth
-                id="firstName"
-                label="First Name"
-                autoFocus
-                value={this.state.firstName}
-                onChange={(e) => this.setState({ firstName: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <StyledTextField
-                margin="normal"
-                variant="outlined"
-                required
-                fullWidth
-                id="lastName"
-                label="Last Name"
-                name="lastName"
-                value={this.state.lastName}
-                onChange={(e) => this.setState({ lastName: e.target.value })}
-              />
-            </Grid>
-          </Grid>
-
-          <Grid item xs={12}>
-            <StyledTextField
-              variant="outlined"
-              required
-              fullWidth
-              id="email"
-              margin="normal"
-              label="Email Address"
-              name="email"
-              value={this.state.email}
-              onChange={(e) => this.setState({ email: e.target.value })}
-            />
-            <StyledTextField
-              variant="outlined"
-              required
-              fullWidth
-              margin="normal"
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              value={this.state.password}
-              onChange={(e) => this.setState({ password: e.target.value })}
-            />
-            <Autocomplete
-              multiple
-              freeSolo
-              id="tags-outlined"
-              options={researchAreaList}
-              getOptionLabel={(option) => option.title || option}
-              value={this.state.researchAreas}
-              onChange={(e, newValue) =>
-                this.setState({ researchAreas: [...newValue] })
-              }
-              filterSelectedOptions
-              renderInput={(params) => {
-                params.inputProps.onKeyDown = this.handleKeyDown;
-                return (
-                  <StyledTextField
-                    {...params}
-                    margin="normal"
-                    variant="outlined"
-                    required
-                    name="researchAreas"
-                    label="Research Areas"
-                    placeholder="Use ',' as a delimeter"
-                    id="researchAreas"
-                    fullWidth
-                  />
-                );
-              }}
-            />
-          </Grid>
-
-          <StyledFormControlLabel
-            control={<StyledCheckbox checked={this.state.checkbox} onChange={this.handleCheck} required value="allowExtraEmails" />}
-            label="I accept the terms and conditions"
-
-          />
-
-          <StyledButton
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-            onClick={this.handleSubmit}
-          >
-            Register
-          </StyledButton>
-          {this.state.fieldEmptyError && (
-            <Snackbar
-              open={this.state.fieldEmptyError}
-              autoHideDuration={3000}
-              onClose={this.handleCloseFieldEmpty}
+      <div className="RegisterPage">
+        <AppBar />
+        <Container component="main" maxWidth="xs">
+          <CssBaseline />
+          <div className={classes.paper}>
+            <Avatar className={classes.avatar}>
+              <CreateIcon />
+            </Avatar>
+            <Typography
+              component="h1"
+              variant="h5"
+              className={classes.typography}
             >
-              <Alert
-                style={{ backgroundColor: colors.quinary }}
-                severity="error"
+              Register
+            </Typography>
+
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <StyledTextField
+                  margin="normal"
+                  name="firstName"
+                  variant="outlined"
+                  required
+                  fullWidth
+                  id="firstName"
+                  label="First Name"
+                  autoFocus
+                  value={this.state.firstName}
+                  onChange={(e) => this.setState({ firstName: e.target.value })}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <StyledTextField
+                  margin="normal"
+                  variant="outlined"
+                  required
+                  fullWidth
+                  id="lastName"
+                  label="Last Name"
+                  name="lastName"
+                  value={this.state.lastName}
+                  onChange={(e) => this.setState({ lastName: e.target.value })}
+                />
+              </Grid>
+            </Grid>
+
+            <Grid item xs={12}>
+              <StyledTextField
+                variant="outlined"
+                required
+                fullWidth
+                id="email"
+                margin="normal"
+                label="Email Address"
+                name="email"
+                value={this.state.email}
+                onChange={(e) => this.setState({ email: e.target.value })}
+              />
+              <StyledTextField
+                variant="outlined"
+                required
+                fullWidth
+                margin="normal"
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                value={this.state.password}
+                onChange={(e) => this.setState({ password: e.target.value })}
+              />
+              <Autocomplete
+                multiple
+                freeSolo
+                id="tags-outlined"
+                options={researchAreaList}
+                getOptionLabel={(option) => option.title || option}
+                value={this.state.researchAreas}
+                onChange={(e, newValue) =>
+                  this.setState({ researchAreas: [...newValue] })
+                }
+                filterSelectedOptions
+                renderInput={(params) => {
+                  params.inputProps.onKeyDown = this.handleKeyDown;
+                  return (
+                    <StyledTextField
+                      {...params}
+                      margin="normal"
+                      variant="outlined"
+                      required
+                      name="researchAreas"
+                      label="Research Areas"
+                      placeholder="Use ',' as a delimeter"
+                      id="researchAreas"
+                      fullWidth
+                    />
+                  );
+                }}
+              />
+            </Grid>
+
+            <StyledFormControlLabel
+              control={
+                <StyledCheckbox
+                  checked={this.state.checkbox}
+                  onChange={this.handleCheck}
+                  required
+                  value="allowExtraEmails"
+                />
+              }
+              label="I accept the terms and conditions"
+            />
+
+            <StyledButton
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+              onClick={this.handleSubmit}
+            >
+              Register
+            </StyledButton>
+            {this.state.fieldEmptyError && (
+              <Snackbar
+                open={this.state.fieldEmptyError}
+                autoHideDuration={3000}
                 onClose={this.handleCloseFieldEmpty}
               >
-                {this.props.fieldEmptyError || this.state.fieldEmptyError}
-              </Alert>
-            </Snackbar>
-          )}
-          {this.state.showError && (
-            <Snackbar
-              open={this.state.showError}
-              autoHideDuration={3000}
-              onClose={this.handleCloseError}
-            >
-              <Alert
-                style={{ backgroundColor: colors.quinary }}
-                severity="error"
+                <Alert
+                  style={{ backgroundColor: colors.quinary }}
+                  severity="error"
+                  onClose={this.handleCloseFieldEmpty}
+                >
+                  {this.props.fieldEmptyError || this.state.fieldEmptyError}
+                </Alert>
+              </Snackbar>
+            )}
+            {this.state.showError && (
+              <Snackbar
+                open={this.state.showError}
+                autoHideDuration={3000}
                 onClose={this.handleCloseError}
               >
-                {this.props.showError || this.state.showError}
-              </Alert>
-            </Snackbar>
-          )}
-          {this.state.showSuccess && (
-            <Snackbar
-              open={this.state.showSuccess}
-              autoHideDuration={3000}
-              onClose={this.handleCloseSuccess}
-            >
-              <Alert
-                style={{ backgroundColor: colors.quaternary }}
-                severity="success"
+                <Alert
+                  style={{ backgroundColor: colors.quinary }}
+                  severity="error"
+                  onClose={this.handleCloseError}
+                >
+                  {this.props.showError || this.state.showError}
+                </Alert>
+              </Snackbar>
+            )}
+            {this.state.showSuccess && (
+              <Snackbar
+                open={this.state.showSuccess}
+                autoHideDuration={3000}
                 onClose={this.handleCloseSuccess}
               >
-                {this.props.showSuccess || this.state.showSuccess}
-              </Alert>
-            </Snackbar>
-          )}
-        </div>
-      </Container>
+                <Alert
+                  style={{ backgroundColor: colors.quaternary }}
+                  severity="success"
+                  onClose={this.handleCloseSuccess}
+                >
+                  {this.props.showSuccess || this.state.showSuccess}
+                </Alert>
+              </Snackbar>
+            )}
+          </div>
+        </Container>
       </div>
     );
   }
