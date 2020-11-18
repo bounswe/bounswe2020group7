@@ -6,13 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.cmpe451.platon.R
+import com.cmpe451.platon.databinding.FragmentFollowingBinding
 
 class FollowingListFragment : Fragment(){
 
+    private lateinit var binding:FragmentFollowingBinding
     companion object{
         fun newInstance(): FollowingListFragment{
             val args = Bundle()
-
             val fragment = FollowingListFragment()
             fragment.arguments = args
             return fragment
@@ -20,6 +21,8 @@ class FollowingListFragment : Fragment(){
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_following,container)
+        // Inflate the layout for this fragment
+        binding = FragmentFollowingBinding.inflate(inflater)
+        return binding.root
     }
 }

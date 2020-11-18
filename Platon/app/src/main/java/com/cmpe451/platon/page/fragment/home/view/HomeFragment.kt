@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.cmpe451.platon.R
 import com.cmpe451.platon.`interface`.FragmentChangeListener
 import com.cmpe451.platon.databinding.FragmentHomeBinding
@@ -34,11 +35,15 @@ class HomeFragment : Fragment(), HomeContract.View  {
         // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(inflater)
         return binding.root
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializePresenter()
+        binding.ppButton.setOnClickListener {
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToProfilePageFragment())
+        }
         setFragmentChangeListener()
         setListeners()
 

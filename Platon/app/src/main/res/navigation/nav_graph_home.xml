@@ -7,5 +7,21 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.cmpe451.platon.page.fragment.home.view.HomeFragment"
-        android:label="Home" />
+        android:label="Home" >
+        <action
+            android:id="@+id/action_homeFragment_to_profilePageFragment"
+            app:destination="@id/profilePageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profilePageFragment"
+        android:name="com.cmpe451.platon.page.fragment.profilepage.view.ProfilePageFragment"
+        android:label="ProfilePageFragment" >
+        <action
+            android:id="@+id/action_profilePageFragment_to_followersFollowingFragment"
+            app:destination="@id/followersFollowingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/followersFollowingFragment"
+        android:name="com.cmpe451.platon.page.fragment.profilepage.view.FollowersFollowingFragment"
+        android:label="FollowersFollowingFragment" />
 </navigation>

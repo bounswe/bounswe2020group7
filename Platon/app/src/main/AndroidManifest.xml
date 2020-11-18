@@ -12,13 +12,14 @@
         android:supportsRtl="true"
         android:theme="@style/SplashTheme">
         <activity android:name=".page.activity.HomeActivity">
-        </activity>
-        <activity android:name=".page.activity.TestActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".page.activity.TestActivity">
+
         </activity>
         <activity android:name=".page.activity.LoginActivity">
 

@@ -6,6 +6,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.cmpe451.platon.R
 import com.cmpe451.platon.page.fragment.profilepage.view.adapters.FollowViewPagerAdapter
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 
 class TestActivity :AppCompatActivity(){
     private lateinit var tabLayout: TabLayout
@@ -14,11 +15,11 @@ class TestActivity :AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.fragment_following_followers)
-        tabLayout = findViewById(R.id.tab_follow)
-        viewPager = findViewById(R.id.vp_follow)
-        var adapter = FollowViewPagerAdapter(this)
-        viewPager.adapter = adapter
+        setContentView(R.layout.fragment_profile_page)
+//        tabLayout = findViewById(R.id.tab_follow)
+//        viewPager = findViewById(R.id.vp_follow)
+//        var adapter = FollowViewPagerAdapter(this)
+//        viewPager.adapter = adapter
 //        TabLayoutMediator(tabLayout, viewPager) {
 //            tab, position ->
 //                tab.text = tabNames[position]

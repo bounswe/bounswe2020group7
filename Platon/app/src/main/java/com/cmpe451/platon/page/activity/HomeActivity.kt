@@ -1,10 +1,10 @@
 package com.cmpe451.platon.page.activity
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
 import android.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -15,8 +15,8 @@ import androidx.navigation.ui.onNavDestinationSelected
 import com.cmpe451.platon.R
 import com.cmpe451.platon.`interface`.FragmentChangeListener
 import com.cmpe451.platon.core.BaseActivity
+import com.cmpe451.platon.page.fragment.home.view.HomeFragmentDirections
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.navigation.NavigationView
 
 class HomeActivity : BaseActivity(), FragmentChangeListener {
 
@@ -32,7 +32,10 @@ class HomeActivity : BaseActivity(), FragmentChangeListener {
 
         bottomNavBar = findViewById(R.id.bottom_nav_bar)
         toolbar = findViewById(R.id.toolbar)
+//
 
+
+//
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.home_nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 

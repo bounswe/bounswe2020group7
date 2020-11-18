@@ -7,4 +7,11 @@
     android:background="@drawable/home_background"
     tools:context=".page.activity.HomeActivity">
 
+    <Button
+        android:id="@+id/pp_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        tools:layout_editor_absoluteX="163dp"
+        tools:layout_editor_absoluteY="201dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

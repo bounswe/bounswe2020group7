@@ -6,8 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.cmpe451.platon.R
+import  com.cmpe451.platon.databinding.FragmentFollowersBinding
+
 
 class FollowerListFragment : Fragment(){
+    private lateinit var binding: FragmentFollowersBinding
     companion object{
         fun newInstance(): FollowerListFragment{
             val args = Bundle()
@@ -18,7 +21,8 @@ class FollowerListFragment : Fragment(){
         }
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_followers,container)
+        binding = FragmentFollowersBinding.inflate(inflater)
+        return binding.root
     }
 
 }
