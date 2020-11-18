@@ -7,7 +7,7 @@ import com.cmpe451.platon.page.fragment.profilepage.view.FollowerListFragment
 import com.cmpe451.platon.page.fragment.profilepage.view.FollowingListFragment
 
 
-class FollowViewPagerAdapter(fragmentActivity: FragmentActivity): FragmentStateAdapter(fragmentActivity) {
+class FollowViewPagerAdapter(fragment:Fragment): FragmentStateAdapter(fragment) {
     override fun getItemCount(): Int {
         return 2;
     }

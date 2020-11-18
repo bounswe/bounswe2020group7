@@ -29,6 +29,7 @@ class ProfilePageFragment : Fragment(), ProfilePageContract.View {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         binding = FragmentProfilePageBinding.inflate(inflater)
+
 //        binding.rvProfilePageInfo.adapter =
         return binding.root
     }

@@ -13,11 +13,11 @@ import com.cmpe451.platon.page.fragment.profilepage.view.ProfilePageFragmentDire
 
 class ProfilePagePresenter(private var view: ProfilePageContract.View?, private var repository: ProfilePageRepository, private var sharedPreferences: SharedPreferences, private var navController: NavController) : ProfilePageContract.Presenter {
     override fun onFollowersButtonClicked() {
-        navController.navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToFollowersFollowingFragment())
+        navController.navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToFollowersFollowingFragment(0))
     }
 
     override fun onFollowingButtonClicked() {
-        navController.navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToFollowersFollowingFragment())
+        navController.navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToFollowersFollowingFragment(1))
     }
 
     override fun onEditProfileButtonClicked() {

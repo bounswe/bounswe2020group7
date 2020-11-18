@@ -23,5 +23,10 @@
     <fragment
         android:id="@+id/followersFollowingFragment"
         android:name="com.cmpe451.platon.page.fragment.profilepage.view.FollowersFollowingFragment"
-        android:label="FollowersFollowingFragment" />
+        android:label="FollowersFollowingFragment" >
+        <argument
+            android:name="follower_or_following"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
 </navigation>
