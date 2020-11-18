@@ -13,7 +13,7 @@ import colors from "../../utils/colors";
 import MuiAlert from "@material-ui/lab/Alert";
 import { Link as RouteLink } from "react-router-dom";
 import Snackbar from "@material-ui/core/Snackbar";
-
+import AppBar from '../AppBar/AppBar'
 const CssTextField = withStyles({
   root: {
     "& .MuiInputBase-input": {
@@ -151,6 +151,7 @@ class Login extends Component {
   render() {
     const { classes } = this.props;
     return (
+      <div><AppBar/>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper}>
@@ -238,6 +239,7 @@ class Login extends Component {
           )}
         </div>
       </Container>
+      </div>
     );
   }
 }

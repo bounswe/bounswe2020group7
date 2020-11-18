@@ -4,7 +4,8 @@ import React, { Component } from 'react';
 import {BrowserRouter as Router, Route} from 'react-router-dom'
 import ForgotPassword from './components/ForgotPassword/ForgotPassword'
 import ResetPassword from './components/ResetPassword/ResetPassword'
-
+import Login from './components/Login/Login'
+import Register from './components/Register/Register'
 class App extends Component {
   constructor(props) {
     super(props);
@@ -27,6 +28,9 @@ class App extends Component {
         render ={ () => !this.state.isAuthenticated ?
               <Landing handlerIsAuthenticated={this.handlerIsAuthenticated}/>
               : <h1>Home</h1>}/>
+
+      <Route path='/login' exact component={Login}/>
+      <Route path='/register' exact  component={Register}/>
       <Route path='/forgotpassword' exact component={ForgotPassword}/>
       <Route path='/resetpassword'  component={ResetPassword}/>
       </div>

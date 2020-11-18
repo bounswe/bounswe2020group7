@@ -14,7 +14,7 @@ import colors from "../../utils/colors";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import MuiAlert from "@material-ui/lab/Alert";
 import Snackbar from "@material-ui/core/Snackbar";
-
+import AppBar from '../AppBar/AppBar'
 const StyledTextField = withStyles({
   root: {
     "& .MuiInputBase-input": {
@@ -210,6 +210,7 @@ class Register extends Component {
   render() {
     const { classes } = this.props;
     return (
+      <div><AppBar/>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper}>
@@ -371,6 +372,7 @@ class Register extends Component {
           )}
         </div>
       </Container>
+      </div>
     );
   }
 }

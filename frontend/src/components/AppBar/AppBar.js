@@ -1,13 +1,28 @@
 import React from 'react';
 import AppBar from '@material-ui/core/AppBar';
+import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
 import InputBase from '@material-ui/core/InputBase';
-import { fade, makeStyles } from '@material-ui/core/styles';
+import { fade, makeStyles, withStyles} from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
 import Logo from '../Logo/Logo';
 import colors from '../../utils/colors';
 import {Link} from 'react-router-dom'
+
+const StyledButton = withStyles({
+  root: {
+
+    color: colors.secondary,
+    "&:hover": {
+      backgroundColor: colors.primary,
+    },
+  },
+})(Button);
 const useStyles = makeStyles((theme) => ({
+
+
+
+
   root: {
     flexGrow: 1,
   },
@@ -71,7 +86,7 @@ export default function SearchAppBar() {
 
   return (
     <div className={classes.root}>
-      <AppBar  style={{ background: colors.primaryDark }} position="fixed">
+      <AppBar  style={{ background: colors.primaryDark }} position="static">
         <Toolbar style={{justifyContent: "space-around"}}>
 <Link to ='/'>
             <Logo
@@ -91,6 +106,10 @@ export default function SearchAppBar() {
               }}
               inputProps={{ 'aria-label': 'search' }}
             />
+          </div>
+          <div>
+          <Link to='/login' style={{textDecoration: "none"}}><StyledButton>Login</StyledButton></Link>
+          <Link to='/register' style={{textDecoration: "none"}}><StyledButton>Register</StyledButton></Link>
           </div>
         </Toolbar>
       </AppBar>
