@@ -26,10 +26,10 @@ class App extends Component {
       <div className="App">
       <Route path='/' exact
         render ={ () => !this.state.isAuthenticated ?
-              <Landing handlerIsAuthenticated={this.handlerIsAuthenticated}/>
+              <Landing/>
               : <h1>Home</h1>}/>
 
-      <Route path='/login' exact component={Login}/>
+      <Route path='/login' exact component={() => <Login  handlerIsAuthenticated={this.handlerIsAuthenticated}/>}/>
       <Route path='/register' exact  component={Register}/>
       <Route path='/forgotpassword' exact component={ForgotPassword}/>
       <Route path='/resetpassword'  component={ResetPassword}/>

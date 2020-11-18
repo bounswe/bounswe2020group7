@@ -11,9 +11,10 @@ import { withStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import colors from "../../utils/colors";
 import MuiAlert from "@material-ui/lab/Alert";
-import { Link as RouteLink } from "react-router-dom";
+import { Link as RouteLink, Redirect  } from "react-router-dom";
 import Snackbar from "@material-ui/core/Snackbar";
 import AppBar from '../AppBar/AppBar'
+import './Login.css'
 const CssTextField = withStyles({
   root: {
     "& .MuiInputBase-input": {
@@ -94,6 +95,7 @@ class Login extends Component {
       password: "",
       fieldEmptyError: false,
       showError: false,
+      isLoggedIn: false,
     };
   }
 
@@ -126,7 +128,10 @@ class Login extends Component {
     })
       .then((response) => {
         if (response.status === 200) {
+          this.setState({isLoggedIn: true})
           this.props.handlerIsAuthenticated();
+
+
         }
         return response.json();
       })
@@ -149,9 +154,16 @@ class Login extends Component {
     });*/
   };
   render() {
+
+    if(this.state.isLoggedIn){
+      return <Redirect to ='/'/>
+    }
+
     const { classes } = this.props;
+
     return (
-      <div><AppBar/>
+      <div className="LoginPage"><AppBar/>
+      <div>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper}>
@@ -239,6 +251,7 @@ class Login extends Component {
           )}
         </div>
       </Container>
+      </div>
       </div>
     );
   }
