@@ -58,6 +58,7 @@ class FollowTest(BaseTest):
         # Returns the following list of the user.
         # e.g. if Umut follows Can, Umut's following list should include Can.
 
+        print("test_get_following_list")
         data = {'follower_id': 1}  # 1: umut
         actual_response = self.client.post('/api/follow/followings', data=data)
 
@@ -75,6 +76,7 @@ class FollowTest(BaseTest):
         # Returns the follower list of the user.
         # e.g. Umut and Alperen follows Can. Then Can's follower list should contain their IDs.
 
+        print("test_get_follower_list")
         data = {'following_id': 2}  # 2: can
         actual_response = self.client.post('/api/follow/followers', data=data)
 
@@ -88,6 +90,7 @@ class FollowTest(BaseTest):
     # following: who receives the follow request
     # In the test case, Can sent Alperen a follow request.
     def test_get_follow_requests(self):
+        print("test_get_follow_requests")
 
         data = {'following_id': 3}  # 3: alperen
         actual_response = self.client.post('/api/follow/get_follow_requests', data=data)
@@ -103,6 +106,8 @@ class FollowTest(BaseTest):
     # In the test case, Umut sends follow request to Hilal. Hilal should see Umut's ID in followRequests list.
     def test_send_follow_requests(self):
 
+        print("test_send_follow_requests")
+
         data = {'follower_id': 1, 'following_id': 4}  # 1: Umut, 4: Hilal
         actual_response = self.client.post('/api/follow/send_follow_requests', data=data)
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
@@ -114,32 +119,29 @@ class FollowTest(BaseTest):
 
         self.assertTrue(umut_id in follow_requests_list.json, "Follow Request of corresponding ID does not exist!")
 
+    '''
     # follower: who sends the follow request
     # following: who receives the follow request
     # In the test case, Alperen will accept Can's follow request.
     # Therefore, Alperen's FollowRequests list should not contain Can and his follower list should contain Can.
     def test_accept_follow_request(self):
 
+        print("test_accept_follow_request")
+
         data = {'follower_id': 2, 'following_id': 3}
         actual_response = self.client.post('/api/follow/accept_follow_requests', data=data)
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
 
-        data_2 = {'follower_id': 1, 'following_id': 3}
-        actual_response = self.client.post('/api/follow/accept_follow_requests', data=data_2)
-        self.assertEqual(actual_response.status_code, 404, 'Incorrect HTTP Response Code')
+        actual_info_1 = ""
+        expected_info_1 = "None"  # veya bunun gibi bir şey. boş liste döndürecek followrequest list.
 
-    # follower: who sends the follow request
-    # following: who receives the follow request
-    # In this test case, Alperen will reject Can's follow request.
-    def test_reject_follow_request(self):
+        actual_info_2 = ""
+        expected_info_2 = "True"  # ah bilemedim.
 
-        data = {'follower_id': 2, 'following_id': 3}
-        actual_response = self.client.post('/api/follow/reject_follow_requests', data=data)
-        self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
-
-        data_2 = {'follower_id': 1, 'following_id': 3}
-        actual_response = self.client.post('/api/follow/reject_follow_requests', data=data_2)
-        self.assertEqual(actual_response.status_code, 404, 'Incorrect HTTP Response Code')
+        self.assertEqual(actual_info_2, expected_info_2)
+        
+    '''
 
     def tearDown(self):
         super().tearDown()
+
