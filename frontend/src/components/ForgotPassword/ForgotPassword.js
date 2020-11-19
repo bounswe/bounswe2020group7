@@ -126,7 +126,7 @@ class ForgotPassword extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <div className="Landing">
+      <div className="LandingForgotPassword">
         <div className="AppBar">
           <AppBar position="static" />
         </div>

@@ -149,7 +149,7 @@ class ResetPassword extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <div className="Landing">
+      <div className="LandingResetPassword">
         <div className="AppBar">
           <AppBar position="static" />
         </div>
