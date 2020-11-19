@@ -88,7 +88,7 @@ class GetFollowRequestsAPI(Resource):
                         500: 'Database Connection Error'})
     @api.expect(get_follow_requests_parser)
     @login_required
-    def post(user_id, new_token, self):
+    def post(user_id, self):
         '''
             Takes following_id as input and returns the follow requests as a list.
         '''
@@ -125,7 +125,7 @@ class SendFollowRequestAPI(Resource):
                         500: 'Database Connection Error'})
     @api.expect(send_follow_requests_parser)
     @login_required
-    def post(user_id, new_token, self):
+    def post(user_id, self):
         '''
             Takes follower_id and following_id as inputs and creates the corresponding Follow Request.
         '''
@@ -159,7 +159,7 @@ class AcceptFollowRequestAPI(Resource):
                         500: 'Database Connection Error'})
     @api.expect(accept_follow_requests_parser)
     @login_required
-    def post(user_id, new_token, self):
+    def post(user_id, self):
         '''
             Takes follower_id and following_id as inputs and accepts the corresponding Follow Request.
         '''
@@ -206,7 +206,7 @@ class RejectFollowRequestAPI(Resource):
                         500: 'Database Connection Error'})
     @api.expect(reject_follow_requests_parser)
     @login_required
-    def post(user_id, new_token, self):
+    def post(user_id, self):
         '''
             Takes the follower_id and following_id as inputs and rejects the corresponding Follow Request.
         '''
