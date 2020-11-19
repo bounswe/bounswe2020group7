@@ -1,5 +1,5 @@
 from flask import make_response, jsonify, request
-from flask_restplus import Resource
+from flask_restplus import Resource, Namespace
 from flask import current_app as app
 
 from app import api, db
@@ -16,7 +16,12 @@ from hashlib import sha256
 from functools import wraps
 
 
+follow_system_ns = Namespace("Follow System",
+                             description = "Follow System Endpoints",
+                             path = "/follow")
+
 # Private Account Restrictions not implemented.
+@follow_system_ns.route("/followings")
 class GetFollowingsAPI(Resource):
 
     @api.doc(responses={200: 'Followings List is successfully returned',
@@ -49,6 +54,7 @@ class GetFollowingsAPI(Resource):
 
 
 # Private Account Restrictions not implemented.
+@follow_system_ns.route("/followers")
 class GetFollowersAPI(Resource):
 
     @api.doc(responses={200: 'Followers List is successfully returned',
@@ -79,6 +85,7 @@ class GetFollowersAPI(Resource):
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
 
+@follow_system_ns.route("/get_follow_requests")
 class GetFollowRequestsAPI(Resource):
 
     @api.doc(responses={200: 'Follow Requests List is successfully returned',
@@ -117,6 +124,7 @@ class GetFollowRequestsAPI(Resource):
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
 
+@follow_system_ns.route("/send_follow_requests")
 class SendFollowRequestAPI(Resource):
 
     @api.doc(responses={200: 'Follow Request is sent successfully',
@@ -150,6 +158,7 @@ class SendFollowRequestAPI(Resource):
 
 
 # login_required decorator will be added.
+@follow_system_ns.route("/accept_follow_requests")
 class AcceptFollowRequestAPI(Resource):
 
     @api.doc(responses={200: 'Follow Request is accepted successfully',
@@ -197,6 +206,7 @@ class AcceptFollowRequestAPI(Resource):
 
 
 # login_required decorator will be added.
+@follow_system_ns.route("/reject_follow_requests")
 class RejectFollowRequestAPI(Resource):
 
     @api.doc(responses={200: 'Follow Request is rejected successfully',
@@ -242,9 +252,4 @@ class RejectFollowRequestAPI(Resource):
 
 
 def register_resources(api):
-    api.add_resource(GetFollowingsAPI, "/follow/followings")
-    api.add_resource(GetFollowersAPI, "/follow/followers")
-    api.add_resource(GetFollowRequestsAPI, "/follow/get_follow_requests")
-    api.add_resource(SendFollowRequestAPI, "/follow/send_follow_requests")
-    api.add_resource(AcceptFollowRequestAPI, "/follow/accept_follow_requests")
-    api.add_resource(RejectFollowRequestAPI, "/follow/reject_follow_requests")
+    api.add_namespace(follow_system_ns)
