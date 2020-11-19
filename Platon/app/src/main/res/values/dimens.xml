@@ -15,6 +15,18 @@
     -->
     <dimen name="inner_frame_layout_padding">5dp</dimen>
 
+    <dimen name="xxx_small">2dp</dimen>
+    <dimen name="xx_small">4dp</dimen>
+    <dimen name="x_small">6dp</dimen>
+    <dimen name="small">8dp</dimen>
+    <dimen name="medium">10dp</dimen>
+    <dimen name="large">12dp</dimen>
+    <dimen name="x_large">14dp</dimen>
+    <dimen name="xx_large">16dp</dimen>
+    <dimen name="xxx_large">18dp</dimen>
+
+
+
 
     <dimen name="inner_frame_layout_padding_2">10dp</dimen>
     <dimen name="title_logo_padding">10dp</dimen>

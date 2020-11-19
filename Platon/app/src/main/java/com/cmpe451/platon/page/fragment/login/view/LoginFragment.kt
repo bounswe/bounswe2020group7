@@ -41,7 +41,7 @@ class LoginFragment : Fragment(), LoginContract.View  {
         presenter.onPreLoginAutomated()
     }
 
-    private fun initializePresenter(){
+    override fun initializePresenter(){
         val sharedPreferences = requireContext().getSharedPreferences("token_file", 0)
         val repository = LoginRepository(sharedPreferences)
         presenter = LoginPresenter(this, repository, sharedPreferences, (activity as LoginActivity).navController )
@@ -107,11 +107,4 @@ class LoginFragment : Fragment(), LoginContract.View  {
     override fun clickLogin() {
         binding.loginBtn.performClick()
     }
-
-    override fun setPresenter(presenter: LoginContract.Presenter) {
-        TODO("Not yet implemented")
-    }
-
-
-
 }

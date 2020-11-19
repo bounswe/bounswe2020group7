@@ -69,6 +69,11 @@ class LoginPresenter(private var view: LoginContract.View?, private var reposito
 
     override fun onForgotPasswordClicked(mail: String) {
         val action = LoginFragmentDirections.actionLoginFragmentToForgotPasswordFragment()
+        val vib = ((view as LoginFragment).activity as LoginActivity).getSystemService(VIBRATOR_SERVICE) as Vibrator
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            vib.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
+        }
+
         ((view as LoginFragment).activity as LoginActivity).navController.navigate(action)
 
     }

@@ -58,53 +58,16 @@ class PreLoginFragment : Fragment(), PreLoginContract.View, TrendingProjectsAdap
 
 
         initializePresenter()
-        initViews(view)
-        setFragmentChangeListener()
-        setListeners()
-
 
         presenter?.onPreLoginMade()
 
+
+        initViews(view)
+        setFragmentChangeListener()
+        setListeners()
     }
 
-
-    private fun initViews(root: View) {
-        val myTrendingProject = arrayOf<TrendingProject>(
-                TrendingProject("PLATON", context?.let { getDrawable(it, R.drawable.ic_home_24px ) },"A collaboration application for all platforms.", TrendingProject.TREND.HOT),
-                TrendingProject("ANDROID: Reborn", context?.let { getDrawable(it, R.drawable.ic_home_24px ) }, "A new version of android.", TrendingProject.TREND.POPULAR),
-                TrendingProject("DRAGON CENTER", context?.let { getDrawable(it, R.drawable.ic_account_24px ) }, "Msi is developing a new version of dragon center. Join now!", TrendingProject.TREND.MOST_LIKED),
-                TrendingProject("COMPUTER VISION For Phones", context?.let { getDrawable(it, R.drawable.ic_work_24px ) }, "A research for cv, prepared for cvvp.", TrendingProject.TREND.NEW_COMERS),
-                TrendingProject("D++", context?.let { getDrawable(it, R.drawable.ic_home_24px ) }, "A new language development for childs.", TrendingProject.TREND.HOT))
-
-
-        val myUpcomingEvents = arrayOf<UpcomingEvent>(
-                UpcomingEvent("CVPR", "Computer Vision conference, yearly", context?.let { getDrawable(it, R.drawable.ic_home_24px ) }, UpcomingEvent.TYPE.CONFERENCE, "12.02.2021"),
-                UpcomingEvent("IJSR", "International Journal of Science and Research (IJSR) is a journal", context?.let { getDrawable(it, R.drawable.ic_account_24px ) }, UpcomingEvent.TYPE.JOURNAL, "12.02.2021" ),
-                UpcomingEvent("ACS Nano", "Call for papers, acs nano", context?.let { getDrawable(it, R.drawable.ic_work_24px ) }, UpcomingEvent.TYPE.JOURNAL, "12.02.2021" ),
-                UpcomingEvent("ECCV", "Computer Vision conference, yearly, European Conference on Computer Vision", context?.let { getDrawable(it, R.drawable.ic_home_24px ) }, UpcomingEvent.TYPE.CONFERENCE, "12.02.2021" )
-
-        )
-
-
-        trendingProjectsRecyclerView = binding.preLoginTrendingProjectsRecyclerView
-        trendingProjectsRecyclerView.adapter = TrendingProjectsAdapter(myTrendingProject, requireContext(), this)
-        trendingProjectsRecyclerView.layoutManager = LinearLayoutManager(context)
-
-        upcomingEventsRecyclerView = binding.preLoginUpcomingEventsRecyclerView
-        upcomingEventsRecyclerView.adapter = UpcomingEventsAdapter(myUpcomingEvents,requireContext(), this)
-        upcomingEventsRecyclerView.layoutManager = LinearLayoutManager(context)
-    }
-
-    private fun setFragmentChangeListener() {
-        this.fragmentChangeListener = activity as FragmentChangeListener
-    }
-
-    private fun setListeners() {
-
-        //password.addTextChangedListener(textWatcher)
-    }
-
-    private fun initializePresenter(){
+    override fun initializePresenter(){
         val sharedPreferences = requireContext().getSharedPreferences("token_file", 0)
         val repository = PreLoginRepository(sharedPreferences)
 
@@ -112,9 +75,33 @@ class PreLoginFragment : Fragment(), PreLoginContract.View, TrendingProjectsAdap
     }
 
 
-    override fun setPresenter(presenter: PreLoginContract.Presenter) {
-        TODO("Not yet implemented")
+
+
+    private fun initViews(root: View) {
+        val myTrendingProject = presenter?.getTrendingProjects()
+
+        val myUpcomingEvents = presenter?.getUpcomingEvents()
+
+        if (myTrendingProject != null){
+            trendingProjectsRecyclerView = binding.preLoginTrendingProjectsRecyclerView
+            trendingProjectsRecyclerView.adapter = TrendingProjectsAdapter(myTrendingProject, requireContext(), this)
+            trendingProjectsRecyclerView.layoutManager = LinearLayoutManager(context)
+        }
+        if (myUpcomingEvents != null){
+            upcomingEventsRecyclerView = binding.preLoginUpcomingEventsRecyclerView
+            upcomingEventsRecyclerView.adapter = UpcomingEventsAdapter(myUpcomingEvents,requireContext(), this)
+            upcomingEventsRecyclerView.layoutManager = LinearLayoutManager(context)
+        }
     }
+
+    private fun setFragmentChangeListener() {
+        this.fragmentChangeListener = activity as FragmentChangeListener
+    }
+
+    private fun setListeners() {
+        //password.addTextChangedListener(textWatcher)
+    }
+
 
     override fun onUpcomingButtonClicked(buttonName: String) {
         TODO("Not yet implemented")

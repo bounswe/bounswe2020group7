@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/inner_frame_layout_padding"
-    android:background="@drawable/view_back">
+    android:background="@drawable/search_element_cell_back">
 
     <TextView
         android:id="@+id/title_trend_project_tv"

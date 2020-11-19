@@ -53,4 +53,7 @@
     <string name="todo_str">TODO</string>
     <string name="trending_projects_str">Trending Projects</string>
     <string name="upcoming_events_str">Upcoming Events</string>
+    <string name="upcoming_event_str">Upcoming Event</string>
+    <string name="date_str">Date</string>
+    <string name="type_str">Type</string>
 </resources>

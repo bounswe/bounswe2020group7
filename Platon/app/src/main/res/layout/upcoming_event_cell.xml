@@ -5,11 +5,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
-    android:background="@drawable/view_back"
+    android:layout_marginBottom="@dimen/xx_small"
+    android:background="@drawable/upcoming_event_cell_back"
     android:elevation="2dp"
-    android:paddingVertical="@dimen/activity_vertical_margin"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingVertical="@dimen/medium">
 
 
     <TextView
@@ -17,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/title_logo_padding"
-        android:text="Upcoming Event"
+        android:text="@string/upcoming_event_str"
         android:textColor="@color/primary_dark"
         android:textSize="@dimen/project_title_text_size"
         app:drawableLeftCompat="@drawable/ic_home_24px" />
@@ -32,8 +32,8 @@
             android:id="@+id/upcoming_event_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxLines="3"
             android:layout_marginHorizontal="@dimen/title_logo_padding"
+            android:maxLines="3"
             android:text="@string/desc_str"
             android:textColor="@color/primary_dark_lighter" />
     </LinearLayout>
@@ -42,9 +42,9 @@
         android:id="@+id/upcoming_event_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/title_logo_padding"
-        android:text="Date"
         android:layout_gravity="end"
+        android:layout_marginHorizontal="@dimen/title_logo_padding"
+        android:text="@string/date_str"
         android:textColor="@color/primary_dark_lighter"
         android:textSize="@dimen/subtitle_text_size" />
 
@@ -52,10 +52,10 @@
         android:id="@+id/upcoming_event_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/title_logo_padding"
-        android:text="Type"
         android:layout_gravity="end"
+        android:layout_marginHorizontal="@dimen/title_logo_padding"
+        android:text="@string/type_str"
         android:textColor="@color/primary_dark_lighter"
         android:textSize="@dimen/subtitle_text_size" />
 
-    </LinearLayout>
+</LinearLayout>

@@ -47,7 +47,7 @@ class ForgotPasswordFragment : Fragment(), ForgotPasswordContract.View {
     }
 
 
-    private fun initializePresenter() {
+    override fun initializePresenter() {
         val sharedPreferences = requireContext().getSharedPreferences("token_file", 0)
         val repository = ForgotPasswordRepository(sharedPreferences)
         //setPresenter(LoginPresenter(this, repository, sharedPreferences))
@@ -86,9 +86,5 @@ class ForgotPasswordFragment : Fragment(), ForgotPasswordContract.View {
         super.onPrepareOptionsMenu(menu)
         menu.findItem(R.id.registerFragment).isVisible = false
         menu.findItem(R.id.loginFragment).isVisible = false
-    }
-
-    override fun setPresenter(presenter: ForgotPasswordContract.Presenter) {
-        TODO("Not yet implemented")
     }
 }

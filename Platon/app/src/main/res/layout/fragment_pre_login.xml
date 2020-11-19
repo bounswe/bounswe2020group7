@@ -34,42 +34,58 @@
             android:fontFamily="@font/dm_sans_bold"
             android:lineSpacingExtra="6sp"
             android:padding="3dp"
-            android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+            android:text="Welcome to the home page prepared for guests. You can check out everything that is public. If you want more, please join us with a few steps."
             android:textColor="#1e2843"
             android:textSize="18sp" />
 
         <TextView
             android:id="@+id/textView"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:background="@drawable/trending_project_cell_back"
+            android:padding="@dimen/xxx_small"
+            android:paddingHorizontal="@dimen/title_logo_padding"
             android:text="@string/trending_projects_str"
+            android:textAllCaps="false"
             android:textColor="@color/primary_dark"
-            android:textSize="@dimen/project_title_text_size" />
+            android:textSize="@dimen/project_title_text_size"
+            android:textStyle="bold" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/pre_login_trending_projects_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent" >
+            android:layout_marginTop="@dimen/xx_small">
 
         </androidx.recyclerview.widget.RecyclerView>
 
         <TextView
             android:id="@+id/textView2"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:background="@drawable/upcoming_event_cell_back"
+            android:padding="@dimen/xxx_small"
+            android:paddingHorizontal="@dimen/title_logo_padding"
             android:text="@string/upcoming_events_str"
             android:textColor="@color/primary_dark"
-            android:textSize="@dimen/project_title_text_size" />
+            android:textSize="@dimen/project_title_text_size"
+            android:textStyle="bold" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/pre_login_upcoming_events_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/pre_login_trending_projects_recycler_view" />
+            android:layout_marginTop="@dimen/xx_small" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/x_large"
+            android:gravity="center"
+            android:text="--EOF--" />
 
 
     </LinearLayout>

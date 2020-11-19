@@ -41,7 +41,7 @@ class HomeFragment : Fragment(), HomeContract.View  {
 
     }
 
-    private fun initializePresenter(){
+    override fun initializePresenter(){
         val sharedPreferences = requireContext().getSharedPreferences("token_file", 0)
         val repository = HomeRepository(sharedPreferences)
         presenter = HomePresenter(this, repository, sharedPreferences, (activity as HomeActivity).navController )
@@ -66,11 +66,4 @@ class HomeFragment : Fragment(), HomeContract.View  {
         menu.findItem(R.id.loginFragment).isVisible = false
         menu.findItem(R.id.logout_menu_btn).isVisible = true
     }
-
-    override fun setPresenter(presenter: HomeContract.Presenter) {
-        TODO("Not yet implemented")
-    }
-
-
-
 }

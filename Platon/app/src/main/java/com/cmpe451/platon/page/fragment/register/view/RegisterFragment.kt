@@ -47,7 +47,7 @@ class RegisterFragment : Fragment(), RegisterContract.View {
     }
 
 
-    private fun initializePresenter() {
+    override fun initializePresenter() {
         val sharedPreferences = requireContext().getSharedPreferences("token_file", 0)
         val repository = RegisterRepository(sharedPreferences)
         //setPresenter(LoginPresenter(this, repository, sharedPreferences))
@@ -113,11 +113,6 @@ class RegisterFragment : Fragment(), RegisterContract.View {
         //}
 
         //password.addTextChangedListener(textWatcher)
-    }
-
-
-    override fun setPresenter(presenter: RegisterContract.Presenter) {
-        TODO("Not yet implemented")
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
