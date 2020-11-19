@@ -41,8 +41,10 @@ def create_app(config_class='config'):
     follow_module(api)
     profile_module(api)
 
+    # Run Scheduled Functions
+    from app.profile_management.views import schedule_regularly
+    schedule_regularly()
     with app.app_context():
         # This will create the database file using SQLAlchemy
-        db.create_all()
-    
+        db.create_all()    
     return app

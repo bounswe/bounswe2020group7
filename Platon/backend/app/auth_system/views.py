@@ -1,5 +1,5 @@
 from flask import make_response,jsonify,request
-from flask_restplus import Resource
+from flask_restplus import Resource,Namespace
 from flask import current_app as app
 from flask_mail import Message 
 
@@ -54,7 +54,11 @@ def send_email(recepient_email,subject,message_body,message_link):
         return True
     except:
         return False
+auth_system_ns = Namespace("Authorization System",
+                            description="Authorization System Endpoints",
+                            path = "/auth_system")
 
+@auth_system_ns.route("/login")
 class LoginAPI(Resource):
     """
         Login Functionality is implemented in this class
@@ -80,7 +84,8 @@ class LoginAPI(Resource):
             return make_response(jsonify({'token':generate_token(user.id,app.config['SESSION_DURATION'])}),200)
         else:
             return make_response(jsonify({'error' : 'Write your e-mail and password'}),400)
-    
+
+@auth_system_ns.route("/reset_password")
 class ResetPasswordAPI(Resource):
     """
         Login Functionality is implemented in this class
@@ -138,5 +143,4 @@ class ResetPasswordAPI(Resource):
             return make_response(jsonify({'error' : 'Write new password twice'}),400)
 
 def register_resources(api):
-    api.add_resource(LoginAPI,"/login")
-    api.add_resource(ResetPasswordAPI,"/reset_password")
+    api.add_namespace(auth_system_ns)
