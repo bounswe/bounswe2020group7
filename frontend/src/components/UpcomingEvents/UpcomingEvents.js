@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Typography from "@material-ui/core/Typography";
-//import UpcomingEventsItem from "./UpcomingEventsItem/UpcomingEventsItem";
+import UpcomingEventsItem from "./UpcomingEventsItem/UpcomingEventsItem";
 import colors from '../../utils/colors'
 import './UpcomingEvents.css'
 const UpcomingEvents = () => {
@@ -26,10 +26,10 @@ const UpcomingEvents = () => {
       </Typography>
       <div className="UpcomingEventsItems">
 
-      {/*Object.keys(trendingProjectsList).map((projects, index) => (
-          <TrendingProjectsItem project={trendingProjectsList[projects]} id = {index}/>
+      {Object.keys(upcomingEventsList).map((events, index) => (
+          <UpcomingEventsItem event={upcomingEventsList[events]} id = {index}/>
 
-      ))*/}
+      ))}
     </div>
     </div>
   );
