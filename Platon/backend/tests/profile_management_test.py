@@ -21,9 +21,9 @@ class ResearchInfoTests(BaseTest):
         for user in users:
             db.session.add(user)
         research_infos = [
-            ResearchInformation(1,"Multi Model Sensor Fusion","A Multi Model Sensor Fusion using Extended Kalman Filters",2020,ResearchType.GOOGLE_SCHOLAR),
+            ResearchInformation(1,"Multi Model Sensor Fusion","A Multi Model Sensor Fusion using Extended Kalman Filters",2020,ResearchType.FETCHED),
             ResearchInformation(1,"Estimating Channel Coefficients using ANN","Using a CNN Model Estimate Channel Coefficients of a 2D Diffusion based Channel",2020,ResearchType.HAND_WRITTEN),
-            ResearchInformation(2,"An Academic Collaboration Platform","An Academic Collaboration Platform named Platon",2020,ResearchType.RESEARCHGATE)
+            ResearchInformation(2,"An Academic Collaboration Platform","An Academic Collaboration Platform named Platon",2020,ResearchType.FETCHED)
 
         ]
         for reseach_info in research_infos:
@@ -35,7 +35,7 @@ class ResearchInfoTests(BaseTest):
         data = {
             'title' : 'Radar Preprocessing using DBCAN Clustring',
             'description' : 'Preprocessing the radar hits using DBCAN Algorithm',
-            'type' : ResearchType.RESEARCHGATE
+            'year' : 2020
         }
         expected_response = {
             'msg' : 'Sucessfully added'
@@ -93,7 +93,7 @@ class ResearchInfoTests(BaseTest):
                 'title':'Multi Model Sensor Fusion',
                 'description':'A Multi Model Sensor Fusion using Extended Kalman Filters',
                 'year': 2020,
-                'type':ResearchType.GOOGLE_SCHOLAR
+                'type':ResearchType.FETCHED
             },
             {
                 'id':2,
