@@ -38,10 +38,12 @@ def login_required(func):
             expire_time = parser.isoparse(auth_info['expire_time'])
             if expire_time < datetime.datetime.now():
                 return make_response(jsonify({'error' : 'Expired Token'}),401)
-            new_token = generate_token(auth_info['id'],app.config['SESSION_DURATION'])
         except:
             return make_response(jsonify({'error' : 'Wrong Token Format'}),401)
-        return func(auth_info['id'],new_token,*args,**kws)
+        new_token = generate_token(auth_info['id'],app.config['SESSION_DURATION'])
+        response = func(auth_info['id'],*args,**kws)
+        response.headers["auth_token"] = new_token
+        return response
         
     return auth_check
 
@@ -110,7 +112,7 @@ class ResetPasswordAPI(Resource):
     @api.doc(responses={200 : 'Password Successfully Changed',400 : 'Passwords are not matched' ,401 : 'Authorization Error',500 : 'Database Connection/E-mail Server Error'})
     @api.expect(reset_password_post_parser)
     @login_required
-    def post(user_id,new_token,self):
+    def post(user_id,self):
         """
             Changes password of the user
         """
