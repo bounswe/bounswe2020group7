@@ -4,7 +4,7 @@ import UpcomingEventsItem from "./UpcomingEventsItem/UpcomingEventsItem";
 import colors from '../../utils/colors'
 import './UpcomingEvents.css'
 const UpcomingEvents = () => {
-  const [upcomingEventsList, setUpcomingEventsList] = useState({});
+  const [upcomingEventsList, setUpcomingEventsList] = useState([]);
   useEffect(
     () => {
       const url = "https://react-my-burger-78df4.firebaseio.com";
@@ -17,7 +17,7 @@ const UpcomingEvents = () => {
           console.error("Error:", error);
         });
     },
-    { upcomingEventsList }
+    [ upcomingEventsList ]
   );
   return (
     <div>
