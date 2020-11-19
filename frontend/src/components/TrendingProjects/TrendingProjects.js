@@ -21,7 +21,7 @@ const TrendingProjects = () => {
   );
   return (
     <div>
-      <Typography style={{color: colors.secondary}} variant="h5" gutterBottom>
+      <Typography style={{color: colors.tertiary, textAlign: "center"}} variant="h5" gutterBottom>
         Trending Projects
       </Typography>
       <div className="TrendingProjectsItems">

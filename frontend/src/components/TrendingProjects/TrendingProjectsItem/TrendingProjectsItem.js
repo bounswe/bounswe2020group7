@@ -16,10 +16,17 @@ const useStyles = makeStyles((theme) => ({
     margin:0,
     padding:0
   },
+  primary:{
+    color: colors.secondary,
+  },
+  secondary:{
+    color: colors.primaryDark ,
+  },
 }));
 
 const Accordion = withStyles({
   root: {
+    backgroundColor:colors.primary,
     borderRadius: "0.5em",
     "&:not(:last-child)": {
       borderBottom: 0,
@@ -36,7 +43,7 @@ const Accordion = withStyles({
 
 const AccordionSummary = withStyles({
   root: {
-    backgroundColor: colors.primaryDark,
+    backgroundColor: colors.tertiaryDark,
 
     borderRadius: "0.5em",
 
@@ -45,6 +52,7 @@ const AccordionSummary = withStyles({
       minHeight: 56,
     },
   },
+
   content: {
     "&$expanded": {
       margin: "12px 0",
@@ -55,7 +63,9 @@ const AccordionSummary = withStyles({
 
 const AccordionDetails = withStyles((theme) => ({
   root: {
-    padding: theme.spacing(2),
+    color:colors.secondary,
+    backgroundColor: colors.primary,
+    borderRadius: "0.5em",
   },
 }))(MuiAccordionDetails);
 const TrendingProjectsItem = (props) => {
@@ -78,7 +88,9 @@ const TrendingProjectsItem = (props) => {
               aria-controls={"panel" + props.id +  " d-content "}
               id={"panel" + props.id +  " d-header "}
             >
-            <ListItemText style={{color: colors.tertiary}} primary={props.project.title} secondary={props.project.authors.join(" - ")} />
+            <ListItemText
+            classes={{ primary: classes.primary, secondary: classes.secondary }}
+            primary={props.project.title} secondary={props.project.authors.join(" - ")} />
             </AccordionSummary>
             <AccordionDetails>
               <Typography>
