@@ -144,3 +144,4 @@ class ResetPasswordAPI(Resource):
 
 def register_resources(api):
     api.add_namespace(auth_system_ns)
+
