@@ -37,5 +37,5 @@ class ResearchInfoDeleteFrom(Form):
     research_id = IntegerField('research_id',validators=[validators.DataRequired()])
 
 research_info_delete_parser = reqparse.RequestParser()
-research_info_delete_parser.add_argument('research_id',required=True,type=int,help='Research ID of the Research',location='args')
+research_info_delete_parser.add_argument('research_id',required=True,type=int,help='Research ID of the Research',location='form')
 research_info_delete_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')

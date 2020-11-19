@@ -61,7 +61,7 @@ class ResearchInformationAPI(Resource):
                 db.session.commit()
             except:
                 return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
-            return make_response(jsonify({'msg' : ' Successfully added'}),201)
+            return make_response(jsonify({'msg' : 'Successfully added'}),201)
         else:
             return make_response(jsonify({'error':'Wrong input format'}),400)
 
@@ -75,7 +75,7 @@ class ResearchInformationAPI(Resource):
         form = ResearchInfoUpdateForm(request.form)
         if form.validate():
             try:
-                research_info = ResearchInformation.query.filter(ResearchInformation.id == form.research_id.data and ResearchInformation.user_id == user_id)
+                research_info = ResearchInformation.query.filter((ResearchInformation.id == form.research_id.data) & (ResearchInformation.user_id == user_id))
                 if research_info is None:
                     return make_response(jsonify({'error':'Please give an appropriate research ID'}),400)
                 research_info.research_title = form.research_title.data if form.research_title.data != '' else research_info.research_title
@@ -96,10 +96,14 @@ class ResearchInformationAPI(Resource):
         """
             Deletes Research Information
         """
-        form = ResearchInfoDeleteFrom(request.args)
+        form = ResearchInfoDeleteFrom(request.form)
         if form.validate():
             try:
-                ResearchInformation.query.filter(ResearchInformation.id == form.research_id.data).delete()
+                research_info = ResearchInformation.query.filter((ResearchInformation.id == form.research_id.data) & (ResearchInformation.user_id == user_id)).first()
+                if research_info is None:
+                    return make_response(jsonify({'error':'You can not delete other user\'s information'}),400)
+                db.session.delete(research_info)
+                db.session.commit()
                 return make_response(jsonify({'msg' : 'Successfully Deleted'}),200)
             except:
                 return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
@@ -110,6 +114,9 @@ class ResearchInfoFetch():
     
     @staticmethod
     def fetch_google_scholar_info(username):
+        """
+            Takes Google Scholar account id as input and returns fetches the works from Google Scholar
+        """
         api_url = "http://cse.bth.se/~fer/googlescholar-api/googlescholar.php?user={}".format(username)
         try:
             response = requests.get(api_url)
@@ -120,6 +127,9 @@ class ResearchInfoFetch():
     
     @staticmethod
     def fetch_research_gate_info(username):
+        """
+            Takes ResearchGate name as input and returns fetches the works from ResearchGate
+        """
         api_url = "https://dblp.org/search/publ/api?q=author%3A{}%3A&format=json".format(username.replace(' ','_'))
         try:
             response = requests.get(api_url)
@@ -131,21 +141,23 @@ class ResearchInfoFetch():
     
     @staticmethod
     def update_research_info():
-        print("deneme")
+        """
+            Updates the Google Scholar and ResearchGate information of all users in the system
+        """
         try:
             all_users = User.query.all()
         except:
             return
         try:
             for user in all_users:
-                all_research_of_user = ResearchInformation.query.filter(ResearchInformation.user_id == user.id and ResearchInformation.type == ResearchType.FETCHED).all()
+                all_research_of_user = ResearchInformation.query.filter((ResearchInformation.user_id == user.id)&(ResearchInformation.type == ResearchType.FETCHED)).all()
                 all_research_new = ResearchInfoFetch.fetch_google_scholar_info(user.google_scholar_name) + ResearchInfoFetch.fetch_research_gate_info(user.researchgate_name)
                 for research in all_research_new:
                     if research['title'] not in [i.research_title for i in all_research_of_user]:
                         db.seesion.add(ResearchInformation(user.id,research['title'],research['description'],research['year'],ResearchType.FETCHED))
                 for research in all_research_of_user:
                     if research.research_title not in [i['title'] for i in all_research_new]:
-                        research.delete()
+                        db.session.delete(research)
                 db.session.commit()
         except:
             return

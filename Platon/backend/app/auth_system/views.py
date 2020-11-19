@@ -54,8 +54,8 @@ def send_email(recepient_email,subject,message_body,message_link):
         return True
     except:
         return False
-auth_system_ns = Namespace("Authorization System",
-                            description="Authorization System Endpoints",
+auth_system_ns = Namespace("Authentication System",
+                            description="Authentication System Endpoints",
                             path = "/auth_system")
 
 @auth_system_ns.route("/login")
