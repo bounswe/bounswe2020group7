@@ -4,7 +4,7 @@ import TrendingProjectsItem from "./TrendingProjectsItem/TrendingProjectsItem";
 import colors from '../../utils/colors'
 import './TrendingProjects.css'
 const TrendingProjects = () => {
-  const [trendingProjectsList, setTrendingProjectsList] = useState({});
+  const [trendingProjectsList, setTrendingProjectsList] = useState([]);
   useEffect(
     () => {
       const url = "https://react-my-burger-78df4.firebaseio.com";
@@ -17,7 +17,7 @@ const TrendingProjects = () => {
           console.error("Error:", error);
         });
     },
-    { trendingProjectsList }
+  [trendingProjectsList ]
   );
   return (
     <div>

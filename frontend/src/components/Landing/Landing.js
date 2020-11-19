@@ -2,6 +2,7 @@ import AppBar from "../AppBar/AppBar";
 import React from "react";
 import "./Landing.css";
 import TrendingProjects from "../TrendingProjects/TrendingProjects";
+import UpcomingEvents from "../UpcomingEvents/UpcomingEvents";
 const Landing = (props) => {
   return (
     <div className="Landing">
@@ -19,7 +20,7 @@ const Landing = (props) => {
         <div className="InformationScreen">
           <div><TrendingProjects /></div>
           <div>
-            <TrendingProjects />
+            <UpcomingEvents />
           </div>
         </div>
 
