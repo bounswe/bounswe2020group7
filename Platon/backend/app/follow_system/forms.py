@@ -7,30 +7,59 @@ from flask_restplus import reqparse
 class GetFollowingsForm(Form):
     follower_id = IntegerField('follower_id', validators=[validators.DataRequired()])
 
+get_followings_parser = reqparse.RequestParser()
+get_followings_parser.add_argument('follower_id', required=True, type=int,
+                                   help="ID of the follower. Follower is the one who follows someone.",
+                                   location='form')
+
 class GetFollowersForm(Form):
     following_id = IntegerField('following_id', validators=[validators.DataRequired()])
 
+get_followers_parser = reqparse.RequestParser()
+get_followers_parser.add_argument('following_id', required=True, type=int,
+                                  help="ID of the following user. Following user is the one who is followed by someone.",
+                                  location='form')
+
 class GetFollowRequestsForm(Form):
     following_id = IntegerField('following_id', validators=[validators.DataRequired()])
+
+get_follow_requests_parser = reqparse.RequestParser()
+get_follow_requests_parser.add_argument('following_id', required=True, type=int,
+                                        help="ID of the following user. Following user is the one who is followed by someone.",
+                                        location='form')
 
 class SendFollowRequestsForm(Form):
     follower_id = IntegerField('follower_id', validators=[validators.DataRequired()])
     following_id = IntegerField('following_id', validators=[validators.DataRequired()])
 
+send_follow_requests_parser = reqparse.RequestParser()
+send_follow_requests_parser.add_argument('follower_id',required=True,type=int,
+                                         help="ID of the follower. Follower is the one who follows someone.",
+                                         location='form')
+send_follow_requests_parser.add_argument('following_id', required=True, type=int,
+                                         help="ID of the following user. Following user is the one who is followed by someone.",
+                                         location='form')
+
 class AcceptFollowRequestsForm(Form):
     follower_id = IntegerField('follower_id', validators=[validators.DataRequired()])
     following_id = IntegerField('following_id', validators=[validators.DataRequired()])
+
+accept_follow_requests_parser = reqparse.RequestParser()
+accept_follow_requests_parser.add_argument('follower_id', required=True, type=int,
+                                           help="ID of the follower. Follower is the one who follows someone.",
+                                           location='form')
+accept_follow_requests_parser.add_argument('following_id', required=True, type=int,
+                                           help="ID of the following user. Following user is the one who is followed by someone.",
+                                           location='form')
 
 class RejectFollowRequestsForm(Form):
     follower_id = IntegerField('follower_id', validators=[validators.DataRequired()])
     following_id = IntegerField('following_id', validators=[validators.DataRequired()])
 
-'''
-class LoginForm(Form):
-    e_mail = StringField("e_mail",validators=[validators.DataRequired()])
-    password = StringField("password",validators=[validators.DataRequired()])
-
-login_parser = reqparse.RequestParser()
-login_parser.add_argument('e_mail',required=True,type=str,help="E-mail of the person",location='form')
-login_parser.add_argument('password',required=True,type=str,help="Password of the person",location='form')
-'''
+reject_follow_requests_parser = reqparse.RequestParser()
+reject_follow_requests_parser.add_argument('follower_id', required=True, type=int,
+                                           help="ID of the follower. Follower is the one who follows someone.",
+                                           location='form')
+reject_follow_requests_parser.add_argument('following_id', required=True, type=int,
+                                           help="ID of the following user. Following user is the one who is followed by someone.",
+                                           location='form')

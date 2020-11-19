@@ -118,6 +118,7 @@ class FollowTest(BaseTest):
     # follower: who sends the follow request
     # following: who receives the follow request
     # In the test case, Umut sends follow request to Hilal. Hilal should see Umut's ID in followRequests list.
+    # Possible Improvement: Check if the same follow request already exists in database.
     def test_send_follow_requests(self):
 
         umut_token = generate_token(1, datetime.timedelta(minutes=10))
