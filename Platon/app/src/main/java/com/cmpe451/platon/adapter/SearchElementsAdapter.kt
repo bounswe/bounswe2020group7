@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
@@ -23,7 +22,7 @@ class SearchElementsAdapter(private val myDataset: ArrayList<String>, private va
     // you provide access to all the views for a data item in a view holder.
     // Each data item is just a string in this case that is shown in a TextView.
     class MyViewHolder(val myView: View) : RecyclerView.ViewHolder(myView){
-        var myTextView = myView.findViewById(R.id.textView) as TextView
+        var myTextView = myView.findViewById(R.id.title_trend_project_tv) as TextView
 
         fun bindData(buttonName: String, buttonClickListener: SearchButtonClickListener) {
             myView.setOnClickListener{

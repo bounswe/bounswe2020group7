@@ -1,10 +1,12 @@
 package com.cmpe451.platon.page.activity
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -15,6 +17,7 @@ import androidx.navigation.ui.onNavDestinationSelected
 import com.cmpe451.platon.R
 import com.cmpe451.platon.`interface`.FragmentChangeListener
 import com.cmpe451.platon.core.BaseActivity
+import com.cmpe451.platon.page.fragment.home.view.HomeFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 
@@ -71,7 +74,22 @@ class HomeActivity : BaseActivity(), FragmentChangeListener {
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        if (item.itemId == R.id.logout_menu_btn){
+            onLogOutButtonClicked()
+        }
+
         return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
+    }
+
+    private fun onLogOutButtonClicked(){
+        val sharedPrefs = getSharedPreferences("token_file", 0)
+        sharedPrefs.edit().remove("login_values").apply()
+        sharedPrefs.edit().putBoolean("remember_me", false).apply()
+
+        finish()
+        startActivity(Intent(this, LoginActivity::class.java))
+        Toast.makeText(this, "Logout made", Toast.LENGTH_LONG).show()
     }
 
     override fun onSupportNavigateUp(): Boolean {

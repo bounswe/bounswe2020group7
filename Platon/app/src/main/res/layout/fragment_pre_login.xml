@@ -38,18 +38,36 @@
             android:textColor="#1e2843"
             android:textSize="18sp" />
 
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:text="@string/trending_projects_str"
+            android:textColor="@color/primary_dark"
+            android:textSize="@dimen/project_title_text_size" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/pre_login_trending_projects_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent" >
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:text="@string/upcoming_events_str"
+            android:textColor="@color/primary_dark"
+            android:textSize="@dimen/project_title_text_size" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/pre_login_upcoming_events_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/pre_login_trending_projects_recycler_view" />
 

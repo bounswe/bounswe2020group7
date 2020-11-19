@@ -67,16 +67,6 @@ class HomeFragment : Fragment(), HomeContract.View  {
         menu.findItem(R.id.logout_menu_btn).isVisible = true
     }
 
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-        if (item.itemId == R.id.logout_menu_btn){
-            presenter.onLogOutButtonClicked()
-        }
-
-        return super.onOptionsItemSelected(item)
-    }
-
     override fun setPresenter(presenter: HomeContract.Presenter) {
         TODO("Not yet implemented")
     }

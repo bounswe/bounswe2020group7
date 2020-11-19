@@ -5,6 +5,7 @@
     <item
         android:id="@+id/logout_menu_btn"
         android:title="@string/logout_str"
+        android:icon="@drawable/ic_logout_24px"
         android:visible="false"
         app:showAsAction="ifRoom" />
 

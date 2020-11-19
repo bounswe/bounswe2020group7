@@ -9,7 +9,7 @@
     android:background="@drawable/view_back">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/title_trend_project_tv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
