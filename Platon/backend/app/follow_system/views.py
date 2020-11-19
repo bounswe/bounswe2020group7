@@ -6,6 +6,7 @@ from app import api, db
 from app.follow_system.forms import GetFollowingsForm, GetFollowersForm, GetFollowRequestsForm, \
     SendFollowRequestsForm, AcceptFollowRequestsForm, RejectFollowRequestsForm
 from app.follow_system.models import Follow, FollowRequests
+from app.auth_system.views import login_required, generate_token
 
 import datetime
 from dateutil import parser
@@ -60,12 +61,17 @@ class GetFollowersAPI(Resource):
         else:
             return make_response(jsonify({'error': 'Bad Request'}), 400)
 
-# login_required decorator will be added.
 class GetFollowRequestsAPI(Resource):
 
-    def post(self):
+    @login_required
+    def post(user_id, new_token, self):
         form = GetFollowRequestsForm(request.form)
         if form.validate():
+
+            # user_id should be equal to form.following_id.data
+            if user_id != form.following_id.data:
+                return make_response(jsonify({'error': 'Unauthorized'}), 401)
+
             try:
                 followSearch = FollowRequests.query.filter(FollowRequests.following_id == form.following_id.data).all()
             except:
@@ -73,6 +79,7 @@ class GetFollowRequestsAPI(Resource):
 
             if followSearch is []:
                 return make_response(jsonify({'error': 'No Follow Request Found'}), 404)
+
 
             mylist = []
             for follow in followSearch:
@@ -83,13 +90,17 @@ class GetFollowRequestsAPI(Resource):
         else:
             return make_response(jsonify({'error': 'Bad Request'}), 400)
 
-
-# login_required decorator will be added.
 class SendFollowRequestAPI(Resource):
 
-    def post(self):
+    @login_required
+    def post(user_id, new_token, self):
         form = SendFollowRequestsForm(request.form)
         if form.validate():
+
+            # Current user should be the follower.
+            if user_id != form.follower_id.data:
+                return make_response(jsonify({'error': 'Unauthorized'}), 401)
+
             fr = FollowRequests(form.follower_id.data, form.following_id.data)
             try:
                 db.session.add(fr)  # Creating a new database entry.
@@ -106,9 +117,14 @@ class SendFollowRequestAPI(Resource):
 # login_required decorator will be added.
 class AcceptFollowRequestAPI(Resource):
 
-    def post(self):
+    @login_required
+    def post(user_id, new_token, self):
         form = AcceptFollowRequestsForm(request.form)
         if form.validate():
+
+            # Current user should be the following.
+            if user_id != form.following_id.data:
+                return make_response(jsonify({'error': 'Unauthorized'}), 401)
 
             # Check if the given FollowRequest instance exists.
             try:
@@ -139,9 +155,14 @@ class AcceptFollowRequestAPI(Resource):
 # login_required decorator will be added.
 class RejectFollowRequestAPI(Resource):
 
-    def post(self):
+    @login_required
+    def post(user_id, new_token, self):
         form = AcceptFollowRequestsForm(request.form)
         if form.validate():
+
+            # Current user should be the following.
+            if user_id != form.following_id.data:
+                return make_response(jsonify({'error': 'Unauthorized'}), 401)
 
             # Check if the given FollowRequest instance exists.
             try:
