@@ -6,6 +6,8 @@ import ForgotPassword from './components/ForgotPassword/ForgotPassword'
 import ResetPassword from './components/ResetPassword/ResetPassword'
 import Login from './components/Login/Login'
 import Register from './components/Register/Register'
+import ProfilePage from './components/ProfilePage/ProfilePage'
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -28,6 +30,8 @@ class App extends Component {
         render ={ () => !this.state.isAuthenticated ?
               <Landing/>
               : <h1>Home</h1>}/>
+      
+      <Route path='/profile' exact  component={ProfilePage}/>
 
       <Route path='/login' exact component={() => <Login  handlerIsAuthenticated={this.handlerIsAuthenticated}/>}/>
       <Route path='/register' exact  component={Register}/>

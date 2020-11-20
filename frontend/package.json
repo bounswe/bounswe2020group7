@@ -13,10 +13,13 @@
     "bootstrap": "^4.5.3",
     "react": "^17.0.1",
     "react-bootstrap": "^1.4.0",
+    "react-bootstrap-star-rating": "^3.5.5-alpha.0.3",
     "react-dom": "^17.0.1",
+    "react-rating-stars-component": "^2.2.0",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.0",
+    "react-star-ratings": "^2.3.0",
     "web-vitals": "^0.2.4"
   },
   "scripts": {
