@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
 
-class FollowerRecyclerViewAdapter(private val dataSet: ArrayList<String>) : RecyclerView.Adapter<FollowerRecyclerViewAdapter.ViewHolder>() {
+class FollowingRecyclerViewAdapter(private val dataSet: ArrayList<String>) : RecyclerView.Adapter<FollowingRecyclerViewAdapter.ViewHolder>() {
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         val view: View = v
 
@@ -18,19 +18,24 @@ class FollowerRecyclerViewAdapter(private val dataSet: ArrayList<String>) : Recy
             val nameText :TextView = view.findViewById(R.id.text_profile_page_info_title)
             nameText.text = model
         }
-    }
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FollowerRecyclerViewAdapter.ViewHolder {
+    }    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FollowingRecyclerViewAdapter.ViewHolder {
         val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.fragment_follower_item, parent, false)
-        return ViewHolder(view)
+                .inflate(R.layout.fragment_following_item, parent, false)
+        return FollowingRecyclerViewAdapter.ViewHolder(view)
     }
 
     override fun getItemCount(): Int {
         return dataSet.size
     }
 
-    override fun onBindViewHolder(holder: FollowerRecyclerViewAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: FollowingRecyclerViewAdapter.ViewHolder, position: Int) {
         holder.bind(dataSet[position])
     }
+    fun submitList(list:ArrayList<String>){
+        this.dataSet.clear()
+        this.dataSet.addAll(list)
+        notifyDataSetChanged()
+    }
+
 
 }

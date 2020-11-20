@@ -24,6 +24,7 @@
         android:layout_marginStart="@dimen/profile_page_margin"
         android:layout_marginEnd="@dimen/profile_page_margin"
         android:text="Name Surname"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/profile_page_icon"

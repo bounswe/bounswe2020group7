@@ -13,6 +13,9 @@ interface ProfilePageContract {
         fun onFollowersButtonClicked()
         fun onFollowingButtonClicked()
         fun onEditProfileButtonClicked()
+        fun getFollowers():ArrayList<String>
+        fun getFollowing():ArrayList<String>
+        fun getProfilePageDetails():ArrayList<MutableMap<String, String>>
     }
 
 }

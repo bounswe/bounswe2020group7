@@ -24,6 +24,26 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
         Toast.makeText((view as ProfilePageFragment).activity, "Edit PP not yet implemented", Toast.LENGTH_SHORT).show()
     }
 
+    override fun getFollowers(): ArrayList<String> {
+        return arrayListOf("Oyku", "Burak", "Ertugrul")
+    }
+
+    override fun getFollowing(): ArrayList<String> {
+        return arrayListOf("Oyku", "Burak", "Ertugrul")
+    }
+
+    override fun getProfilePageDetails(): ArrayList<MutableMap<String, String>> {
+        val a = mutableMapOf("title" to "Bio", "info" to "sjdhjahjdhjshhd")
+        val b = mutableMapOf("title" to "Mail", "info" to "sjdhjahjdhjshhd")
+        val c = mutableMapOf("title" to "Other", "info" to "sjdhjahjdhjshhd")
+        val d = mutableMapOf("title" to "Interests", "info" to "sjdhjahjdhjshhd")
+        val e = mutableMapOf("title" to "OtherOther", "info" to "sjdhjahjdhjshhd")
+        val f = mutableMapOf("title" to "Education", "info" to "sjdhjahjdhjshhd")
+        val g = mutableMapOf("title" to "Education2", "info" to "sjdhjahjdhjshhd")
+        val h = mutableMapOf("title" to "Education3", "info" to "sjdhjahjdhjshhd")
+        return arrayListOf(a,b,c,d,e,f,g,h)
+    }
+
 
     override fun onStart() {
         TODO("Not yet implemented")

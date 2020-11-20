@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmpe451.platon.R
 import com.cmpe451.platon.databinding.FragmentProfilePageBinding
 import com.cmpe451.platon.page.activity.HomeActivity
@@ -16,11 +17,13 @@ import com.cmpe451.platon.page.fragment.profilepage.contract.ProfilePageContract
 import com.cmpe451.platon.page.fragment.profilepage.model.ProfilePageRepository
 import com.cmpe451.platon.page.fragment.profilepage.presenter.ProfilePagePresenter
 import com.cmpe451.platon.page.fragment.profilepage.view.adapters.FollowerRecyclerViewAdapter
+import com.cmpe451.platon.page.fragment.profilepage.view.adapters.ProfilePageRecyclerViewAdapter
 
 class ProfilePageFragment : Fragment(), ProfilePageContract.View {
 
     private lateinit var binding: FragmentProfilePageBinding
     private lateinit var presenter: ProfilePageContract.Presenter
+    private lateinit var details: ArrayList<MutableMap<String,String>>
     override fun setPresenter(presenter: ProfilePageContract.Presenter) {
         TODO("Not yet implemented")
     }
@@ -29,8 +32,7 @@ class ProfilePageFragment : Fragment(), ProfilePageContract.View {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         binding = FragmentProfilePageBinding.inflate(inflater)
-
-//        binding.rvProfilePageInfo.adapter =
+        details = ArrayList()
         return binding.root
     }
 
@@ -38,6 +40,11 @@ class ProfilePageFragment : Fragment(), ProfilePageContract.View {
         super.onViewCreated(view, savedInstanceState)
         setListeners()
         initializePresenter()
+        val rvProfilePage = binding.rvProfilePageInfo
+        val adapter = ProfilePageRecyclerViewAdapter(ArrayList())
+        rvProfilePage.adapter = adapter
+        rvProfilePage.layoutManager = LinearLayoutManager(this.activity)
+        adapter.submitList(presenter.getProfilePageDetails())
     }
     private fun setListeners() {
 

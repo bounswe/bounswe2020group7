@@ -14,11 +14,13 @@
         app:tabSelectedTextColor="@color/secondary_orange"
         app:tabBackground="@drawable/bg_tab_item"
         app:tabRippleColor="@color/primary_dark"
+        app:tabTextColor="@color/primary_light"
         >
         <com.google.android.material.tabs.TabItem
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/text_follower"/>
+            android:text="@string/text_follower"
+            />
         <com.google.android.material.tabs.TabItem
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
