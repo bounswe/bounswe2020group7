@@ -24,7 +24,7 @@ class LoginTest(BaseTest):
 
     def test_valid_login(self):
         data = {'e_mail' : 'umut@deneme.com', 'password' : 'umut1234'}
-        actual_response = self.client.post('/api/login',data = data)
+        actual_response = self.client.post('/api/auth_system/login',data = data)
 
         actual_info = jwt.decode(json.loads(actual_response.data)['token'], TestConfig.JWT_SESSION_KEY, algorithms=[TestConfig.JWT_ALGORITHM])
         expected_info = {'id':1,'expire_time':(datetime.datetime.now()+TestConfig.SESSION_DURATION).isoformat()}
@@ -35,7 +35,7 @@ class LoginTest(BaseTest):
     def test_invalid_login(self):
         expected_response = {'error' : 'Wrong e-mail or password'}
         data = {'e_mail' : 'umut@deneme.com', 'password' : 'umut14'}
-        actual_response = self.client.post('/api/login',data = data)
+        actual_response = self.client.post('/api/auth_system/login',data = data)
 
         self.assertEqual(actual_response.status_code,401,'Incorrect HTTP Response Code')
         self.assertEqual(json.loads(actual_response.data)['error'],expected_response['error'],'Incorrect Error Message')
@@ -43,7 +43,7 @@ class LoginTest(BaseTest):
     def test_not_activated_user(self):
         expected_response = {'error' : 'Please activate your account'}
         data = {'e_mail' : 'can@deneme.com', 'password' : 'can1234'}
-        actual_response = self.client.post('/api/login',data = data)
+        actual_response = self.client.post('/api/auth_system/login',data = data)
 
         self.assertEqual(actual_response.status_code,401,'Incorrect HTTP Response Code')
         self.assertEqual(json.loads(actual_response.data)['error'],expected_response['error'],'Incorrect Error Message')
@@ -66,7 +66,7 @@ class ReserPasswordTest(BaseTest):
     def test_reset_password_valid(self):
         valid_token = generate_token(1,datetime.timedelta(minutes=10))
         expected_response = {'mgs' : 'Password successfully changed'}
-        actual_response = self.client.post("/api/reset_password",data={'new_password' : '123456','new_password_repeat' : '123456'},headers={'auth_token' : valid_token})
+        actual_response = self.client.post("/api/auth_system/reset_password",data={'new_password' : '123456','new_password_repeat' : '123456'},headers={'auth_token' : valid_token})
         
         self.assertEqual(actual_response.status_code,200)
         self.assertEqual(json.loads(actual_response.data),expected_response)
@@ -74,7 +74,7 @@ class ReserPasswordTest(BaseTest):
     def test_reset_password_invalid_input(self):
         valid_token = generate_token(1,datetime.timedelta(minutes=10))
         expected_response = {'error' : 'Passwords are not matched' }
-        actual_response = self.client.post("/api/reset_password",data={'new_password' : '123','new_password_repeat' : '123456'},headers={'auth_token' : valid_token})
+        actual_response = self.client.post("/api/auth_system/reset_password",data={'new_password' : '123','new_password_repeat' : '123456'},headers={'auth_token' : valid_token})
         
         self.assertEqual(actual_response.status_code,400)
         self.assertEqual(json.loads(actual_response.data),expected_response)
@@ -82,7 +82,7 @@ class ReserPasswordTest(BaseTest):
     def test_reset_password_invalid_input2(self):
         valid_token = generate_token(1,datetime.timedelta(minutes=10))
         expected_response = {'error' : 'Write new password twice'}
-        actual_response = self.client.post("/api/reset_password",data={'new_password' : '123456','new_password_re' : '123456'},headers={'auth_token' : valid_token})
+        actual_response = self.client.post("/api/auth_system/reset_password",data={'new_password' : '123456','new_password_re' : '123456'},headers={'auth_token' : valid_token})
         
         self.assertEqual(actual_response.status_code,400)
         self.assertEqual(json.loads(actual_response.data),expected_response)
@@ -90,7 +90,7 @@ class ReserPasswordTest(BaseTest):
     def test_reset_password_invalid_token(self):
         valid_token = "abkfblkjdgfbajksfbdkajsfdbkjasfdlbjk"
         expected_response = {'error' : 'Wrong Token Format'}
-        actual_response = self.client.post("/api/reset_password",data={'new_password' : '123456','new_password_repeat' : '123456'},headers={'auth_token' : valid_token})
+        actual_response = self.client.post("/api/auth_system/reset_password",data={'new_password' : '123456','new_password_repeat' : '123456'},headers={'auth_token' : valid_token})
         
         self.assertEqual(actual_response.status_code,401)
         self.assertEqual(json.loads(actual_response.data),expected_response)

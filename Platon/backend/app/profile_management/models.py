@@ -6,7 +6,15 @@ class ResearchInformation(db.Model):
     user_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"))
     research_title = db.Column(db.String(250),nullable=False)
     description = db.Column(db.String(500))
+    year = db.Column(db.Integer,nullable=False)
     type = db.Column(db.SmallInteger,nullable=False)
+
+    def __init__(self,user_id,research_title,description,year,type):
+        self.user_id = user_id
+        self.research_title = research_title
+        self.description = description
+        self.year = year
+        self.type = type
 
 class Jobs(db.Model):
     __tablename__ = 'jobs'
