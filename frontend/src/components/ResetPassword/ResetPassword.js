@@ -120,12 +120,22 @@ class ResetPassword extends Component {
       this.setState({ fieldEmptyError: "Fields are required" });
       return;
     }
+
+    //TODO error check
+    let path = this.props.location.pathname
+    const token = path.split('/')[2]
+
     const url =
-      "https://react-my-burger-78df4.firebaseio.com/resetpassword.json";
+      "https://react-my-burger-78df4.firebaseio.com";
     const data = { email: this.state.email, password: this.state.password };
-    fetch(url, {
+
+    fetch(url + "/resetpassword.json", {
       method: "POST",
       body: JSON.stringify(data),
+      headers:{
+        'Content-Type': 'application/json',
+        'Authorization': token,
+      }
     })
       .then((response) => {
         if (response.status === 200) {
@@ -148,6 +158,8 @@ class ResetPassword extends Component {
   };
   render() {
     const { classes } = this.props;
+
+
     return (
       <div className="LandingResetPassword">
         <div className="AppBar">
