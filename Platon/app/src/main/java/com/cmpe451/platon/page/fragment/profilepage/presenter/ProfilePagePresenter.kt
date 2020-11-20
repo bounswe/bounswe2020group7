@@ -25,7 +25,7 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
     }
 
     override fun getFollowers(): ArrayList<String> {
-        return arrayListOf("Oyku", "Burak", "Ertugrul")
+        return arrayListOf("FollowerOyku", "Burak", "Ertugrul")
     }
 
     override fun getFollowing(): ArrayList<String> {

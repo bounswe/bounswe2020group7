@@ -4,8 +4,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
+import com.cmpe451.platon.page.fragment.profilepage.view.ProfilePageFragment
 
 class FollowingRecyclerViewAdapter(private val dataSet: ArrayList<String>) : RecyclerView.Adapter<FollowingRecyclerViewAdapter.ViewHolder>() {
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {

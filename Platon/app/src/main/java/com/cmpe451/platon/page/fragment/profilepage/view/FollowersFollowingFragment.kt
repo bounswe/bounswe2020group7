@@ -17,7 +17,7 @@ class FollowersFollowingFragment : Fragment(){
     private lateinit var binding: FragmentFollowingFollowersBinding
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager : ViewPager2
-    private val tabNames  = arrayOf("Following","Followers")
+    private val tabNames  = arrayOf("Followers","Following")
     private var pos :Int = 0
 
 

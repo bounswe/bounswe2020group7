@@ -40,12 +40,18 @@ class ProfilePageFragment : Fragment(), ProfilePageContract.View {
         super.onViewCreated(view, savedInstanceState)
         setListeners()
         initializePresenter()
+        initializeAdapter()
+
+    }
+
+    private fun initializeAdapter() {
         val rvProfilePage = binding.rvProfilePageInfo
         val adapter = ProfilePageRecyclerViewAdapter(ArrayList())
         rvProfilePage.adapter = adapter
         rvProfilePage.layoutManager = LinearLayoutManager(this.activity)
         adapter.submitList(presenter.getProfilePageDetails())
     }
+
     private fun setListeners() {
 
         binding.buttonFollowers.setOnClickListener {
