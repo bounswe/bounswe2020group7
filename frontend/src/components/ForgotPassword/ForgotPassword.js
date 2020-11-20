@@ -128,9 +128,9 @@ class ForgotPassword extends Component {
     return (
       <div className="LandingForgotPassword">
         <div className="AppBar">
-          <AppBar position="static" />
+          <AppBar/>
         </div>
-        <div className="ForgotPassword">
+        <div>
           {!this.state.showSuccess ? (
             <Container component="main" maxWidth="xs">
               <CssBaseline />

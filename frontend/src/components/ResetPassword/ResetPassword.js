@@ -163,9 +163,9 @@ class ResetPassword extends Component {
     return (
       <div className="LandingResetPassword">
         <div className="AppBar">
-          <AppBar position="static" />
+          <AppBar/>
         </div>
-        <div className="ResetPassword">
+        <div>
           <Container component="main" maxWidth="xs">
             <CssBaseline />
             <div className={classes.paper}>
