@@ -120,7 +120,10 @@ class ResetPassword extends Component {
       this.setState({ fieldEmptyError: "Fields are required" });
       return;
     }
-
+    if (!/\S+@\S+\.\S+/.test(this.state.email) ) {
+      this.setState({ fieldEmptyError: "Invalid email" });
+      return;
+    }
     //TODO error check
     let path = this.props.location.pathname
     const token = path.split('/')[2]

@@ -158,7 +158,11 @@ class Register extends Component {
       this.setState({ fieldEmptyError: "Fields are required" });
       return;
     }
-    const url = "https://react-my-burger-78df4.firebaseio.com/register.json";
+    if (!/\S+@\S+\.\S+/.test(this.state.email) ) {
+      this.setState({ fieldEmptyError: "Invalid email" });
+      return;
+    }
+    const url = "https://react-my-burger-78df4.firebaseio.com";
     const data = {
       firstName: this.state.firstName,
       lastName: this.state.lastName,
@@ -166,7 +170,7 @@ class Register extends Component {
       password: this.state.password,
       job: this.state.job,
     };
-    fetch(url, {
+    fetch(url + '/register.json', {
       method: "POST",
       body: JSON.stringify(data),
     })

@@ -120,9 +120,14 @@ class Login extends Component {
       this.setState({ fieldEmptyError: "Fields are required" });
       return;
     }
-    const url = "https://react-my-burger-78df4.firebaseio.com/users.json";
+    if (!/\S+@\S+\.\S+/.test(this.state.email) ) {
+      this.setState({ fieldEmptyError: "Invalid email" });
+      return;
+    }
+
+    const url = "https://react-my-burger-78df4.firebaseio.com";
     const data = { email: this.state.email, password: this.state.password };
-    fetch(url, {
+    fetch(url+"/users.json", {
       method: "POST",
       body: JSON.stringify(data),
     })

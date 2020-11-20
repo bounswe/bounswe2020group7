@@ -104,10 +104,13 @@ class ForgotPassword extends Component {
       this.setState({ fieldEmptyError: "Fields are required" });
       return;
     }
-    const url =
-      "https://react-my-burger-78df4.firebaseio.com/forgotpassword.json";
+    if (!/\S+@\S+\.\S+/.test(this.state.email) ) {
+      this.setState({ fieldEmptyError: "Invalid email" });
+      return;
+    }
+    const url = "https://react-my-burger-78df4.firebaseio.com";
     const data = { email: this.state.email };
-    fetch(url, {
+    fetch(url + "/forgotpassword.json", {
       method: "POST",
       body: JSON.stringify(data),
     })
