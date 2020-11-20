@@ -8,6 +8,7 @@ from app.follow_system.forms import GetFollowingsForm, GetFollowersForm, GetFoll
 from app.follow_system.forms import get_followings_parser, get_followers_parser, get_follow_requests_parser, send_follow_requests_parser, \
     accept_follow_requests_parser, reject_follow_requests_parser
 from app.follow_system.models import Follow, FollowRequests
+from app.auth_system.models import User
 from app.auth_system.views import login_required, generate_token
 
 import datetime
@@ -146,14 +147,28 @@ class SendFollowRequestAPI(Resource):
             if user_id != form.follower_id.data:
                 return make_response(jsonify({'error': 'Unauthorized'}), 401)
 
-            fr = FollowRequests(form.follower_id.data, form.following_id.data)
+            following_user = ""
             try:
-                db.session.add(fr)  # Creating a new database entry.
+                following_user = User.query.filter(User.id == form.following_id.data).first()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+            follow_record = ""
+            if following_user.is_private:
+                # Create FollowRequest record if the following user has private profile.
+                follow_record = FollowRequests(form.follower_id.data, form.following_id.data)
+            else:
+                # Create Follow record if the following user has public profile.
+                follow_record = Follow(form.follower_id.data, form.following_id.data)
+
+            try:
+                db.session.add(follow_record)  # Creating a new database entry.
                 db.session.commit()
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
             return make_response(jsonify({'msg': 'Follow Request is succesfully added'}), 200)
+
 
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)

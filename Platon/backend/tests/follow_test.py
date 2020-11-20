@@ -148,6 +148,19 @@ class FollowTest(BaseTest):
         umut_id = 1
         self.assertTrue(umut_id in follow_requests_list.json, "Follow Request of corresponding ID does not exist!")
 
+        # Another Case. Let's follow a public profile. It should create Follow record, not FollowRequest record.
+        can_token = generate_token(2, datetime.timedelta(minutes=10))
+        data = {'follower_id': 2, 'following_id': 1}  # 1: Umut, 2: Can
+        actual_response = self.client.post('/api/follow/send_follow_requests', data=data,
+                                           headers={'auth_token': can_token})
+        self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
+
+        follow_list = self.client.get('/api/follow/followers',
+                                      data={'following_id': 1},
+                                      headers={'auth_token': can_token})
+        self.assertEqual(follow_list.status_code, 200, 'Incorrect HTTP Response Code')
+        self.assertTrue(2 in follow_list.json, "Follow record of corresponding ID does not exist!")
+
     # follower: who sends the follow request
     # following: who receives the follow request
     # In the test case, Alperen will accept Can's follow request.
