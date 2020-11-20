@@ -59,16 +59,21 @@ class FollowTest(BaseTest):
 
         # Returns the following list of the user.
         # e.g. if Umut follows Can, Umut's following list should include Can.
-
+        valid_token = generate_token(1, datetime.timedelta(minutes=10))
         data = {'follower_id': 1}  # 1: umut
-        actual_response = self.client.post('/api/follow/followings', data=data)
+        actual_response = self.client.get('/api/follow/followings', data=data,
+                                          headers={'auth_token': valid_token})
 
-        # print(actual_response)
         actual_info = actual_response.data
         expected_info = [2]
 
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
         self.assertEqual(json.loads(actual_info), expected_info, "Incorrect FollowingID")
+
+        # "No token send" case.
+        data = {'follower_id': 1}  # 1: umut
+        actual_response = self.client.get('/api/follow/followings', data=data)
+        self.assertEqual(actual_response.status_code, 401, 'Incorrect HTTP Response Code')
 
     # follower: user that follows someone
     # following: user that is followed by someone
@@ -77,15 +82,21 @@ class FollowTest(BaseTest):
 
         # Returns the follower list of the user.
         # e.g. Umut and Alperen follows Can. Then Can's follower list should contain their IDs.
-
+        valid_token = generate_token(1, datetime.timedelta(minutes=10))
         data = {'following_id': 2}  # 2: can
-        actual_response = self.client.post('/api/follow/followers', data=data)
+        actual_response = self.client.get('/api/follow/followers', data=data,
+                                          headers={'auth_token': valid_token})
 
         actual_info = actual_response.data
         expected_info = [1, 3]
 
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
         self.assertEqual(json.loads(actual_info), expected_info, "Incorrect FollowerIDs")
+
+        # "No token send" case
+        data = {'following_id': 2}  # 2: can
+        actual_response = self.client.get('/api/follow/followers', data=data)
+        self.assertEqual(actual_response.status_code, 401, 'Incorrect HTTP Response Code')
 
     # follower: who sends the follow request
     # following: who receives the follow request
@@ -96,7 +107,7 @@ class FollowTest(BaseTest):
         valid_token = generate_token(3, datetime.timedelta(minutes=10))  # token created for Alperen.
 
         data = {'following_id': 3}  # 3: alperen
-        actual_response = self.client.post('/api/follow/get_follow_requests', data=data,
+        actual_response = self.client.get('/api/follow/get_follow_requests', data=data,
                                            headers={'auth_token': valid_token})
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
 
@@ -107,12 +118,12 @@ class FollowTest(BaseTest):
 
         # Token will be created for another user. Login_required should return an error.
         another_token = generate_token(1, datetime.timedelta(minutes=10))  # token created for Umut.
-        actual_response = self.client.post('/api/follow/get_follow_requests', data=data,
+        actual_response = self.client.get('/api/follow/get_follow_requests', data=data,
                                            headers={'auth_token': another_token})
         self.assertEqual(actual_response.status_code, 401, 'Incorrect HTTP Response Code')
 
         # Token will not be created. Login_required should return an error.
-        actual_response = self.client.post('/api/follow/get_follow_requests', data=data)
+        actual_response = self.client.get('/api/follow/get_follow_requests', data=data)
         self.assertEqual(actual_response.status_code, 401, 'Incorrect HTTP Response Code')
 
     # follower: who sends the follow request
@@ -130,7 +141,7 @@ class FollowTest(BaseTest):
         # Let's see if follow request can be seen by Hilal.
         data = {'following_id': 4}
         hilal_token = generate_token(4, datetime.timedelta(minutes=10))
-        follow_requests_list = self.client.post('/api/follow/get_follow_requests', data=data,
+        follow_requests_list = self.client.get('/api/follow/get_follow_requests', data=data,
                                                 headers={'auth_token': hilal_token})
         self.assertEqual(follow_requests_list.status_code, 200, 'Incorrect HTTP Response Code')
 

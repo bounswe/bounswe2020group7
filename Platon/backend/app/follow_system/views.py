@@ -29,7 +29,8 @@ class GetFollowingsAPI(Resource):
                         400: 'Input Format Error',
                         500: 'Database Connection Error'})
     @api.expect(get_followings_parser)
-    def post(self):
+    @login_required
+    def get(user_id, self):
         '''
             Takes follower_id as input and returns the followings as a list.
         '''
@@ -62,7 +63,8 @@ class GetFollowersAPI(Resource):
                         400: 'Input Format Error',
                         500: ' Database Connection Error'})
     @api.expect(get_followers_parser)
-    def post(self):
+    @login_required
+    def get(user_id, self):
         '''
             Takes following_id as input and returns the followers as a list.
         '''
@@ -95,7 +97,7 @@ class GetFollowRequestsAPI(Resource):
                         500: 'Database Connection Error'})
     @api.expect(get_follow_requests_parser)
     @login_required
-    def post(user_id, self):
+    def get(user_id, self):
         '''
             Takes following_id as input and returns the follow requests as a list.
         '''
