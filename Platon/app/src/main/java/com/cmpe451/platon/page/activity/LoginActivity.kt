@@ -77,10 +77,14 @@ class LoginActivity :BaseActivity(), FragmentChangeListener, SearchElementsAdapt
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.actionbar, menu)
+
         val search = (menu?.findItem(R.id.search_btn)?.actionView as SearchView)
         val searchBar = search.findViewById<LinearLayout>(R.id.search_bar)
-
         searchBar.layoutTransition = LayoutTransition()
+
+        search.setOnSearchClickListener{
+            binding.searchAmongRb.visibility = View.VISIBLE
+        }
 
         search.setOnQueryTextListener( object: SearchView.OnQueryTextListener{
             override fun onQueryTextChange(newText: String?): Boolean {
@@ -92,9 +96,10 @@ class LoginActivity :BaseActivity(), FragmentChangeListener, SearchElementsAdapt
                 searchRecyclerView.adapter?.notifyItemInserted(0)
                 return Log.println(Log.ERROR, "SEARCH:",(query + searchRecyclerView.adapter?.itemCount.toString()+ myDataset.toString()).trim())*0 == 0
             }
-        }
-        )
+        })
+
         search.setOnCloseListener {
+            binding.searchAmongRb.visibility = View.GONE
             myDataset.clear()
             searchRecyclerView.adapter?.notifyDataSetChanged()
             search.onActionViewCollapsed()

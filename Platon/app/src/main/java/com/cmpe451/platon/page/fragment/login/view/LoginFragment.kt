@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import com.cmpe451.platon.R
 import com.cmpe451.platon.`interface`.FragmentChangeListener
@@ -94,8 +95,14 @@ class LoginFragment : Fragment(), LoginContract.View  {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-        menu.findItem(R.id.registerFragment).isVisible = false
-        menu.findItem(R.id.loginFragment).isVisible = false
+
+        val search = (menu.findItem(R.id.search_btn)?.actionView as SearchView)
+        search.setQuery("", false)
+        search.isIconified = true
+
+        menu.findItem(R.id.registerFragment)?.isVisible = false
+        menu.findItem(R.id.loginFragment)?.isVisible = false
+        menu.findItem(R.id.search_btn)?.isVisible = false
     }
 
     override fun setFields(mail: String, pass: String, b: Boolean) {

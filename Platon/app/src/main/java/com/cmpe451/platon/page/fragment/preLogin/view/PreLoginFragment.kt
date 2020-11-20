@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat.getDrawable
 import androidx.core.app.ActivityCompat.invalidateOptionsMenu
@@ -55,8 +56,6 @@ class PreLoginFragment : Fragment(), PreLoginContract.View, TrendingProjectsAdap
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
         initializePresenter()
 
         presenter?.onPreLoginMade()
@@ -101,7 +100,6 @@ class PreLoginFragment : Fragment(), PreLoginContract.View, TrendingProjectsAdap
     private fun setListeners() {
         //password.addTextChangedListener(textWatcher)
     }
-
 
     override fun onUpcomingButtonClicked(buttonName: String) {
         TODO("Not yet implemented")

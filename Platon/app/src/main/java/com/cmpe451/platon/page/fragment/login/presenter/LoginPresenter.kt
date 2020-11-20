@@ -30,7 +30,6 @@ class LoginPresenter(private var view: LoginContract.View?, private var reposito
             Toast.makeText((view as LoginFragment).activity, "Autologin..2", Toast.LENGTH_LONG).show()
 
             val mailPass = sharedPreferences.getStringSet("login_values", setOf()) as Set<String>
-
             if (mailPass.size == 2){
                 val it = mailPass.iterator()
                 val mail = it.next()
@@ -45,7 +44,7 @@ class LoginPresenter(private var view: LoginContract.View?, private var reposito
 
 
     override fun onLoginButtonClicked(mail: String, pass: String, remember: Boolean, flag: Boolean) {
-        if (!flag){
+        if (!flag && !mail.equals(pass, true)){
             sharedPreferences.edit().putBoolean("remember_me", remember).apply()
 
             sharedPreferences.edit().putStringSet("login_values", setOf(mail, pass)).apply()
