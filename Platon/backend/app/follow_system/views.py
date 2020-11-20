@@ -138,7 +138,7 @@ class SendFollowRequestAPI(Resource):
     @login_required
     def post(user_id, self):
         '''
-            Takes follower_id and following_id as inputs and creates the corresponding Follow Request.
+            Creates FollowRequest record if profile is private, creates Follow record if profile is public.
         '''
         form = SendFollowRequestsForm(request.form)
         if form.validate():
