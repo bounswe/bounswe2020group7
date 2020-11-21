@@ -4,7 +4,9 @@
     <style name="Theme.Platon" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Status bar color. -->
         <!-- Customize your theme here. -->
+        <item name="colorControlNormal">@color/primary_light</item>
         <item name="android:windowFullscreen">true</item>
+        <item name="android:editTextColor">@color/primary_light</item>
         <item name="android:windowContentOverlay">@null</item>
     </style>
 

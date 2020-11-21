@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/login_back"
+    android:background="@color/primary_dark"
     tools:context=".page.activity.LoginActivity">
 
 
@@ -14,29 +14,34 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@drawable/radius"
+        android:background="@drawable/view_back_darker"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="@dimen/inner_frame_layout_padding_2"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:padding="@dimen/inner_frame_layout_padding_2">
 
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/xxx_large"
+            android:contentDescription="@string/logo_o_str"
+            app:srcCompat="@drawable/ic_o_logo_100" />
 
         <EditText
             android:id="@+id/email_et"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:autofillHints=""
             android:backgroundTint="@color/primary_dark"
-            android:ems="10"
+            android:ems="15"
             android:hint="@string/prompt_email"
             android:inputType="textEmailAddress"
-            android:textColor="@color/primary_dark"
-            android:textColorHighlight="@color/primary_dark"
-            android:textColorHint="@color/primary_dark_lighter"
-            android:textColorLink="@color/primary_dark_lighter" />
+            android:textColor="@color/primary_light"
+            android:textColorHighlight="@color/primary_light"
+            android:textColorHint="@color/secondary_purple"
+            android:textColorLink="@color/secondary_purple" />
 
         <EditText
             android:id="@+id/pass_et"
@@ -44,26 +49,40 @@
             android:layout_height="wrap_content"
             android:autofillHints=""
             android:backgroundTint="@color/primary_dark"
-            android:ems="10"
+            android:ems="15"
             android:hint="@string/prompt_password"
             android:inputType="textPassword"
-            android:textColor="@color/primary_dark"
-            android:textColorHighlight="@color/primary_dark"
-            android:textColorHint="@color/primary_dark_lighter"
-            android:textColorLink="@color/primary_dark_lighter" />
+            android:textColor="@color/primary_light"
+            android:textColorHighlight="@color/primary_light"
+            android:textColorHint="@color/secondary_purple"
+            android:textColorLink="@color/secondary_purple" />
 
         <CheckBox
             android:id="@+id/remember_chk"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/remember_me_str"
-            android:textColor="@color/primary_dark" />
+            android:textColor="@color/secondary_purple" />
 
         <Button
             android:id="@+id/login_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:backgroundTint="@color/secondary_purple"
+            android:text="@string/login_str"
+            android:textColor="@color/primary_light" />
+
+        <TextView
+            android:id="@+id/forgot_pw_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/login_str" />
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:clickable="true"
+            android:focusable="true"
+            android:hapticFeedbackEnabled="true"
+            android:text="@string/forgot_password_str"
+            android:textColor="@color/secondary_purple" />
 
         <TextView
             android:id="@+id/dont_have_acc_btn"
@@ -71,9 +90,10 @@
             android:layout_height="wrap_content"
             android:clickable="true"
             android:focusable="true"
+            android:layout_marginTop="@dimen/xxxxx_large"
             android:hapticFeedbackEnabled="true"
             android:text="@string/dontHave_str"
-            android:textColor="@color/primary_dark" />
+            android:textColor="@color/secondary_purple" />
 
     </LinearLayout>
 </ScrollView>

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/register_back"
+    android:background="@color/primary_dark"
     tools:context=".page.activity.LoginActivity">
 
     <LinearLayout
@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
 
         android:layout_gravity="center"
-        android:background="@drawable/radius"
+        android:background="@drawable/view_back_darker"
         android:gravity="center"
         android:orientation="vertical"
         android:padding="@dimen/inner_frame_layout_padding_2"
@@ -21,105 +21,137 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <EditText
-            android:id="@+id/fullname_tv"
-            android:layout_width="wrap_content"
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:autofillHints=""
-            android:ems="10"
-            android:hint="@string/prompt_name"
-            android:inputType="textPersonName|textAutoComplete"
-            android:textColor="@color/primary_dark"
-            android:textColorHighlight="@color/primary_dark"
-            android:textColorHint="@color/primary_dark_lighter"
-            android:textColorLink="@color/primary_dark_lighter" />
+            android:layout_margin="@dimen/xxx_large"
+            android:contentDescription="@string/logo_o_str"
+            app:srcCompat="@drawable/ic_o_logo_100" />
 
-        <EditText
-            android:id="@+id/username_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:autofillHints=""
-            android:ems="10"
-            android:hint="@string/username_str"
-            android:inputType="textPersonName"
-            android:textColor="@color/primary_dark"
-            android:textColorHighlight="@color/primary_dark"
-            android:textColorHint="@color/primary_dark_lighter"
-            android:textColorLink="@color/primary_dark_lighter" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/firstname_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autofillHints=""
+                android:backgroundTint="@color/secondary_purple"
+                android:hint="@string/firstName_str"
+                android:inputType="textPersonName|textAutoComplete"
+                android:textColor="@color/primary_light"
+                android:textColorHighlight="@color/primary_light"
+                android:textColorHint="@color/secondary_purple"
+                android:textColorLink="@color/secondary_purple" />
+
+            <EditText
+                android:id="@+id/lastname_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autofillHints=""
+                android:backgroundTint="@color/secondary_purple"
+                android:ems="15"
+                android:hint="@string/lastName_str"
+                android:inputType="textPersonName"
+                android:textColor="@color/primary_light"
+                android:textColorHighlight="@color/primary_light"
+                android:textColorHint="@color/secondary_purple"
+                android:textColorLink="@color/secondary_purple" />
+        </LinearLayout>
 
         <EditText
             android:id="@+id/mail_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autofillHints=""
-            android:ems="10"
+            android:backgroundTint="@color/secondary_purple"
+            android:ems="15"
             android:hint="@string/prompt_email"
             android:inputType="textEmailAddress"
-            android:textColor="@color/primary_dark"
-            android:textColorHighlight="@color/primary_dark"
-            android:textColorHint="@color/primary_dark_lighter"
-            android:textColorLink="@color/primary_dark_lighter" />
+            android:textColor="@color/primary_light"
+            android:textColorHighlight="@color/primary_light"
+            android:textColorHint="@color/secondary_purple"
+            android:textColorLink="@color/secondary_purple" />
 
         <EditText
-            android:id="@+id/phone_tv"
+            android:id="@+id/job_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autofillHints=""
-            android:ems="10"
-            android:hint="@android:string/emptyPhoneNumber"
-            android:inputType="phone"
-            android:textColor="@color/primary_dark"
-            android:textColorHighlight="@color/primary_dark"
-            android:textColorHint="@color/primary_dark_lighter"
-            android:textColorLink="@color/primary_dark_lighter" />
+            android:backgroundTint="@color/secondary_purple"
+            android:ems="15"
+            android:hint="@string/job_str"
+            android:inputType="text|textAutoCorrect"
+            android:textColor="@color/primary_light"
+            android:textColorHighlight="@color/primary_light"
+            android:textColorHint="@color/secondary_purple"
+            android:textColorLink="@color/secondary_purple" />
 
         <EditText
             android:id="@+id/pw1_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autofillHints=""
-            android:ems="10"
+            android:backgroundTint="@color/secondary_purple"
+            android:ems="15"
             android:hint="@string/prompt_password"
             android:inputType="textPassword"
-            android:textColor="@color/primary_dark"
-            android:textColorHighlight="@color/primary_dark"
-            android:textColorHint="@color/primary_dark_lighter"
-            android:textColorLink="@color/primary_dark_lighter" />
+            android:textColor="@color/primary_light"
+            android:textColorHighlight="@color/primary_light"
+            android:textColorHint="@color/secondary_purple"
+            android:textColorLink="@color/secondary_purple" />
+
+
+
 
         <EditText
             android:id="@+id/pw2_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autofillHints=""
-            android:ems="10"
+            android:backgroundTint="@color/secondary_purple"
+            android:ems="15"
             android:hint="@string/prompt_password"
             android:inputType="textPassword"
-            android:textColor="@color/primary_dark"
-            android:textColorHighlight="@color/primary_dark"
-            android:textColorHint="@color/primary_dark_lighter"
-            android:textColorLink="@color/primary_dark_lighter" />
+            android:textColor="@color/primary_light"
+            android:textColorHighlight="@color/primary_light"
+            android:textColorHint="@color/secondary_purple"
+            android:textColorLink="@color/secondary_purple" />
 
         <CheckBox
             android:id="@+id/terms_chk"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:text="@string/acceptterms_str"
-            android:textColor="@color/primary_dark" />
+            android:textColor="@color/secondary_purple" />
 
         <Button
             android:id="@+id/register_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/register_str" />
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:backgroundTint="@color/secondary_purple"
+            android:text="@string/register_str"
+            android:textColor="@color/primary_light" />
 
         <TextView
             android:id="@+id/alread_have_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/xxxxx_large"
             android:clickable="true"
             android:focusable="true"
             android:text="@string/already_have_str"
-            android:textColor="@color/primary_dark" />
+            android:textColor="@color/secondary_purple" />
 
     </LinearLayout>
 </ScrollView>

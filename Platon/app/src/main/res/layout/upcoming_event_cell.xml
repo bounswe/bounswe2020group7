@@ -1,25 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.cardview.widget.CardView xmlns:android = "http://schemas.android.com/apk/res/android"
+    xmlns:card_view = "http://schemas.android.com/apk/res-auto"
+    card_view:cardCornerRadius = "@dimen/medium"
+    card_view:cardElevation="@dimen/xxx_small"
+    android:layout_marginBottom="@dimen/xx_small"
+    android:layout_width = "match_parent"
+    android:layout_marginHorizontal="@dimen/xx_large"
+    card_view:contentPadding="@dimen/medium"
+    card_view:cardBackgroundColor="@color/secondary_green_transparent"
+    android:layout_height = "wrap_content">
 
-    android:layout_margin="15dp"
+<RelativeLayout
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:elevation="2dp"
-    android:background="@color/colorAccent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="1"
-        android:layout_centerInParent="true"
-        android:textSize="25sp"
-        android:padding="20dp"
-        android:gravity="center_vertical|center_horizontal"
-        android:textColor="#fff"
-        tools:ignore="MissingConstraints"  />
+            android:layout_alignParentStart="true"
+            android:id="@+id/upcoming_event_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/title_logo_padding"
+            android:maxLines="1"
+            android:text="@string/upcoming_event_str"
+            android:textColor="@color/primary_dark"
+            android:textSize="@dimen/project_title_text_size"
+            card_view:drawableLeftCompat="@drawable/ic_profile_24px" />
+    <LinearLayout
+        android:id="@+id/date_type_ll"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/upcoming_event_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/upcoming_event_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/date_str"
+            android:textColor="@color/primary_dark_lighter"
+            android:textSize="@dimen/subtitle_text_size" />
+
+        <TextView
+            android:id="@+id/upcoming_event_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/type_str"
+            android:textColor="@color/primary_dark"
+            android:textSize="@dimen/subtitle_text_size" />
+        </LinearLayout>
+
+        <TextView
+            android:background="@drawable/view_back"
+            android:layout_below="@id/upcoming_event_title"
+            android:visibility="gone"
+            android:id="@+id/upcoming_event_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/desc_text_size"
+            android:padding="@dimen/medium"
+            android:maxLines="3"
+            android:text="@string/desc_str"
+            android:textColor="@color/primary_light" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>
+</androidx.cardview.widget.CardView>

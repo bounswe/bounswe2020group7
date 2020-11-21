@@ -11,6 +11,46 @@
 
     <include layout="@layout/toolbar" />
 
+    <RadioGroup
+        android:id="@+id/search_among_rb"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary_dark"
+        android:checkedButton="@id/workspace_rb"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/medium"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/textView4"
+            android:textColor="@color/primary_light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search among:" />
+
+        <RadioButton
+            android:id="@+id/workspace_rb"
+            android:textColor="@color/primary_light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/workspaces_str" />
+
+        <RadioButton
+            android:id="@+id/user_rb"
+            android:textColor="@color/primary_light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/users_str" />
+    </RadioGroup>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/search_element_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary_dark">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">

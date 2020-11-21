@@ -10,14 +10,21 @@
     <color name="colorAccent">#03DAC5</color>
 
     <!-- Chosen application colors -->
-    <color name="primary_dark">#313638</color>
 
-    <color name="primary_light_transparent">#88e0dfd5</color>
+    <color name="primary_dark">#313638</color>
+    <color name="primary_dark_darker">#222527</color>
+    <color name="primary_light_transparent">#77e0dfd5</color>
+    <color name="primary_dark_lighter2_transparent">#77898B87</color>
+    <color name="secondary_green_transparent">#AAb0db06</color>
+    <color name="secondary_orange_transparent">#AAff8b33</color>
+    <color name="secondary_purple_transparent">#AA8f9dd3</color>
+
     <color name="primary_light">#e0dfd5</color>
     <color name="secondary_purple">#8f9dd3</color>
     <color name="secondary_green">#b0db06</color>
     <color name="secondary_orange">#ff8b33</color>
     <color name="primary_dark_lighter2">#898B87</color>
     <color name="primary_dark_lighter">#5D6160</color>
+    <color name="primary_dark_lighter_transparent">#885D6160</color>
     <color name="secondary_purple2">#B8BED4</color>
 </resources>

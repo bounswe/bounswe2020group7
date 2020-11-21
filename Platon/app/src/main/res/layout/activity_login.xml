@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -9,14 +11,54 @@
     android:orientation="vertical"
     tools:context=".page.activity.LoginActivity">
 
-    <include layout="@layout/toolbar" />
+        <include layout="@layout/toolbar" />
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/login_nav_host_fragment"
-        android:name="androidx.navigation.fragment.NavHostFragment"
+    <RadioGroup
+        android:id="@+id/search_among_rb"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:defaultNavHost="true"
-        app:navGraph="@navigation/nav_graph" />
+        android:layout_height="wrap_content"
+        android:background="@color/primary_dark_darker"
+        android:checkedButton="@id/workspace_rb"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/medium"
+        android:visibility="gone">
 
+        <TextView
+            android:id="@+id/textView4"
+            android:textColor="@color/primary_light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search among:" />
+
+        <RadioButton
+            android:id="@+id/workspace_rb"
+            android:textColor="@color/primary_light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/workspaces_str" />
+
+        <RadioButton
+            android:id="@+id/user_rb"
+            android:textColor="@color/primary_light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/users_str" />
+    </RadioGroup>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/search_element_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary_dark_darker">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/login_nav_host_fragment"
+                android:name="androidx.navigation.fragment.NavHostFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:defaultNavHost="true"
+                app:layout_constraintTop_toBottomOf="@+id/search_element_recycler_view"
+                app:navGraph="@navigation/nav_graph" />
 </LinearLayout>
