@@ -10,8 +10,9 @@
     <color name="colorAccent">#03DAC5</color>
 
     <!-- Chosen application colors -->
+
     <color name="primary_dark">#313638</color>
-    <color name="primary_dark_darker">#303030</color>
+    <color name="primary_dark_darker">#222527</color>
     <color name="primary_light_transparent">#77e0dfd5</color>
     <color name="primary_dark_lighter2_transparent">#77898B87</color>
     <color name="secondary_green_transparent">#88b0db06</color>

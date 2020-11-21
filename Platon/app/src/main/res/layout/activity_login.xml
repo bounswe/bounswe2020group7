@@ -17,7 +17,7 @@
         android:id="@+id/search_among_rb"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primary_dark"
+        android:background="@color/primary_dark_darker"
         android:checkedButton="@id/workspace_rb"
         android:orientation="horizontal"
         android:paddingHorizontal="@dimen/medium"
@@ -49,7 +49,7 @@
         android:id="@+id/search_element_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primary_dark">
+        android:background="@color/primary_dark_darker">
 
     </androidx.recyclerview.widget.RecyclerView>
 

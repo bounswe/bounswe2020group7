@@ -50,7 +50,7 @@ class TrendingProjectsAdapter(private val data: ArrayList<TrendingProject>, priv
         // - replace the contents of the view with that element
 
         val drawable = data[position].img
-        drawable?.setBounds(0,0,25,25)
+        drawable?.setBounds(0,0,drawable.intrinsicWidth,drawable.intrinsicHeight)
         holder.binding.descTrendProjectTv.text = data[position].description
         holder.binding.titleTrendProjectTv.text = data[position].project_title
         holder.binding.titleTrendProjectTv.setCompoundDrawables(drawable, null, null, null)

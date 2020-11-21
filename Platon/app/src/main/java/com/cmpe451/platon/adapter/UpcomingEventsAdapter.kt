@@ -60,7 +60,7 @@ class UpcomingEventsAdapter(private val data: ArrayList<UpcomingEvent>, private 
 
         holder.binding.upcomingEventTitle.text = data[position].title
         val drawable = data[position].img
-        drawable?.setBounds(0,0,25,25)
+        drawable?.setBounds(0,0,drawable.intrinsicWidth,drawable.intrinsicHeight)
         holder.binding.upcomingEventTitle.setCompoundDrawables(drawable, null, null, null)
         holder.binding.upcomingEventDate.text = data[position].date
         holder.binding.upcomingEventDesc.text = data[position].desc
