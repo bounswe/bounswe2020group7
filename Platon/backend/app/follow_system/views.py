@@ -143,10 +143,13 @@ class FollowRequestAPI(Resource):
 
             following_user = ""
             try:
-                following_user = User.query.filter(User.id == form.following_id.data).first()
+                following_user = User.query.filter((User.id == form.following_id.data)&(User.is_valid == True)).first()
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
+            if following_user in None:
+                return make_response(jsonify({'error': 'User not found'}), 400)
+                
             follow_record = ""
             if following_user.is_private:
                 # Create FollowRequest record if the following user has private profile.
@@ -177,7 +180,7 @@ class FollowRequestAPI(Resource):
     @login_required
     def delete(user_id, self):
         '''
-            Takes the follower_id and following_id as inputs and rejects the corresponding Follow Request.
+            Takes the follower_id and following_id as inputs and replies the corresponding Follow Request.
         '''
         form = ReplyFollowRequestsForm(request.form)
         if form.validate():
