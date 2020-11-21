@@ -13,7 +13,6 @@ import MuiAlert from "@material-ui/lab/Alert";
 import AutorenewIcon from "@material-ui/icons/Autorenew";
 import "./ResetPassword.css";
 import Snackbar from "@material-ui/core/Snackbar";
-import config from "../../utils/config";
 
 const CssTextField = withStyles({
   root: {
@@ -86,7 +85,7 @@ class ResetPassword extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      passwordAgain: "",
+      email: "",
       password: "",
       showSuccess: false,
       fieldEmptyError: false,
@@ -117,22 +116,23 @@ class ResetPassword extends Component {
     this.setState({ showSuccess: false });
   };
   handleSubmit = () => {
-    if (this.state.passwordAgain === "" || this.state.password === "") {
+    if (this.state.email === "" || this.state.email === "") {
       this.setState({ fieldEmptyError: "Fields are required" });
       return;
     }
-    if (this.state.passwordAgain!==this.state.password) {
-      this.setState({ fieldEmptyError: "Password mismatch" });
+    if (!/\S+@\S+\.\S+/.test(this.state.email) ) {
+      this.setState({ fieldEmptyError: "Invalid email" });
       return;
     }
-
+    //TODO error check
     let path = this.props.location.pathname
     const token = path.split('/')[2]
 
-    const url = config.BASE_URL
-    const data = { password: this.state.password, passwordAgain: this.state.passwordAgain };
+    const url =
+      "https://react-my-burger-78df4.firebaseio.com";
+    const data = { email: this.state.email, password: this.state.password };
 
-    fetch(url + "/auth_system/reset_password", {
+    fetch(url + "/resetpassword.json", {
       method: "POST",
       body: JSON.stringify(data),
       headers:{
@@ -147,7 +147,7 @@ class ResetPassword extends Component {
           });
           this.setState({
 
-            passwordAgain: "",
+            email: "",
             password: "",
 
           });
@@ -187,9 +187,21 @@ class ResetPassword extends Component {
                   className={classes.typography}
                   margin="normal"
                 >
-                  Enter your new password.
+                  Enter your email address and your new password.
                 </Typography>
-
+                <CssTextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  value={this.state.email}
+                  onChange={(e) => this.setState({ email: e.target.value })}
+                  autoComplete="email"
+                  autoFocus
+                />
                 <CssTextField
                   variant="outlined"
                   margin="normal"
@@ -202,20 +214,6 @@ class ResetPassword extends Component {
                   value={this.state.password}
                   onChange={(e) => this.setState({ password: e.target.value })}
                   autoComplete="current-password"
-                />
-                <CssTextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="passwordAgain"
-                  label="New Password Again"
-                  name="passwordAgain"
-                  type="password"
-                  value={this.state.passwordAgain}
-                  onChange={(e) => this.setState({ passwordAgain: e.target.value })}
-                  autoComplete="passwordAgain"
-                  autoFocus
                 />
                 <StyledButton
                   type="submit"
