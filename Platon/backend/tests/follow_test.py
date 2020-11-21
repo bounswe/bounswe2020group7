@@ -168,20 +168,20 @@ class FollowTest(BaseTest):
     def test_accept_follow_request(self):
 
         alperen_token = generate_token(3, datetime.timedelta(minutes=10))
-        data = {'follower_id': 2, 'following_id': 3}
-        actual_response = self.client.post('/api/follow/accept_follow_requests', data=data,
+        data = {'follower_id': 2, 'following_id': 3, 'state': 1}
+        actual_response = self.client.post('/api/follow/reply_follow_requests', data=data,
                                            headers={'auth_token': alperen_token})
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
 
         # Should return no request found. There is no follow request with these ids.
-        data_2 = {'follower_id': 1, 'following_id': 3}
-        actual_response = self.client.post('/api/follow/accept_follow_requests', data=data_2,
+        data_2 = {'follower_id': 1, 'following_id': 3, 'state': 1}
+        actual_response = self.client.post('/api/follow/reply_follow_requests', data=data_2,
                                            headers={'auth_token': alperen_token})
         self.assertEqual(actual_response.status_code, 404, 'Incorrect HTTP Response Code')
 
         # Let Can try to accept the follow request of Alperen. It should return authorization error.
         can_token = generate_token(2, datetime.timedelta(minutes=10))
-        actual_response = self.client.post('/api/follow/accept_follow_requests', data=data,
+        actual_response = self.client.post('/api/follow/reply_follow_requests', data=data,
                                            headers={'auth_token': can_token})
         self.assertEqual(actual_response.status_code, 401, 'Incorrect HTTP Response Code')
 
@@ -191,20 +191,20 @@ class FollowTest(BaseTest):
     def test_reject_follow_request(self):
 
         alperen_token = generate_token(3, datetime.timedelta(minutes=10))
-        data = {'follower_id': 2, 'following_id': 3}
-        actual_response = self.client.post('/api/follow/reject_follow_requests', data=data,
+        data = {'follower_id': 2, 'following_id': 3, 'state': 2}
+        actual_response = self.client.post('/api/follow/reply_follow_requests', data=data,
                                            headers={'auth_token': alperen_token})
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
 
         # Should return no request found. There is no follow request with these ids.
-        data_2 = {'follower_id': 1, 'following_id': 3}
-        actual_response = self.client.post('/api/follow/reject_follow_requests', data=data_2,
-                                           headers={'auth_token': alperen_token})
+        data_2 = {'follower_id': 1, 'following_id': 3, 'state': 2}
+        actual_response = self.client.post('/api/follow/reply_follow_requests', data=data_2,
+                                           headers={'auth_token': alperen_token}, )
         self.assertEqual(actual_response.status_code, 404, 'Incorrect HTTP Response Code')
 
         # Let Can try to reject the follow request of Alperen. It should return authorization error.
         can_token = generate_token(2, datetime.timedelta(minutes=10))
-        actual_response = self.client.post('/api/follow/reject_follow_requests', data=data,
+        actual_response = self.client.post('/api/follow/reply_follow_requests', data=data,
                                            headers={'auth_token': can_token})
         self.assertEqual(actual_response.status_code, 401, 'Incorrect HTTP Response Code')
 

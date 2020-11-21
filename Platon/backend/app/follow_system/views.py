@@ -4,9 +4,9 @@ from flask import current_app as app
 
 from app import api, db
 from app.follow_system.forms import GetFollowingsForm, GetFollowersForm, GetFollowRequestsForm, \
-    SendFollowRequestsForm, AcceptFollowRequestsForm, RejectFollowRequestsForm
+    SendFollowRequestsForm, ReplyFollowRequestsForm
 from app.follow_system.forms import get_followings_parser, get_followers_parser, get_follow_requests_parser, send_follow_requests_parser, \
-    accept_follow_requests_parser, reject_follow_requests_parser
+    reply_follow_requests_parser
 from app.follow_system.models import Follow, FollowRequests
 from app.auth_system.models import User
 from app.auth_system.views import login_required, generate_token
@@ -18,8 +18,8 @@ from functools import wraps
 
 
 follow_system_ns = Namespace("Follow System",
-                             description = "Follow System Endpoints",
-                             path = "/follow")
+                             description="Follow System Endpoints",
+                             path="/follow")
 
 # Private Account Restrictions not implemented.
 @follow_system_ns.route("/followings")
@@ -175,69 +175,21 @@ class SendFollowRequestAPI(Resource):
 
 
 # login_required decorator will be added.
-@follow_system_ns.route("/accept_follow_requests")
-class AcceptFollowRequestAPI(Resource):
+@follow_system_ns.route("/reply_follow_requests")
+class ReplyFollowRequestAPI(Resource):
 
-    @api.doc(responses={200: 'Follow Request is accepted successfully',
+    @api.doc(responses={200: 'Follow Request is replied successfully',
                         400: 'Input Format Error',
-                        401: 'Current user is unauthorized to accept the Follow Request',
+                        401: 'Current user is unauthorized to reply the Follow Request',
                         404: 'Follow Request not found',
                         500: 'Database Connection Error'})
-    @api.expect(accept_follow_requests_parser)
-    @login_required
-    def post(user_id, self):
-        '''
-            Takes follower_id and following_id as inputs and accepts the corresponding Follow Request.
-        '''
-        form = AcceptFollowRequestsForm(request.form)
-        if form.validate():
-
-            # Current user should be the following.
-            if user_id != form.following_id.data:
-                return make_response(jsonify({'error': 'Unauthorized'}), 401)
-
-            # Check if the given FollowRequest instance exists.
-            try:
-                followSearch = FollowRequests.query.filter(FollowRequests.following_id == form.following_id.data,
-                                                           FollowRequests.follower_id == form.follower_id.data).all()
-            except:
-                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
-
-            if len(followSearch)==0:
-                return make_response(jsonify({'error': 'Follow Request not found'}), 404)
-
-            # If it exists: Create a Follow instance. Delete FollowRequest instance.
-            follow_request = followSearch[0]
-            new_follow_entry = Follow(follow_request.follower_id, follow_request.following_id)
-            try:
-                db.session.add(new_follow_entry)
-                db.session.delete(follow_request)
-                db.session.commit()
-            except:
-                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
-
-            return make_response(jsonify({'msg': 'Follow Request is succesfully accepted'}), 200)
-
-        else:
-            return make_response(jsonify({'error': 'Input Format Error'}), 400)
-
-
-# login_required decorator will be added.
-@follow_system_ns.route("/reject_follow_requests")
-class RejectFollowRequestAPI(Resource):
-
-    @api.doc(responses={200: 'Follow Request is rejected successfully',
-                        400: 'Input Format Error',
-                        401: 'Current user is unauthorized to reject the Follow Request',
-                        404: 'Follow Request not found',
-                        500: 'Database Connection Error'})
-    @api.expect(reject_follow_requests_parser)
+    @api.expect(reply_follow_requests_parser)
     @login_required
     def post(user_id, self):
         '''
             Takes the follower_id and following_id as inputs and rejects the corresponding Follow Request.
         '''
-        form = AcceptFollowRequestsForm(request.form)
+        form = ReplyFollowRequestsForm(request.form)
         if form.validate():
 
             # Current user should be the following.
@@ -254,18 +206,34 @@ class RejectFollowRequestAPI(Resource):
             if len(followSearch) == 0:
                 return make_response(jsonify({'error': 'Follow Request not found'}), 404)
 
-            # If it exists: Delete FollowRequest instance.
             follow_request = followSearch[0]
-            try:
-                db.session.delete(follow_request)
-                db.session.commit()
-            except:
-                return make_response(jsonify({'error': 'Database Connection Problem'}), 500)
 
-            return make_response(jsonify({'msg': 'Follow Request is succesfully accepted'}), 200)
+            # Accept if the state of the reply is 1.
+            if form.state.data == 1:
+                new_follow_entry = Follow(follow_request.follower_id, follow_request.following_id)
+                try:
+                    db.session.add(new_follow_entry)
+                    db.session.delete(follow_request)
+                    db.session.commit()
+                except:
+                    return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+            # Reject if the state of the reply is 2.
+            elif form.state.data == 2:
+                try:
+                    db.session.delete(follow_request)
+                    db.session.commit()
+                except:
+                    return make_response(jsonify({'error': 'Database Connection Problem'}), 500)
+
+            # Return error if the state of reply is other than 1 or 2.
+            else:
+                return make_response(jsonify({'error': 'State of FollowRequest answer can only be 1 or 2!'}), 400)
+
+            return make_response(jsonify({'msg': 'Follow Request is successfully replied'}), 200)
 
         else:
-            return make_response(jsonify({'error': 'Bad Request'}), 400)
+            return make_response(jsonify({'error': 'Input Format Error'}), 400)
 
 
 def register_resources(api):
