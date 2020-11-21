@@ -15,6 +15,7 @@ import { Link as RouteLink, Redirect } from "react-router-dom";
 import Snackbar from "@material-ui/core/Snackbar";
 import AppBar from "../AppBar/AppBar";
 import "./Login.css";
+import config from "../../utils/config";
 const CssTextField = withStyles({
   root: {
     "& .MuiInputBase-input": {
@@ -128,6 +129,9 @@ class Login extends Component {
     const url = "https://react-my-burger-78df4.firebaseio.com";
     const data = { email: this.state.email, password: this.state.password };
     fetch(url+"/users.json", {
+    const url = config.BASE_URL
+    const data = { email: this.state.email, password: this.state.password };
+    fetch(url + "/api/auth_system/login", {
       method: "POST",
       body: JSON.stringify(data),
     })

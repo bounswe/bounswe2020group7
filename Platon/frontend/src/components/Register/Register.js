@@ -27,6 +27,7 @@ const StyledTextField = withStyles({
     "& .MuiFormLabel-root": {
       color: colors.primaryLight,
     },
+
     "& label.Mui-focused": {
       color: colors.tertiary,
     },
