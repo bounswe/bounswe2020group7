@@ -6,20 +6,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.cmpe451.platon.R
-import com.cmpe451.platon.databinding.FragmentFollowingBinding
+import com.cmpe451.platon.databinding.FragmentFollowersFollowingListBinding
 import com.cmpe451.platon.page.activity.HomeActivity
 import com.cmpe451.platon.page.fragment.profilepage.contract.ProfilePageContract
 import com.cmpe451.platon.page.fragment.profilepage.model.ProfilePageRepository
 import com.cmpe451.platon.page.fragment.profilepage.presenter.ProfilePagePresenter
-import com.cmpe451.platon.page.fragment.profilepage.view.adapters.FollowerRecyclerViewAdapter
-import com.cmpe451.platon.page.fragment.profilepage.view.adapters.FollowingRecyclerViewAdapter
+import com.cmpe451.platon.adapter.FollowerFollowingRecyclerViewAdapter
+import com.cmpe451.platon.util.Definitions
 
 class FollowingListFragment : Fragment(), ProfilePageContract.View{
 
-    private lateinit var binding:FragmentFollowingBinding
+    private lateinit var binding:FragmentFollowersFollowingListBinding
     private lateinit var presenter: ProfilePagePresenter
-    private lateinit var following: ArrayList<String>
+    private lateinit var following: ArrayList<Definitions.User>
     companion object{
         fun newInstance(): FollowingListFragment{
             val args = Bundle()
@@ -31,7 +30,7 @@ class FollowingListFragment : Fragment(), ProfilePageContract.View{
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = FragmentFollowingBinding.inflate(inflater)
+        binding = FragmentFollowersFollowingListBinding.inflate(inflater)
         following = ArrayList()
         return binding.root
     }
@@ -40,7 +39,7 @@ class FollowingListFragment : Fragment(), ProfilePageContract.View{
         initializePresenter()
         val rvFollowers = binding.rvFollow
         following.addAll(presenter.getFollowing())
-        val adapter = FollowingRecyclerViewAdapter(ArrayList())
+        val adapter = FollowerFollowingRecyclerViewAdapter(ArrayList())
         rvFollowers.adapter = adapter
         adapter.submitList(following)
         rvFollowers.layoutManager = LinearLayoutManager(this.activity)

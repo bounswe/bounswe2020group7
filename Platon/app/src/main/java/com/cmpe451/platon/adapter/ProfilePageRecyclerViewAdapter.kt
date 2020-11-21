@@ -1,4 +1,4 @@
-package com.cmpe451.platon.page.fragment.profilepage.view.adapters
+package com.cmpe451.platon.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -21,17 +21,17 @@ class ProfilePageRecyclerViewAdapter(private val dataSet: ArrayList<MutableMap<S
             detail.text = model["info"]
         }
     }
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProfilePageRecyclerViewAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.fragment_profile_page_info_item, parent, false)
-        return ProfilePageRecyclerViewAdapter.ViewHolder(view)
+        return ViewHolder(view)
     }
 
     override fun getItemCount(): Int {
         return dataSet.size
     }
 
-    override fun onBindViewHolder(holder: ProfilePageRecyclerViewAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(dataSet[position])
     }
     fun submitList(list:ArrayList<MutableMap<String, String>>){

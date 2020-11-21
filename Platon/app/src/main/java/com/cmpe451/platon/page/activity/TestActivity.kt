@@ -4,9 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.cmpe451.platon.R
-import com.cmpe451.platon.page.fragment.profilepage.view.adapters.FollowViewPagerAdapter
 import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 
 class TestActivity :AppCompatActivity(){
     private lateinit var tabLayout: TabLayout

@@ -1,4 +1,4 @@
-package com.cmpe451.platon.page.fragment.profilepage.view.adapters
+package com.cmpe451.platon.adapter
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity

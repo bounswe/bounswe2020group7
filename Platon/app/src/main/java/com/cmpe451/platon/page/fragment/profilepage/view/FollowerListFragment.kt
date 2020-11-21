@@ -6,19 +6,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.cmpe451.platon.R
-import com.cmpe451.platon.databinding.FragmentFollowersBinding
+import com.cmpe451.platon.databinding.FragmentFollowersFollowingListBinding
 import com.cmpe451.platon.page.activity.HomeActivity
 import com.cmpe451.platon.page.fragment.profilepage.contract.ProfilePageContract
 import com.cmpe451.platon.page.fragment.profilepage.model.ProfilePageRepository
 import com.cmpe451.platon.page.fragment.profilepage.presenter.ProfilePagePresenter
-import com.cmpe451.platon.page.fragment.profilepage.view.adapters.FollowerRecyclerViewAdapter
+import com.cmpe451.platon.adapter.FollowerFollowingRecyclerViewAdapter
+import com.cmpe451.platon.util.Definitions
 
 
 class FollowerListFragment : Fragment(), ProfilePageContract.View{
-    private lateinit var binding: FragmentFollowersBinding
+    private lateinit var binding: FragmentFollowersFollowingListBinding
     private lateinit var presenter: ProfilePagePresenter
-    private lateinit var followers: ArrayList<String>
+    private lateinit var followers: ArrayList<Definitions.User>
 
     companion object{
         fun newInstance(): FollowerListFragment{
@@ -30,7 +30,7 @@ class FollowerListFragment : Fragment(), ProfilePageContract.View{
         }
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentFollowersBinding.inflate(inflater)
+        binding = FragmentFollowersFollowingListBinding.inflate(inflater)
         followers = ArrayList()
 
         return binding.root
@@ -40,8 +40,9 @@ class FollowerListFragment : Fragment(), ProfilePageContract.View{
         super.onViewCreated(view, savedInstanceState)
         initializePresenter()
         val rvFollowers = binding.rvFollow
-        followers.addAll(presenter.getFollowers())
-        rvFollowers.adapter = FollowerRecyclerViewAdapter(followers)
+        val a = presenter.getFollowers()
+        followers.addAll(a)
+        rvFollowers.adapter = FollowerFollowingRecyclerViewAdapter(followers)
         rvFollowers.layoutManager = LinearLayoutManager(this.activity)
 
     }

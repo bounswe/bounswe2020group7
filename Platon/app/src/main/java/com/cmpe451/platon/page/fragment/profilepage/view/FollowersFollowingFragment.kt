@@ -7,11 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.cmpe451.platon.databinding.FragmentFollowingFollowersBinding
-import com.cmpe451.platon.page.fragment.profilepage.view.adapters.FollowViewPagerAdapter
+import com.cmpe451.platon.adapter.FollowViewPagerAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import java.text.FieldPosition
-import kotlin.properties.Delegates
 
 class FollowersFollowingFragment : Fragment(){
     private lateinit var binding: FragmentFollowingFollowersBinding
