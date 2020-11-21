@@ -23,7 +23,7 @@ jobs:
         - npm run build
     
     - stage: deploy
-      if: branch = frontend-release
+      if: branch = release
       language: python
       python:
         - 3.6
