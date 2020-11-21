@@ -1,42 +1,50 @@
-import React from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Grid from '@material-ui/core/Grid';
-import CreateIcon from '@material-ui/icons/Create';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
-import colors from '../../utils/colors';
-import Autocomplete from '@material-ui/lab/Autocomplete';
 
+import React, { Component } from "react";
+import Avatar from "@material-ui/core/Avatar";
+import Button from "@material-ui/core/Button";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import TextField from "@material-ui/core/TextField";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
+import Grid from "@material-ui/core/Grid";
+import CreateIcon from "@material-ui/icons/Create";
+import Typography from "@material-ui/core/Typography";
+import { withStyles } from "@material-ui/core/styles";
+import Container from "@material-ui/core/Container";
+import colors from "../../utils/colors";
+import MuiAlert from "@material-ui/lab/Alert";
+import Snackbar from "@material-ui/core/Snackbar";
+import AppBar from "../AppBar/AppBar";
+import TermsConditions from './TermsConditions/TermsConditions'
+import "./Register.css";
 const StyledTextField = withStyles({
   root: {
-    margin: 0,
+    "& .MuiInputBase-input": {
 
-    '& .MuiInputBase-input': {
       color: colors.secondary,
     },
     "& .Mui-required": {
       color: colors.primaryLight,
     },
-    '& label.Mui-focused': {
+
+    "& .MuiFormLabel-root": {
+      color: colors.primaryLight,
+    },
+
+    "& label.Mui-focused": {
       color: colors.tertiary,
     },
-    '& .MuiInput-underline:after': {
+    "& .MuiInput-underline:after": {
       borderBottomColor: colors.tertiary,
     },
-    '& .MuiOutlinedInput-root': {
-      '& fieldset': {
+    "& .MuiOutlinedInput-root": {
+      "& fieldset": {
         borderColor: colors.secondaryLight,
       },
-      '&:hover fieldset': {
+      "&:hover fieldset": {
         borderColor: colors.secondaryDark,
       },
-      '&.Mui-focused fieldset': {
+      "&.Mui-focused fieldset": {
         borderColor: colors.tertiary,
       },
     },
@@ -44,49 +52,46 @@ const StyledTextField = withStyles({
 })(TextField);
 
 
-
 const StyledButton = withStyles({
   root: {
     background: colors.tertiary,
     color: colors.secondary,
-    '&:hover': {
-      backgroundColor: colors.tertiaryDark,
-    }
-  }
-})(Button);
 
+    "&:hover": {
+      backgroundColor: colors.tertiaryDark,
+    },
+  },
+})(Button);
 
 const StyledFormControlLabel = withStyles({
   root: {
     color: colors.tertiary,
-    '& .MuiFormControlLabel-label	': {
+    "& .MuiFormControlLabel-label	": {
       color: colors.secondary,
     },
-    '&$checked': {
-      color: colors.quinary
+    "&$checked": {
+      color: colors.quinary,
     },
-  }
+  },
 })(FormControlLabel);
-
 
 const StyledCheckbox = withStyles({
   root: {
     color: colors.tertiary,
-    '&$checked': {
+    "&$checked": {
       color: colors.quaternary,
     },
-
   },
   checked: {},
 })(Checkbox);
 
-const useStyles = makeStyles((theme) => ({
 
+const useStyles = (theme) => ({
   paper: {
     marginTop: theme.spacing(8),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
   },
   typography: {
     color: colors.secondary,
@@ -97,247 +102,278 @@ const useStyles = makeStyles((theme) => ({
     color: colors.secondary,
   },
   form: {
-    width: '100%', // Fix IE 11 issue.
+
+    width: "100%", // Fix IE 11 issue.
     marginTop: theme.spacing(3),
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
-}));
 
+});
 
-export default function Register() {
-  const [value, setValue] = React.useState([]);
-  const handleKeyDown = event => {
-    switch (event.key) {
-      case ",": {
-        event.preventDefault();
-        event.stopPropagation();
-        if (event.target.value.length > 0) {
-          setValue([...value, event.target.value]);
-        }
-        break;
-      }
-      default:
-    }
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
+class Register extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      job: "",
+      checkbox: false,
+      showError: false,
+      showSuccess: false,
+      fieldEmptyError: false,
+    };
+  }
+  handleCheck = (event) => {
+    this.setState({ checkbox: event.target.checked });
   };
-  const classes = useStyles();
-  return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <CreateIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5" className={classes.typography}>
-          Register
-        </Typography>
-        <form className={classes.form} noValidate>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <StyledTextField
-                autoComplete="fname"
-                name="firstName"
-                variant="outlined"
-                required
-                fullWidth
-                id="firstName"
-                label="First Name"
-                autoFocus
+  handleCloseFieldEmpty = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
 
-              />
+    this.setState({ fieldEmptyError: false });
+  };
+
+  handleCloseError = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    this.setState({ showError: false });
+  };
+
+  handleCloseSuccess = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    this.setState({ showSuccess: false });
+  };
+
+  handleSubmit = () => {
+    if (
+      this.state.firstName === "" ||
+      this.state.lastName === "" ||
+      this.state.email === "" ||
+      this.state.password === "" ||
+      this.state.job === "" ||
+      !this.state.checkbox
+    ) {
+      this.setState({ fieldEmptyError: "Fields are required" });
+      return;
+    }
+    if (!/\S+@\S+\.\S+/.test(this.state.email) ) {
+      this.setState({ fieldEmptyError: "Invalid email" });
+      return;
+    }
+    const url = "https://react-my-burger-78df4.firebaseio.com";
+    const data = {
+      firstName: this.state.firstName,
+      lastName: this.state.lastName,
+      email: this.state.email,
+      password: this.state.password,
+      job: this.state.job,
+    };
+    fetch(url + '/register.json', {
+      method: "POST",
+      body: JSON.stringify(data),
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          this.setState({
+            showSuccess: "Successfully registered. Please login to continue.",
+          });
+          this.setState({
+            firstName: "",
+            lastName: "",
+            email: "",
+            password: "",
+            job: "",
+            checkbox: false,
+          });
+        }
+        return response.json();
+      })
+      .catch((err) => {
+        this.setState({ showError: "Error occured. Check your credientials." });
+        console.log(err);
+      });
+  };
+
+
+
+  render() {
+    const { classes } = this.props;
+    return (
+      <div className="RegisterPage">
+        <AppBar />
+        <Container component="main" maxWidth="xs">
+          <CssBaseline />
+          <div className={classes.paper}>
+            <Avatar className={classes.avatar}>
+              <CreateIcon />
+            </Avatar>
+            <Typography
+              component="h1"
+              variant="h5"
+              className={classes.typography}
+            >
+              Register
+            </Typography>
+
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <StyledTextField
+                  margin="normal"
+                  name="firstName"
+                  variant="outlined"
+                  required
+                  fullWidth
+                  id="firstName"
+                  label="First Name"
+                  autoFocus
+                  value={this.state.firstName}
+                  onChange={(e) => this.setState({ firstName: e.target.value })}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <StyledTextField
+                  margin="normal"
+                  variant="outlined"
+                  required
+                  fullWidth
+                  id="lastName"
+                  label="Last Name"
+                  name="lastName"
+                  value={this.state.lastName}
+                  onChange={(e) => this.setState({ lastName: e.target.value })}
+                />
+              </Grid>
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <StyledTextField
-                variant="outlined"
-                required
-                fullWidth
-                id="lastName"
-                label="Last Name"
-                name="lastName"
-                autoComplete="lname"
-              />
-            </Grid>
+
             <Grid item xs={12}>
               <StyledTextField
                 variant="outlined"
                 required
                 fullWidth
                 id="email"
+
+                margin="normal"
                 label="Email Address"
                 name="email"
-                autoComplete="email"
+                value={this.state.email}
+                onChange={(e) => this.setState({ email: e.target.value })}
               />
-            </Grid>
-            <Grid item xs={12}>
               <StyledTextField
                 variant="outlined"
                 required
                 fullWidth
+
+                margin="normal"
                 name="password"
                 label="Password"
                 type="password"
                 id="password"
-                autoComplete="current-password"
+
+                value={this.state.password}
+                onChange={(e) => this.setState({ password: e.target.value })}
               />
-            </Grid>
-            <Grid item xs={12}>
-              <Autocomplete
-
-                multiple
-                freeSolo
-                id="tags-outlined"
-                options={top100Films}
-                getOptionLabel={option => option.title || option}
-                value={value}
-                onChange={(event, newValue) => setValue(newValue)}
-                filterSelectedOptions
-                renderInput={params => {
-                  params.inputProps.onKeyDown = handleKeyDown;
-                  return (
-                    <StyledTextField
-
-                      {...params}
-                      variant="outlined"
-                      required
-                      name="affinities"
-                      label="Affinities"
-                      placeholder="Use ',' as a delimeter"
-                      id="affinities"
-                      margin="normal"
-                      fullWidth
-                    />
-                  );
-                }}
+              <StyledTextField
+                variant="outlined"
+                required
+                fullWidth
+                margin="normal"
+                name="job"
+                label="Job"
+                type="job"
+                id="job"
+                value={this.state.job}
+                onChange={(e) => this.setState({ job: e.target.value })}
               />
             </Grid>
 
-            <Grid item xs={12}>
-              <StyledFormControlLabel
-                control={<StyledCheckbox value="allowExtraEmails" />}
-                label="I accept the terms and conditions"
-              />
-            </Grid>
-          </Grid>
-          <StyledButton
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-          >
-            Register
-          </StyledButton>
-        </form>
+            <StyledFormControlLabel
+              control={
+                <StyledCheckbox
+                  checked={this.state.checkbox}
+                  onChange={this.handleCheck}
+                  required
+                  value="allowExtraEmails"
+                />
+              }
+              label="I accept the terms and conditions"
+            />
+
+            <StyledButton
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+              onClick={this.handleSubmit}
+            >
+              Register
+            </StyledButton>
+            <TermsConditions/>
+            {this.state.fieldEmptyError && (
+              <Snackbar
+                open={this.state.fieldEmptyError}
+                autoHideDuration={3000}
+                onClose={this.handleCloseFieldEmpty}
+              >
+                <Alert
+                  style={{ backgroundColor: colors.quinary }}
+                  severity="error"
+                  onClose={this.handleCloseFieldEmpty}
+                >
+                  {this.props.fieldEmptyError || this.state.fieldEmptyError}
+                </Alert>
+              </Snackbar>
+            )}
+            {this.state.showError && (
+              <Snackbar
+                open={this.state.showError}
+                autoHideDuration={3000}
+                onClose={this.handleCloseError}
+              >
+                <Alert
+                  style={{ backgroundColor: colors.quinary }}
+                  severity="error"
+                  onClose={this.handleCloseError}
+                >
+                  {this.props.showError || this.state.showError}
+                </Alert>
+              </Snackbar>
+            )}
+            {this.state.showSuccess && (
+              <Snackbar
+                open={this.state.showSuccess}
+                autoHideDuration={3000}
+                onClose={this.handleCloseSuccess}
+              >
+                <Alert
+                  style={{ backgroundColor: colors.quaternary }}
+                  severity="success"
+                  onClose={this.handleCloseSuccess}
+                >
+                  {this.props.showSuccess || this.state.showSuccess}
+                </Alert>
+              </Snackbar>
+            )}
+          </div>
+        </Container>
       </div>
-    </Container>
-  );
+    );
+  }
 }
 
 
-const top100Films = [
-  { title: "The Shawshank Redemption", year: 1994 },
-  { title: "The Godfather", year: 1972 },
-  { title: "The Godfather: Part II", year: 1974 },
-  { title: "The Dark Knight", year: 2008 },
-  { title: "12 Angry Men", year: 1957 },
-  { title: "Schindler's List", year: 1993 },
-  { title: "Pulp Fiction", year: 1994 },
-  { title: "The Lord of the Rings: The Return of the King", year: 2003 },
-  { title: "The Good, the Bad and the Ugly", year: 1966 },
-  { title: "Fight Club", year: 1999 },
-  { title: "The Lord of the Rings: The Fellowship of the Ring", year: 2001 },
-  { title: "Star Wars: Episode V - The Empire Strikes Back", year: 1980 },
-  { title: "Forrest Gump", year: 1994 },
-  { title: "Inception", year: 2010 },
-  { title: "The Lord of the Rings: The Two Towers", year: 2002 },
-  { title: "One Flew Over the Cuckoo's Nest", year: 1975 },
-  { title: "Goodfellas", year: 1990 },
-  { title: "The Matrix", year: 1999 },
-  { title: "Seven Samurai", year: 1954 },
-  { title: "Star Wars: Episode IV - A New Hope", year: 1977 },
-  { title: "City of God", year: 2002 },
-  { title: "Se7en", year: 1995 },
-  { title: "The Silence of the Lambs", year: 1991 },
-  { title: "It's a Wonderful Life", year: 1946 },
-  { title: "Life Is Beautiful", year: 1997 },
-  { title: "The Usual Suspects", year: 1995 },
-  { title: "Léon: The Professional", year: 1994 },
-  { title: "Spirited Away", year: 2001 },
-  { title: "Saving Private Ryan", year: 1998 },
-  { title: "Once Upon a Time in the West", year: 1968 },
-  { title: "American History X", year: 1998 },
-  { title: "Interstellar", year: 2014 },
-  { title: "Casablanca", year: 1942 },
-  { title: "City Lights", year: 1931 },
-  { title: "Psycho", year: 1960 },
-  { title: "The Green Mile", year: 1999 },
-  { title: "The Intouchables", year: 2011 },
-  { title: "Modern Times", year: 1936 },
-  { title: "Raiders of the Lost Ark", year: 1981 },
-  { title: "Rear Window", year: 1954 },
-  { title: "The Pianist", year: 2002 },
-  { title: "The Departed", year: 2006 },
-  { title: "Terminator 2: Judgment Day", year: 1991 },
-  { title: "Back to the Future", year: 1985 },
-  { title: "Whiplash", year: 2014 },
-  { title: "Gladiator", year: 2000 },
-  { title: "Memento", year: 2000 },
-  { title: "The Prestige", year: 2006 },
-  { title: "The Lion King", year: 1994 },
-  { title: "Apocalypse Now", year: 1979 },
-  { title: "Alien", year: 1979 },
-  { title: "Sunset Boulevard", year: 1950 },
-  {
-    title:
-      "Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb",
-    year: 1964
-  },
-  { title: "The Great Dictator", year: 1940 },
-  { title: "Cinema Paradiso", year: 1988 },
-  { title: "The Lives of Others", year: 2006 },
-  { title: "Grave of the Fireflies", year: 1988 },
-  { title: "Paths of Glory", year: 1957 },
-  { title: "Django Unchained", year: 2012 },
-  { title: "The Shining", year: 1980 },
-  { title: "WALL·E", year: 2008 },
-  { title: "American Beauty", year: 1999 },
-  { title: "The Dark Knight Rises", year: 2012 },
-  { title: "Princess Mononoke", year: 1997 },
-  { title: "Aliens", year: 1986 },
-  { title: "Oldboy", year: 2003 },
-  { title: "Once Upon a Time in America", year: 1984 },
-  { title: "Witness for the Prosecution", year: 1957 },
-  { title: "Das Boot", year: 1981 },
-  { title: "Citizen Kane", year: 1941 },
-  { title: "North by Northwest", year: 1959 },
-  { title: "Vertigo", year: 1958 },
-  { title: "Star Wars: Episode VI - Return of the Jedi", year: 1983 },
-  { title: "Reservoir Dogs", year: 1992 },
-  { title: "Braveheart", year: 1995 },
-  { title: "M", year: 1931 },
-  { title: "Requiem for a Dream", year: 2000 },
-  { title: "Amélie", year: 2001 },
-  { title: "A Clockwork Orange", year: 1971 },
-  { title: "Like Stars on Earth", year: 2007 },
-  { title: "Taxi Driver", year: 1976 },
-  { title: "Lawrence of Arabia", year: 1962 },
-  { title: "Double Indemnity", year: 1944 },
-  { title: "Eternal Sunshine of the Spotless Mind", year: 2004 },
-  { title: "Amadeus", year: 1984 },
-  { title: "To Kill a Mockingbird", year: 1962 },
-  { title: "Toy Story 3", year: 2010 },
-  { title: "Logan", year: 2017 },
-  { title: "Full Metal Jacket", year: 1987 },
-  { title: "Dangal", year: 2016 },
-  { title: "The Sting", year: 1973 },
-  { title: "2001: A Space Odyssey", year: 1968 },
-  { title: "Singin' in the Rain", year: 1952 },
-  { title: "Toy Story", year: 1995 },
-  { title: "Bicycle Thieves", year: 1948 },
-  { title: "The Kid", year: 1921 },
-  { title: "Inglourious Basterds", year: 2009 },
-  { title: "Snatch", year: 2000 },
-  { title: "3 Idiots", year: 2009 },
-  { title: "Monty Python and the Holy Grail", year: 1975 }
-];
+export default withStyles(useStyles)(Register);
