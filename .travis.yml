@@ -1,0 +1,17 @@
+language: node_js
+node_js:
+- 12.10.0
+cache: npm
+
+before_install: cd Platon/frontend
+script:
+- npm cache clean --force
+- npm install
+- npm run build
+deploy:
+  provider: heroku
+  app: platon-frontend
+  on: frontend-dev
+  skip_cleanup: true
+  api_key:
+    secure: hF+MlIlP119Racwyo6z2tFNoUT7ecU7OMHASUggcCO5pel5PPGewgfydKWvQ4NlXpQgOlfucNw2IR7kAVAsbFtUt/KXlp296nN8t7TB4/V3oDAaGYQ/Z78+7vfNYtUbinwbxKmpU1XsZvMxtBh+jaxP4bvabbQ6AMkRuk3y9SpGX+sUHT2JayCeu6VDtD9E4+pIR8hwX2CZpCiNJlCbkQbPTg84hCBj+8AXH4wfg2r4w61zec9on5zBh7HzBxxzGYrQogBKm5d6Rt7oECKxceyeJWYgcuaASdOlC+nriXJih68wYFbWK1PkVdLPJe8ojtIvhsAMWFLB8rQZS/5SfBETNTo0ls240tA2Q12JQIkEmdp+wlReF3L/MZHyQb2ZZZ8ajVxaYAzfhx5OPeVlFRsNvj6HjKionrgqaxcTThEpg5hRlD3D8WYv4Z+6e3Q32vvR9Nn2DUcKmh1UN3j2K/SNBxpcfvNn+ijNJ6Qk17ETG9LBwmdRzYzJof1PXilsxk1HBGykYMkuhjsqQFg2nE/adZIF1kYRdy0II+5WutexAN8ScJr4w63WXellX6r0ZFZC8DSnE+pC3gDPZGnx1oLhr/O7RiPXgrWU/h4wHHyc6C/z3AXXSUa45y62ppVMUcRBcBAE7m71mebjiPKNXFjxcauCI3SNEelB9L1EsM9o=
