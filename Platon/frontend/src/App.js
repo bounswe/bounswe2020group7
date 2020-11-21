@@ -7,6 +7,7 @@ import ResetPassword from './components/ResetPassword/ResetPassword'
 import Login from './components/Login/Login'
 import Register from './components/Register/Register'
 import ProfilePage from './components/ProfilePage/ProfilePage'
+import EditProfile from './components/EditProfile/EditProfile';
 
 class App extends Component {
   constructor(props) {
@@ -32,6 +33,7 @@ class App extends Component {
               : <h1>Home</h1>}/>
       
       <Route path='/profile' exact  component={ProfilePage}/>
+      <Route path='/editprofile' exact  component={EditProfile}/>
 
       <Route path='/login' exact component={() => <Login  handlerIsAuthenticated={this.handlerIsAuthenticated}/>}/>
       <Route path='/register' exact  component={Register}/>

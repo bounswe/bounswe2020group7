@@ -24,6 +24,9 @@ const StyledTextField = withStyles({
     "& .Mui-required": {
       color: colors.primaryLight,
     },
+    "& .MuiFormLabel-root": {
+      color: colors.primaryLight,
+    },
     "& label.Mui-focused": {
       color: colors.tertiary,
     },

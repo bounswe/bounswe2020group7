@@ -4,12 +4,6 @@
     background-color: #313638;
 }
 
-.ProfileLargeFont{
-    color: #E0DFD5;
-    font-family: 'Rubik', sans-serif;
-    font-size: 48px;
-}
-
 .ProfilePageContainer{
     padding-top: 2%;
 }
@@ -32,6 +26,12 @@
     color: #E0DFD5;
     font-family: 'Rubik', sans-serif !important;
     font-size: 20px;
+}
+
+.GeneralLargeFont{
+    color: #E0DFD5;
+    font-family: 'Rubik', sans-serif;
+    font-size: 48px;
 }
 
 .ProfileFollowButton{

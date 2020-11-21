@@ -13,7 +13,7 @@ const ProfilePage = (props) => {
         </div>
         
         <Container className = "ProfilePageContainer">
-            <h2 className="ProfileLargeFont">My Profile</h2>
+            <h2 className="GeneralLargeFont">My Profile</h2>
             <hr className="ProfilePageLine" />
 
             <Row>
