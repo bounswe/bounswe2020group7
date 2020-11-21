@@ -1,3 +1,4 @@
+
 import React, { Component } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
@@ -19,11 +20,13 @@ import "./Register.css";
 const StyledTextField = withStyles({
   root: {
     "& .MuiInputBase-input": {
+
       color: colors.secondary,
     },
     "& .Mui-required": {
       color: colors.primaryLight,
     },
+
     "& .MuiFormLabel-root": {
       color: colors.primaryLight,
     },
@@ -48,10 +51,12 @@ const StyledTextField = withStyles({
   },
 })(TextField);
 
+
 const StyledButton = withStyles({
   root: {
     background: colors.tertiary,
     color: colors.secondary,
+
     "&:hover": {
       backgroundColor: colors.tertiaryDark,
     },
@@ -80,6 +85,7 @@ const StyledCheckbox = withStyles({
   checked: {},
 })(Checkbox);
 
+
 const useStyles = (theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -96,12 +102,14 @@ const useStyles = (theme) => ({
     color: colors.secondary,
   },
   form: {
+
     width: "100%", // Fix IE 11 issue.
     marginTop: theme.spacing(3),
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+
 });
 
 function Alert(props) {
@@ -257,6 +265,7 @@ class Register extends Component {
                 required
                 fullWidth
                 id="email"
+
                 margin="normal"
                 label="Email Address"
                 name="email"
@@ -267,11 +276,13 @@ class Register extends Component {
                 variant="outlined"
                 required
                 fullWidth
+
                 margin="normal"
                 name="password"
                 label="Password"
                 type="password"
                 id="password"
+
                 value={this.state.password}
                 onChange={(e) => this.setState({ password: e.target.value })}
               />

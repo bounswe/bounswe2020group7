@@ -1,5 +1,6 @@
 import React from 'react';
 import AppBar from '@material-ui/core/AppBar';
+
 import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
 import InputBase from '@material-ui/core/InputBase';
@@ -19,7 +20,6 @@ const StyledButton = withStyles({
   },
 })(Button);
 const useStyles = makeStyles((theme) => ({
-
 
 
 
@@ -88,12 +88,16 @@ export default function SearchAppBar() {
     <div className={classes.root}>
       <AppBar  style={{ background: colors.primaryDark }} position="static">
         <Toolbar style={{justifyContent: "space-around"}}>
+
 <Link to ='/'>
+
             <Logo
             height='5vh'
             width='15vh'
             fill={colors.secondary}
+
              /></Link>
+
           <div className={classes.search}>
             <div className={classes.searchIcon}>
               <SearchIcon />
@@ -107,10 +111,12 @@ export default function SearchAppBar() {
               inputProps={{ 'aria-label': 'search' }}
             />
           </div>
+
           <div>
           <Link to='/login' style={{textDecoration: "none"}}><StyledButton>Login</StyledButton></Link>
           <Link to='/register' style={{textDecoration: "none"}}><StyledButton>Register</StyledButton></Link>
           </div>
+
         </Toolbar>
       </AppBar>
     </div>

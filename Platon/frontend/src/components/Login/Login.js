@@ -1,3 +1,4 @@
+
 import { React, Component } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
@@ -19,11 +20,13 @@ import config from "../../utils/config";
 const CssTextField = withStyles({
   root: {
     "& .MuiInputBase-input": {
+
       color: colors.secondary,
     },
     "& .Mui-required": {
       color: colors.primaryLight,
     },
+
     "& label.Mui-focused": {
       color: colors.tertiary,
     },
@@ -38,6 +41,7 @@ const CssTextField = withStyles({
         borderColor: colors.secondaryDark,
       },
       "&.Mui-focused fieldset": {
+
         borderColor: colors.tertiary,
       },
     },
@@ -48,10 +52,12 @@ const StyledButton = withStyles({
   root: {
     background: colors.tertiary,
     color: colors.secondary,
+
     "&:hover": {
       backgroundColor: colors.tertiaryDark,
     },
   },
+
 })(Button);
 
 const StyledLink = withStyles({
@@ -66,6 +72,7 @@ const useStyles = (theme) => ({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+
   },
 
   typography: {
@@ -77,7 +84,9 @@ const useStyles = (theme) => ({
     color: colors.secondary,
   },
   form: {
+
     width: "100%", // Fix IE 11 issue.
+
     marginTop: theme.spacing(1),
   },
   submit: {
@@ -92,6 +101,7 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
+
       email: "",
       password: "",
       fieldEmptyError: false,
@@ -144,6 +154,7 @@ class Login extends Component {
       .catch((err) => {
         this.setState({ showError: "Error occured. Check your credientials." });
         console.log(err);
+
       });
     //const data = { email: this.state.email, password: this.state.password }
     /*axios.post(url, { email: this.state.email, password: this.state.password })
@@ -158,6 +169,7 @@ class Login extends Component {
       debugger;
       console.log(error);
     });*/
+
   };
   render() {
     if (this.state.isLoggedIn) {
@@ -263,8 +275,11 @@ class Login extends Component {
           </Container>
         </div>
       </div>
+
     );
   }
 }
 
+
 export default withStyles(useStyles)(Login);
+
