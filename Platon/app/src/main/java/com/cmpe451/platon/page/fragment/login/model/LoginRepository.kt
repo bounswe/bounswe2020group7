@@ -9,5 +9,10 @@ import android.content.SharedPreferences
 
 
 class LoginRepository(val sharedPreferences: SharedPreferences){
+    fun tryToLogin(mailStr: String, passStr: String): Boolean {
+
+
+        return true
+    }
 
 }

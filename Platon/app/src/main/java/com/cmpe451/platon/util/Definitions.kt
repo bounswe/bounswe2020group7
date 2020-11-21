@@ -52,8 +52,6 @@ class Definitions {
         enum class TYPE {
             CONFERENCE, JOURNAL
         }
-
-
     }
 
 

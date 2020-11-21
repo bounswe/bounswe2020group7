@@ -5,6 +5,7 @@ package com.cmpe451.platon.adapter
  */
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,16 +23,16 @@ class TrendingProjectsAdapter(private val data: ArrayList<TrendingProject>, priv
     // Each data item is just a string in this case that is shown in a TextView.
     class TrendProjectViewHolder(private val view: View, var binding: TrendProjectCellBinding) : RecyclerView.ViewHolder(view){
 
-        fun bindData(buttonName: String, buttonClickListener: TrendingProjectButtonClickListener) {
+        fun bindData(binding: TrendProjectCellBinding, position: Int,buttonClickListener: TrendingProjectButtonClickListener) {
 
             view.setOnClickListener{
-                buttonClickListener.onTrendingProjectButtonClicked(buttonName)
+                buttonClickListener.onTrendingProjectButtonClicked(binding,position)
             }
         }
     }
 
     interface TrendingProjectButtonClickListener{
-        fun onTrendingProjectButtonClicked(buttonName: String)
+        fun onTrendingProjectButtonClicked(binding: TrendProjectCellBinding, position: Int)
     }
 
     // Create new views (invoked by the layout manager)
@@ -49,13 +50,13 @@ class TrendingProjectsAdapter(private val data: ArrayList<TrendingProject>, priv
         // - replace the contents of the view with that element
 
         val drawable = data[position].img
-        drawable?.setBounds(0,0,25,25)
+        drawable?.setBounds(0,0,drawable.intrinsicWidth,drawable.intrinsicHeight)
         holder.binding.descTrendProjectTv.text = data[position].description
         holder.binding.titleTrendProjectTv.text = data[position].project_title
         holder.binding.titleTrendProjectTv.setCompoundDrawables(drawable, null, null, null)
         holder.binding.whyTrendProjectTv.text = data[position].reason.toString()
 
-        holder.bindData("Button Name", trendingProjectsButtonClickListener)
+        holder.bindData(holder.binding, position, trendingProjectsButtonClickListener)
     }
 
 

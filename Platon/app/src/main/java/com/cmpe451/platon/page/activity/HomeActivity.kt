@@ -46,6 +46,7 @@ class HomeActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickList
 
         setSupportActionBar(toolbar)
         NavigationUI.setupActionBarWithNavController(this, navController)
+
         NavigationUI.setupWithNavController(binding.bottomNavBar, navController)
 
         initViews()
@@ -97,7 +98,6 @@ class HomeActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickList
         if (item.itemId == R.id.logout_menu_btn){
             onLogOutButtonClicked()
         }
-
         return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
     }
 

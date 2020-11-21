@@ -19,7 +19,6 @@ class PreLoginPresenter(view: PreLoginContract.View, private var repository: Pre
         val rememberMe = sharedPreferences.getBoolean("remember_me", false)
 
         if (rememberMe){
-            Toast.makeText((view as PreLoginFragment).activity, "Autologin..1", Toast.LENGTH_LONG).show()
             val action = PreLoginFragmentDirections.actionPreLoginFragmentToLoginFragment()
             ((view as PreLoginFragment).activity as LoginActivity).navController.navigate(action)
         }

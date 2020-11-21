@@ -63,16 +63,11 @@ class ForgotPasswordFragment : Fragment(), ForgotPasswordContract.View {
 
     private fun setListeners() {
         binding.forgotPassBtn.setOnClickListener {
-            var flag = false
+            presenter.onForgotPassClicked(binding.emailEt, binding.forgotPassBtn, binding.newPass1Et, binding.newPass2Et, binding.resetPassBtn, binding.tokenEt)
+        }
 
-            if (binding.emailEt.text.isNullOrEmpty()){
-                binding.emailEt.error = "Required"
-                flag = true
-            }
-
-            val mail =  binding.emailEt.text.toString().trim()
-
-            presenter.onForgotPassClicked(mail, flag)
+        binding.resetPassBtn.setOnClickListener {
+            presenter.onResetPasswordClicked(binding.newPass1Et, binding.newPass2Et, binding.tokenEt)
         }
 
         //password.addTextChangedListener(textWatcher)

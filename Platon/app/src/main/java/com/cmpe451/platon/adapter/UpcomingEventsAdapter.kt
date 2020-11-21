@@ -26,16 +26,16 @@ class UpcomingEventsAdapter(private val data: ArrayList<UpcomingEvent>, private 
     // you provide access to all the views for a data item in a view holder.
     // Each data item is just a string in this case that is shown in a TextView.
     class UpcomingEventViewHolder(val view: View, var binding: UpcomingEventCellBinding) : RecyclerView.ViewHolder(view){
-        fun bindData(buttonName : String, buttonClickListener: UpcomingButtonClickListener) {
+        fun bindData(position: Int, buttonClickListener: UpcomingButtonClickListener) {
             view.setOnClickListener{
-                buttonClickListener.onUpcomingButtonClicked(buttonName)
+                buttonClickListener.onUpcomingButtonClicked(binding, position)
             }
         }
     }
 
 
     interface UpcomingButtonClickListener{
-        fun onUpcomingButtonClicked(buttonName: String)
+        fun onUpcomingButtonClicked(binding: UpcomingEventCellBinding, position:Int)
     }
 
     // Create new views (invoked by the layout manager)
@@ -60,13 +60,13 @@ class UpcomingEventsAdapter(private val data: ArrayList<UpcomingEvent>, private 
 
         holder.binding.upcomingEventTitle.text = data[position].title
         val drawable = data[position].img
-        drawable?.setBounds(0,0,25,25)
+        drawable?.setBounds(0,0,drawable.intrinsicWidth,drawable.intrinsicHeight)
         holder.binding.upcomingEventTitle.setCompoundDrawables(drawable, null, null, null)
         holder.binding.upcomingEventDate.text = data[position].date
         holder.binding.upcomingEventDesc.text = data[position].desc
         holder.binding.upcomingEventType.text = data[position].type.toString()
 
-        holder.bindData(data[position].toString(), upcomingEventsButtonClickListener)
+        holder.bindData(position, upcomingEventsButtonClickListener)
     }
 
     /**
