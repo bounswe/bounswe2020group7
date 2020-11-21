@@ -1,6 +1,7 @@
 package com.cmpe451.platon.page.fragment.preLogin.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,8 @@ import com.cmpe451.platon.adapter.TrendingProjectsAdapter
 import com.cmpe451.platon.adapter.UpcomingEventsAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentPreLoginBinding
+import com.cmpe451.platon.databinding.TrendProjectCellBinding
+import com.cmpe451.platon.databinding.UpcomingEventCellBinding
 import com.cmpe451.platon.page.fragment.preLogin.contract.PreLoginContract
 import com.cmpe451.platon.page.fragment.preLogin.model.PreLoginRepository
 import com.cmpe451.platon.page.fragment.preLogin.presenter.PreLoginPresenter
@@ -65,7 +68,7 @@ class PreLoginFragment : Fragment(), PreLoginContract.View, TrendingProjectsAdap
         if (myUpcomingEvents != null){
             upcomingEventsRecyclerView = binding.preLoginUpcomingEventsRecyclerView
             upcomingEventsRecyclerView.adapter = UpcomingEventsAdapter(myUpcomingEvents,requireContext(), this)
-            upcomingEventsRecyclerView.layoutManager = LinearLayoutManager(context)
+            upcomingEventsRecyclerView.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL, false)
         }
     }
 
@@ -74,11 +77,26 @@ class PreLoginFragment : Fragment(), PreLoginContract.View, TrendingProjectsAdap
         //password.addTextChangedListener(textWatcher)
     }
 
-    override fun onUpcomingButtonClicked(buttonName: String) {
+    override fun onUpcomingButtonClicked(binding: UpcomingEventCellBinding, position:Int) {
+        if (binding.upcomingEventDesc.visibility == View.GONE){
+            binding.upcomingEventDesc.visibility = View.VISIBLE
+        }else{
+            binding.upcomingEventDesc.visibility = View.GONE
+        }
+
+        binding.upcomingEventDesc.refreshDrawableState()
+
         Definitions().vibrate(50, activity as BaseActivity)
     }
 
-    override fun onTrendingProjectButtonClicked(buttonName: String) {
+    override fun onTrendingProjectButtonClicked(binding: TrendProjectCellBinding, position:Int) {
+        if (binding.descTrendProjectTv.visibility == View.GONE){
+            binding.descTrendProjectTv.visibility = View.VISIBLE
+        }else{
+            binding.descTrendProjectTv.visibility = View.GONE
+        }
+
+        binding.descTrendProjectTv.refreshDrawableState()
         Definitions().vibrate(50, activity as BaseActivity)
     }
 }

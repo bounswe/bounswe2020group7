@@ -116,7 +116,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:backgroundTint="@color/secondary_purple2"
+            android:backgroundTint="@color/primary_dark"
             android:text="@string/register_str"
             android:textColor="@color/primary_light" />
 
