@@ -12,17 +12,12 @@ class TestConfig:
 
     # Define the application directory
     import os
-    BASE_DIR = os.path.abspath(os.path.dirname(__file__)) 
-    
+    BASE_DIR = os.path.abspath(os.path.dirname(__file__))  
+
     # Define the database - we are working with
-    mysql_user = os.getenv('MYSQL_USER')
-    mysql_password = os.getenv('MYSQL_PASSWORD')
-    mysql_host = os.getenv('MYSQL_HOST')
-    mysql_port = os.getenv('MYSQL_PORT')
-    mysql_database = os.getenv('MYSQL_DATABASE')
-    
-    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://{}:{}@{}:{}/{}".format(mysql_user, mysql_password, mysql_host, mysql_port, mysql_database)
-    SQLALCHEMY_TRACK_MODIFICATIONS = False 
+    DATABASE_URL = "admin:platon1234@platondbms.cchkgthejclc.eu-central-1.rds.amazonaws.com:3306"
+    SQLALCHEMY_DATABASE_URI = 'mysql://' + DATABASE_URL + '/platon_db_test'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Application threads. A common general assumption is
     # using 2 per available processor cores - to handle
@@ -60,5 +55,6 @@ class BaseTest(TestCase):
         db.create_all()
     
     def tearDown(self):
+
         db.session.remove()
         db.drop_all()
