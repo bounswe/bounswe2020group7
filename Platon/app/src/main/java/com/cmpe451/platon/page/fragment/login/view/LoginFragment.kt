@@ -101,4 +101,6 @@ class LoginFragment : Fragment(), LoginContract.View  {
     override fun clickLogin() {
         binding.loginBtn.performClick()
     }
+
+
 }

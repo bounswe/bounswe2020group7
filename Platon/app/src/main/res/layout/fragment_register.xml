@@ -21,14 +21,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/alread_have_btn"
-            android:layout_width="wrap_content"
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
-            android:text="@string/already_have_str"
-            android:textColor="@color/secondary_purple" />
+            android:layout_margin="@dimen/xxx_large"
+            android:contentDescription="@string/logo_o_str"
+            app:srcCompat="@drawable/ic_o_logo_100" />
+
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -81,6 +82,20 @@
             android:textColorLink="@color/secondary_purple" />
 
         <EditText
+            android:id="@+id/job_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            android:backgroundTint="@color/secondary_purple"
+            android:ems="15"
+            android:hint="@string/job_str"
+            android:inputType="text|textAutoCorrect"
+            android:textColor="@color/primary_light"
+            android:textColorHighlight="@color/primary_light"
+            android:textColorHint="@color/secondary_purple"
+            android:textColorLink="@color/secondary_purple" />
+
+        <EditText
             android:id="@+id/pw1_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -93,6 +108,9 @@
             android:textColorHighlight="@color/primary_light"
             android:textColorHint="@color/secondary_purple"
             android:textColorLink="@color/secondary_purple" />
+
+
+
 
         <EditText
             android:id="@+id/pw2_tv"
@@ -124,6 +142,16 @@
             android:backgroundTint="@color/secondary_purple"
             android:text="@string/register_str"
             android:textColor="@color/primary_light" />
+
+        <TextView
+            android:id="@+id/alread_have_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/xxxxx_large"
+            android:clickable="true"
+            android:focusable="true"
+            android:text="@string/already_have_str"
+            android:textColor="@color/secondary_purple" />
 
     </LinearLayout>
 </ScrollView>

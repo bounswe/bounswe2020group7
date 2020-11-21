@@ -1,11 +1,13 @@
 package com.cmpe451.platon.page.fragment.preLogin.view
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +21,7 @@ import com.cmpe451.platon.page.fragment.preLogin.contract.PreLoginContract
 import com.cmpe451.platon.page.fragment.preLogin.model.PreLoginRepository
 import com.cmpe451.platon.page.fragment.preLogin.presenter.PreLoginPresenter
 import com.cmpe451.platon.util.Definitions
+import com.cmpe451.platon.R
 
 class PreLoginFragment : Fragment(), PreLoginContract.View, TrendingProjectsAdapter.TrendingProjectButtonClickListener, UpcomingEventsAdapter.UpcomingButtonClickListener  {
 
@@ -42,7 +45,6 @@ class PreLoginFragment : Fragment(), PreLoginContract.View, TrendingProjectsAdap
         initializePresenter()
 
         presenter?.onPreLoginMade()
-
         initViews(view)
         setListeners()
     }
