@@ -1,22 +1,29 @@
 package com.cmpe451.platon.page.fragment.login.presenter
 
+/**
+ * @author Burak Ömür
+ */
+
 import android.content.Context.VIBRATOR_SERVICE
 import android.content.Intent
 import android.content.SharedPreferences
-import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
+import android.util.Patterns
+import android.widget.CheckBox
+import android.widget.EditText
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
+import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.page.activity.HomeActivity
 import com.cmpe451.platon.page.activity.LoginActivity
 import com.cmpe451.platon.page.fragment.login.contract.LoginContract
 import com.cmpe451.platon.page.fragment.login.model.LoginRepository
 import com.cmpe451.platon.page.fragment.login.view.LoginFragment
 import com.cmpe451.platon.page.fragment.login.view.LoginFragmentDirections
-import com.cmpe451.platon.page.fragment.preLogin.view.PreLoginFragment
-import com.cmpe451.platon.page.fragment.preLogin.view.PreLoginFragmentDirections
+import com.cmpe451.platon.util.Definitions
 
 
 class LoginPresenter(private var view: LoginContract.View?, private var repository: LoginRepository, private var sharedPreferences: SharedPreferences, private var navController: NavController) : LoginContract.Presenter {
@@ -43,36 +50,52 @@ class LoginPresenter(private var view: LoginContract.View?, private var reposito
     }
 
 
-    override fun onLoginButtonClicked(mail: String, pass: String, remember: Boolean, flag: Boolean) {
-        if (!flag && !mail.equals(pass, true)){
-            sharedPreferences.edit().putBoolean("remember_me", remember).apply()
+    override fun onLoginButtonClicked(mail: EditText, pass: EditText, remember: CheckBox) {
 
-            sharedPreferences.edit().putStringSet("login_values", setOf(mail, pass)).apply()
+        // define flag of problem
+        var flag = false
+
+        // check mail bo
+        if (mail.text.isNullOrEmpty() || !Patterns.EMAIL_ADDRESS.matcher(mail.text.toString().trim()).matches()){
+            mail.error = "Required field / Wrong input"
+            flag = true
+        }
+
+        // check password box
+        if( pass.text.isNullOrEmpty()){
+            pass.error = "Required"
+            flag = true
+        }
+
+        // gather
+        val mailStr = mail.text.toString().trim()
+        val passStr = pass.text.toString().trim()
+        val rememberBool = remember.isChecked
+
+
+        if (!flag && !mailStr.equals(passStr, true)){
+            sharedPreferences.edit().putBoolean("remember_me", rememberBool).apply()
+
+            sharedPreferences.edit().putStringSet("login_values", setOf(mailStr, passStr)).apply()
 
             (view as LoginFragment).startActivity(Intent((view as LoginFragment).activity, HomeActivity::class.java))
             (view as LoginFragment).activity?.finish()
         }
 
-        Log.println(Log.INFO, "Important:", mail + pass + remember.toString())
+        Log.println(Log.INFO, "Important:", mailStr + passStr + rememberBool.toString())
     }
 
+
     override fun onAlreadyHaveAccountClicked() {
-        val vib = ((view as LoginFragment).activity as LoginActivity).getSystemService(VIBRATOR_SERVICE) as Vibrator
+        Definitions().vibrate (50, (view as Fragment).activity as BaseActivity)
         val action = LoginFragmentDirections.actionLoginFragmentToRegisterFragment()
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            vib.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
-        }
         navController.navigate(action)
 
     }
 
-    override fun onForgotPasswordClicked(mail: String) {
+    override fun onForgotPasswordClicked(mail: EditText) {
+        Definitions().vibrate (50, (view as Fragment).activity as BaseActivity)
         val action = LoginFragmentDirections.actionLoginFragmentToForgotPasswordFragment()
-        val vib = ((view as LoginFragment).activity as LoginActivity).getSystemService(VIBRATOR_SERVICE) as Vibrator
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            vib.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
-        }
-
         ((view as LoginFragment).activity as LoginActivity).navController.navigate(action)
 
     }

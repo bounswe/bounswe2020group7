@@ -2,7 +2,6 @@ package com.cmpe451.platon.page.activity
 
 import android.animation.LayoutTransition
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -20,16 +19,11 @@ import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
-import com.cmpe451.platon.`interface`.FragmentChangeListener
 import com.cmpe451.platon.adapter.SearchElementsAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.ActivityHomeBinding
-import com.cmpe451.platon.databinding.ActivityLoginBinding
-import com.cmpe451.platon.page.fragment.home.view.HomeFragment
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.navigation.NavigationView
 
-class HomeActivity : BaseActivity(), FragmentChangeListener, SearchElementsAdapter.SearchButtonClickListener {
+class HomeActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickListener {
 
     lateinit var toolbar: Toolbar
     lateinit var navController: NavController
@@ -57,21 +51,12 @@ class HomeActivity : BaseActivity(), FragmentChangeListener, SearchElementsAdapt
         initViews()
     }
 
-    override fun addFragment(fragment: Fragment, bundle: Bundle?) {
-        TODO("Not yet implemented")
-    }
-
     private fun initViews() {
         searchRecyclerView = binding.searchElementRecyclerView
         searchRecyclerView.adapter = SearchElementsAdapter(myDataset,this, this)
         searchRecyclerView.layoutManager = LinearLayoutManager(this)
         (searchRecyclerView.adapter as SearchElementsAdapter).notifyDataSetChanged()
     }
-
-    override fun destroyCurrentFragment() {
-        TODO("Not yet implemented")
-    }
-
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.actionbar, menu)

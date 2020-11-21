@@ -1,14 +1,18 @@
 package com.cmpe451.platon.adapter
 
+/**
+ * @author Burak Ömür
+ */
+
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.databinding.TrendProjectCellBinding
-import com.cmpe451.platon.util.TrendingProject
+import com.cmpe451.platon.util.Definitions.TrendingProject
 
-class TrendingProjectsAdapter(private val data: Array<TrendingProject>, private val context: Context, private val trendingProjectsButtonClickListener: TrendingProjectButtonClickListener) :
+class TrendingProjectsAdapter(private val data: ArrayList<TrendingProject>, private val context: Context, private val trendingProjectsButtonClickListener: TrendingProjectButtonClickListener) :
 
         RecyclerView.Adapter<TrendingProjectsAdapter.TrendProjectViewHolder>() {
 
@@ -53,6 +57,38 @@ class TrendingProjectsAdapter(private val data: Array<TrendingProject>, private 
 
         holder.bindData("Button Name", trendingProjectsButtonClickListener)
     }
+
+
+    /**
+     * Adds element to given position
+     */
+    fun addElement(position: Int, element:TrendingProject){
+        data.add(position, element)
+        this.notifyItemInserted(position)
+    }
+
+    /**
+     * Removes element at given position
+     */
+    fun removeElement(position: Int){
+        data.removeAt(position)
+        this.notifyItemRemoved(position)
+    }
+    /**
+     * Updates element at given position
+     */
+    fun updateElement(position: Int, element: TrendingProject){
+        data[position] = element
+        this.notifyItemChanged(position)
+    }
+    /**
+     * Clear all elements
+     */
+    fun clearElements(){
+        data.clear()
+        this.notifyDataSetChanged()
+    }
+
 
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = data.size

@@ -4,8 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.app.ActivityCompat
 import com.cmpe451.platon.R
-import com.cmpe451.platon.util.TrendingProject
-import com.cmpe451.platon.util.UpcomingEvent
+import com.cmpe451.platon.util.Definitions.TrendingProject
+import com.cmpe451.platon.util.Definitions.UpcomingEvent
 
 //import com.cmpe451.elevator.HttpRequest
 
@@ -13,9 +13,9 @@ import com.cmpe451.platon.util.UpcomingEvent
 class PreLoginRepository(sharedPreferences: SharedPreferences){
 
 
-    fun fetchUpcomingEvents(context:Context?):Array<UpcomingEvent> {
+    fun fetchUpcomingEvents(context:Context?):ArrayList<UpcomingEvent> {
 
-        return arrayOf(
+        return arrayListOf(
                 UpcomingEvent("CVPR", "Computer Vision conference, yearly", context?.let { ActivityCompat.getDrawable(it, R.drawable.ic_home_24px) }, UpcomingEvent.TYPE.CONFERENCE, "12.02.2021"),
                 UpcomingEvent("IJSR", "International Journal of Science and Research (IJSR) is a journal", context?.let { ActivityCompat.getDrawable(it, R.drawable.ic_account_24px) }, UpcomingEvent.TYPE.JOURNAL, "12.02.2021"),
                 UpcomingEvent("ACS Nano", "Call for papers, acs nano", context?.let { ActivityCompat.getDrawable(it, R.drawable.ic_work_24px) }, UpcomingEvent.TYPE.JOURNAL, "12.02.2021"),
@@ -28,9 +28,9 @@ class PreLoginRepository(sharedPreferences: SharedPreferences){
         )
     }
 
-    fun fetchTrendingProjects(context:Context?):Array<TrendingProject> {
+    fun fetchTrendingProjects(context:Context?):ArrayList<TrendingProject> {
 
-        return arrayOf(
+        return arrayListOf(
                 TrendingProject("PLATON", context?.let { ActivityCompat.getDrawable(it, R.drawable.ic_home_24px) }, "A collaboration application for all platforms.", TrendingProject.TREND.HOT),
                 TrendingProject("ANDROID: Reborn", context?.let { ActivityCompat.getDrawable(it, R.drawable.ic_home_24px) }, "A new version of android.", TrendingProject.TREND.POPULAR),
                 TrendingProject("DRAGON CENTER", context?.let { ActivityCompat.getDrawable(it, R.drawable.ic_account_24px) }, "Msi is developing a new version of dragon center. Join now!", TrendingProject.TREND.MOST_LIKED),

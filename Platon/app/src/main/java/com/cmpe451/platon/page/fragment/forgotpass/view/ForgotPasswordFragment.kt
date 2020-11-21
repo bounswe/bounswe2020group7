@@ -1,5 +1,9 @@
 package com.cmpe451.platon.page.fragment.forgotpass.view
 
+/**
+ * @author Burak Ömür
+ */
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -8,18 +12,20 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import com.cmpe451.platon.R
-import com.cmpe451.platon.`interface`.FragmentChangeListener
 import com.cmpe451.platon.databinding.FragmentForgotPasswordBinding
 import com.cmpe451.platon.page.activity.LoginActivity
 import com.cmpe451.platon.page.fragment.forgotpass.presenter.ForgotPasswordPresenter
 import com.cmpe451.platon.page.fragment.forgotpass.model.ForgotPasswordRepository
 import com.cmpe451.platon.page.fragment.forgotpass.contract.ForgotPasswordContract
 
+/**
+ * Forgot Password's fragment class
+ * If user forgets his/her password, s/he will be viewing this fragment class.
+ */
 class ForgotPasswordFragment : Fragment(), ForgotPasswordContract.View {
 
+    // define
     private lateinit var presenter: ForgotPasswordContract.Presenter
-    private lateinit var fragmentChangeListener: FragmentChangeListener
-
     private lateinit var binding: FragmentForgotPasswordBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,18 +46,14 @@ class ForgotPasswordFragment : Fragment(), ForgotPasswordContract.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //initViews(view)
         initializePresenter()
-        setFragmentChangeListener()
         setListeners()
-
     }
 
 
     override fun initializePresenter() {
         val sharedPreferences = requireContext().getSharedPreferences("token_file", 0)
         val repository = ForgotPasswordRepository(sharedPreferences)
-        //setPresenter(LoginPresenter(this, repository, sharedPreferences))
         presenter = ForgotPasswordPresenter(this, repository, sharedPreferences, (activity as LoginActivity).navController)
     }
 
@@ -59,13 +61,7 @@ class ForgotPasswordFragment : Fragment(), ForgotPasswordContract.View {
 
     }
 
-    private fun setFragmentChangeListener() {
-        this.fragmentChangeListener = activity as FragmentChangeListener
-    }
-
     private fun setListeners() {
-
-
         binding.forgotPassBtn.setOnClickListener {
             var flag = false
 
@@ -86,10 +82,12 @@ class ForgotPasswordFragment : Fragment(), ForgotPasswordContract.View {
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
 
+        // clear search bar, and make it iconified
         val search = (menu.findItem(R.id.search_btn)?.actionView as SearchView)
         search.setQuery("", false)
         search.isIconified = true
 
+        // hide all elements in the menu
         menu.findItem(R.id.registerFragment)?.isVisible = false
         menu.findItem(R.id.loginFragment)?.isVisible = false
         menu.findItem(R.id.search_btn)?.isVisible = false

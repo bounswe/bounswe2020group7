@@ -1,5 +1,9 @@
 package com.cmpe451.platon.adapter
 
+/**
+ * @author Burak Ömür
+ */
+
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -9,9 +13,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
 import com.cmpe451.platon.databinding.TrendProjectCellBinding
 import com.cmpe451.platon.databinding.UpcomingEventCellBinding
-import com.cmpe451.platon.util.UpcomingEvent
+import com.cmpe451.platon.util.Definitions.TrendingProject
+import com.cmpe451.platon.util.Definitions.UpcomingEvent
 
-class UpcomingEventsAdapter(private val data: Array<UpcomingEvent>, private val context: Context, private val upcomingEventsButtonClickListener: UpcomingButtonClickListener) :
+class UpcomingEventsAdapter(private val data: ArrayList<UpcomingEvent>, private val context: Context, private val upcomingEventsButtonClickListener: UpcomingButtonClickListener) :
 
 
         RecyclerView.Adapter<UpcomingEventsAdapter.UpcomingEventViewHolder>() {
@@ -63,4 +68,35 @@ class UpcomingEventsAdapter(private val data: Array<UpcomingEvent>, private val 
 
         holder.bindData(data[position].toString(), upcomingEventsButtonClickListener)
     }
+
+    /**
+     * Adds element to given position
+     */
+    fun addElement(position: Int, element: UpcomingEvent){
+        data.add(position, element)
+        this.notifyItemInserted(position)
+    }
+
+    /**
+     * Removes element at given position
+     */
+    fun removeElement(position: Int){
+        data.removeAt(position)
+        this.notifyItemRemoved(position)
+    }
+    /**
+     * Updates element at given position
+     */
+    fun updateElement(position: Int, element: UpcomingEvent){
+        data[position] = element
+        this.notifyItemChanged(position)
+    }
+    /**
+     * Clear all elements
+     */
+    fun clearElements(){
+        data.clear()
+        this.notifyDataSetChanged()
+    }
+
 }

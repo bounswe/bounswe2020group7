@@ -1,15 +1,11 @@
 package com.cmpe451.platon.page.fragment.home.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import com.cmpe451.platon.R
-import com.cmpe451.platon.`interface`.FragmentChangeListener
 import com.cmpe451.platon.databinding.FragmentHomeBinding
-import com.cmpe451.platon.databinding.FragmentLoginBinding
 import com.cmpe451.platon.page.activity.HomeActivity
-import com.cmpe451.platon.page.activity.LoginActivity
 import com.cmpe451.platon.page.fragment.home.contract.HomeContract
 import com.cmpe451.platon.page.fragment.home.model.HomeRepository
 import com.cmpe451.platon.page.fragment.home.presenter.HomePresenter
@@ -17,7 +13,6 @@ import com.cmpe451.platon.page.fragment.home.presenter.HomePresenter
 class HomeFragment : Fragment(), HomeContract.View  {
 
     private lateinit var presenter: HomeContract.Presenter
-    private lateinit var fragmentChangeListener: FragmentChangeListener
 
     private lateinit var binding: FragmentHomeBinding
 
@@ -36,7 +31,6 @@ class HomeFragment : Fragment(), HomeContract.View  {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializePresenter()
-        setFragmentChangeListener()
         setListeners()
 
     }
@@ -51,9 +45,6 @@ class HomeFragment : Fragment(), HomeContract.View  {
 
     }
 
-    private fun setFragmentChangeListener() {
-        this.fragmentChangeListener = activity as FragmentChangeListener
-    }
 
     private fun setListeners() {
         //password.addTextChangedListener(textWatcher)
