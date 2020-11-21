@@ -43,6 +43,5 @@ def create_app(config_class='config'):
 
     with app.app_context():
         # This will create the database file using SQLAlchemy
-        db.create_all()
-    
+        db.create_all()    
     return app
