@@ -1,21 +1,4 @@
-matrix:
-  include:
-    - language: python
-    - before_script:
-      - cd Platon/backend
-    script:
-      - python test.py
-    
-    - language: node_js
-      node_js:
-        -12.10.0
-      cache: npm
-      before_script:
-        - cd Platon/backend
-      script:
-        - npm cache clean --force
-        - npm install
-        - npm run build
+language: python
 
 before_deploy:
 - openssl aes-256-cbc -K $encrypted_db2095f63ba3_key -iv $encrypted_db2095f63ba3_iv -in deploy_rsa.enc -out /tmp/deploy_rsa -d
