@@ -5,6 +5,7 @@
     <item
         android:id="@+id/logout_menu_btn"
         android:title="@string/logout_str"
+        android:icon="@drawable/ic_logout_24px"
         android:visible="false"
         app:showAsAction="ifRoom" />
 
@@ -24,6 +25,7 @@
         android:id="@+id/search_btn"
         android:icon="@drawable/ic_search_24dp"
         android:title="@string/search_str"
-        app:actionViewClass="android.widget.SearchView"
+        android:visible="true"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="always" />
 </menu>

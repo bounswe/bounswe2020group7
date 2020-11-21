@@ -1,25 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
 
-    android:layout_margin="15dp"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/xx_small"
+    android:background="@drawable/upcoming_event_cell_back"
     android:elevation="2dp"
-    android:background="@color/colorAccent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:orientation="vertical"
+    android:paddingVertical="@dimen/medium">
+
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/upcoming_event_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/title_logo_padding"
+        android:text="@string/upcoming_event_str"
+        android:textColor="@color/primary_dark"
+        android:textSize="@dimen/project_title_text_size"
+        app:drawableLeftCompat="@drawable/ic_home_24px" />
+
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="1"
-        android:layout_centerInParent="true"
-        android:textSize="25sp"
-        android:padding="20dp"
-        android:gravity="center_vertical|center_horizontal"
-        android:textColor="#fff"
-        tools:ignore="MissingConstraints"  />
+        android:orientation="horizontal">
 
+        <TextView
+            android:id="@+id/upcoming_event_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/title_logo_padding"
+            android:maxLines="3"
+            android:text="@string/desc_str"
+            android:textColor="@color/primary_dark_lighter" />
+    </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/upcoming_event_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginHorizontal="@dimen/title_logo_padding"
+        android:text="@string/date_str"
+        android:textColor="@color/primary_dark_lighter"
+        android:textSize="@dimen/subtitle_text_size" />
+
+    <TextView
+        android:id="@+id/upcoming_event_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginHorizontal="@dimen/title_logo_padding"
+        android:text="@string/type_str"
+        android:textColor="@color/primary_dark_lighter"
+        android:textSize="@dimen/subtitle_text_size" />
+
+</LinearLayout>

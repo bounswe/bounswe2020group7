@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="15dp"
+    android:background="@drawable/login_back"
+    android:elevation="2dp"
+    android:orientation="vertical">
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/img_trend_project_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_account_24px" />
+
+        <TextView
+            android:layout_weight="1"
+            android:id="@+id/title_trend_project_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="Title"
+            android:textColor="@color/primary_dark"
+            android:textSize="@dimen/title_text_size"
+            tools:ignore="MissingConstraints" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_weight="1"
+            android:id="@+id/who_trend_project_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/who_str"
+            android:textColor="@color/secondary_purple" />
+
+        <TextView
+            android:layout_weight="1"
+            android:id="@+id/what_trend_project_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/action_str"
+            android:textColor="@color/secondary_purple" />
+
+        <TextView
+            android:layout_weight="1"
+            android:id="@+id/whom_trend_project_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/toWhom_str"
+            android:textColor="@color/secondary_purple" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:gravity="end"
+        android:layout_height="match_parent" >
+
+        <TextView
+            android:id="@+id/time_trend_project_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/time_str"
+            android:textColor="@color/secondary_orange" />
+    </TableRow>
+
+
+</TableLayout>

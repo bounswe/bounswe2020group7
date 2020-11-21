@@ -35,5 +35,26 @@
     <string name="already_have_str">Already have an account?</string>
     <string name="prompt_name">Name</string>
     <string name="remember_me_str">Remember me</string>
-    <string name="username_str">Username</string>
+    <string name="firstName_str">First Name</string>
+    <string name="lastName_str">Last Name</string>
+
+    <string name="profile_str">Profile</string>
+    <string name="workspaces_str">Workspaces</string>
+    <string name="phone_str">Phone</string>
+    <string name="forgot_password_str">Forgot password?</string>
+    <string name="send_code_str">Send Code</string>
+    <string name="action_str">action</string>
+    <string name="who_str">Who</string>
+    <string name="toWhom_str">to whom</string>
+    <string name="time_str">time</string>
+    <string name="project_title_str">Project Title</string>
+    <string name="desc_str">Description of project</string>
+    <string name="why_str">The reason of trending</string>
+    <string name="todo_str">TODO</string>
+    <string name="trending_projects_str">Trending Projects</string>
+    <string name="upcoming_events_str">Upcoming Events</string>
+    <string name="upcoming_event_str">Upcoming Event</string>
+    <string name="date_str">Date</string>
+    <string name="type_str">Type</string>
+    <string name="users_str">Users</string>
 </resources>

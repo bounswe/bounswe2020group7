@@ -1,18 +1,11 @@
 package com.cmpe451.platon.page.fragment.home.view
 
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
 import com.cmpe451.platon.R
-import com.cmpe451.platon.`interface`.FragmentChangeListener
 import com.cmpe451.platon.databinding.FragmentHomeBinding
-import com.cmpe451.platon.databinding.FragmentLoginBinding
 import com.cmpe451.platon.page.activity.HomeActivity
-import com.cmpe451.platon.page.activity.LoginActivity
 import com.cmpe451.platon.page.fragment.home.contract.HomeContract
 import com.cmpe451.platon.page.fragment.home.model.HomeRepository
 import com.cmpe451.platon.page.fragment.home.presenter.HomePresenter
@@ -20,7 +13,6 @@ import com.cmpe451.platon.page.fragment.home.presenter.HomePresenter
 class HomeFragment : Fragment(), HomeContract.View  {
 
     private lateinit var presenter: HomeContract.Presenter
-    private lateinit var fragmentChangeListener: FragmentChangeListener
 
     private lateinit var binding: FragmentHomeBinding
 
@@ -39,12 +31,11 @@ class HomeFragment : Fragment(), HomeContract.View  {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializePresenter()
-        setFragmentChangeListener()
         setListeners()
 
     }
 
-    private fun initializePresenter(){
+    override fun initializePresenter(){
         val sharedPreferences = requireContext().getSharedPreferences("token_file", 0)
         val repository = HomeRepository(sharedPreferences)
         presenter = HomePresenter(this, repository, sharedPreferences, (activity as HomeActivity).navController )
@@ -54,13 +45,8 @@ class HomeFragment : Fragment(), HomeContract.View  {
 
     }
 
-    private fun setFragmentChangeListener() {
-        this.fragmentChangeListener = activity as FragmentChangeListener
-    }
 
     private fun setListeners() {
-
-
         //password.addTextChangedListener(textWatcher)
     }
 
@@ -71,11 +57,4 @@ class HomeFragment : Fragment(), HomeContract.View  {
         menu.findItem(R.id.loginFragment).isVisible = false
         menu.findItem(R.id.logout_menu_btn).isVisible = true
     }
-
-    override fun setPresenter(presenter: HomeContract.Presenter) {
-        TODO("Not yet implemented")
-    }
-
-
-
 }

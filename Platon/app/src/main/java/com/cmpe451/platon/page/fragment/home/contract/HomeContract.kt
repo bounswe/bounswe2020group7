@@ -11,7 +11,6 @@ interface HomeContract {
 
     interface Presenter : BasePresenter {
 
-
     }
 
 }

@@ -1,25 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-
-    android:layout_margin="15dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/xx_small"
+    android:background="@drawable/trending_project_cell_back"
     android:elevation="2dp"
-    android:background="@color/black"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:orientation="vertical"
+    android:paddingVertical="@dimen/medium">
+
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/title_trend_project_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_home_24px"
+        android:paddingHorizontal="@dimen/title_logo_padding"
+        android:text="@string/project_title_str"
+        android:textColor="@color/primary_dark"
+        android:textSize="@dimen/project_title_text_size" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="1"
-        android:layout_centerInParent="true"
-        android:textSize="25sp"
-        android:padding="20dp"
-        android:gravity="center_vertical|center_horizontal"
-        android:textColor="#fff"
-        tools:ignore="MissingConstraints"  />
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/desc_trend_project_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="3"
+            android:paddingHorizontal="@dimen/title_logo_padding"
+            android:text="@string/desc_str"
+            android:textColor="@color/primary_dark_lighter"
+            android:textSize="@dimen/desc_text_size" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/why_trend_project_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:paddingHorizontal="@dimen/title_logo_padding"
+        android:text="@string/why_str"
+        android:textColor="@color/primary_dark_lighter"
+        android:textSize="@dimen/subtitle_text_size" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
