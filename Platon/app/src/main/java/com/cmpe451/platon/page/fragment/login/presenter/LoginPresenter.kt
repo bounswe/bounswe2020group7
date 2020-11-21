@@ -34,16 +34,12 @@ class LoginPresenter(private var view: LoginContract.View?, private var reposito
 
         if (rememberMe){
 
-            Toast.makeText((view as LoginFragment).activity, "Autologin..2", Toast.LENGTH_LONG).show()
+            Toast.makeText((view as LoginFragment).activity, "Logging In", Toast.LENGTH_LONG).show()
 
-            val mailPass = sharedPreferences.getStringSet("login_values", setOf()) as Set<String>
-            if (mailPass.size == 2){
-                val it = mailPass.iterator()
-                val mail = it.next()
-                val pass = it.next()
-
+            val mail = sharedPreferences.getString("login_mail", null)
+            val pass = sharedPreferences.getString("login_pass", null)
+            if (mail != null && pass != null){
                 (view as LoginFragment).setFields(mail, pass, true)
-
                 (view as LoginFragment).clickLogin()
             }
         }
@@ -73,13 +69,19 @@ class LoginPresenter(private var view: LoginContract.View?, private var reposito
         val rememberBool = remember.isChecked
 
 
-        if (!flag && !mailStr.equals(passStr, true)){
+        if (!flag){
             sharedPreferences.edit().putBoolean("remember_me", rememberBool).apply()
+            sharedPreferences.edit().putString("login_mail", mailStr).apply()
+            sharedPreferences.edit().putString("login_pass", passStr).apply()
 
-            sharedPreferences.edit().putStringSet("login_values", setOf(mailStr, passStr)).apply()
+            if (repository.tryToLogin(mailStr, passStr)) {
+                (view as LoginFragment).startActivity(Intent((view as LoginFragment).activity, HomeActivity::class.java))
+                (view as LoginFragment).activity?.finish()
+            }else{
+                Toast.makeText((view as Fragment).activity, "Mail and password do not match!", Toast.LENGTH_LONG).show()
+            }
 
-            (view as LoginFragment).startActivity(Intent((view as LoginFragment).activity, HomeActivity::class.java))
-            (view as LoginFragment).activity?.finish()
+
         }
 
         Log.println(Log.INFO, "Important:", mailStr + passStr + rememberBool.toString())

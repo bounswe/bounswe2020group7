@@ -19,8 +19,6 @@ open class HttpRequest(
         var token: String? = "",
         var listener: Listener
 ): AsyncTask<String, Void,JSONObject?>() {
-    
-
 
     private val READ_TIMEOUT: Int = 10000
     private val CONNECTION_TIMEOUT: Int= 10000

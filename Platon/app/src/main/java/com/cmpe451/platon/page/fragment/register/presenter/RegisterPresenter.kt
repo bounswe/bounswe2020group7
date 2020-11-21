@@ -66,6 +66,8 @@ class RegisterPresenter(private var view: RegisterContract.View?, private var re
         Log.println(Log.INFO,"IMPORTANT:",firstNameStr + lastNameStr + mailStr + pass1Str + pass2Str  + flag.toString())
     }
 
+
+
     override fun onStart() {
         TODO("Not yet implemented")
     }

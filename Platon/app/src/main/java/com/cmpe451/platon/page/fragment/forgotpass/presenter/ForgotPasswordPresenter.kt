@@ -5,29 +5,76 @@ package com.cmpe451.platon.page.fragment.forgotpass.presenter
  */
 
 import android.content.SharedPreferences
-import android.net.sip.SipSession
-import android.util.Log
+import android.util.Patterns
+import android.view.View
+import android.widget.Button
+import android.widget.EditText
 import androidx.navigation.NavController
-import com.cmpe451.platon.`interface`.Listener
-import com.cmpe451.platon.page.activity.LoginActivity
 import com.cmpe451.platon.page.fragment.forgotpass.contract.ForgotPasswordContract
 import com.cmpe451.platon.page.fragment.forgotpass.model.ForgotPasswordRepository
-import com.cmpe451.platon.page.fragment.forgotpass.view.ForgotPasswordFragment
-import com.cmpe451.platon.util.HttpRequest
-import org.json.JSONObject
-
 
 class ForgotPasswordPresenter(private var view: ForgotPasswordContract.View?,
                               private var repository: ForgotPasswordRepository,
                               private var sharedPreferences: SharedPreferences,
                               private var navController: NavController) : ForgotPasswordContract.Presenter {
-    override fun onForgotPassClicked(mail: String, flag:Boolean) {
+
+    override fun onForgotPassClicked(email: EditText, forgot_btn:Button, pass1: EditText, pass2: EditText, reset_btn:Button, token:EditText) {
+
+        var flag = false
+        if(email.text.isNullOrEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email.text.toString().trim()).matches()){
+            email.error = "Required / invalid input"
+            flag = true
+        }
+
+        val mail = email.text.toString().trim()
 
         if (!flag){
-            ((view as ForgotPasswordFragment).activity as LoginActivity).navController.navigateUp()
+            repository.postPasswordForgotten(mail)
+            email.visibility = View.GONE
+            forgot_btn.visibility = View.GONE
+            token.visibility = View.VISIBLE
+            reset_btn.visibility = View.VISIBLE
+            pass1.visibility = View.VISIBLE
+            pass2.visibility = View.VISIBLE
+        }
+    }
+
+    override fun onResetPasswordClicked(pass1: EditText, pass2: EditText, token: EditText) {
+
+        var flag = false
+
+        if(token.text.isNullOrEmpty()){
+            token.error = "Required"
+            flag= true
+        }
+
+        if(pass1.text.isNullOrEmpty()){
+            pass1.error = "Required"
+            flag = true
+        }
+
+        if(pass2.text.isNullOrEmpty() ){
+            pass2.error = "Required!"
+            flag = true
+        }
+
+        val pass1Str = pass1.text.toString().trim()
+        val pass2Str = pass2.text.toString().trim()
+        val tokenStr = token.text.toString().trim()
+
+        if(!pass1Str.equals(pass2Str, false)){
+            pass2.error = "Passwords must match!"
+            flag = true
+        }
+
+
+        if (!flag){
+            repository.postResetPassword(tokenStr, pass1Str, pass2Str)
+            navController.navigateUp()
         }
 
     }
+
 
     override fun onStart() {
         TODO("Not yet implemented")

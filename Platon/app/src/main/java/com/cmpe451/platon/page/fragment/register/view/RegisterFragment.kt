@@ -53,7 +53,6 @@ class RegisterFragment : Fragment(), RegisterContract.View {
             presenter.onAlreadyHaveAccountClicked()
         }
 
-
         //password.addTextChangedListener(textWatcher)
     }
 

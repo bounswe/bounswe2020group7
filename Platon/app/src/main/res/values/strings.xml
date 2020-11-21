@@ -57,4 +57,9 @@
     <string name="date_str">Date</string>
     <string name="type_str">Type</string>
     <string name="users_str">Users</string>
+    <string name="conf_pass_str">Confirm password</string>
+    <string name="new_pass_str">New password</string>
+    <string name="reset_pass_str">Reset Password</string>
+    <string name="token_str">Keycode</string>
+    <string name="send_token_str">Send Keycode</string>
 </resources>
