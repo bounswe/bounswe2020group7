@@ -47,7 +47,7 @@
         android:id="@+id/search_element_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primary_dark">
+        android:background="@color/primary_dark_darker">
 
     </androidx.recyclerview.widget.RecyclerView>
 
@@ -72,7 +72,7 @@
             android:id="@+id/bottom_nav_bar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/nav_bar_height"
-            android:background="@color/primary_dark"
+            android:background="@color/primary_dark_darker"
             app:itemTextColor="@color/primary_light"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

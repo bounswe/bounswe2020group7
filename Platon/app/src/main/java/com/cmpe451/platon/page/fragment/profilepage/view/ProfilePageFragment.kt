@@ -2,10 +2,13 @@ package com.cmpe451.platon.page.fragment.profilepage.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.cmpe451.platon.R
 import com.cmpe451.platon.databinding.FragmentProfilePageBinding
 import com.cmpe451.platon.page.activity.HomeActivity
 import com.cmpe451.platon.page.fragment.profilepage.contract.ProfilePageContract
@@ -20,15 +23,13 @@ class ProfilePageFragment : Fragment(), ProfilePageContract.View {
     private lateinit var presenter: ProfilePageContract.Presenter
     private lateinit var details: ArrayList<MutableMap<String,String>>
     private lateinit var user :Definitions.User
-    override fun setPresenter(presenter: ProfilePageContract.Presenter) {
-        TODO("Not yet implemented")
-    }
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         binding = FragmentProfilePageBinding.inflate(inflater)
         details = ArrayList()
+        setHasOptionsMenu(true)
         return binding.root
     }
 
@@ -137,7 +138,21 @@ class ProfilePageFragment : Fragment(), ProfilePageContract.View {
 
         //password.addTextChangedListener(textWatcher)
     }
-    private fun initializePresenter(){
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+
+        // clear search bar, and make it icon
+        val search = (menu.findItem(R.id.search_btn)?.actionView as SearchView)
+        search.setQuery("", false)
+        search.isIconified = true
+
+        menu.findItem(R.id.registerFragment)?.isVisible = false
+        menu.findItem(R.id.loginFragment)?.isVisible = false
+        menu.findItem(R.id.search_btn)?.isVisible = false
+    }
+
+    override fun initializePresenter(){
         val sharedPreferences = requireContext().getSharedPreferences("token_file", 0)
         val repository = ProfilePageRepository(sharedPreferences)
         presenter = ProfilePagePresenter(this, repository, sharedPreferences, (activity as HomeActivity).navController )

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
+import com.cmpe451.platon.databinding.FragmentFollowerFollowingItemBinding
 import com.cmpe451.platon.page.fragment.profilepage.contract.ProfilePageContract
 import com.cmpe451.platon.util.Definitions
 
@@ -17,7 +18,8 @@ class FollowerFollowingRecyclerViewAdapter(private val dataSet: ArrayList<Defini
         init {
             // Define click listener for the ViewHolder's View.
         }
-        fun bind(model:Definitions.User){
+        fun bind(model:Definitions.User, view:View){
+
             val nameText :TextView = view.findViewById(R.id.text_profile_page_info_title)
             nameText.text = model.name + " " + model.surname
         }
@@ -38,11 +40,11 @@ class FollowerFollowingRecyclerViewAdapter(private val dataSet: ArrayList<Defini
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(dataSet[position])
+        holder.bind(dataSet[position], holder.view)
 
     }
 
-    override fun setPresenter(presenter: ProfilePageContract.Presenter) {
+    override fun initializePresenter() {
         TODO("Not yet implemented")
     }
 

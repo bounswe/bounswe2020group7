@@ -44,13 +44,10 @@ class FollowingListFragment : Fragment(), ProfilePageContract.View{
         adapter.submitList(following)
         rvFollowers.layoutManager = LinearLayoutManager(this.activity)
     }
-    private fun initializePresenter(){
+    override fun initializePresenter(){
         val sharedPreferences = requireContext().getSharedPreferences("token_file", 0)
         val repository = ProfilePageRepository(sharedPreferences)
         presenter = ProfilePagePresenter(this, repository, sharedPreferences, (activity as HomeActivity).navController )
     }
 
-    override fun setPresenter(presenter: ProfilePageContract.Presenter) {
-        TODO("Not yet implemented")
-    }
 }

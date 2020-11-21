@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
     <item
-        android:id="@+id/bottom_nav_bar_home"
-        android:icon="@drawable/ic_o_logo_24dp"
+        android:id="@+id/homeFragment"
+        android:icon="@drawable/ic_home_24px"
         android:title="@string/home_str" />
     <item
         android:id="@+id/bottom_nav_bar_workspaces"
-        android:icon="@drawable/ic_o_logo_24dp"
-        android:title="@string/from_str" />
+        android:icon="@drawable/ic_work_24px"
+        android:title="@string/workspaces_str" />
     <item
-        android:id="@+id/bottom_nav_bar_profile_page"
-        android:icon="@drawable/ic_register_24dp"
-        android:title="@string/title_activity_login" />
+        android:id="@+id/profilePageFragment"
+        android:icon="@drawable/ic_profile_24px"
+        android:title="@string/profile_str" />
 </menu>

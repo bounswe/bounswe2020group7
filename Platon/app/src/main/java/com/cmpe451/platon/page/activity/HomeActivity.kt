@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
-import android.widget.SearchView
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -36,21 +35,10 @@ class HomeActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickList
 
     lateinit var binding : ActivityHomeBinding
 
-    private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        when (item.itemId) {
-            R.id.bottom_nav_bar_home -> {
-                return@OnNavigationItemSelectedListener true
-            }
-            R.id.bottom_nav_bar_workspaces -> {
+    private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener {
+        item ->
 
-                return@OnNavigationItemSelectedListener true
-            }
-            R.id.bottom_nav_bar_profile_page -> {
-                navController.navigate(HomeFragmentDirections.actionHomeFragmentToProfilePageFragment())
-                return@OnNavigationItemSelectedListener true
-            }
-        }
-        false
+        item.onNavDestinationSelected(navController) || true
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
