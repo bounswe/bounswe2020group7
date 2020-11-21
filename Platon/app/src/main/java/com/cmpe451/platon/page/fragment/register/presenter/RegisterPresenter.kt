@@ -74,10 +74,12 @@ class RegisterPresenter(private var view: RegisterContract.View?, private var re
         }
 
         if (flag) {
-            repository.postRegister(firstNameStr, lastNameStr, mailStr, jobStr, pass1Str)
-            Toast.makeText((view as RegisterFragment).activity, "Error", Toast.LENGTH_LONG).show()
+            if(repository.postRegister(firstNameStr, lastNameStr, mailStr, jobStr, pass1Str)){
+                Toast.makeText((view as Fragment).activity, "Success", Toast.LENGTH_LONG).show()
+            }else{
+                Toast.makeText((view as Fragment).activity, "Error", Toast.LENGTH_LONG).show()
+            }
         }
-        Log.println(Log.INFO,"IMPORTANT:",firstNameStr + lastNameStr + jobStr +mailStr + pass1Str + pass2Str  + flag.toString())
     }
 
 

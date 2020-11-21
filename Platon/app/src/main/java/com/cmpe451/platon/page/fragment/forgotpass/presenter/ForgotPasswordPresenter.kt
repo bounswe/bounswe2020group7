@@ -9,9 +9,13 @@ import android.util.Patterns
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.FrameLayout
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import com.cmpe451.platon.page.fragment.forgotpass.contract.ForgotPasswordContract
 import com.cmpe451.platon.page.fragment.forgotpass.model.ForgotPasswordRepository
+import com.cmpe451.platon.page.fragment.register.view.RegisterFragment
 
 class ForgotPasswordPresenter(private var view: ForgotPasswordContract.View?,
                               private var repository: ForgotPasswordRepository,
@@ -29,13 +33,18 @@ class ForgotPasswordPresenter(private var view: ForgotPasswordContract.View?,
         val mail = email.text.toString().trim()
 
         if (!flag){
-            repository.postPasswordForgotten(mail)
-            email.visibility = View.GONE
-            forgot_btn.visibility = View.GONE
-            token.visibility = View.VISIBLE
-            reset_btn.visibility = View.VISIBLE
-            pass1.visibility = View.VISIBLE
-            pass2.visibility = View.VISIBLE
+            if(repository.postPasswordForgotten(mail)){
+                email.visibility = View.GONE
+                forgot_btn.visibility = View.GONE
+                token.visibility = View.VISIBLE
+                reset_btn.visibility = View.VISIBLE
+                pass1.visibility = View.VISIBLE
+                pass2.visibility = View.VISIBLE
+            }else{
+                Toast.makeText((view as Fragment).activity, "Error", Toast.LENGTH_LONG).show()
+            }
+
+
         }
     }
 
@@ -69,8 +78,14 @@ class ForgotPasswordPresenter(private var view: ForgotPasswordContract.View?,
 
 
         if (!flag){
-            repository.postResetPassword(tokenStr, pass1Str, pass2Str)
-            navController.navigateUp()
+            if(repository.postResetPassword(tokenStr, pass1Str, pass2Str)){
+                Toast.makeText((view as Fragment).activity, "Success", Toast.LENGTH_LONG).show()
+                navController.navigateUp()
+            }else{
+                Toast.makeText((view as Fragment).activity, "Error", Toast.LENGTH_LONG).show()
+            }
+
+
         }
 
     }

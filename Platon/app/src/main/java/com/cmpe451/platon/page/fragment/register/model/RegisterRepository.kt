@@ -6,8 +6,8 @@ import android.content.SharedPreferences
 
 class RegisterRepository(sharedPreferences: SharedPreferences){
 
-    fun postRegister(firstName:String, lastName:String, mail:String, job:String, pass:String){
-
+    fun postRegister(firstName:String, lastName:String, mail:String, job:String, pass:String):Boolean{
+        return true
     }
 
 
