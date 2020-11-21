@@ -4,4 +4,4 @@ WORKDIR /platon_backend
 COPY backend/requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 COPY . .
-CMD ["/bin/sh", "platon_backend_entrypoint.sh"]
+CMD ["/bin/sh", "backend/platon_backend_entrypoint.sh"]
