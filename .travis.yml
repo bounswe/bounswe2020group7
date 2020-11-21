@@ -25,6 +25,8 @@ jobs:
     - stage: deploy
       if: branch = release
       language: python
+      addons:
+        ssh_known_hosts: 52.59.254.130
       python:
         - 3.6
       before_script:
