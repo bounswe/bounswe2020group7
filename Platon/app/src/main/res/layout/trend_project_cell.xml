@@ -7,7 +7,7 @@
     android:layout_marginBottom="@dimen/xx_small"
     android:layout_width = "match_parent"
     card_view:contentPadding="@dimen/medium"
-    card_view:cardBackgroundColor="@color/secondary_green_transparent"
+    card_view:cardBackgroundColor="@color/secondary_purple_transparent"
     android:layout_height = "wrap_content">
 
 <RelativeLayout

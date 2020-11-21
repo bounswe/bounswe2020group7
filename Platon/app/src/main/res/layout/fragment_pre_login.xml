@@ -13,9 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:gravity="center"
         app:layout_constraintTop_toTopOf="parent">
-
-
 
         <TextView
             android:layout_margin="10dp"
@@ -24,8 +23,8 @@
             android:fontFamily="@font/dm_sans_regular"
             android:lineSpacingExtra="6sp"
             android:padding="3dp"
-            android:text="Hello!"
-            android:textColor="@color/primary_dark"
+            android:text="Welcome to Platon"
+            android:textColor="@color/primary_dark_darker"
             android:textStyle="bold"
             android:textSize="@dimen/title_text_size" />
 
@@ -36,55 +35,76 @@
             android:fontFamily="@font/dm_sans_bold"
             android:lineSpacingExtra="6sp"
             android:padding="3dp"
-            android:text="Welcome to the home page prepared for guests. You can check out everything that is public. If you want more, please join us with a few steps."
+            android:text="Discover research and connect with your scientific community."
             android:textColor="@color/primary_dark"
             android:textSize="18sp" />
 
+        <LinearLayout
+            android:padding="@dimen/xx_small"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_margin="@dimen/small"
+            android:layout_height="wrap_content">
         <TextView
+            android:shadowColor="@color/primary_dark"
+            android:shadowRadius="2"
+            android:shadowDx="1"
+            android:shadowDy="1"
             android:layout_marginHorizontal="10dp"
             android:id="@+id/textView"
+            android:fontFamily="@font/dm_sans_bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:background="@drawable/trending_project_cell_back"
-            android:padding="@dimen/xx_small"
-            android:paddingHorizontal="@dimen/title_logo_padding"
+
+
             android:text="@string/trending_projects_str"
             android:textAllCaps="false"
-            android:textColor="@color/primary_dark"
-            android:textSize="@dimen/project_title_text_size"
-            app:drawableLeftCompat="@drawable/ic_work_24px" />
+            android:textColor="@color/secondary_purple"
+            android:textSize="@dimen/project_title_text_size" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:layout_marginHorizontal="10dp"
+            android:fontFamily="@font/dm_sans_bold"
             android:id="@+id/pre_login_trending_projects_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/xx_small">
 
         </androidx.recyclerview.widget.RecyclerView>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:padding="@dimen/xx_small"
+            android:layout_margin="@dimen/small"
+            android:paddingHorizontal="@dimen/title_logo_padding"
+            android:layout_height="wrap_content">
 
         <TextView
+            android:shadowColor="@color/primary_dark"
+            android:shadowRadius="2"
+            android:shadowDx="1"
+            android:shadowDy="1"
             android:layout_marginHorizontal="10dp"
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:background="@drawable/upcoming_event_cell_back"
             android:padding="@dimen/xx_small"
             android:paddingHorizontal="@dimen/title_logo_padding"
             android:text="@string/upcoming_events_str"
-            android:textColor="@color/primary_dark"
-            android:textSize="@dimen/project_title_text_size"
-            app:drawableLeftCompat="@drawable/ic_profile_24px" />
+            android:textColor="@color/secondary_green"
+            android:textSize="@dimen/project_title_text_size" />
 
 
         <androidx.recyclerview.widget.RecyclerView
+            android:paddingVertical="@dimen/small"
             android:layout_marginVertical="10dp"
             android:id="@+id/pre_login_upcoming_events_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/xx_small" />
+        </LinearLayout>
         <TextView
             android:id="@+id/textView3"
             android:layout_width="match_parent"
