@@ -11,7 +11,6 @@ import {Link} from 'react-router-dom'
 
 const StyledButton = withStyles({
   root: {
-
     color: colors.secondary,
     "&:hover": {
       backgroundColor: colors.primary,
