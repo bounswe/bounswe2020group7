@@ -13,21 +13,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center_horizontal"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:layout_margin="@dimen/medium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/dm_sans_regular"
-            android:lineSpacingExtra="8sp"
-            android:text="Welcome to Platon"
-            android:textColor="@color/primary_light"
-            android:textStyle="bold"
-            android:textSize="@dimen/title_text_size" />
+        android:gravity="center_horizontal">
 
 
+
+
+            <TextView
+                android:layout_margin="@dimen/medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/dm_sans_regular"
+                android:lineSpacingExtra="8sp"
+                android:text="Welcome to PLATON"
+                android:textColor="@color/primary_light"
+                android:textStyle="bold"
+                android:textSize="@dimen/title_text_size" />
 
         <TextView
             android:textAlignment="center"

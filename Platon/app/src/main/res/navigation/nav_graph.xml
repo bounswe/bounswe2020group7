@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/preLoginFragment"
         android:name="com.cmpe451.platon.page.fragment.preLogin.view.PreLoginFragment"
-        android:label="Platon">
+        android:label="@string/app_name">
         <action
             android:id="@+id/action_preLoginFragment_to_loginFragment"
             app:destination="@id/loginFragment"
@@ -22,7 +22,7 @@
             app:enterAnim="@anim/fragment_fade_enter"
             app:exitAnim="@anim/fragment_fade_exit"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"

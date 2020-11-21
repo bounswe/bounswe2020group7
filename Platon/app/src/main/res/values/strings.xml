@@ -62,4 +62,5 @@
     <string name="reset_pass_str">Reset Password</string>
     <string name="token_str">Keycode</string>
     <string name="send_token_str">Send Keycode</string>
+    <string name="job_str">Job</string>
 </resources>

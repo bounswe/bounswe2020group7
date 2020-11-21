@@ -20,15 +20,13 @@
         android:padding="@dimen/inner_frame_layout_padding_2">
 
 
-        <TextView
-            android:id="@+id/dont_have_acc_btn"
-            android:layout_width="wrap_content"
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
-            android:hapticFeedbackEnabled="true"
-            android:text="@string/dontHave_str"
-            android:textColor="@color/secondary_purple" />
+            android:layout_margin="@dimen/xxx_large"
+            android:contentDescription="@string/logo_o_str"
+            app:srcCompat="@drawable/ic_o_logo_100" />
 
         <EditText
             android:id="@+id/email_et"
@@ -84,6 +82,17 @@
             android:focusable="true"
             android:hapticFeedbackEnabled="true"
             android:text="@string/forgot_password_str"
+            android:textColor="@color/secondary_purple" />
+
+        <TextView
+            android:id="@+id/dont_have_acc_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginTop="@dimen/xxxxx_large"
+            android:hapticFeedbackEnabled="true"
+            android:text="@string/dontHave_str"
             android:textColor="@color/secondary_purple" />
 
     </LinearLayout>

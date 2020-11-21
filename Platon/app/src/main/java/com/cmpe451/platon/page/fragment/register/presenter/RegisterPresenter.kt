@@ -16,6 +16,9 @@ import com.cmpe451.platon.page.fragment.register.view.RegisterFragmentDirections
 import com.cmpe451.platon.util.Definitions
 
 class RegisterPresenter(private var view: RegisterContract.View?, private var repository: RegisterRepository, private var sharedPreferences: SharedPreferences, private var navController: NavController) : RegisterContract.Presenter {
+    override fun getTermsAndConds(): String {
+        return repository.terms
+    }
 
     override fun onAlreadyHaveAccountClicked() {
         Definitions().vibrate(50, (view as Fragment).activity as BaseActivity)
@@ -23,7 +26,7 @@ class RegisterPresenter(private var view: RegisterContract.View?, private var re
         navController.navigate(action)
     }
 
-    override fun onRegisterButtonClicked(firstName: EditText, lastName: EditText, mail: EditText, pass1: EditText, pass2: EditText, terms:CheckBox) {
+    override fun onRegisterButtonClicked(firstName: EditText, lastName: EditText, mail: EditText,job:EditText, pass1: EditText, pass2: EditText, terms:CheckBox) {
 
         var flag = false
 
@@ -47,9 +50,15 @@ class RegisterPresenter(private var view: RegisterContract.View?, private var re
             pass2.error = "Required"
             flag = true
         }
+        if( job.text.isNullOrEmpty()){
+            job.error = "Required"
+            flag = true
+        }
         if (!terms.isChecked){
             flag = true
         }
+
+
 
 
         val firstNameStr = firstName.text.toString().trim()
@@ -57,13 +66,18 @@ class RegisterPresenter(private var view: RegisterContract.View?, private var re
         val mailStr = mail.text.toString().trim()
         val pass1Str = pass1.text.toString().trim()
         val pass2Str = pass2.text.toString().trim()
+        val jobStr = job.text.toString().trim()
 
-
+        if(pass1Str.equals(pass2Str, false)){
+            pass2.error = "Required / Must match"
+            flag = true
+        }
 
         if (flag) {
+            repository.postRegister(firstNameStr, lastNameStr, mailStr, jobStr, pass1Str)
             Toast.makeText((view as RegisterFragment).activity, "Error", Toast.LENGTH_LONG).show()
         }
-        Log.println(Log.INFO,"IMPORTANT:",firstNameStr + lastNameStr + mailStr + pass1Str + pass2Str  + flag.toString())
+        Log.println(Log.INFO,"IMPORTANT:",firstNameStr + lastNameStr + jobStr +mailStr + pass1Str + pass2Str  + flag.toString())
     }
 
 

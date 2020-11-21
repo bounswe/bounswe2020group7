@@ -24,6 +24,8 @@
     <dimen name="x_large">14dp</dimen>
     <dimen name="xx_large">16dp</dimen>
     <dimen name="xxx_large">18dp</dimen>
+    <dimen name="xxxx_large">24dp</dimen>
+    <dimen name="xxxxx_large">30dp</dimen>
 
 
 

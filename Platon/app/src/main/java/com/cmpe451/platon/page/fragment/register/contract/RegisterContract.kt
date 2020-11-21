@@ -12,8 +12,9 @@ interface RegisterContract {
     }
 
     interface Presenter : BasePresenter {
+        fun getTermsAndConds():String
         fun onAlreadyHaveAccountClicked()
-        fun onRegisterButtonClicked(firstName: EditText, lastName: EditText, mail: EditText, pass1: EditText, pass2: EditText, terms: CheckBox)
+        fun onRegisterButtonClicked(firstName: EditText, lastName: EditText, mail: EditText, job:EditText, pass1: EditText, pass2: EditText, terms: CheckBox)
 
     }
 

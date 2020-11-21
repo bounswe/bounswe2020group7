@@ -1,13 +1,16 @@
 package com.cmpe451.platon.page.fragment.register.view
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import com.cmpe451.platon.R
+import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentRegisterBinding
 import com.cmpe451.platon.page.activity.LoginActivity
 import com.cmpe451.platon.page.fragment.register.contract.RegisterContract
@@ -46,11 +49,24 @@ class RegisterFragment : Fragment(), RegisterContract.View {
 
     private fun setListeners() {
         binding.registerBtn.setOnClickListener {
-            presenter.onRegisterButtonClicked(binding.firstnameTv, binding.lastnameTv, binding.mailTv, binding.pw1Tv, binding.pw2Tv, binding.termsChk)
+            presenter.onRegisterButtonClicked(binding.firstnameTv, binding.lastnameTv, binding.mailTv, binding.jobTv, binding.pw1Tv, binding.pw2Tv, binding.termsChk)
         }
 
         binding.alreadHaveBtn.setOnClickListener {
             presenter.onAlreadyHaveAccountClicked()
+        }
+        binding.termsChk.isClickable = true
+        binding.termsChk.setOnClickListener {
+            val dial = AlertDialog.Builder(activity as BaseActivity)
+            dial.setTitle("Terms and Conditions")
+            dial.setMessage(presenter.getTermsAndConds())
+            dial.setPositiveButton("Accept") { _, _ ->
+                binding.termsChk.isChecked = true
+            }
+            dial.setNegativeButton("Reject") { _, _ ->
+                binding.termsChk.isChecked = false
+            }
+            dial.show()
         }
 
         //password.addTextChangedListener(textWatcher)
