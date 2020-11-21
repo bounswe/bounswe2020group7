@@ -3,6 +3,7 @@ package com.cmpe451.platon.page.fragment.home.view
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.cmpe451.platon.R
 import com.cmpe451.platon.databinding.FragmentHomeBinding
 import com.cmpe451.platon.page.activity.HomeActivity
@@ -26,13 +27,13 @@ class HomeFragment : Fragment(), HomeContract.View  {
         // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(inflater)
         return binding.root
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializePresenter()
         setListeners()
-
     }
 
     override fun initializePresenter(){

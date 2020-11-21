@@ -19,7 +19,8 @@ class Definitions {
     val TRENDING_PROJECT_GUESTS_ADDRESS = ""
     val UPCOMING_EVENTS_ADDRESS = ""
 
-
+    class User(val name:String, val surname:String, val rating: Double, val bio:String)
+  
     /**
      * Trending projects are serialized according to this.
      * @param project_title Title of the trending project
@@ -63,4 +64,3 @@ class Definitions {
     }
 
 }
-

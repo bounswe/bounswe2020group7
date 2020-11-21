@@ -90,5 +90,4 @@ tools:context=".page.activity.HomeActivity">
 
 
 </LinearLayout>
-
 </ScrollView>

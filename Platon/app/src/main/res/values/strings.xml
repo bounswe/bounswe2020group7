@@ -35,6 +35,10 @@
     <string name="already_have_str">Already have an account?</string>
     <string name="prompt_name">Name</string>
     <string name="remember_me_str">Remember me</string>
+    <string name="username_str">Username</string>
+    <string name="text_follower"> 0 Followers</string>
+    <string name="text_following">0 Following</string>
+    <string name="text_edit_profile">Edit Profile</string>
     <string name="firstName_str">First Name</string>
     <string name="lastName_str">Last Name</string>
 

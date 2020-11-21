@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
+import android.widget.SearchView
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -21,6 +23,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.SearchElementsAdapter
 import com.cmpe451.platon.core.BaseActivity
+import com.cmpe451.platon.page.fragment.home.view.HomeFragmentDirections
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.cmpe451.platon.databinding.ActivityHomeBinding
 
 class HomeActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickListener {
@@ -31,6 +35,23 @@ class HomeActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickList
     private lateinit var searchRecyclerView: RecyclerView
 
     lateinit var binding : ActivityHomeBinding
+
+    private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
+        when (item.itemId) {
+            R.id.bottom_nav_bar_home -> {
+                return@OnNavigationItemSelectedListener true
+            }
+            R.id.bottom_nav_bar_workspaces -> {
+
+                return@OnNavigationItemSelectedListener true
+            }
+            R.id.bottom_nav_bar_profile_page -> {
+                navController.navigate(HomeFragmentDirections.actionHomeFragmentToProfilePageFragment())
+                return@OnNavigationItemSelectedListener true
+            }
+        }
+        false
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_Platon)
@@ -46,9 +67,9 @@ class HomeActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickList
 
         setSupportActionBar(toolbar)
         NavigationUI.setupActionBarWithNavController(this, navController)
-
+        
         NavigationUI.setupWithNavController(binding.bottomNavBar, navController)
-
+        binding.bottomNavBar.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         initViews()
     }
 
