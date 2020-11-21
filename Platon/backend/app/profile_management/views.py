@@ -40,7 +40,7 @@ class ResearchInformationAPI(Resource):
                 all_research_info = ResearchInformation.query.filter(ResearchInformation.user_id == form.user_id.data).all()
             except:
                 return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
-            return make_response(jsonify({'research_info' :[{'title': info['title'], 'description': info['description'], 'year': info['year']}for info in all_research_info]}),200)
+            return make_response(jsonify({'research_info' :[{'id': info.id,'title': info.research_title, 'description': info.description, 'year': info.year}for info in all_research_info]}),200)
         else:
             return make_response(jsonify({'error':'Wrong input format'}),400)
     
