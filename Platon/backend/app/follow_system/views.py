@@ -88,8 +88,9 @@ class GetFollowersAPI(Resource):
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
 
-@follow_system_ns.route("/get_follow_requests")
-class GetFollowRequestsAPI(Resource):
+
+@follow_system_ns.route("/follow_requests")
+class FollowRequestAPI(Resource):
 
     @api.doc(responses={200: 'Follow Requests List is successfully returned',
                         404: 'Follow Requests List is empty',
@@ -117,7 +118,6 @@ class GetFollowRequestsAPI(Resource):
             if followSearch is []:
                 return make_response(jsonify({'error': 'No Follow Request Found'}), 404)
 
-
             mylist = []
             for follow in followSearch:
                 mylist.append(follow.follower_id)
@@ -126,9 +126,6 @@ class GetFollowRequestsAPI(Resource):
 
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
-
-@follow_system_ns.route("/send_follow_requests")
-class SendFollowRequestAPI(Resource):
 
     @api.doc(responses={200: 'Follow Request is sent successfully',
                         400: 'Input Format Error',
@@ -174,10 +171,6 @@ class SendFollowRequestAPI(Resource):
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
 
 
-# login_required decorator will be added.
-@follow_system_ns.route("/reply_follow_requests")
-class ReplyFollowRequestAPI(Resource):
-
     @api.doc(responses={200: 'Follow Request is replied successfully',
                         400: 'Input Format Error',
                         401: 'Current user is unauthorized to reply the Follow Request',
@@ -185,7 +178,7 @@ class ReplyFollowRequestAPI(Resource):
                         500: 'Database Connection Error'})
     @api.expect(reply_follow_requests_parser)
     @login_required
-    def post(user_id, self):
+    def delete(user_id, self):
         '''
             Takes the follower_id and following_id as inputs and rejects the corresponding Follow Request.
         '''
