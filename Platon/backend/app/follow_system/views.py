@@ -9,19 +9,14 @@ from app.follow_system.forms import get_followings_parser, get_followers_parser,
     reply_follow_requests_parser
 from app.follow_system.models import Follow, FollowRequests
 from app.auth_system.models import User
-from app.auth_system.views import login_required, generate_token
-
-import datetime
-from dateutil import parser
-from hashlib import sha256
-from functools import wraps
+from app.auth_system.views import login_required
+from app.follow_system.helpers import follow_required
 
 
 follow_system_ns = Namespace("Follow System",
                              description="Follow System Endpoints",
                              path="/follow")
 
-# Private Account Restrictions not implemented.
 @follow_system_ns.route("/followings")
 class GetFollowingsAPI(Resource):
 
@@ -31,11 +26,12 @@ class GetFollowingsAPI(Resource):
                         500: 'Database Connection Error'})
     @api.expect(get_followings_parser)
     @login_required
+    @follow_required(param_loc='args',requested_user_id_key='follower_id')
     def get(user_id, self):
         '''
             Takes follower_id as input and returns the followings as a list.
         '''
-        form = GetFollowingsForm(request.form)
+        form = GetFollowingsForm(request.args)
         if form.validate():
             try:
                 followSearch = Follow.query.filter(Follow.follower_id == form.follower_id.data).all()
@@ -55,7 +51,6 @@ class GetFollowingsAPI(Resource):
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
 
 
-# Private Account Restrictions not implemented.
 @follow_system_ns.route("/followers")
 class GetFollowersAPI(Resource):
 
@@ -65,11 +60,12 @@ class GetFollowersAPI(Resource):
                         500: ' Database Connection Error'})
     @api.expect(get_followers_parser)
     @login_required
+    @follow_required(param_loc='args',requested_user_id_key='following_id')
     def get(user_id, self):
         '''
             Takes following_id as input and returns the followers as a list.
         '''
-        form = GetFollowersForm(request.form)
+        form = GetFollowersForm(request.args)
         if form.validate():
             try:
                 followSearch = Follow.query.filter(Follow.following_id == form.following_id.data).all()
@@ -99,11 +95,12 @@ class FollowRequestAPI(Resource):
                         500: 'Database Connection Error'})
     @api.expect(get_follow_requests_parser)
     @login_required
+    @follow_required(param_loc='args',requested_user_id_key='following_id')
     def get(user_id, self):
         '''
             Takes following_id as input and returns the follow requests as a list.
         '''
-        form = GetFollowRequestsForm(request.form)
+        form = GetFollowRequestsForm(request.args)
         if form.validate():
 
             # user_id should be equal to form.following_id.data
