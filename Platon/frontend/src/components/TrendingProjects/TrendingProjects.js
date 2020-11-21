@@ -26,8 +26,8 @@ const TrendingProjects = () => {
       </Typography>
       <div className="TrendingProjectsItems">
       {Object.keys(trendingProjectsList).map((projects, index) => (
+          <TrendingProjectsItem project={trendingProjectsList[projects]} id = {index}/>
           <TrendingProjectsItem project={trendingProjectsList[projects]} key={index} id = {index}/>
-
       ))}
     </div>
     </div>

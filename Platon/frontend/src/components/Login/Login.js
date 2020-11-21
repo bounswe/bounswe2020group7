@@ -126,6 +126,9 @@ class Login extends Component {
       return;
     }
 
+    const url = "https://react-my-burger-78df4.firebaseio.com";
+    const data = { email: this.state.email, password: this.state.password };
+    fetch(url+"/users.json", {
     const url = config.BASE_URL
     const data = { email: this.state.email, password: this.state.password };
     fetch(url + "/api/auth_system/login", {
