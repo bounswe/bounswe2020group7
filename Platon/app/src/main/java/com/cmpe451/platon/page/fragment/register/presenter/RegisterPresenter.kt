@@ -68,12 +68,12 @@ class RegisterPresenter(private var view: RegisterContract.View?, private var re
         val pass2Str = pass2.text.toString().trim()
         val jobStr = job.text.toString().trim()
 
-        if(pass1Str.equals(pass2Str, false)){
+        if(!pass1Str.equals(pass2Str, false)){
             pass2.error = "Required / Must match"
             flag = true
         }
 
-        if (flag) {
+        if (!flag) {
             if(repository.postRegister(firstNameStr, lastNameStr, mailStr, jobStr, pass1Str)){
                 Toast.makeText((view as Fragment).activity, "Success", Toast.LENGTH_LONG).show()
             }else{
