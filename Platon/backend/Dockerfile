@@ -4,4 +4,7 @@ WORKDIR /platon_backend
 COPY backend/requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 COPY ./backend .
-CMD ["/bin/sh", "platon_backend/platon_backend_entrypoint.sh"]
+CMD ["flask","db","init"]
+CMD ["flask","db","migrate"]
+CMD ["flask","db","upgrade"]
+CMD ["flask","run","--host=0.0.0.0"]
