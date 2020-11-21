@@ -39,7 +39,7 @@ class FollowingListFragment : Fragment(), ProfilePageContract.View{
         super.onViewCreated(view, savedInstanceState)
         initializePresenter()
         val rvFollowers = binding.rvFollow
-        following.addAll(presenter.getFollowers())
+        following.addAll(presenter.getFollowing())
         val adapter = FollowingRecyclerViewAdapter(ArrayList())
         rvFollowers.adapter = adapter
         adapter.submitList(following)

@@ -24,6 +24,23 @@ class HomeActivity : BaseActivity(), FragmentChangeListener {
     lateinit var navController: NavController
     lateinit var bottomNavBar : BottomNavigationView
 
+    private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
+        when (item.itemId) {
+            R.id.bottom_nav_bar_home -> {
+                return@OnNavigationItemSelectedListener true
+            }
+            R.id.bottom_nav_bar_workspaces -> {
+
+                return@OnNavigationItemSelectedListener true
+            }
+            R.id.bottom_nav_bar_profile_page -> {
+                navController.navigate(HomeFragmentDirections.actionHomeFragmentToProfilePageFragment())
+                return@OnNavigationItemSelectedListener true
+            }
+        }
+        false
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_Platon)
         super.onCreate(savedInstanceState)
@@ -31,6 +48,7 @@ class HomeActivity : BaseActivity(), FragmentChangeListener {
 
 
         bottomNavBar = findViewById(R.id.bottom_nav_bar)
+
         toolbar = findViewById(R.id.toolbar)
 //
 
@@ -42,6 +60,7 @@ class HomeActivity : BaseActivity(), FragmentChangeListener {
         setSupportActionBar(toolbar)
         NavigationUI.setupActionBarWithNavController(this, navController)
         NavigationUI.setupWithNavController(bottomNavBar, navController)
+        bottomNavBar.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
     }
 
     override fun addFragment(fragment: Fragment, bundle: Bundle?) {
