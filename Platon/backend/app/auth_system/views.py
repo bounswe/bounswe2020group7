@@ -107,7 +107,7 @@ class ResetPasswordAPI(Resource):
 
 
 @auth_system_ns.route("/user")
-class User(Resource):
+class UserAPI(Resource):
     '''
     This class is a RESTful API for "User" model.
     You can find the endpoints for creating, reading, updating and deleting a user below.
@@ -123,7 +123,7 @@ class User(Resource):
             })
     def get(self):
         # Parses the form data.
-        form = GetUserForm(request.form)
+        form = GetUserForm(request.args)
         
         # Checks whether the data is in valid form.
         # If yes, starts processing the data.
@@ -188,11 +188,14 @@ class User(Resource):
                     try:
                         new_user = User(is_valid=False,
                                         e_mail=form.e_mail.data,
-                                        password_hashed=sha256(form.password.data),
+                                        password_hashed=hashed(form.password.data),
                                         name=form.name.data,
                                         surname=form.surname.data,
                                         is_private=False,
-                                        rate=-1.0
+                                        rate=-1.0,
+                                        profile_photo=None,
+                                        google_scholar_name=None,
+                                        researchgate_name=None
                                         )
                         # DO NOT FORGET TO WRITE CODE FOR "JOB" CREATION
                         db.session.add(new_user)
