@@ -1,6 +1,6 @@
 # Composefile for database and backend services combined
 
-version: "3.8"
+version: "3.3"
 
 services:
   db:
@@ -30,7 +30,9 @@ services:
       - "/var/lib/mysql"
   
   backend:
-    build: .
+    build: 
+      context: .
+      dockerfile: ./backend/Dockerfile
     depends_on:
       - db
     restart: on-failure
@@ -56,3 +58,17 @@ services:
           - backend
     ports:
       - "5000:5000"
+
+  frontend:
+    build: 
+      context: .
+      dockerfile: ./frontend/Dockerfile
+    depends_on:
+      - backend
+    restart: on-failure
+    networks:
+      default:
+        aliases:
+          - frontend
+    ports:
+      - "80:3000"
