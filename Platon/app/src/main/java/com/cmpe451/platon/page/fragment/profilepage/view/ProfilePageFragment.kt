@@ -38,6 +38,7 @@ class ProfilePageFragment : Fragment(), ProfilePageContract.View {
         setListeners()
         initializePresenter()
         initializeAdapter()
+
         setUser()
     }
     private fun setUser(){

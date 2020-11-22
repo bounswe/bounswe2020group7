@@ -67,4 +67,7 @@
     <string name="token_str">Keycode</string>
     <string name="send_token_str">Send Keycode</string>
     <string name="job_str">Job</string>
+    <string name="old_password">Old password</string>
+    <string name="new_password">New Password</string>
+    <string name="text_follow">Follow</string>
 </resources>
