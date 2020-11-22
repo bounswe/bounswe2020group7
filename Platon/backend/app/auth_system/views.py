@@ -7,6 +7,7 @@ from app import api, mail, db
 from app.auth_system.forms import LoginForm,login_parser
 from app.auth_system.forms import ResetPasswordGetForm,reset_password_get_parser
 from app.auth_system.forms import ResetPasswordPostForm,reset_password_post_parser
+from app.auth_system.forms import GetUserForm, get_user_parser
 from app.auth_system.forms import CreateUserForm, create_user_parser
 from app.auth_system.forms import UpdateUserForm, update_user_parser
 from app.auth_system.forms import DeleteUserForm, delete_user_parser
@@ -111,6 +112,41 @@ class User(Resource):
     This class is a RESTful API for "User" model.
     You can find the endpoints for creating, reading, updating and deleting a user below.
     '''
+
+    # GET request
+    @api.expect(get_user_parser)
+    @api.doc(responses={
+                200: "User has been found.",
+                400: "Missing data fields or invalid data.",
+                404: "The user is not found.",
+                500: "The server is not connected to the database.",
+            })
+    def get(self):
+        # Parses the form data.
+        form = GetUserForm(request.form)
+        
+        # Checks whether the data is in valid form.
+        # If yes, starts processing the data.
+        # If not, an error is raised.
+        if form.validate():
+            # Checks whether there is an already existing user in the database with the given user ID.
+            # If yes, user information is returned.
+            # If not, an error is raised.
+            existing_user = User.query.filter_by(id=form.user_id.data).first()
+            if existing_user is not None:
+                try:
+                    account_information = {
+                                            "name": existing_user.name,
+                                            "surname": existing_user.surname,
+                                            "google_scholar_name": existing_user.google_scholar_name,
+                                            "researchgate_name": existing_user.researchgate_name
+                                            }
+                except:
+                    return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+                else:
+                    return make_response(jsonify(account_information), 200)
+            else:
+                return make_response(jsonify({"error" : "The user is not found."}), 404)
 
 
 

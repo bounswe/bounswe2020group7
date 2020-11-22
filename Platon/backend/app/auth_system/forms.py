@@ -27,6 +27,12 @@ reset_password_post_parser.add_argument('new_password_repeat',required=True,type
 reset_password_post_parser.add_argument('auth_token',required=True, type=str,help="Token that sent via email as a URL link",location='headers')
 
 
+class GetUserForm(Form):
+	user_id = IntegerField("User ID", validators=[validators.DataRequired()])
+get_user_parser = reqparse.RequestParser()
+get_user_parser.add_argument("user_id", required=True, type=int, help="ID of the requested user.", location="args")
+
+
 class CreateUserForm(Form):
 	e_mail = StringField("E-mail", validators=[validators.DataRequired(), validators.Email()])
 	password = StringField("Password", validators=[validators.DataRequired()])
