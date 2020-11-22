@@ -52,7 +52,7 @@ class ResearchInformationAPI(Resource):
         """
         form = ResearchInfoPostForm(request.form)
         if form.validate():
-            new_research_info = ResearchInformation(user_id,form.research_title.data,form.description.data,form.year.data,ResearchType.HAND_WRITTEN)
+            new_research_info = ResearchInformation(user_id,form.research_title.data,form.description.data,form.year.data,int(ResearchType.HAND_WRITTEN))
             try:
                 db.session.add(new_research_info)
                 db.session.commit()
