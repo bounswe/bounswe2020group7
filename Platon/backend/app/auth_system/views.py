@@ -140,6 +140,7 @@ class User(Resource):
                 # If yes, user information is returned.
                 # If not, an error is raised.
                 if existing_user is not None:
+                    # DO NOT FORGET TO WRITE CODE FOR PRIVATE ACCOUNTS
                     account_information = {
                                             "name": existing_user.name,
                                             "surname": existing_user.surname,
@@ -193,6 +194,7 @@ class User(Resource):
                                         is_private=False,
                                         rate=-1.0
                                         )
+                        # DO NOT FORGET TO WRITE CODE FOR "JOB" CREATION
                         db.session.add(new_user)
                         db.session.commit()
                     except:
@@ -251,6 +253,8 @@ class User(Resource):
                     # Tries to update account information of the user.
                     # If it fails, an error is raised.
                     try:
+                        # DO NOT FORGET TO WRITE CODE FOR PROFILE INFORMATION
+
                         for key, value in form.data:
                             if value:
                                 setattr(existing_user, key, value)
