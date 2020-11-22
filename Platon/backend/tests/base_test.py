@@ -15,8 +15,13 @@ class TestConfig:
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))  
 
     # Define the database - we are working with
-    DATABASE_URL = "admin:platon1234@platondbms.cchkgthejclc.eu-central-1.rds.amazonaws.com:3306"
-    SQLALCHEMY_DATABASE_URI = 'mysql://' + DATABASE_URL + '/platon_db_test'
+    mysql_user = "user"
+    mysql_password = "rootpassword"
+    mysql_host = "52.59.254.130"
+    mysql_port = "3306"
+    mysql_database = "platondb_test"
+
+    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://{}:{}@{}:{}/{}".format(mysql_user, mysql_password, mysql_host, mysql_port, mysql_database)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Application threads. A common general assumption is
