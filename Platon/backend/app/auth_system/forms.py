@@ -1,4 +1,4 @@
-from wtforms import Form, StringField, validators
+from wtforms import Form, StringField, IntegerField, BooleanField, validators
 from app import api
 from flask_restplus import reqparse, inputs
 
@@ -34,7 +34,7 @@ get_user_parser.add_argument("user_id", required=True, type=int, help="ID of the
 
 
 class CreateUserForm(Form):
-	e_mail = StringField("E-mail", validators=[validators.DataRequired(), validators.Email()])
+	e_mail = StringField("E-mail", validators=[validators.DataRequired()])
 	password = StringField("Password", validators=[validators.DataRequired()])
 	name = StringField("Name", validators=[validators.DataRequired()])
 	surname = StringField("Surname", validators=[validators.DataRequired()])
@@ -61,7 +61,7 @@ update_user_parser.add_argument("name", required=False, type=str, help="Name of 
 update_user_parser.add_argument("surname", required=False, type=str, help="Surname of the user", location="form")
 update_user_parser.add_argument("job", required=False, type=str, help="Job of the user", location="form")
 update_user_parser.add_argument("is_valid", required=False, type=inputs.boolean, help="The flag that shows whether the user account is activated or not.", location="form")
-update_user_parser.add_argument("is_private", required=False, type=type=inputs.boolean, help="The flag that shows whether the user's profile is public or private.", location="form")
+update_user_parser.add_argument("is_private", required=False, type=inputs.boolean, help="The flag that shows whether the user's profile is public or private.", location="form")
 update_user_parser.add_argument("profile_photo", required=False, type=str, help="Profile photo of the user", location="form")
 update_user_parser.add_argument("google_scholar_name", required=False, type=str, help="Google Scholar user name of the user", location="form")
 update_user_parser.add_argument("researchgate_name", required=False, type=str, help="ResearchGate user name of the user", location="form")

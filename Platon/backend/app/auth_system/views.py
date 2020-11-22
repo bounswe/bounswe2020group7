@@ -140,14 +140,13 @@ class User(Resource):
                 # If yes, user information is returned.
                 # If not, an error is raised.
                 if existing_user is not None:
-                    try:
-                        account_information = {
-                                                "name": existing_user.name,
-                                                "surname": existing_user.surname,
-                                                "google_scholar_name": existing_user.google_scholar_name,
-                                                "researchgate_name": existing_user.researchgate_name
-                                                }
-                        return make_response(jsonify(account_information), 200)
+                    account_information = {
+                                            "name": existing_user.name,
+                                            "surname": existing_user.surname,
+                                            "google_scholar_name": existing_user.google_scholar_name,
+                                            "researchgate_name": existing_user.researchgate_name
+                                            }
+                    return make_response(jsonify(account_information), 200)
                 else:
                     return make_response(jsonify({"error" : "The user is not found."}), 404)
         else:
@@ -272,7 +271,7 @@ class User(Resource):
     @api.doc(responses={
                 200: "User account has been successfully deleted.",
                 400: "Missing data fields or invalid data.",
-                401: "Wrong password."
+                401: "Wrong password.",
                 404: "The user is not found.",
                 500: "The server is not connected to the database."
             })
