@@ -9,8 +9,9 @@ from app.auth_system.forms import ResetPasswordGetForm,reset_password_get_parser
 from app.auth_system.forms import ResetPasswordPostForm,reset_password_post_parser
 from app.auth_system.forms import CreateUserForm, create_user_parser
 from app.auth_system.forms import UpdateUserForm, update_user_parser
+from app.auth_system.forms import DeleteUserForm, delete_user_parser
 from app.auth_system.models import User
-from app.auth_system.helpers import generate_token,send_email,login_required
+from app.auth_system.helpers import generate_token,send_email,login_required, hashed
 
 from hashlib import sha256
 import datetime
@@ -38,7 +39,7 @@ class LoginAPI(Resource):
                 return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
             if user is None:
                 return make_response(jsonify({'error' : 'User Not Found'}),404)
-            if user.password_hashed != sha256(form.password.data.encode('utf-8')).hexdigest():
+            if user.password_hashed != hashed(form.password.data):
                 return make_response(jsonify({'error' : 'Wrong e-mail or password'}),401)
             if not user.is_valid:
                 return make_response(jsonify({'error' : 'Please activate your account'}),401)
@@ -210,7 +211,49 @@ class User(Resource):
             return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
 
 
+    # DELETE request
+    @api.expect(delete_user_parser)
+    @api.doc(responses={
+                200: "User account has been successfully deleted.",
+                400: "Missing data fields or invalid data.",
+                401: "Wrong password."
+                404: "The user is not found.",
+                500: "The server is not connected to the database."
+            })
+    @login_required
+    def delete(user_id, self):
+        # Parses the form data.
+        form = DeleteUserForm(request.form)
         
+        # Checks whether the data is in valid form.
+        # If yes, starts processing the data.
+        # If not, an error is raised.
+        if form.validate():
+            # Checks whether there is an existing user in the database with the given user ID.
+            # If yes, starts processing the data.
+            # If not, an error is raised.
+            existing_user = User.query.filter_by(id=user_id).first()
+            if existing_user is not None:
+                # Checks whether the inputted password matches the password of the user.
+                # If yes, the user account gets deleted.
+                # If not, an error is raised.
+                if existing_user.password_hashed == hashed(form.password.data):
+                    # Tries to delete the user account.
+                    # If it fails, an error is raised.
+                    try:
+                        db.session.delete(existing_user)
+                        db.session.commit()
+                    except:
+                        return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+                    else:
+                        return make_response(jsonify({"message" : "User account has been successfully deleted."}), 200)
+                else:
+                    return make_response(jsonify({"error" : "Wrong password."}), 401)    
+            else:
+                return make_response(jsonify({"error" : "The user is not found."}), 404)
+        else:
+            return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
+
 
 
 def register_resources(api):

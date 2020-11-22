@@ -46,3 +46,6 @@ def send_email(recipient_email,subject,message_body,message_link):
         return True
     except:
         return False
+
+def hashed(password):
+    return sha256(password.encode('utf-8')).hexdigest()

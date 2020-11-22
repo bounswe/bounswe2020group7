@@ -60,3 +60,7 @@ update_user_parser.add_argument("profile_photo", required=False, type=str, help=
 update_user_parser.add_argument("google_scholar_name", required=False, type=str, help="Google Scholar user name of the user", location="form")
 update_user_parser.add_argument("researchgate_name", required=False, type=str, help="ResearchGate user name of the user", location="form")
 
+class DeleteUserForm(Form):
+	password = StringField("Password", validators=[validators.DataRequired()])
+delete_user_parser = reqparse.RequestParser()
+delete_user_parser.add_argument("password", required=True, type=str, help="Password of the user", location="form")
