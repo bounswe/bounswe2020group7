@@ -5,6 +5,7 @@ cache: npm
 
 before_install: cd Platon/frontend
 script:
+- rm -rf package-lock.json 
 - npm cache clean --force
 - npm install
 - npm run build
