@@ -112,6 +112,8 @@ class User(Resource):
     You can find the endpoints for creating, reading, updating and deleting a user below.
     '''
 
+
+
     # POST request
     @api.expect(create_user_parser)
     @api.doc(responses={
@@ -152,7 +154,7 @@ class User(Resource):
                 # Tries to send the activation mail to the user.
                 # If it fails, an error is raised.
                 try:
-                    account_activation_token = generate_token(new_user, datetime.timedelta(days=1))
+                    account_activation_token = generate_token(new_user.id, datetime.timedelta(days=1))
                     send_email(
                                 recipient_email=new_user.e_mail,
                                 subject="Activate Your Platon Account",
