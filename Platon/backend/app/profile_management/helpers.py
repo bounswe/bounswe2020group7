@@ -51,11 +51,11 @@ class ResearchInfoFetch():
             return
         try:
             for user in all_users:
-                all_research_of_user = ResearchInformation.query.filter((ResearchInformation.user_id == user.id)&(ResearchInformation.type == ResearchType.FETCHED)).all()
+                all_research_of_user = ResearchInformation.query.filter((ResearchInformation.user_id == user.id)&(ResearchInformation.type == int(ResearchType.FETCHED))).all()
                 all_research_new = ResearchInfoFetch.fetch_google_scholar_info(user.google_scholar_name) + ResearchInfoFetch.fetch_research_gate_info(user.researchgate_name)
                 for research in all_research_new:
                     if research['title'] not in [i.research_title for i in all_research_of_user]:
-                        db.seesion.add(ResearchInformation(user.id,research['title'],research['description'],research['year'],ResearchType.FETCHED))
+                        db.seesion.add(ResearchInformation(user.id,research['title'],research['description'],research['year'],int(ResearchType.FETCHED)))
                 for research in all_research_of_user:
                     if research.research_title not in [i['title'] for i in all_research_new]:
                         db.session.delete(research)
