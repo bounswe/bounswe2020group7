@@ -58,6 +58,8 @@ class BaseTest(TestCase):
         return create_app(TestConfig)
     
     def setUp(self):
+        db.session.remove()
+        db.drop_all()
         db.create_all()
     
     def tearDown(self):
