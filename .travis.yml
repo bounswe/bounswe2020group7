@@ -10,7 +10,7 @@ jobs:
         - pip install -r requirements.txt
       script:
         - python test.py
-    
+
     - stage: test
       language: node_js
       node_js:
@@ -20,8 +20,8 @@ jobs:
       install:
         - npm cache clean --force
         - npm install
-        - npm start
-    
+        - CI=false npm run build
+
     - stage: deploy
       if: branch = release AND type != pull_request
       language: python
@@ -35,6 +35,6 @@ jobs:
         - chmod 600 /tmp/deploy_rsa
         - ssh-add /tmp/deploy_rsa
       script: ssh deploy-user@52.59.254.130 'bash ~/deploy.sh'
-      
+
 notifications:
   email: false
