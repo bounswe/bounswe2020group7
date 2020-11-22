@@ -14,6 +14,9 @@ class ResearchInfoFetch():
         """
             Takes Google Scholar account id as input and returns fetches the works from Google Scholar
         """
+        if username is None:
+            return []
+
         api_url = "http://cse.bth.se/~fer/googlescholar-api/googlescholar.php?user={}".format(username)
         try:
             response = requests.get(api_url)
@@ -27,6 +30,8 @@ class ResearchInfoFetch():
         '''
         Extracts Google Scholar account ID from Google Scholar profile page URL.
         '''
+        if URL is None:
+            return None
         return URL.split("?user=", 1)[1].split("&",1)[0]
     
     @staticmethod
@@ -34,6 +39,9 @@ class ResearchInfoFetch():
         """
             Takes Research Gate profile URL as input and returns fetches the works from Research Gate
         """
+        if username is None:
+            return []
+
         api_url = "{}/research".format(username)
         try:
             response = requests.get(api_url)

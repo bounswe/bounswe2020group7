@@ -14,6 +14,7 @@ from app.auth_system.forms import DeleteUserForm, delete_user_parser
 from app.auth_system.models import User
 from app.profile_management.models import Jobs
 from app.auth_system.helpers import generate_token,send_email,login_required, hashed
+from app.profile_management.helpers import ResearchInfoFetch
 
 from hashlib import sha256
 import datetime
@@ -234,9 +235,9 @@ class UserAPI(Resource):
                                         surname=form.surname.data,
                                         is_private=False,
                                         rate=-1.0,
-                                        profile_photo=None,
-                                        google_scholar_name=None,
-                                        researchgate_name=None,
+                                        profile_photo=form.data.items().get("profile_photo"),
+                                        google_scholar_name=form.data.items().get("google_scholar_name"),
+                                        researchgate_name=form.data.items().get("researchgate_name"),
                                         job_id=new_user_job.id
                                         )
                         # DO NOT FORGET TO WRITE CODE FOR "JOB" CREATION
@@ -245,6 +246,12 @@ class UserAPI(Resource):
                     except:
                         return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
                     
+                    # Tries to update the research information of the newly registered user.
+                    try:
+                        ResearchInfoFetch.update_research_info(new_user.id)
+                    except Exception as e:
+                        print(str(e))
+
                     # Tries to send the activation mail to the user.
                     # If it fails, an error is raised.
                     try:
@@ -317,8 +324,14 @@ class UserAPI(Resource):
                         db.session.commit()
                     except:
                         return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
-                    else:
-                        return make_response(jsonify({"message" : "Account information has been successfully updated."}), 200)
+                    
+                    # Tries to update the research information of the newly updated user.
+                    try:
+                        ResearchInfoFetch.update_research_info(new_user.id)
+                    except Exception as e:
+                        print(str(e))
+                    
+                    return make_response(jsonify({"message" : "Account information has been successfully updated."}), 200)
                 else:
                     return make_response(jsonify({"error" : "The user is not found."}), 404)
         else:
@@ -373,7 +386,6 @@ class UserAPI(Resource):
                     return make_response(jsonify({"error" : "The user is not found."}), 404)
         else:
             return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
-
 
 
 def register_resources(api):
