@@ -4,7 +4,9 @@ DEBUG = True
 
 # Define the application directory
 import os
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))  
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
+FRONTEND_HOSTNAME = "ec2-52-59-254-130.eu-central-1.compute.amazonaws.com/"
 
 # Define the database - we are working with
 mysql_user = os.getenv('MYSQL_USER')
