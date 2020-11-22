@@ -10,7 +10,7 @@ import Login from './components/Login/Login'
 import Register from './components/Register/Register'
 import ProfilePage from './components/ProfilePage/ProfilePage'
 import EditProfile from './components/EditProfile/EditProfile';
-
+import Activation from './components/Activation/Activation'
 
 class App extends Component {
   constructor(props) {
@@ -30,11 +30,12 @@ class App extends Component {
     return (
       <Router>
       <div className="App">
+      <Route path='/activate/' component={Activation}/>
+
       <Route path='/' exact
         render ={ () => !this.state.isAuthenticated ?
               <Landing/>
               : <HomePage/>}/>
-
       <Route path='/profile' exact  component={ProfilePage}/>
       <Route path='/editprofile' exact  component={EditProfile}/>
 

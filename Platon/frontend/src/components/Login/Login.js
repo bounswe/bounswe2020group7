@@ -1,4 +1,3 @@
-
 import { React, Component } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
@@ -17,11 +16,10 @@ import Snackbar from "@material-ui/core/Snackbar";
 import AppBar from "../AppBar/AppBar";
 import "./Login.css";
 import config from "../../utils/config";
-import axios from 'axios'
+import axios from "axios";
 const CssTextField = withStyles({
   root: {
     "& .MuiInputBase-input": {
-
       color: colors.secondary,
     },
     "& .Mui-required": {
@@ -42,7 +40,6 @@ const CssTextField = withStyles({
         borderColor: colors.secondaryDark,
       },
       "&.Mui-focused fieldset": {
-
         borderColor: colors.tertiary,
       },
     },
@@ -58,7 +55,6 @@ const StyledButton = withStyles({
       backgroundColor: colors.tertiaryDark,
     },
   },
-
 })(Button);
 
 const StyledLink = withStyles({
@@ -73,7 +69,6 @@ const useStyles = (theme) => ({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-
   },
 
   typography: {
@@ -85,7 +80,6 @@ const useStyles = (theme) => ({
     color: colors.secondary,
   },
   form: {
-
     width: "100%", // Fix IE 11 issue.
 
     marginTop: theme.spacing(1),
@@ -102,7 +96,6 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-
       email: "",
       password: "",
       fieldEmptyError: false,
@@ -132,30 +125,52 @@ class Login extends Component {
       this.setState({ fieldEmptyError: "Fields are required" });
       return;
     }
-    if (!/\S+@\S+\.\S+/.test(this.state.email) ) {
+    if (!/\S+@\S+\.\S+/.test(this.state.email)) {
       this.setState({ fieldEmptyError: "Invalid email" });
       return;
     }
 
-    const url = config.BASE_URL
-    const data = { e_mail: this.state.email, password: this.state.password };
+    const url = config.BASE_URL;
+    let formData = new FormData();
+
+    formData.append("e_mail", this.state.email);
+    formData.append("password", this.state.password);
+
     /*
     fetch(url+"/api/auth_system/login", {
       method: "POST",
       body: JSON.stringify(data),
     })*/
-    axios.post(url+ "/api/auth_system/login", { e_mail: this.state.email, password: this.state.password })
+    axios
+      .post(url + "/api/auth_system/login", formData)
       .then((response) => {
+        console.log(response);
         if (response.status === 200) {
           this.setState({ isLoggedIn: true });
           this.props.handlerIsAuthenticated();
         }
         return response.json();
       })
-      .catch((err) => {
-        this.setState({ showError: "Error occured. Check your credientials." });
-        console.log(err);
+      .catch((error) => {
+        if (error.response) {
+          if (error.response.status === 401) {
+            this.setState({
+              showError:
+                "Error occured. Make sure you have verified your account.",
+            });
+          } else {
+            this.setState({
+              showError: "Error occured. Check your credientials.",
+            });
+          }
+        } else {
+          this.setState({
+            showError: "Error occured. Check your credientials.",
+          });
+        }
+        console.log(error)
       });
+
     //const data = { email: this.state.email, password: this.state.password }
     /*axios.post(url, { email: this.state.email, password: this.state.password })
     .then( (response) => {
@@ -169,7 +184,6 @@ class Login extends Component {
       debugger;
       console.log(error);
     });*/
-
   };
   render() {
     if (this.state.isLoggedIn) {
@@ -275,11 +289,8 @@ class Login extends Component {
           </Container>
         </div>
       </div>
-
     );
   }
 }
 
-
 export default withStyles(useStyles)(Login);
-
