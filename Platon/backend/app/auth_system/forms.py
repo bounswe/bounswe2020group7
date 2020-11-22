@@ -33,6 +33,10 @@ get_user_parser = reqparse.RequestParser()
 get_user_parser.add_argument("user_id", required=True, type=int, help="ID of the requested user.", location="args")
 
 
+get_self_parser = reqparse.RequestParser()
+get_self_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
+
+
 class CreateUserForm(Form):
 	e_mail = StringField("E-mail", validators=[validators.DataRequired()])
 	password = StringField("Password", validators=[validators.DataRequired()])
@@ -65,8 +69,11 @@ update_user_parser.add_argument("is_private", required=False, type=inputs.boolea
 update_user_parser.add_argument("profile_photo", required=False, type=str, help="Profile photo of the user", location="form")
 update_user_parser.add_argument("google_scholar_name", required=False, type=str, help="Google Scholar user name of the user", location="form")
 update_user_parser.add_argument("researchgate_name", required=False, type=str, help="ResearchGate user name of the user", location="form")
+update_user_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
+
 
 class DeleteUserForm(Form):
 	password = StringField("Password", validators=[validators.DataRequired()])
 delete_user_parser = reqparse.RequestParser()
 delete_user_parser.add_argument("password", required=True, type=str, help="Password of the user", location="form")
+delete_user_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")

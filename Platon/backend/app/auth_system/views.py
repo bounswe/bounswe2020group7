@@ -12,6 +12,7 @@ from app.auth_system.forms import CreateUserForm, create_user_parser
 from app.auth_system.forms import UpdateUserForm, update_user_parser
 from app.auth_system.forms import DeleteUserForm, delete_user_parser
 from app.auth_system.models import User
+from app.profile_management.models import Jobs
 from app.auth_system.helpers import generate_token,send_email,login_required, hashed
 
 from hashlib import sha256
@@ -119,7 +120,7 @@ class UserAPI(Resource):
                 200: "User has been found.",
                 400: "Missing data fields or invalid data.",
                 404: "The user is not found.",
-                500: "The server is not connected to the database.",
+                500: "The server is not connected to the database."
             })
     def get(self):
         # Parses the form data.
@@ -154,6 +155,36 @@ class UserAPI(Resource):
             return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
 
 
+    # GET request (for the logged-in user to get their own user information)
+    @api.expect(get_self_parser)
+    @api.doc(responses={
+                200: "User has been found.",
+                404: "The user is not found.",
+                500: "The server is not connected to the database."
+            })
+    @login_required
+    def get(user_id, self):
+        # Tries to connect to the database.
+        # If it fails, an error is raised.
+        try:
+            logged_in_user = User.query.filter_by(id=user_id).first()
+        except:
+            return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+        else:
+            # Checks whether there is an already existing user in the database with the given user ID.
+            # If yes, user information is returned.
+            # If not, an error is raised.
+            if logged_in_user is not None:
+                account_information = {
+                                        "name": logged_in_user.name,
+                                        "surname": logged_in_user.surname,
+                                        "google_scholar_name": logged_in_user.google_scholar_name,
+                                        "researchgate_name": logged_in_user.researchgate_name
+                                        }
+                return make_response(jsonify(account_information), 200)
+            else:
+                return make_response(jsonify({"error" : "The user is not found."}), 404)
+
 
     # POST request
     @api.expect(create_user_parser)
@@ -186,6 +217,16 @@ class UserAPI(Resource):
                     # Tries to add the user to the database.
                     # If it fails, an error is raised.
                     try:
+                        # Checks whether the inputted job already exists in the database,
+                        # If not, adds the job to the database.
+                        # If yes, gets the ID of the job and writes it to the new user's "job_id" field.
+                        job_name = form.job.data.title()
+                        new_user_job = Jobs.query.filter_by(name=job_name).first()
+                        if new_user_job is None:
+                            new_user_job = Jobs(name=job_name)
+                            db.session.add(new_user_job)
+                            db.session.commit()
+
                         new_user = User(is_valid=False,
                                         e_mail=form.e_mail.data,
                                         password_hashed=hashed(form.password.data),
@@ -195,7 +236,8 @@ class UserAPI(Resource):
                                         rate=-1.0,
                                         profile_photo=None,
                                         google_scholar_name=None,
-                                        researchgate_name=None
+                                        researchgate_name=None,
+                                        job_id=new_user_job.id
                                         )
                         # DO NOT FORGET TO WRITE CODE FOR "JOB" CREATION
                         db.session.add(new_user)
@@ -212,8 +254,7 @@ class UserAPI(Resource):
                                     subject="Activate Your Platon Account",
                                     message_body='''Please activate your Platon account by clicking the activation link below.
                                                     Do not forget to activate your account today, the link expires in one day!''',
-                                    # WARNING! This URL should NOT be hard coded as below. Please update this line.
-                                    message_link="http://{}?token={}".format(app.config["FRONTEND_HOSTNAME"],account_activation_token)
+                                    message_link="http://{}/activate_account?token={}".format("FRONTEND_HOSTNAME",account_activation_token)
                                     )
                     except:
                         return make_response(jsonify({"error" : "The server could not send the account activation e-mail."}), 503)
@@ -256,8 +297,19 @@ class UserAPI(Resource):
                     # Tries to update account information of the user.
                     # If it fails, an error is raised.
                     try:
-                        # DO NOT FORGET TO WRITE CODE FOR PROFILE INFORMATION
+                        # Checks whether the inputted job already exists in the database,
+                        # If not, adds the job to the database.
+                        # If yes, gets the ID of the job and writes it to the new user's "job_id" field.
+                        job_name = form.job.data.title()
+                        new_user_job = Jobs.query.filter_by(name=job_name).first()
+                        if new_user_job is None:
+                            new_user_job = Jobs(name=job_name)
+                            db.session.add(new_user_job)
+                            db.session.commit()
 
+
+                        # Replaces the "job" in the form data with its ID.
+                        form.data["job"] = new_user_job.id
                         for key, value in form.data.items():
                             if value:
                                 setattr(existing_user, key, value)
