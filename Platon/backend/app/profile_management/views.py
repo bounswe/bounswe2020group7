@@ -1,6 +1,6 @@
 from flask import make_response,jsonify,request
 from flask_restplus import Resource,Namespace
-from enum import Enum
+from enum import IntEnum
 
 from app.auth_system.helpers import login_required
 from app.auth_system.models import User
@@ -13,7 +13,7 @@ from app.profile_management.models import ResearchInformation,Notification,Notif
 from app.profile_management.helpers import schedule_regularly
 from app import api, db
 
-class ResearchType(Enum):
+class ResearchType(IntEnum):
     HAND_WRITTEN = 0
     FETCHED = 1
 
@@ -53,7 +53,7 @@ class ResearchInformationAPI(Resource):
         """
         form = ResearchInfoPostForm(request.form)
         if form.validate():
-            new_research_info = ResearchInformation(user_id,form.research_title.data,form.description.data,form.year.data,ResearchType.HAND_WRITTEN)
+            new_research_info = ResearchInformation(user_id,form.research_title.data,form.description.data,form.year.data,int(ResearchType.HAND_WRITTEN))
             try:
                 db.session.add(new_research_info)
                 db.session.commit()

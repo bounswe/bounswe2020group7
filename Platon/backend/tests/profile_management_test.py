@@ -24,9 +24,9 @@ class ResearchInfoTests(BaseTest):
             db.session.add(user)
         db.session.commit()
         research_infos = [
-            ResearchInformation(1,"Multi Model Sensor Fusion","A Multi Model Sensor Fusion using Extended Kalman Filters",2020,ResearchType.FETCHED),
-            ResearchInformation(1,"Estimating Channel Coefficients using ANN","Using a CNN Model Estimate Channel Coefficients of a 2D Diffusion based Channel",2020,ResearchType.HAND_WRITTEN),
-            ResearchInformation(2,"An Academic Collaboration Platform","An Academic Collaboration Platform named Platon",2020,ResearchType.FETCHED)
+            ResearchInformation(1,"Multi Model Sensor Fusion","A Multi Model Sensor Fusion using Extended Kalman Filters",2020,int(ResearchType.FETCHED)),
+            ResearchInformation(1,"Estimating Channel Coefficients using ANN","Using a CNN Model Estimate Channel Coefficients of a 2D Diffusion based Channel",2020,int(ResearchType.HAND_WRITTEN)),
+            ResearchInformation(2,"An Academic Collaboration Platform","An Academic Collaboration Platform named Platon",2020,int(ResearchType.FETCHED))
 
         ]
         for research_info in research_infos:
@@ -225,7 +225,7 @@ class NotificationTests(BaseTest):
         valid_token = generate_token(2,TestConfig.SESSION_DURATION)
         notification = Notification.query.filter(Notification.id == 2).first()
 
-        expected_response = [{'id':2,'text': 'Umut deletes a workspace','link':'/workspace/1', 'timestamp' : notification.timestamp.,'related_users': [1]}]
+        expected_response = [{'id':2,'text': 'Umut deletes a workspace','link':'/workspace/1', 'timestamp' : notification.timestamp,'related_users': [1]}]
         actual_response = self.client.get("/api/profile/notifications",headers = {"auth_token" : valid_token})
         
         self.assertEqual(actual_response.status_code,200)
