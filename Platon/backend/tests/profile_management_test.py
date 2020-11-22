@@ -146,8 +146,11 @@ class ResearchInfoTests(BaseTest):
             }
                 ]
         actual_result = ResearchInfoFetch.fetch_research_gate_info(RG_name)
-        for i in expected_response:
-            self.assertIn(i,actual_result)
+        if actual_result == []:
+            self.assertTrue()
+        else:
+            for i in expected_response:
+                self.assertIn(i,actual_result)
     
     def test_fetch_GS_info(self):
         GS_info = "QAzjUf8AAAAJ"
@@ -258,4 +261,3 @@ class NotificationTests(BaseTest):
         self.assertEqual(expected_response,json.loads(actual_response.data))
         self.assertIsNotNone(Notification.query.filter(Notification.id == 1).first())
         self.assertIsNotNone(NotificationRelatedUser.query.filter(NotificationRelatedUser.notification_id == 1).first())
-
