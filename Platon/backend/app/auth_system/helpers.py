@@ -32,8 +32,8 @@ def login_required(func):
                 return make_response(jsonify({'error' : 'Expired Token'}),401)
         except:
             return make_response(jsonify({'error' : 'Wrong Token Format'}),401)
-        new_token = generate_token(auth_info['id'],app.config['SESSION_DURATION'])
         response = func(auth_info['id'],*args,**kws)
+        new_token = generate_token(auth_info['id'],app.config['SESSION_DURATION'])
         response.headers["auth_token"] = new_token
         return response
         

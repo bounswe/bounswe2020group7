@@ -49,7 +49,7 @@ class LoginTest(BaseTest):
         self.assertEqual(json.loads(actual_response.data)['error'],expected_response['error'],'Incorrect Error Message')
     
 
-class ReserPasswordTest(BaseTest):
+class ResetPasswordTest(BaseTest):
     """
         Unit Tests of the reset password module
     """
