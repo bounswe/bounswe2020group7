@@ -1,0 +1,6 @@
+.dockerignore
+venv
+.venv
+.git
+.cache
+migrations
