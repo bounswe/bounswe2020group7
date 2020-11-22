@@ -2,7 +2,6 @@ import './App.css';
 import Landing from './components/Landing/Landing';
 import React, { Component } from 'react';
 
-import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
 import HomePage from './components/HomePage/HomePage'
 import {BrowserRouter as Router, Route} from 'react-router-dom'
 import ForgotPassword from './components/ForgotPassword/ForgotPassword'
@@ -34,8 +33,8 @@ class App extends Component {
       <Route path='/' exact
         render ={ () => !this.state.isAuthenticated ?
               <Landing/>
-              : <h1>Home</h1>}/>
-      
+              : <HomePage/>}/>
+
       <Route path='/profile' exact  component={ProfilePage}/>
       <Route path='/editprofile' exact  component={EditProfile}/>
 

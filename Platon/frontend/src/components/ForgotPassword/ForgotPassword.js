@@ -14,7 +14,7 @@ import HomeIcon from "@material-ui/icons/Home";
 import { Link as RouteLink } from "react-router-dom";
 import "./ForgotPassword.css";
 import Snackbar from "@material-ui/core/Snackbar";
-
+import config from "../../utils/config";
 const CssTextField = withStyles({
   root: {
     "& .MuiInputBase-input": {
@@ -108,10 +108,10 @@ class ForgotPassword extends Component {
       this.setState({ fieldEmptyError: "Invalid email" });
       return;
     }
-    const url = "https://react-my-burger-78df4.firebaseio.com";
-    const data = { email: this.state.email };
-    fetch(url + "/forgotpassword.json", {
-      method: "POST",
+    const url = config.BASE_URL
+    const data = { e_mail: this.state.email };
+    fetch(url + "/auth_system/reset_password", {
+      method: "GET",
       body: JSON.stringify(data),
     })
       .then((response) => {

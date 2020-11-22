@@ -4,7 +4,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 import colors from "../../utils/colors";
-
+import {Link} from 'react-router-dom'
 const { SubMenu } = Menu;
 
 class Sider extends React.Component {
@@ -33,9 +33,10 @@ class Sider extends React.Component {
                     }
                 >
                 </SubMenu>
+                <Link to ='/profile'>
                 <SubMenu key="sub2" icon={<AppstoreOutlined />}  title=" Profile">
 
-                </SubMenu>
+                </SubMenu></Link>
                 <SubMenu
                     key="sub4"
                     title="Messages">

@@ -73,7 +73,7 @@ export default function CustomizedDialogs() {
         open={open}
       >
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-          Terms and Conditions
+          Platon
         </DialogTitle>
         <DialogContent dividers>
           <Typography gutterBottom>
