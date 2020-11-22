@@ -17,6 +17,7 @@ import Snackbar from "@material-ui/core/Snackbar";
 import AppBar from "../AppBar/AppBar";
 import "./Login.css";
 import config from "../../utils/config";
+import axios from 'axios'
 const CssTextField = withStyles({
   root: {
     "& .MuiInputBase-input": {
@@ -138,11 +139,12 @@ class Login extends Component {
 
     const url = config.BASE_URL
     const data = { e_mail: this.state.email, password: this.state.password };
-    fetch(url+"/users.json", {
-
+    /*
+    fetch(url+"/api/auth_system/login", {
       method: "POST",
       body: JSON.stringify(data),
-    })
+    })*/
+    axios.post(url+ "/api/auth_system/login", { e_mail: this.state.email, password: this.state.password })
       .then((response) => {
         if (response.status === 200) {
           this.setState({ isLoggedIn: true });
@@ -153,7 +155,6 @@ class Login extends Component {
       .catch((err) => {
         this.setState({ showError: "Error occured. Check your credientials." });
         console.log(err);
-
       });
     //const data = { email: this.state.email, password: this.state.password }
     /*axios.post(url, { email: this.state.email, password: this.state.password })
