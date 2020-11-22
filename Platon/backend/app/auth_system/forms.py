@@ -43,12 +43,18 @@ class CreateUserForm(Form):
 	name = StringField("Name", validators=[validators.DataRequired()])
 	surname = StringField("Surname", validators=[validators.DataRequired()])
 	job = StringField("Job", validators=[validators.DataRequired()])
+	profile_photo = StringField("Profile Photo", validators=[validators.optional()])
+	google_scholar_name = StringField("Google Scholar Name", validators=[validators.optional()])
+	researchgate_name = StringField("ResearchGate Name", validators=[validators.optional()])
 create_user_parser = reqparse.RequestParser()
 create_user_parser.add_argument("e_mail", required=True, type=str, help="E-mail address of the new user", location="form")
 create_user_parser.add_argument("password", required=True, type=str, help="Password of the new user", location="form")
 create_user_parser.add_argument("name", required=True, type=str, help="Name of the new user", location="form")
 create_user_parser.add_argument("surname", required=True, type=str, help="Surname of the new user", location="form")
 create_user_parser.add_argument("job", required=True, type=str, help="Job of the new user", location="form")
+create_user_parser.add_argument("profile_photo", required=False, type=str, help="URL of the profile picture of the user", location="form")
+create_user_parser.add_argument("google_scholar_name", required=False, type=str, help="URL of the Google Scholar page of the user", location="form")
+create_user_parser.add_argument("researchgate_name", required=False, type=str, help="URL of the ResearchGate page of the user", location="form")
 
 
 class UpdateUserForm(Form):
@@ -66,9 +72,9 @@ update_user_parser.add_argument("surname", required=False, type=str, help="Surna
 update_user_parser.add_argument("job", required=False, type=str, help="Job of the user", location="form")
 update_user_parser.add_argument("is_valid", required=False, type=inputs.boolean, help="The flag that shows whether the user account is activated or not.", location="form")
 update_user_parser.add_argument("is_private", required=False, type=inputs.boolean, help="The flag that shows whether the user's profile is public or private.", location="form")
-update_user_parser.add_argument("profile_photo", required=False, type=str, help="Profile photo of the user", location="form")
-update_user_parser.add_argument("google_scholar_name", required=False, type=str, help="Google Scholar user name of the user", location="form")
-update_user_parser.add_argument("researchgate_name", required=False, type=str, help="ResearchGate user name of the user", location="form")
+update_user_parser.add_argument("profile_photo", required=False, type=str, help="URL of the profile picture of the user", location="form")
+update_user_parser.add_argument("google_scholar_name", required=False, type=str, help="URL of the Google Scholar page of the user", location="form")
+update_user_parser.add_argument("researchgate_name", required=False, type=str, help="URL of the ResearchGate page of the user", location="form")
 update_user_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
 
 
