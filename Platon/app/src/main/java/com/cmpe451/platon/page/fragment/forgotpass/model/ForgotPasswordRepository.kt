@@ -24,8 +24,6 @@ class ForgotPasswordRepository(val sharedPreferences: SharedPreferences) {
 
         val call = service.resetPasswordSendKeycode(mail)
 
-        sharedPreferences.edit().remove("reset_key_sent").apply()
-        sharedPreferences.edit().remove("reset_key_sent_fail").apply()
 
 
         val callback: Callback<JsonObject?> = object: Callback<JsonObject?>{

@@ -1,6 +1,8 @@
 package com.cmpe451.platon.page.fragment.register.presenter
 
 import android.content.SharedPreferences
+import android.os.Handler
+import android.os.HandlerThread
 import android.util.Log
 import android.util.Patterns
 import android.widget.CheckBox
@@ -9,6 +11,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import com.cmpe451.platon.core.BaseActivity
+import com.cmpe451.platon.page.fragment.preLogin.view.PreLoginFragmentDirections
 import com.cmpe451.platon.page.fragment.register.contract.RegisterContract
 import com.cmpe451.platon.page.fragment.register.model.RegisterRepository
 import com.cmpe451.platon.page.fragment.register.view.RegisterFragment
@@ -75,7 +78,45 @@ class RegisterPresenter(private var view: RegisterContract.View?, private var re
 
         if (!flag) {
             if(repository.postRegister(firstNameStr, lastNameStr, mailStr, jobStr, pass1Str)){
-                Toast.makeText((view as Fragment).activity, "Success", Toast.LENGTH_LONG).show()
+
+                val ht = HandlerThread("MyHandlerThread")
+                ht.start()
+                val handler = Handler(ht.looper)
+                val runnable = Runnable {
+                    var registerFail = false
+                    var registerSuccess = false
+
+                    var counter = 50
+                    while(!registerFail && counter > 0 && !registerSuccess ){
+                        registerFail =  sharedPreferences.getBoolean("register_fail", false)
+                        registerSuccess= sharedPreferences.getBoolean("register_success", false)
+                        Thread.sleep(250)
+                        counter -= 1
+                    }
+
+                    when{
+                        registerSuccess ->{
+                            val runner = Runnable {
+                                val action = PreLoginFragmentDirections.actionPreLoginFragmentToLoginFragment()
+                                navController.navigateUp()
+                                navController.navigate(action)
+                            }
+                            Toast.makeText((view as Fragment).activity, "Successfully registered!", Toast.LENGTH_LONG).show()
+                            ((view as Fragment).activity as BaseActivity).runOnUiThread(runner)
+                        }
+                        registerFail->{
+                            Toast.makeText((view as Fragment).activity, "Failed to register!", Toast.LENGTH_LONG).show()
+                        }
+                        else ->{
+                            Toast.makeText((view as Fragment).activity, "Server not responding!", Toast.LENGTH_LONG).show()
+                        }
+                    }
+
+                    sharedPreferences.edit().remove("register_fail").apply()
+                    sharedPreferences.edit().remove("register_success").apply()
+
+                }
+                handler.post(runnable)
             }else{
                 Toast.makeText((view as Fragment).activity, "Error", Toast.LENGTH_LONG).show()
             }
