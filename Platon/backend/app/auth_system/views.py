@@ -296,8 +296,18 @@ class UserAPI(Resource):
                     # Tries to update account information of the user.
                     # If it fails, an error is raised.
                     try:
-                        # DO NOT FORGET TO WRITE CODE FOR PROFILE INFORMATION
+                        # Checks whether the inputted job already exists in the database,
+                        # If not, adds the job to the database.
+                        # If yes, gets the ID of the job and writes it to the new user's "job_id" field.
+                        job_name = form.job.data.title()
+                        new_user_job = Jobs.query.filter_by(name=job_name).first()
+                        if new_user_job is None:
+                            new_user_job = Jobs(name=job_name)
+                            db.session.add(new_user_job)
+                            db.session.commit()
 
+                        # Replaces the "job" in the form data with its ID.
+                        form.data["job"] = new_user_job.id
                         for key, value in form.data.items():
                             if value:
                                 setattr(existing_user, key, value)
