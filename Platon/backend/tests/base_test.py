@@ -2,6 +2,7 @@ from flask_testing import TestCase
 from app import create_app, db
 import unittest
 import datetime
+import sqlalchemy
 
 class TestConfig:
 
@@ -15,7 +16,7 @@ class TestConfig:
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))  
 
     # Define the database - we are working with
-    mysql_user = "user"
+    mysql_user = "root"
     mysql_password = "rootpassword"
     mysql_host = "52.59.254.130"
     mysql_port = "3306"
@@ -51,6 +52,7 @@ class TestConfig:
     SECRET_KEY = "secret"
 
 class BaseTest(TestCase):
+    engine = sqlalchemy.create_engine("mysql+pymysql://root:rootpassword@52.59.254.130:3306")
 
     def create_app(self):
         # pass in test configuration

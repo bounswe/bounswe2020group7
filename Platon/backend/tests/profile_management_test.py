@@ -14,8 +14,7 @@ import json
 class ResearchInfoTests(BaseTest):
     
     def setUp(self):
-        super().setUp()
-        # Add artificia users to test login feature
+        # Add artificial users to test login feature
         users = [
             User("umut@deneme.com",True,"b73ec5e4625ffcb6d0d70826f33be7a75d45b37046e26c4b60d9111266d70e32",3.5,"Umut","Özdemir",False,None,None,None),
             User("can@deneme.com",False,"cce0c2170d1ae52e099c716165d80119ee36840e3252e57f2b2b4d6bb111d8a5",4.6,"Can","Deneme",True,None,None,None)
@@ -24,9 +23,9 @@ class ResearchInfoTests(BaseTest):
             db.session.add(user)
         db.session.commit()
         research_infos = [
-            ResearchInformation(1,"Multi Model Sensor Fusion","A Multi Model Sensor Fusion using Extended Kalman Filters",2020,ResearchType.FETCHED),
-            ResearchInformation(1,"Estimating Channel Coefficients using ANN","Using a CNN Model Estimate Channel Coefficients of a 2D Diffusion based Channel",2020,ResearchType.HAND_WRITTEN),
-            ResearchInformation(2,"An Academic Collaboration Platform","An Academic Collaboration Platform named Platon",2020,ResearchType.FETCHED)
+            ResearchInformation(1,"Multi Model Sensor Fusion","A Multi Model Sensor Fusion using Extended Kalman Filters",2020,int(ResearchType.FETCHED)),
+            ResearchInformation(1,"Estimating Channel Coefficients using ANN","Using a CNN Model Estimate Channel Coefficients of a 2D Diffusion based Channel",2020,int(ResearchType.HAND_WRITTEN)),
+            ResearchInformation(2,"An Academic Collaboration Platform","An Academic Collaboration Platform named Platon",2020,int(ResearchType.FETCHED))
 
         ]
         for research_info in research_infos:
@@ -54,7 +53,6 @@ class ResearchInfoTests(BaseTest):
         self.assertEqual(expected_response,json.loads(actual_response.data))
         self.assertEqual(201,actual_response.status_code)
         self.assertIsNotNone(ResearchInformation.query.filter(ResearchInformation.research_title == 'Radar Preprocessing using DBCAN Clustring').first())
-    
 
     def test_add_research_info_invalid(self):
         valid_token = generate_token(1,TestConfig.SESSION_DURATION)
@@ -188,4 +186,3 @@ class ResearchInfoTests(BaseTest):
         actual_result = ResearchInfoFetch.fetch_google_scholar_info(GS_info)
         for i in expected_response:
             self.assertIn(i,actual_result)
-    
