@@ -16,14 +16,24 @@ import Snackbar from "@material-ui/core/Snackbar";
 import AppBar from "../AppBar/AppBar";
 import TermsConditions from './TermsConditions/TermsConditions'
 import "./Register.css";
+import config from "../../utils/config";
+import axios from 'axios'
+
 const StyledTextField = withStyles({
   root: {
     "& .MuiInputBase-input": {
+
       color: colors.secondary,
     },
     "& .Mui-required": {
       color: colors.primaryLight,
     },
+
+    "& .MuiFormLabel-root": {
+      color: colors.primaryLight,
+    },
+
+
     "& label.Mui-focused": {
       color: colors.tertiary,
     },
@@ -48,6 +58,7 @@ const StyledButton = withStyles({
   root: {
     background: colors.tertiary,
     color: colors.secondary,
+
     "&:hover": {
       backgroundColor: colors.tertiaryDark,
     },
@@ -76,6 +87,7 @@ const StyledCheckbox = withStyles({
   checked: {},
 })(Checkbox);
 
+
 const useStyles = (theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -92,12 +104,14 @@ const useStyles = (theme) => ({
     color: colors.secondary,
   },
   form: {
+
     width: "100%", // Fix IE 11 issue.
     marginTop: theme.spacing(3),
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+
 });
 
 function Alert(props) {
@@ -162,20 +176,22 @@ class Register extends Component {
       this.setState({ fieldEmptyError: "Invalid email" });
       return;
     }
-    const url = "https://react-my-burger-78df4.firebaseio.com";
-    const data = {
-      firstName: this.state.firstName,
-      lastName: this.state.lastName,
-      email: this.state.email,
-      password: this.state.password,
-      job: this.state.job,
-    };
-    fetch(url + '/register.json', {
-      method: "POST",
-      body: JSON.stringify(data),
-    })
+
+    const url = config.BASE_URL
+
+    let formData = new FormData();
+
+    formData.append("e_mail", this.state.email);
+    formData.append("password",this.state.password);
+    formData.append("name",this.state.firstName);
+    formData.append("surname",this.state.lastName);
+    formData.append("job",this.state.job);
+
+
+    axios.post(url+ "/api/auth_system/user", formData)
       .then((response) => {
-        if (response.status === 200) {
+        console.log(response)
+        if (response.status === 201) {
           this.setState({
             showSuccess: "Successfully registered. Please login to continue.",
           });

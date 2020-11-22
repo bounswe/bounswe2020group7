@@ -27,7 +27,6 @@ const TrendingProjects = () => {
       <div className="TrendingProjectsItems">
       {Object.keys(trendingProjectsList).map((projects, index) => (
           <TrendingProjectsItem project={trendingProjectsList[projects]} key={index} id = {index}/>
-
       ))}
     </div>
     </div>
