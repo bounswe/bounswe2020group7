@@ -1,6 +1,6 @@
 from wtforms import Form, StringField, validators
 from app import api
-from flask_restplus import reqparse
+from flask_restplus import reqparse, inputs
 
 class LoginForm(Form):
     e_mail = StringField("e_mail",validators=[validators.DataRequired()])
@@ -39,3 +39,24 @@ create_user_parser.add_argument("password", required=True, type=str, help="Passw
 create_user_parser.add_argument("name", required=True, type=str, help="Name of the new user", location="form")
 create_user_parser.add_argument("surname", required=True, type=str, help="Surname of the new user", location="form")
 create_user_parser.add_argument("job", required=True, type=str, help="Job of the new user", location="form")
+
+
+class UpdateUserForm(Form):
+	name = StringField("Name", validators=[validators.optional()])
+	surname = StringField("Surname", validators=[validators.optional()])
+	job = StringField("Job", validators=[validators.optional()])
+	is_valid = BooleanField("Activation State", validators=[validators.optional()])
+	is_private = BooleanField("Public/Private State", validators=[validators.optional()])
+	profile_photo = StringField("Profile Photo", validators=[validators.optional()])
+	google_scholar_name = StringField("Google Scholar Name", validators=[validators.optional()])
+	researchgate_name = StringField("ResearchGate Name", validators=[validators.optional()])
+update_user_parser = reqparse.RequestParser()
+update_user_parser.add_argument("name", required=False, type=str, help="Name of the user", location="form")
+update_user_parser.add_argument("surname", required=False, type=str, help="Surname of the user", location="form")
+update_user_parser.add_argument("job", required=False, type=str, help="Job of the user", location="form")
+update_user_parser.add_argument("is_valid", required=False, type=inputs.boolean, help="The flag that shows whether the user account is activated or not.", location="form")
+update_user_parser.add_argument("is_private", required=False, type=type=inputs.boolean, help="The flag that shows whether the user's profile is public or private.", location="form")
+update_user_parser.add_argument("profile_photo", required=False, type=str, help="Profile photo of the user", location="form")
+update_user_parser.add_argument("google_scholar_name", required=False, type=str, help="Google Scholar user name of the user", location="form")
+update_user_parser.add_argument("researchgate_name", required=False, type=str, help="ResearchGate user name of the user", location="form")
+

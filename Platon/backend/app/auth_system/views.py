@@ -8,6 +8,7 @@ from app.auth_system.forms import LoginForm,login_parser
 from app.auth_system.forms import ResetPasswordGetForm,reset_password_get_parser
 from app.auth_system.forms import ResetPasswordPostForm,reset_password_post_parser
 from app.auth_system.forms import CreateUserForm, create_user_parser
+from app.auth_system.forms import UpdateUserForm, update_user_parser
 from app.auth_system.models import User
 from app.auth_system.helpers import generate_token,send_email,login_required
 
@@ -110,6 +111,7 @@ class User(Resource):
     You can find the endpoints for creating, reading, updating and deleting a user below.
     '''
 
+    # POST request
     @api.expect(create_user_parser)
     @api.doc(responses={
                 201: "User has been successfully created.",
@@ -128,16 +130,16 @@ class User(Resource):
             # Checks whether there is an already existing user in the database with the e-mail address in the form data.
             # If not, the user gets created.
             # If yes, an error is raised.
-            existing_user = User.query.filter_by(e_mail=form.e_mail).first()
+            existing_user = User.query.filter_by(e_mail=form.e_mail.data).first()
             if existing_user is None:
                 # Tries to add the user to the database.
                 # If it fails, an error is raised.
                 try:
                     new_user = User(is_valid=False,
-                                    e_mail=form.e_mail,
-                                    password_hashed=sha256(form.password),
-                                    name=form.name,
-                                    surname=form.surname,
+                                    e_mail=form.e_mail.data,
+                                    password_hashed=sha256(form.password.data),
+                                    name=form.name.data,
+                                    surname=form.surname.data,
                                     is_private=False,
                                     rate=-1.0
                                     )
@@ -155,7 +157,8 @@ class User(Resource):
                                 subject="Activate Your Platon Account",
                                 message_body='''Please activate your Platon account by clicking the activation link below.
                                                 Do not forget to activate your account today, the link expires in one day!''',
-                                message_link=None
+                                # WARNING! This URL should NOT be hard coded as below. Please update this line.
+                                message_link="http://{}?token={}".format("FRONTEND_HOSTNAME",account_activation_token)
                                 )
                 except:
                     return make_response(jsonify({"error" : "The server could not send the account activation e-mail."}), 503)
@@ -165,6 +168,49 @@ class User(Resource):
                 return None
         else:
             return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
+
+
+    # PUT request
+    @api.expect(update_user_parser)
+    @api.doc(responses={
+                200: "Account information has been successfully updated.",
+                400: "Missing data fields or invalid data.",
+                404: "The user is not found.",
+                500: "The server is not connected to the database."
+            })
+    @login_required
+    def put(user_id, self):
+        # Parses the form data.
+        form = UpdateUserForm(request.form)
+        
+        # Checks whether the data is in valid form.
+        # If yes, starts processing the data.
+        # If not, an error is raised.
+        if form.validate():
+            # Checks whether there is an already existing user in the database with the given user ID.
+            # If yes, account information of the user gets updated.
+            # If not, an error is raised.
+            existing_user = User.query.filter_by(id=user_id).first()
+            if existing_user is not None:
+                # Tries to update account information of the user.
+                # If it fails, an error is raised.
+                try:
+                    for key, value in form.data:
+                        if value:
+                            setattr(existing_user, key, value)
+                    db.session.add(existing_user)
+                    db.session.commit()
+                except:
+                    return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+                else:
+                    return make_response(jsonify({"message" : "User has been successfully created."}), 200)
+            else:
+                return make_response(jsonify({"error" : "The user is not found."}), 404)
+        else:
+            return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
+
+
+        
 
 
 def register_resources(api):
