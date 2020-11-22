@@ -14,8 +14,7 @@ import json
 class ResearchInfoTests(BaseTest):
     
     def setUp(self):
-        super().setUp()
-        # Add artificia users to test login feature
+        # Add artificial users to test login feature
         users = [
             User("umut@deneme.com",True,"b73ec5e4625ffcb6d0d70826f33be7a75d45b37046e26c4b60d9111266d70e32",3.5,"Umut","Özdemir",False,None,None,None),
             User("can@deneme.com",False,"cce0c2170d1ae52e099c716165d80119ee36840e3252e57f2b2b4d6bb111d8a5",4.6,"Can","Deneme",True,None,None,None)
@@ -54,7 +53,6 @@ class ResearchInfoTests(BaseTest):
         self.assertEqual(expected_response,json.loads(actual_response.data))
         self.assertEqual(201,actual_response.status_code)
         self.assertIsNotNone(ResearchInformation.query.filter(ResearchInformation.research_title == 'Radar Preprocessing using DBCAN Clustring').first())
-    
 
     def test_add_research_info_invalid(self):
         valid_token = generate_token(1,TestConfig.SESSION_DURATION)
@@ -261,3 +259,4 @@ class NotificationTests(BaseTest):
         self.assertEqual(expected_response,json.loads(actual_response.data))
         self.assertIsNotNone(Notification.query.filter(Notification.id == 1).first())
         self.assertIsNotNone(NotificationRelatedUser.query.filter(NotificationRelatedUser.notification_id == 1).first())
+
