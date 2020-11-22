@@ -173,7 +173,7 @@ class ResearchInfoTests(BaseTest):
                 'year': 2018
             }, 
             {
-                'title': 'Intelligent network data analytics function in 5G cellular networks using machine learning.', 
+                'title': 'Intelligent network data analytics function in 5G cellular networks using machine learning', 
                 'description': '', 
                 'year': 2020
             }, 
