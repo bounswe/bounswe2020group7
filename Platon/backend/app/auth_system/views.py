@@ -119,7 +119,7 @@ class UserAPI(Resource):
                 200: "User has been found.",
                 400: "Missing data fields or invalid data.",
                 404: "The user is not found.",
-                500: "The server is not connected to the database.",
+                500: "The server is not connected to the database."
             })
     def get(self):
         # Parses the form data.
@@ -153,6 +153,35 @@ class UserAPI(Resource):
         else:
             return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
 
+
+    # GET request (for the logged-in user to get their own user information)
+    @api.doc(responses={
+                200: "User has been found.",
+                404: "The user is not found.",
+                500: "The server is not connected to the database."
+            })
+    @login_required
+    def get(user_id, self):
+        # Tries to connect to the database.
+        # If it fails, an error is raised.
+        try:
+            logged_in_user = User.query.filter_by(id=user_id).first()
+        except:
+            return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+        else:
+            # Checks whether there is an already existing user in the database with the given user ID.
+            # If yes, user information is returned.
+            # If not, an error is raised.
+            if logged_in_user is not None:
+                account_information = {
+                                        "name": logged_in_user.name,
+                                        "surname": logged_in_user.surname,
+                                        "google_scholar_name": logged_in_user.google_scholar_name,
+                                        "researchgate_name": logged_in_user.researchgate_name
+                                        }
+                return make_response(jsonify(account_information), 200)
+            else:
+                return make_response(jsonify({"error" : "The user is not found."}), 404)
 
 
     # POST request
