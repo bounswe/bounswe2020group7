@@ -153,36 +153,36 @@ class ResearchInfoTests(BaseTest):
         GS_info = "QAzjUf8AAAAJ"
         expected_response = [
             {
-                'title': 'Channel Model of Molecular Communication via Diffusion in a Vessel-like Environment Considering a Partially Covering Receiver',
-                'description': '',
+                'title': 'Channel Model of Molecular Communication via Diffusion in a Vessel-like Environment Considering a Partially Covering Receiver', 
+                'description': '', 
                 'year': 2018
-            },
+            }, 
             {
-                'title': 'Transmitter localization in vessel-like diffusive channels using ring-shaped molecular receivers',
-                'description': '',
+                'title': 'Transmitter localization in vessel-like diffusive channels using ring-shaped molecular receivers', 
+                'description': '', 
                 'year': 2018
-            },
+            }, 
             {
-                'title': 'Mol-eye: A new metric for the performance evaluation of a molecular signal',
-                'description': '',
+                'title': 'Mol-eye: A new metric for the performance evaluation of a molecular signal', 
+                'description': '', 
                 'year': 2018
-            },
+            }, 
             {
-                'title': 'Performance analysis of power adjustment methods in molecular communication via diffusion',
-                'description': '',
+                'title': 'Performance analysis of power adjustment methods in molecular communication via diffusion', 
+                'description': '', 
                 'year': 2018
-            },
+            }, 
             {
-                'title': 'Intelligent network data analytics function in 5G cellular networks using machine learning',
-                'description': '',
+                'title': 'Intelligent network data analytics function in 5G cellular networks using machine learning', 
+                'description': '', 
                 'year': 2020
-            },
+            }, 
             {
-                'title': 'Note recognition-based mobile application for guitar training',
-                'description': '',
+                'title': 'Note recognition-based mobile application for guitar training', 
+                'description': '', 
                 'year': 2017
             }
-                ]
+            ]
         actual_result = ResearchInfoFetch.fetch_google_scholar_info(GS_info)
         for i in expected_response:
             self.assertIn(i,actual_result)
