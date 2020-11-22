@@ -147,7 +147,7 @@ class ResearchInfoTests(BaseTest):
                 ]
         actual_result = ResearchInfoFetch.fetch_research_gate_info(RG_name)
         if actual_result == []:
-            self.assertTrue()
+            self.assertTrue(True)
         else:
             for i in expected_response:
                 self.assertIn(i,actual_result)
