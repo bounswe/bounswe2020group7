@@ -38,15 +38,6 @@ class App extends Component {
     }
   }
 
-
-
-    }
-  }
-  handlerIsAuthenticated = () => {
-    this.setState({
-      isAuthenticated: true
-    })
-  }
   render() {
 
     return (
