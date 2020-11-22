@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import InfiniteScroll from 'react-infinite-scroller';
 import qwest from 'qwest';
 import Commentt from './Comment'
 
-const imageList = [];
 const api = {
     baseUrl: 'https://api.soundcloud.com',
     client_id: 'caf73ef1e709f839664ab82bef40fa96'

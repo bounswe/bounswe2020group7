@@ -2,7 +2,7 @@ import React from "react";
 import "./EditProfile.css";
 import AppBar from "../AppBar/AppBar";
 import colors from "../../utils/colors";
-import { Container, Col, Row, Button, Card } from "react-bootstrap";
+import { Container, Col, Row, Button } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { TextField, withStyles } from '@material-ui/core';
 
@@ -36,14 +36,14 @@ const StyledTextField = withStyles({
       },
     },
   })(TextField);
-  
+
 const EditProfile = (props) => {
     return (
       <div className="Landing">
         <div className="AppBar">
           <AppBar />
         </div>
-        
+
         <Container className = "ProfilePageContainer">
             <Row className="mb-3 justify-content-center">
                 <Col sm={6}>
@@ -51,14 +51,14 @@ const EditProfile = (props) => {
                     <hr className="ProfilePageLine" />
                 </Col>
             </Row>
-            
+
 
             <Row className="mb-3 justify-content-center">
                 <Col sm={6}>
                     <Row>
                         <Col sm={6}>
                             <StyledTextField className="EditProfileTextInput" id="outlined-basic" label="First Name" variant="outlined" fullWidth />
-                        </Col> 
+                        </Col>
                         <Col sm={6}>
                             <StyledTextField className="EditProfileTextInput" id="outlined-basic" label="Second Name" variant="outlined" fullWidth required/>
                         </Col>
@@ -68,25 +68,25 @@ const EditProfile = (props) => {
 
             <Row className="mb-3 justify-content-center">
                 <Col sm={6}>
-                    <StyledTextField className="EditProfileTextInput" id="outlined-basic" label="E-mail" variant="outlined" fullWidth required/>   
+                    <StyledTextField className="EditProfileTextInput" id="outlined-basic" label="E-mail" variant="outlined" fullWidth required/>
                 </Col>
             </Row>
 
             <Row className="mb-3 justify-content-center">
                 <Col sm={6}>
-                    <StyledTextField className="EditProfileTextInput" id="outlined-basic" label="Password" variant="outlined" type="password" fullWidth required/>   
+                    <StyledTextField className="EditProfileTextInput" id="outlined-basic" label="Password" variant="outlined" type="password" fullWidth required/>
                 </Col>
             </Row>
 
             <Row className="mb-3 justify-content-center">
                 <Col sm={6}>
-                    <StyledTextField className="EditProfileTextInput" id="outlined-basic" label="Job" variant="outlined" fullWidth required/>   
+                    <StyledTextField className="EditProfileTextInput" id="outlined-basic" label="Job" variant="outlined" fullWidth required/>
                 </Col>
             </Row>
 
             <Row className="mb-3 justify-content-center">
                 <Col sm={6}>
-                    <StyledTextField className="EditProfileTextInput" id="outlined-basic" label="Profile Photo Url" variant="outlined" fullWidth required/>   
+                    <StyledTextField className="EditProfileTextInput" id="outlined-basic" label="Profile Photo Url" variant="outlined" fullWidth required/>
                 </Col>
             </Row>
 
@@ -97,11 +97,11 @@ const EditProfile = (props) => {
                     </Button>
                 </Col>
             </Row>
-            
+
         </Container>
 
       </div>
     );
   };
-  
+
   export default EditProfile;

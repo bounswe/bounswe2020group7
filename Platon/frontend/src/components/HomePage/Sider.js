@@ -1,7 +1,6 @@
 import { Menu } from 'antd';
-import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, MailOutlined } from '@ant-design/icons';
 import React from 'react'
-import ReactDOM from 'react-dom'
 
 import colors from "../../utils/colors";
 import {Link} from 'react-router-dom'
