@@ -258,7 +258,7 @@ class UserAPI(Resource):
                     try:
                         # DO NOT FORGET TO WRITE CODE FOR PROFILE INFORMATION
 
-                        for key, value in form.data:
+                        for key, value in form.data.items():
                             if value:
                                 setattr(existing_user, key, value)
                         db.session.add(existing_user)
