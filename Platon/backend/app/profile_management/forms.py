@@ -39,3 +39,13 @@ class ResearchInfoDeleteFrom(Form):
 research_info_delete_parser = reqparse.RequestParser()
 research_info_delete_parser.add_argument('research_id',required=True,type=int,help='Research ID of the Research',location='form')
 research_info_delete_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
+
+notification_get_parser = reqparse.RequestParser()
+notification_get_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
+
+class NotificationDeleteForm(Form):
+    notification_id = IntegerField('notification_id',validators=[validators.DataRequired()])
+
+notification_delete_parser = reqparse.RequestParser()
+notification_delete_parser.add_argument('notification_id',required=True,type=int,help='ID of the Notification that will be deleted',location='form')
+notification_delete_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')

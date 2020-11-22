@@ -52,7 +52,6 @@ class TestConfig:
     SECRET_KEY = "secret"
 
 class BaseTest(TestCase):
-    engine = sqlalchemy.create_engine("mysql+pymysql://root:rootpassword@52.59.254.130:3306")
 
     def create_app(self):
         # pass in test configuration

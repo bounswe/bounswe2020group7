@@ -4,7 +4,7 @@ import atexit
 from apscheduler.schedulers.background import BackgroundScheduler
 from app import db
 
-from app.profile_management.models import ResearchInformation
+from app.profile_management.models import ResearchInformation,Notification,NotificationRelatedUser
 
 class ResearchInfoFetch():
     
@@ -57,6 +57,31 @@ class ResearchInfoFetch():
                 db.session.commit()
         except:
             return
+
+class NotificationManager():
+    
+    @staticmethod
+    def add_notification(owner_id,related_user_id_list,text,link=None):
+        """
+            Creates notification for a user and also adds related user list to the database
+            If it creates without any problem it returns True,
+            In any problem function returns False
+        """
+        new_notification = Notification(owner_id,text,link)
+        try:
+            db.session.add(new_notification)
+            db.session.commit()
+        except:
+            return False
+
+        related_user_records = [NotificationRelatedUser(new_notification.id,id) for id in related_user_id_list]
+        try:
+            db.session.add_all(related_user_records)
+            db.session.commit()
+        except:
+            return False
+
+        return True
 
 
 def schedule_regularly():
