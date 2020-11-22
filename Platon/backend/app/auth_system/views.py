@@ -254,7 +254,7 @@ class UserAPI(Resource):
                                     message_body='''Please activate your Platon account by clicking the activation link below.
                                                     Do not forget to activate your account today, the link expires in one day!''',
                                     # WARNING! This URL should NOT be hard coded as below. Please update this line.
-                                    message_link="http://{}?token={}".format("FRONTEND_HOSTNAME",account_activation_token)
+                                    message_link="http://{}/activate_account?token={}".format("FRONTEND_HOSTNAME",account_activation_token)
                                     )
                     except:
                         return make_response(jsonify({"error" : "The server could not send the account activation e-mail."}), 503)
