@@ -22,6 +22,7 @@ interface LoginContract {
         fun onAlreadyHaveAccountClicked()
         fun onForgotPasswordClicked(mail: EditText)
         fun onPreLoginAutomated()
+        fun triggerLogin(token:String?)
 
     }
 

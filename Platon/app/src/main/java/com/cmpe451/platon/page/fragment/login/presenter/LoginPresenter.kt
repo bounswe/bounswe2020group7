@@ -4,11 +4,11 @@ package com.cmpe451.platon.page.fragment.login.presenter
  * @author Burak Ömür
  */
 
-import android.content.Context.VIBRATOR_SERVICE
 import android.content.Intent
 import android.content.SharedPreferences
-import android.os.VibrationEffect
-import android.os.Vibrator
+import android.os.Handler
+import android.os.HandlerThread
+import android.os.Looper
 import android.util.Log
 import android.util.Patterns
 import android.widget.CheckBox
@@ -26,7 +26,12 @@ import com.cmpe451.platon.page.fragment.login.view.LoginFragmentDirections
 import com.cmpe451.platon.util.Definitions
 
 
-class LoginPresenter(private var view: LoginContract.View?, private var repository: LoginRepository, private var sharedPreferences: SharedPreferences, private var navController: NavController) : LoginContract.Presenter {
+class LoginPresenter(
+    private var view: LoginContract.View?,
+    private var repository: LoginRepository,
+    private var sharedPreferences: SharedPreferences,
+    private var navController: NavController
+) : LoginContract.Presenter {
 
 
     override fun onPreLoginAutomated(){
@@ -45,6 +50,16 @@ class LoginPresenter(private var view: LoginContract.View?, private var reposito
         }
     }
 
+    override fun triggerLogin(token: String?) {
+        ((view as Fragment).activity as BaseActivity).finish()
+        ((view as Fragment).activity as BaseActivity).startActivity(
+            Intent(
+                (view as Fragment).activity,
+                HomeActivity::class.java
+            )
+        )
+    }
+
 
     override fun onLoginButtonClicked(mail: EditText, pass: EditText, remember: CheckBox) {
 
@@ -52,7 +67,9 @@ class LoginPresenter(private var view: LoginContract.View?, private var reposito
         var flag = false
 
         // check mail bo
-        if (mail.text.isNullOrEmpty() || !Patterns.EMAIL_ADDRESS.matcher(mail.text.toString().trim()).matches()){
+        if (mail.text.isNullOrEmpty() || !Patterns.EMAIL_ADDRESS.matcher(
+                mail.text.toString().trim()
+            ).matches()){
             mail.error = "Required field / Wrong input"
             flag = true
         }
@@ -75,28 +92,51 @@ class LoginPresenter(private var view: LoginContract.View?, private var reposito
             sharedPreferences.edit().putString("login_pass", passStr).apply()
 
             if (repository.tryToLogin(mailStr, passStr)) {
-                (view as LoginFragment).startActivity(Intent((view as LoginFragment).activity, HomeActivity::class.java))
-                (view as LoginFragment).activity?.finish()
+
+                val ht = HandlerThread("MyHandlerThread")
+                ht.start()
+                val handler = Handler(ht.looper)
+                val runnable = Runnable {
+                    var token:String? = null
+
+
+                    while(token == null){
+                        token = sharedPreferences.getString("token", null)
+                        Thread.sleep(250)
+                    }
+                    if(token.subSequence(0, 4) != "fail"){
+                        triggerLogin(token)
+                    }else{
+                        sharedPreferences.edit().remove("token").apply()
+                        Toast.makeText(
+                            (view as Fragment).activity,
+                            "Some error occurred",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+
+                }
+                handler.post(runnable)
             }else{
-                Toast.makeText((view as Fragment).activity, "Mail and password do not match!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        (view as Fragment).activity,
+                        "Some error occurred",
+                        Toast.LENGTH_LONG
+                    ).show()
             }
-
-
         }
-
-        Log.println(Log.INFO, "Important:", mailStr + passStr + rememberBool.toString())
     }
 
 
     override fun onAlreadyHaveAccountClicked() {
-        Definitions().vibrate (50, (view as Fragment).activity as BaseActivity)
+        Definitions().vibrate(50, (view as Fragment).activity as BaseActivity)
         val action = LoginFragmentDirections.actionLoginFragmentToRegisterFragment()
         navController.navigate(action)
 
     }
 
     override fun onForgotPasswordClicked(mail: EditText) {
-        Definitions().vibrate (50, (view as Fragment).activity as BaseActivity)
+        Definitions().vibrate(50, (view as Fragment).activity as BaseActivity)
         val action = LoginFragmentDirections.actionLoginFragmentToForgotPasswordFragment()
         ((view as LoginFragment).activity as LoginActivity).navController.navigate(action)
 

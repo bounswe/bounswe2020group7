@@ -18,6 +18,8 @@ import com.cmpe451.platon.page.activity.LoginActivity
 import com.cmpe451.platon.page.fragment.login.contract.LoginContract
 import com.cmpe451.platon.page.fragment.login.model.LoginRepository
 import com.cmpe451.platon.page.fragment.login.presenter.LoginPresenter
+import com.cmpe451.platon.util.ApiClient
+import com.cmpe451.platon.util.ApiInterface
 
 /**
  * Login Fragment class of application

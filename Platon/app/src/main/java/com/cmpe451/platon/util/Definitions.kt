@@ -5,21 +5,35 @@ import android.graphics.drawable.Drawable
 import android.os.VibrationEffect
 import android.os.Vibrator
 import com.cmpe451.platon.core.BaseActivity
-import com.cmpe451.platon.page.activity.LoginActivity
-import com.cmpe451.platon.page.fragment.login.view.LoginFragment
+import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
+import retrofit2.http.FormUrlEncoded
+
 
 /**
  * Class to keep definitive and serial data.
  */
 class Definitions {
 
-    val FORGOT_PASS_ADDRESS = ""
-    val LOGIN_ADDRESS = ""
-    val REGISTER_ADDRESS = ""
-    val TRENDING_PROJECT_GUESTS_ADDRESS = ""
-    val UPCOMING_EVENTS_ADDRESS = ""
+    companion object {
+        val API_URL="http://52.59.254.130:5000/"
+        val API_PORT ="5000"
+        val FORGOT_PASS_ADDRESS = ""
+        val LOGIN_ADDRESS = ""
+        val REGISTER_ADDRESS = ""
+        val TRENDING_PROJECT_GUESTS_ADDRESS = ""
+        val UPCOMING_EVENTS_ADDRESS = ""
+    }
 
-    class User(val name:String, val surname:String, val rating: Double, val bio:String)
+
+    class Token {
+        @SerializedName("token")
+        @Expose
+        var token: String? = null
+    }
+
+
+    class User(val name: String, val surname: String, val rating: Double, val bio: String)
   
     /**
      * Trending projects are serialized according to this.
@@ -28,7 +42,12 @@ class Definitions {
      * @param description A short description of the trending project
      * @param reason The reason for trending
      */
-    class TrendingProject(val project_title:String, val img: Drawable?, val description:String, val reason:TREND) {
+    class TrendingProject(
+        val project_title: String,
+        val img: Drawable?,
+        val description: String,
+        val reason: TREND
+    ) {
         /**
          * Reason for trending is chosen by enumerator.
          */
@@ -46,7 +65,13 @@ class Definitions {
      * @param type Type of the upcoming event
      * @param date Date as string of the event
      */
-    class UpcomingEvent (val title:String, val desc:String, val img: Drawable? ,val type:TYPE, val date:String){
+    class UpcomingEvent(
+        val title: String,
+        val desc: String,
+        val img: Drawable?,
+        val type: TYPE,
+        val date: String
+    ){
         /**
          * Type of the event chosen by this.
          */
@@ -56,7 +81,7 @@ class Definitions {
     }
 
 
-    fun vibrate(ms:Long=50, activity:BaseActivity){
+    fun vibrate(ms: Long = 50, activity: BaseActivity){
         val vib = activity.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             vib.vibrate(VibrationEffect.createOneShot(ms, VibrationEffect.DEFAULT_AMPLITUDE))
