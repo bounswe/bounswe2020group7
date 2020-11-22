@@ -26,13 +26,6 @@ class Definitions {
     }
 
 
-    class Token {
-        @SerializedName("token")
-        @Expose
-        var token: String? = null
-    }
-
-
     class User(val name: String, val surname: String, val rating: Double, val bio: String)
   
     /**

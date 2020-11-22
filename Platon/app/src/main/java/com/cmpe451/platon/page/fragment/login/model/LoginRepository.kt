@@ -10,6 +10,7 @@ import com.cmpe451.platon.page.fragment.login.presenter.LoginPresenter
 import com.cmpe451.platon.util.ApiClient
 import com.cmpe451.platon.util.ApiInterface
 import com.cmpe451.platon.util.Definitions
+import com.google.gson.JsonObject
 import kotlinx.coroutines.flow.callbackFlow
 import retrofit2.Call
 import retrofit2.Callback
@@ -27,20 +28,19 @@ class LoginRepository(val sharedPreferences: SharedPreferences){
 
         val call = service.makeLogin(mailStr, passStr)
 
-        val callback: Callback<Definitions.Token?> = object: Callback<Definitions.Token?>{
-            override fun onResponse(call: Call<Definitions.Token?>, response: Response<Definitions.Token?>) {
-                var token:String? = "fail_server_side"
-                if(response.isSuccessful){
-                    Log.println(Log.INFO, "IMPORTANT_Resp",  (response.body() as Definitions.Token).token + "")
-                    token = (response.body() as Definitions.Token).token
-                }
-                sharedPreferences.edit().putString("token", token).apply()
+        sharedPreferences.edit().remove("token").apply()
 
+        val callback: Callback<JsonObject?> = object: Callback<JsonObject?>{
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                if(response.isSuccessful){
+                    Log.println(Log.INFO, "IMPORTANT_Resp",  (response.body() as JsonObject).get("token").toString())
+                    val token = (response.body() as JsonObject).get("token").toString()
+                    sharedPreferences.edit().putString("token", token).apply()
+                }
             }
 
-            override fun onFailure(call: Call<Definitions.Token?>, t: Throwable) {
-                val token:String? = "fail_client_side"
-                sharedPreferences.edit().putString("token", token).apply()
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                Log.println(Log.INFO, "IMPORTANT_Resp",  "Error failure:!")
             }
         }
 

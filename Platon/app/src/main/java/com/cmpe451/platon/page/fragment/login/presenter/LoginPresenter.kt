@@ -85,7 +85,6 @@ class LoginPresenter(
         val passStr = pass.text.toString().trim()
         val rememberBool = remember.isChecked
 
-
         if (!flag){
             sharedPreferences.edit().putBoolean("remember_me", rememberBool).apply()
             sharedPreferences.edit().putString("login_mail", mailStr).apply()
@@ -99,20 +98,17 @@ class LoginPresenter(
                 val runnable = Runnable {
                     var token:String? = null
 
-
-                    while(token == null){
+                    var counter = 50
+                    while(token == null && counter > 0){
                         token = sharedPreferences.getString("token", null)
                         Thread.sleep(250)
+                        counter -= 1
                     }
-                    if(token.subSequence(0, 4) != "fail"){
+
+                    if(token != null){
                         triggerLogin(token)
                     }else{
-                        sharedPreferences.edit().remove("token").apply()
-                        Toast.makeText(
-                            (view as Fragment).activity,
-                            "Some error occurred",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        Toast.makeText((view as Fragment).activity, "Some error occurred", Toast.LENGTH_LONG).show()
                     }
 
                 }
