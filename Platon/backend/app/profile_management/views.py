@@ -10,6 +10,10 @@ from app.profile_management.forms import ResearchInfoGetForm,research_info_get_p
 from app.profile_management.forms import ResearchInfoUpdateForm, research_info_update_parser,ResearchInfoDeleteFrom,research_info_delete_parser
 from app.profile_management.models import ResearchInformation
 from app.profile_management.helpers import schedule_regularly
+from app.profile_management.models import Skills
+from app.profile_management.models import Jobs
+from app.profile_management.forms import JobsPostForm,jobs_post_parser, JobsPutForm,jobs_put_parser, JobsDeleteForm,jobs_delete_parser
+from app.profile_management.forms import SkillsPostForm,skills_post_parser, SkillsPutForm,skills_put_parser, SkillsDeleteForm,skills_delete_parser
 from app import api, db
 
 class ResearchType(Enum):
@@ -106,6 +110,170 @@ class ResearchInformationAPI(Resource):
                 return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
         else:
             return make_response(jsonify({'error':'Wrong input format'}),400)
+
+    @profile_management_ns.route("/jobs")
+    class JobsAPI(Resource):
+
+        """
+            Returns all job names
+        """
+        @api.doc(responses={200: 'Valid Response', 404: 'Empty List', 500: 'Database Connection Problem'})
+        def get(self):
+            try:
+                jobs = Jobs.query.all()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Problem'}), 500)
+            if jobs is []:
+                return make_response(jsonify({'error': 'Jobs not found'}), 404)
+
+            jobsList = []
+            for job in jobs:
+                jobsList.append(job.name)
+
+            return make_response(jsonify(jobsList), 200)
+
+        """
+            Creates a new job
+        """
+        @api.doc(responses={201: 'Successfully Created', 400: 'Wrong Input Format', 401: 'Authantication Problem',
+                            500: 'Database Connection Problem'})
+        @api.expect(jobs_post_parser)
+        def post(self):
+            form = JobsPostForm(request.form)
+            if form.validate():
+                new_job = Jobs(form.name.data)
+                try:
+                    db.session.add(new_job)
+                    db.session.commit()
+                except:
+                    return make_response(jsonify({'error': 'Database Connection Problem'}), 500)
+                return make_response(jsonify({'msg': ' Successfully added'}), 201)
+            else:
+                return make_response(jsonify({'error': 'Wrong input format'}), 400)
+
+        """
+            Updates a job
+        """
+        @api.doc(responses={201: 'Successfully Updated', 400: 'Wrong Input Format', 401: 'Authantication Problem',
+                            500: 'Database Connection Problem'})
+        @api.expect(jobs_put_parser)
+        def put(self):
+            form = JobsPutForm(request.form)
+            if form.validate():
+                try:
+                    job = Jobs.query.filter(Jobs.id == form.id.data).first()
+                    if job is None:
+                        return make_response(jsonify({'error': 'Please give an appropriate job ID'}), 400)
+                    job.name = form.name.data if form.name.data != '' else job.name
+                    db.session.commit()
+                except:
+                    return make_response(jsonify({'error': 'Database Connection Problem'}), 500)
+                return make_response(jsonify({'msg': ' Successfully changed'}), 201)
+            else:
+                return make_response(jsonify({'error': 'Wrong input format'}), 400)
+
+        """
+            Deletes a job
+        """
+        @api.doc(responses={200: 'Successfully Deleted', 400: 'Wrong Input Format', 401: 'Authantication Problem',
+                            500: 'Database Connection Problem'})
+        @api.expect(jobs_delete_parser)
+        def delete(self):
+            form = JobsDeleteForm(request.form)
+            if form.validate():
+                try:
+                    job = Jobs.query.filter(Jobs.id == form.id.data).first()
+                    if job is None:
+                        return make_response(jsonify({'error': 'You can not delete other user\'s information'}), 400)
+                    db.session.delete(job)
+                    db.session.commit()
+                    return make_response(jsonify({'msg': 'Successfully Deleted'}), 200)
+                except:
+                    return make_response(jsonify({'error': 'Database Connection Problem'}), 500)
+            else:
+                return make_response(jsonify({'error': 'Wrong input format'}), 400)
+
+    @profile_management_ns.route("/skills")
+    class SkillsAPI(Resource):
+
+        """
+            Returns all skill names
+        """
+        @api.doc(responses={200: 'Valid Response', 404: 'Empty List', 500: 'Database Connection Problem'})
+        def get(self):
+            try:
+                skills = Skills.query.all()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Problem'}), 500)
+            if skills is []:
+                return make_response(jsonify({'error': 'Jobs not found'}), 404)
+
+            skillsList = []
+            for skill in skills:
+                skillsList.append(skill.name)
+
+            return make_response(jsonify(skillsList), 200)
+
+        """
+            Creates a skill
+        """
+        @api.doc(responses={201: 'Successfully Created', 400: 'Wrong Input Format', 401: 'Authantication Problem',
+                            500: 'Database Connection Problem'})
+        @api.expect(skills_post_parser)
+        def post(self):
+            form = SkillsPostForm(request.form)
+            if form.validate():
+                new_skill = Skills(form.name.data)
+                try:
+                    db.session.add(new_skill)
+                    db.session.commit()
+                except:
+                    return make_response(jsonify({'error': 'Database Connection Problem'}), 500)
+                return make_response(jsonify({'msg': ' Successfully added'}), 201)
+            else:
+                return make_response(jsonify({'error': 'Wrong input format'}), 400)
+
+        """
+            Updates a skill
+        """
+        @api.doc(responses={201: 'Successfully Updated', 400: 'Wrong Input Format', 401: 'Authantication Problem',
+                            500: 'Database Connection Problem'})
+        @api.expect(skills_put_parser)
+        def put(self):
+            form = SkillsPutForm(request.form)
+            if form.validate():
+                try:
+                    skill = Skills.query.filter(Skills.id == form.id.data).first()
+                    if skill is None:
+                        return make_response(jsonify({'error': 'Please give an appropriate skill ID'}), 400)
+                    skill.name = form.name.data if form.name.data != '' else skill.name
+                    db.session.commit()
+                except:
+                    return make_response(jsonify({'error': 'Database Connection Problem'}), 500)
+                return make_response(jsonify({'msg': ' Successfully changed'}), 201)
+            else:
+                return make_response(jsonify({'error': 'Wrong input format'}), 400)
+
+        """
+            Deletes a skill
+        """
+        @api.doc(responses={200: 'Successfully Deleted', 400: 'Wrong Input Format', 401: 'Authantication Problem',
+                            500: 'Database Connection Problem'})
+        @api.expect(skills_delete_parser)
+        def delete(self):
+            form = SkillsDeleteForm(request.form)
+            if form.validate():
+                try:
+                    skill = Skills.query.filter(Skills.id == form.id.data).first()
+                    if skill is None:
+                        return make_response(jsonify({'error': 'You can not delete other user\'s information'}), 400)
+                    db.session.delete(skill)
+                    db.session.commit()
+                    return make_response(jsonify({'msg': 'Successfully Deleted'}), 200)
+                except:
+                    return make_response(jsonify({'error': 'Database Connection Problem'}), 500)
+            else:
+                return make_response(jsonify({'error': 'Wrong input format'}), 400)
 
 def register_resources(api):
     schedule_regularly()

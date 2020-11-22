@@ -39,3 +39,50 @@ class ResearchInfoDeleteFrom(Form):
 research_info_delete_parser = reqparse.RequestParser()
 research_info_delete_parser.add_argument('research_id',required=True,type=int,help='Research ID of the Research',location='form')
 research_info_delete_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
+
+class JobsPostForm(Form):
+    name = StringField("name", validators=[validators.DataRequired()])
+
+jobs_post_parser = reqparse.RequestParser()
+jobs_post_parser.add_argument('name',required=True, type=str,help="Name of the job",location='form')
+jobs_post_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
+
+
+class JobsPutForm(Form):
+    id = IntegerField("id", validators=[validators.DataRequired()])
+    name = StringField("name", default='')
+
+jobs_put_parser = reqparse.RequestParser()
+jobs_put_parser.add_argument('id',required=True,type=int,help='Job ID',location='form')
+jobs_put_parser.add_argument('name',required=True, type=str,help="Name of the job",location='form')
+jobs_put_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
+
+class JobsDeleteForm(Form):
+    id = IntegerField("id", validators=[validators.DataRequired()])
+
+jobs_delete_parser = reqparse.RequestParser()
+jobs_delete_parser.add_argument('id',required=True,type=int,help='Job ID',location='form')
+jobs_delete_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
+
+class SkillsPostForm(Form):
+    name = StringField("name", validators=[validators.DataRequired()])
+
+skills_post_parser = reqparse.RequestParser()
+skills_post_parser.add_argument('name',required=True, type=str,help="Name of the skill",location='form')
+skills_post_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
+
+class SkillsPutForm(Form):
+    id = IntegerField("id", validators=[validators.DataRequired()])
+    name = StringField("name", default='')
+
+skills_put_parser = reqparse.RequestParser()
+skills_put_parser.add_argument('id',required=True,type=int,help='Skill ID',location='form')
+skills_put_parser.add_argument('name',required=True, type=str,help="Name of the skill",location='form')
+skills_put_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
+
+class SkillsDeleteForm(Form):
+    id = IntegerField("id", validators=[validators.DataRequired()])
+
+skills_delete_parser = reqparse.RequestParser()
+skills_delete_parser.add_argument('id',required=True,type=int,help='Skill ID',location='form')
+skills_delete_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
