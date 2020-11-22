@@ -25,7 +25,6 @@ class Definitions {
         val UPCOMING_EVENTS_ADDRESS = ""
     }
 
-
     class User(val name: String, val surname: String, val rating: Double, val bio: String)
   
     /**

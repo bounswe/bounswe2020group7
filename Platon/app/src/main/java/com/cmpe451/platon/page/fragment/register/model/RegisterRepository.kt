@@ -1,12 +1,45 @@
 package com.cmpe451.platon.page.fragment.register.model
 
 import android.content.SharedPreferences
+import android.util.Log
+import com.cmpe451.platon.util.ApiClient
+import com.cmpe451.platon.util.ApiInterface
+import com.google.gson.JsonObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
 //import com.cmpe451.elevator.HttpRequest
 
 
-class RegisterRepository(sharedPreferences: SharedPreferences){
+class RegisterRepository(val sharedPreferences: SharedPreferences){
 
     fun postRegister(firstName:String, lastName:String, mail:String, job:String, pass:String):Boolean{
+
+        val api = ApiClient()
+        api.initRetrofit()
+        val service = api.getRetrofit().create(ApiInterface::class.java)
+
+        val call = service.makeRegister(mail, pass, firstName, lastName, job)
+
+
+
+        val callback: Callback<JsonObject?> = object: Callback<JsonObject?> {
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                if(response.isSuccessful){
+                    sharedPreferences.edit().putBoolean("register_success", true).apply()
+                }else{
+                    sharedPreferences.edit().putBoolean("register_fail", true).apply()
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                Log.println(Log.INFO, "IMPORTANT_Resp",  "Error failure:!")
+            }
+        }
+
+        call?.enqueue(callback)
+
         return true
     }
 

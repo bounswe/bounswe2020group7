@@ -74,6 +74,9 @@ class ForgotPasswordPresenter(private var view: ForgotPasswordContract.View?,
                             Toast.makeText((view as Fragment).activity, "Request not answered!", Toast.LENGTH_LONG).show()
                         }
                     }
+
+                    sharedPreferences.edit().remove("reset_key_sent").apply()
+                    sharedPreferences.edit().remove("reset_key_sent_fail").apply()
                 }
                 handler.post(runnable)
             } else {

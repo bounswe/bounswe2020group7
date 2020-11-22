@@ -50,7 +50,7 @@ class LoginPresenter(
         }
     }
 
-    override fun triggerLogin(token: String?) {
+    override fun triggerLogin(token: String?, rememberBool:Boolean, mailStr:String, passStr:String) {
         ((view as Fragment).activity as BaseActivity).finish()
         ((view as Fragment).activity as BaseActivity).startActivity(
             Intent(
@@ -58,6 +58,13 @@ class LoginPresenter(
                 HomeActivity::class.java
             )
         )
+
+        sharedPreferences.edit().putBoolean("remember_me", rememberBool).apply()
+        if(rememberBool){
+            sharedPreferences.edit().putString("login_mail", mailStr).apply()
+            sharedPreferences.edit().putString("login_pass", passStr).apply()
+        }
+
     }
 
 
@@ -86,30 +93,42 @@ class LoginPresenter(
         val rememberBool = remember.isChecked
 
         if (!flag){
-            sharedPreferences.edit().putBoolean("remember_me", rememberBool).apply()
-            sharedPreferences.edit().putString("login_mail", mailStr).apply()
-            sharedPreferences.edit().putString("login_pass", passStr).apply()
-
             if (repository.tryToLogin(mailStr, passStr)) {
 
                 val ht = HandlerThread("MyHandlerThread")
                 ht.start()
                 val handler = Handler(ht.looper)
                 val runnable = Runnable {
-                    var token:String? = null
+                    var failLogin = false
+                    var successLogin = false
 
                     var counter = 50
-                    while(token == null && counter > 0){
-                        token = sharedPreferences.getString("token", null)
+                    while(!failLogin && counter > 0 && !successLogin){
+                        failLogin = sharedPreferences.getBoolean("login_fail", false)
+                        successLogin = sharedPreferences.getBoolean("login_success", false)
                         Thread.sleep(250)
                         counter -= 1
                     }
 
-                    if(token != null){
-                        triggerLogin(token)
-                    }else{
-                        Toast.makeText((view as Fragment).activity, "Some error occurred", Toast.LENGTH_LONG).show()
+                    when{
+                        successLogin ->{
+                            val token = sharedPreferences.getString("token", null)
+                            if(token != null){
+                                triggerLogin(token, rememberBool, mailStr, passStr)
+                                Toast.makeText((view as Fragment).activity, "Login successful!", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                        failLogin ->{
+                            Toast.makeText((view as Fragment).activity, "Mail and password do not match!", Toast.LENGTH_LONG).show()
+                        }
+                        else ->{
+                            Toast.makeText((view as Fragment).activity, "Server not responding!", Toast.LENGTH_LONG).show()
+                        }
                     }
+
+                    sharedPreferences.edit().remove("login_fail").apply()
+                    sharedPreferences.edit().remove("login_success").apply()
+                    sharedPreferences.edit().remove("token").apply()
 
                 }
                 handler.post(runnable)
