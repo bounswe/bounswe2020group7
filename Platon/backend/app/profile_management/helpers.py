@@ -21,6 +21,13 @@ class ResearchInfoFetch():
             return [{'title':research['title'],'description':'','year':research['year']}for research in response['publications']]
         except:
             return []
+
+    @staticmethod
+    def extract_google_scholar_id(URL):
+        '''
+        Extracts Google Scholar account ID from Google Scholar profile page URL.
+        '''
+        return URL.split("?user=", 1)[1].split("&",1)[0]
     
     @staticmethod
     def fetch_research_gate_info(username):
@@ -50,19 +57,31 @@ class ResearchInfoFetch():
             all_users = User.query.all()
         except:
             return
-        try:
+        else:
             for user in all_users:
-                all_research_of_user = ResearchInformation.query.filter((ResearchInformation.user_id == user.id)&(ResearchInformation.type == int(ResearchType.FETCHED))).all()
-                all_research_new = ResearchInfoFetch.fetch_google_scholar_info(user.google_scholar_name) + ResearchInfoFetch.fetch_research_gate_info(user.researchgate_name)
-                for research in all_research_new:
-                    if research['title'] not in [i.research_title for i in all_research_of_user]:
-                        db.seesion.add(ResearchInformation(user.id,research['title'],research['description'],research['year'],int(ResearchType.FETCHED)))
-                for research in all_research_of_user:
-                    if research.research_title not in [i['title'] for i in all_research_new]:
-                        db.session.delete(research)
-                db.session.commit()
+                update_research_info(user.id)
+
+    @staticmethod
+    def update_research_info(user_id):
+        '''
+        Updates the research information of the user with the given ID.
+        '''
+        try:
+            user = User.query.filter_by(id=user_id).first()
+            all_research_of_user = ResearchInformation.query.filter((ResearchInformation.user_id == user.id)&(ResearchInformation.type == int(ResearchType.FETCHED))).all()
+            
+            google_scholar_id = ResearchInfoFetch.extract_google_scholar_id(user.google_scholar_name)
+            all_research_new = ResearchInfoFetch.fetch_google_scholar_info(google_scholar_id) + ResearchInfoFetch.fetch_research_gate_info(user.researchgate_name)
+            for research in all_research_new:
+                if research['title'] not in [i.research_title for i in all_research_of_user]:
+                    db.seesion.add(ResearchInformation(user.id,research['title'],research['description'],research['year'],int(ResearchType.FETCHED)))
+            for research in all_research_of_user:
+                if research.research_title not in [i['title'] for i in all_research_new]:
+                    db.session.delete(research)
+            db.session.commit()
         except:
             return
+
 
 class NotificationManager():
     
