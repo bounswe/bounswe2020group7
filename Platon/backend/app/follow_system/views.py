@@ -29,7 +29,7 @@ class GetFollowingsAPI(Resource):
     @follow_required(param_loc='args',requested_user_id_key='follower_id')
     def get(user_id, self):
         '''
-            Takes follower_id as input and returns the followings as a list.
+            Returns a list of dictionaries with id, name, surname, e_mail, rate and is_private informations.
         '''
         form = GetFollowingsForm(request.args)
         if form.validate():
@@ -43,7 +43,10 @@ class GetFollowingsAPI(Resource):
 
             mylist = []
             for follow in followSearch:
-                mylist.append(follow.following_id)
+                following_user = User.query.filter(User.id == follow.following_id).first()
+                mylist.append({'id': following_user.id, 'name': following_user.name, 'surname': following_user.surname,
+                               'e_mail': following_user.e_mail, 'rate': following_user.rate,
+                               'is_private': following_user.is_private})
 
             return make_response(jsonify(mylist), 200)
 
@@ -63,7 +66,7 @@ class GetFollowersAPI(Resource):
     @follow_required(param_loc='args',requested_user_id_key='following_id')
     def get(user_id, self):
         '''
-            Takes following_id as input and returns the followers as a list.
+            Returns a list of dictionaries with id, name, surname, e_mail, rate and is_private informations.
         '''
         form = GetFollowersForm(request.args)
         if form.validate():
@@ -77,7 +80,10 @@ class GetFollowersAPI(Resource):
 
             mylist = []
             for follow in followSearch:
-                mylist.append(follow.follower_id)
+                follower_user = User.query.filter(User.id == follow.follower_id).first()
+                mylist.append({'id': follower_user.id, 'name': follower_user.name, 'surname': follower_user.surname,
+                               'e_mail': follower_user.e_mail, 'rate': follower_user.rate,
+                               'is_private': follower_user.is_private})
 
             return make_response(jsonify(mylist), 200)
 
@@ -98,7 +104,7 @@ class FollowRequestAPI(Resource):
     @follow_required(param_loc='args',requested_user_id_key='following_id')
     def get(user_id, self):
         '''
-            Takes following_id as input and returns the follow requests as a list.
+            Returns a list of dictionaries that contains id, name, surname, e_mail, rate and is_private.
         '''
         form = GetFollowRequestsForm(request.args)
         if form.validate():
@@ -117,7 +123,10 @@ class FollowRequestAPI(Resource):
 
             mylist = []
             for follow in followSearch:
-                mylist.append(follow.follower_id)
+                follower_user = User.query.filter(User.id == follow.follower_id).first()
+                mylist.append({'id': follower_user.id, 'name': follower_user.name, 'surname': follower_user.surname,
+                               'e_mail': follower_user.e_mail, 'rate': follower_user.rate,
+                               'is_private': follower_user.is_private})
 
             return make_response(jsonify(mylist), 200)
 
