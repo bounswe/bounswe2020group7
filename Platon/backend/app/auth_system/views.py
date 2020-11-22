@@ -12,6 +12,7 @@ from app.auth_system.forms import CreateUserForm, create_user_parser
 from app.auth_system.forms import UpdateUserForm, update_user_parser
 from app.auth_system.forms import DeleteUserForm, delete_user_parser
 from app.auth_system.models import User
+from app.profile_management.models import Jobs
 from app.auth_system.helpers import generate_token,send_email,login_required, hashed
 
 from hashlib import sha256
@@ -215,6 +216,16 @@ class UserAPI(Resource):
                     # Tries to add the user to the database.
                     # If it fails, an error is raised.
                     try:
+                        # Checks whether the inputted job already exists in the database,
+                        # If not, adds the job to the database.
+                        # If yes, gets the ID of the job and writes it to the new user's "job_id" field.
+                        job_name = form.job.data.title()
+                        new_user_job = Jobs.query.filter_by(name=job_name).first()
+                        if new_user_job is None:
+                            new_user_job = Jobs(name=job_name)
+                            db.session.add(new_user_job)
+                            db.session.commit()
+
                         new_user = User(is_valid=False,
                                         e_mail=form.e_mail.data,
                                         password_hashed=hashed(form.password.data),
@@ -224,9 +235,9 @@ class UserAPI(Resource):
                                         rate=-1.0,
                                         profile_photo=None,
                                         google_scholar_name=None,
-                                        researchgate_name=None
+                                        researchgate_name=None,
+                                        job_id=new_user_job.id
                                         )
-                        # DO NOT FORGET TO WRITE CODE FOR "JOB" CREATION
                         db.session.add(new_user)
                         db.session.commit()
                     except:
