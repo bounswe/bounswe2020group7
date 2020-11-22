@@ -17,6 +17,8 @@ import AppBar from "../AppBar/AppBar";
 import "./Login.css";
 import config from "../../utils/config";
 import axios from "axios";
+import authService from "../../services/authService";
+
 const CssTextField = withStyles({
   root: {
     "& .MuiInputBase-input": {
@@ -121,6 +123,7 @@ class Login extends Component {
   };
 
   handleSubmit = () => {
+
     if (this.state.email === "" || this.state.password === "") {
       this.setState({ fieldEmptyError: "Fields are required" });
       return;
@@ -130,63 +133,26 @@ class Login extends Component {
       return;
     }
 
-    const url = config.BASE_URL;
-    let formData = new FormData();
-
-    formData.append("e_mail", this.state.email);
-    formData.append("password", this.state.password);
-
-    /*
-    fetch(url+"/api/auth_system/login", {
-      method: "POST",
-      body: JSON.stringify(data),
-    })*/
-    axios
-      .post(url + "/api/auth_system/login", formData)
-      .then((response) => {
-        console.log(response);
-        if (response.status === 200) {
-          this.setState({ isLoggedIn: true });
-          this.props.handlerIsAuthenticated();
-        }
-        return response.json();
-      })
-      .catch((error) => {
-        if (error.response) {
-          if (error.response.status === 401) {
-            this.setState({
-              showError:
-                "Error occured. Make sure you have verified your account.",
-            });
-          } else {
-            this.setState({
-              showError: "Error occured. Check your credientials.",
-            });
-          }
-        } else {
-          this.setState({
-            showError: "Error occured. Check your credientials.",
-          });
-        }
-        console.log(error)
-      });
-
-    //const data = { email: this.state.email, password: this.state.password }
-    /*axios.post(url, { email: this.state.email, password: this.state.password })
-    .then( (response) => {
-      //if(response.statusCode === 200){
-      debugger;
-      if(response){
-        this.props.handlerIsAuthenticated();      // Your function call
+    authService.login(this.state.email, this.state.password).then((response) => {
+      if(response.status === 200){
+        this.setState({ isLoggedIn: true });
       }
-    })
-    .catch( (error) =>{
-      debugger;
-      console.log(error);
-    });*/
+      else if(response.status === 401){
+        this.setState({
+          showError:
+            "Error occured. Make sure you have verified your account.",
+        });
+      }
+      else{
+        this.setState({
+          showError: "Error occured. Check your credientials.",
+        });
+      }
+    });
   };
+
   render() {
-    if (this.state.isLoggedIn) {
+    if (this.props.isAuthenticated) {
       return <Redirect to="/" />;
     }
 

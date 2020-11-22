@@ -11,20 +11,29 @@ import Register from './components/Register/Register'
 import ProfilePage from './components/ProfilePage/ProfilePage'
 import EditProfile from './components/EditProfile/EditProfile';
 import Activation from './components/Activation/Activation'
+import { setAuthorizationToken } from './helpers/setAuthorizationToken';
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isAuthenticated: false,
-
     }
   }
-  handlerIsAuthenticated = () => {
-    this.setState({
-      isAuthenticated: true
-    })
+  componentDidMount(){
+    this.handlerIsAuthenticated();
   }
+  handlerIsAuthenticated = () => {
+    const jwtToken = localStorage.getItem("jwtToken");
+    if (jwtToken) {
+      setAuthorizationToken(jwtToken);
+      console.log(jwtToken);
+      this.setState({
+        isAuthenticated: true
+      })
+    }
+  }
+
   render() {
 
     return (
@@ -39,7 +48,7 @@ class App extends Component {
       <Route path='/profile' exact  component={ProfilePage}/>
       <Route path='/editprofile' exact  component={EditProfile}/>
 
-      <Route path='/login' exact component={() => <Login  handlerIsAuthenticated={this.handlerIsAuthenticated}/>}/>
+      <Route path='/login' exact component={() => <Login isAuthenticated={this.state.isAuthenticated} />}/>
       <Route path='/register' exact  component={Register}/>
       <Route path='/forgotpassword' exact component={ForgotPassword}/>
       <Route path='/resetpassword'  component={ResetPassword}/>
