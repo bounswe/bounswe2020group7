@@ -39,8 +39,8 @@ def login_required(func):
         
     return auth_check
 
-def send_email(recepient_email,subject,message_body,message_link):
-    msg = Message(subject=subject,body=message_body + '\n' + message_link,recipients = [recepient_email])
+def send_email(recipient_email,subject,message_body,message_link):
+    msg = Message(subject=subject,body=message_body + '\n' + message_link,recipients = [recipient_email])
     try:
         mail.send(msg)
         return True
