@@ -129,24 +129,29 @@ class User(Resource):
         # If yes, starts processing the data.
         # If not, an error is raised.
         if form.validate():
-            # Checks whether there is an already existing user in the database with the given user ID.
-            # If yes, user information is returned.
-            # If not, an error is raised.
-            existing_user = User.query.filter_by(id=form.user_id.data).first()
-            if existing_user is not None:
-                try:
-                    account_information = {
-                                            "name": existing_user.name,
-                                            "surname": existing_user.surname,
-                                            "google_scholar_name": existing_user.google_scholar_name,
-                                            "researchgate_name": existing_user.researchgate_name
-                                            }
-                except:
-                    return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
-                else:
-                    return make_response(jsonify(account_information), 200)
+            # Tries to connect to the database.
+            # If it fails, an error is raised.
+            try:
+                existing_user = User.query.filter_by(id=form.user_id.data).first()
+            except:
+                return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
             else:
-                return make_response(jsonify({"error" : "The user is not found."}), 404)
+                # Checks whether there is an already existing user in the database with the given user ID.
+                # If yes, user information is returned.
+                # If not, an error is raised.
+                if existing_user is not None:
+                    try:
+                        account_information = {
+                                                "name": existing_user.name,
+                                                "surname": existing_user.surname,
+                                                "google_scholar_name": existing_user.google_scholar_name,
+                                                "researchgate_name": existing_user.researchgate_name
+                                                }
+                        return make_response(jsonify(account_information), 200)
+                else:
+                    return make_response(jsonify({"error" : "The user is not found."}), 404)
+        else:
+            return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
 
 
 
@@ -155,6 +160,7 @@ class User(Resource):
     @api.doc(responses={
                 201: "User has been successfully created.",
                 400: "Missing data fields or invalid data.",
+                409: "User with the given e-mail address already exists.",
                 500: "The server is not connected to the database.",
                 503: "The server could not send the account activation e-mail."
             })
@@ -166,45 +172,51 @@ class User(Resource):
         # If yes, starts processing the data.
         # If not, an error is raised.
         if form.validate():
-            # Checks whether there is an already existing user in the database with the e-mail address in the form data.
-            # If not, the user gets created.
-            # If yes, an error is raised.
-            existing_user = User.query.filter_by(e_mail=form.e_mail.data).first()
-            if existing_user is None:
-                # Tries to add the user to the database.
-                # If it fails, an error is raised.
-                try:
-                    new_user = User(is_valid=False,
-                                    e_mail=form.e_mail.data,
-                                    password_hashed=sha256(form.password.data),
-                                    name=form.name.data,
-                                    surname=form.surname.data,
-                                    is_private=False,
-                                    rate=-1.0
-                                    )
-                    db.session.add(new_user)
-                    db.session.commit()
-                except:
-                    return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
-                
-                # Tries to send the activation mail to the user.
-                # If it fails, an error is raised.
-                try:
-                    account_activation_token = generate_token(new_user.id, datetime.timedelta(days=1))
-                    send_email(
-                                recipient_email=new_user.e_mail,
-                                subject="Activate Your Platon Account",
-                                message_body='''Please activate your Platon account by clicking the activation link below.
-                                                Do not forget to activate your account today, the link expires in one day!''',
-                                # WARNING! This URL should NOT be hard coded as below. Please update this line.
-                                message_link="http://{}?token={}".format("FRONTEND_HOSTNAME",account_activation_token)
-                                )
-                except:
-                    return make_response(jsonify({"error" : "The server could not send the account activation e-mail."}), 503)
-                else:
-                    return make_response(jsonify({"message" : "User has been successfully created."}), 201)
+            # Tries to connect to the database.
+            # If it fails, an error is raised.
+            try:
+                existing_user = User.query.filter_by(e_mail=form.e_mail.data).first()
+            except:
+                return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
             else:
-                return None
+                # Checks whether there is an already existing user in the database with the e-mail address in the form data.
+                # If not, the user gets created.
+                # If yes, an error is raised.
+                if existing_user is None:
+                    # Tries to add the user to the database.
+                    # If it fails, an error is raised.
+                    try:
+                        new_user = User(is_valid=False,
+                                        e_mail=form.e_mail.data,
+                                        password_hashed=sha256(form.password.data),
+                                        name=form.name.data,
+                                        surname=form.surname.data,
+                                        is_private=False,
+                                        rate=-1.0
+                                        )
+                        db.session.add(new_user)
+                        db.session.commit()
+                    except:
+                        return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+                    
+                    # Tries to send the activation mail to the user.
+                    # If it fails, an error is raised.
+                    try:
+                        account_activation_token = generate_token(new_user.id, datetime.timedelta(days=1))
+                        send_email(
+                                    recipient_email=new_user.e_mail,
+                                    subject="Activate Your Platon Account",
+                                    message_body='''Please activate your Platon account by clicking the activation link below.
+                                                    Do not forget to activate your account today, the link expires in one day!''',
+                                    # WARNING! This URL should NOT be hard coded as below. Please update this line.
+                                    message_link="http://{}?token={}".format("FRONTEND_HOSTNAME",account_activation_token)
+                                    )
+                    except:
+                        return make_response(jsonify({"error" : "The server could not send the account activation e-mail."}), 503)
+                    else:
+                        return make_response(jsonify({"message" : "User has been successfully created."}), 201)
+                else:
+                    return make_response(jsonify({"error" : "User with the given e-mail address already exists."}), 409)
         else:
             return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
 
@@ -226,25 +238,31 @@ class User(Resource):
         # If yes, starts processing the data.
         # If not, an error is raised.
         if form.validate():
-            # Checks whether there is an already existing user in the database with the given user ID.
-            # If yes, account information of the user gets updated.
-            # If not, an error is raised.
-            existing_user = User.query.filter_by(id=user_id).first()
-            if existing_user is not None:
-                # Tries to update account information of the user.
-                # If it fails, an error is raised.
-                try:
-                    for key, value in form.data:
-                        if value:
-                            setattr(existing_user, key, value)
-                    db.session.add(existing_user)
-                    db.session.commit()
-                except:
-                    return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
-                else:
-                    return make_response(jsonify({"message" : "User has been successfully created."}), 200)
+            # Tries to connect to the database.
+            # If it fails, an error is raised.
+            try:
+                existing_user = User.query.filter_by(id=user_id).first()
+            except:
+                return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
             else:
-                return make_response(jsonify({"error" : "The user is not found."}), 404)
+                # Checks whether there is an existing user in the database with the given user ID.
+                # If yes, starts processing the data.
+                # If not, an error is raised.
+                if existing_user is not None:
+                    # Tries to update account information of the user.
+                    # If it fails, an error is raised.
+                    try:
+                        for key, value in form.data:
+                            if value:
+                                setattr(existing_user, key, value)
+                        db.session.add(existing_user)
+                        db.session.commit()
+                    except:
+                        return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+                    else:
+                        return make_response(jsonify({"message" : "Account information has been successfully updated."}), 200)
+                else:
+                    return make_response(jsonify({"error" : "The user is not found."}), 404)
         else:
             return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
 
@@ -267,28 +285,34 @@ class User(Resource):
         # If yes, starts processing the data.
         # If not, an error is raised.
         if form.validate():
-            # Checks whether there is an existing user in the database with the given user ID.
-            # If yes, starts processing the data.
-            # If not, an error is raised.
-            existing_user = User.query.filter_by(id=user_id).first()
-            if existing_user is not None:
-                # Checks whether the inputted password matches the password of the user.
-                # If yes, the user account gets deleted.
-                # If not, an error is raised.
-                if existing_user.password_hashed == hashed(form.password.data):
-                    # Tries to delete the user account.
-                    # If it fails, an error is raised.
-                    try:
-                        db.session.delete(existing_user)
-                        db.session.commit()
-                    except:
-                        return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
-                    else:
-                        return make_response(jsonify({"message" : "User account has been successfully deleted."}), 200)
-                else:
-                    return make_response(jsonify({"error" : "Wrong password."}), 401)    
+            # Tries to connect to the database.
+            # If it fails, an error is raised.
+            try:
+                existing_user = User.query.filter_by(id=user_id).first()
+            except:
+                return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
             else:
-                return make_response(jsonify({"error" : "The user is not found."}), 404)
+                # Checks whether there is an existing user in the database with the given user ID.
+                # If yes, starts processing the data.
+                # If not, an error is raised.
+                if existing_user is not None:
+                    # Checks whether the inputted password matches the password of the user.
+                    # If yes, the user account gets deleted.
+                    # If not, an error is raised.
+                    if existing_user.password_hashed == hashed(form.password.data):
+                        # Tries to delete the user account.
+                        # If it fails, an error is raised.
+                        try:
+                            db.session.delete(existing_user)
+                            db.session.commit()
+                        except:
+                            return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+                        else:
+                            return make_response(jsonify({"message" : "User account has been successfully deleted."}), 200)
+                    else:
+                        return make_response(jsonify({"error" : "Wrong password."}), 401)    
+                else:
+                    return make_response(jsonify({"error" : "The user is not found."}), 404)
         else:
             return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
 
