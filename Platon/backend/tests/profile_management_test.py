@@ -104,51 +104,51 @@ class ResearchInfoTests(BaseTest):
     def test_fetch_RG_info(self):
         RG_name = "https://www.researchgate.net/profile/Meric_Turan"
         expected_response = [
-            { 
-                "title": "Intelligent network data analytics function in 5G cellular networks using machine learning.",
-                "description": "",
-                'year': 2020
-            },
-            { 
-                "title": "Transmitter Localization in Vessel-Like Diffusive Channels Using Ring-Shaped Molecular Receivers.",
-                "description": "",
-                'year': 2018
-            },
-            { 
-                "title": "Channel Model of Molecular Communication via Diffusion in a Vessel-Like Environment Considering a Partially Covering Receiver.",
-                "description": "",
-                'year': 2018
-            },
-            { 
-                "title": "Performance analysis of power adjustment methods in molecular communication via diffusion.",
-                "description": "",
-                'year': 2018
-            },
-            { 
-                "title": "MOL-eye - A new metric for the performance evaluation of a molecular signal.",
-                "description": "",
-                'year': 2018
-            },            
-            { 
-                "title": "Channel Model of Molecular Communication via Diffusion in a Vessel-like Environment Considering a Partially Covering Receiver.",
-                "description": "",
-                'year': 2018
-            },            
-            { 
-                "title": "Note recognition-based mobile application for guitar training.",
-                "description": "",
+            {
+                'title': 'MOL-Eye: A New Metric for the Performance Evaluation of a Molecular Signal', 
+                'description': '', 
                 'year': 2017
-            },            
-            { 
-                "title": "MOL-Eye - A New Metric for the Performance Evaluation of a Molecular Signal.",
-                "description": "",
+            }, 
+            {
+                'title': 'Channel Model of Molecular Communication via Diffusion in a Vessel-like Environment Considering a Partially Covering Receiver', 
+                'description': '',
+                 'year': 2018
+            }, 
+            {
+                'title': 'Intelligent network data analytics function in 5G cellular networks using machine learning', 
+                'description': '', 
+                'year': 2020
+            }, 
+            {
+                'title': 'Transmitter Localization in Vessel-Like Diffusive Channels Using Ring-Shaped Molecular Receivers', 
+                'description': '', 
+                'year': 2018
+            }, 
+            {
+                'title': 'Channel Model of Molecular Communication via Diffusion in a Vessel-Like Environment Considering a Partially Covering Receiver', 
+                'description': '', 
+                'year': 2018
+            }, 
+            {
+                'title': 'Performance analysis of power adjustment methods in molecular communication via diffusion', 
+                'description': '', 
+                'year': 2018
+            }, 
+            {
+                'title': 'MOL-eye: A new metric for the performance evaluation of a molecular signal', 
+                'description': '', 
+                'year': 2018
+            }, 
+            {
+                'title': 'Note recognition-based mobile application for guitar training', 
+                'description': '', 
                 'year': 2017
             }
-        ]
+                ]
         actual_result = ResearchInfoFetch.fetch_research_gate_info(RG_name)
         for i in expected_response:
             self.assertIn(i,actual_result)
-
+    
     def test_fetch_GS_info(self):
         GS_info = "QAzjUf8AAAAJ"
         expected_response = [
@@ -186,7 +186,7 @@ class ResearchInfoTests(BaseTest):
         actual_result = ResearchInfoFetch.fetch_google_scholar_info(GS_info)
         for i in expected_response:
             self.assertIn(i,actual_result)
-
+    
 class NotificationTests(BaseTest):
 
     def setUp(self):
