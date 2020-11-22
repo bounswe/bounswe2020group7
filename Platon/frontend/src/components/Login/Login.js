@@ -15,8 +15,6 @@ import { Link as RouteLink, Redirect } from "react-router-dom";
 import Snackbar from "@material-ui/core/Snackbar";
 import AppBar from "../AppBar/AppBar";
 import "./Login.css";
-import config from "../../utils/config";
-import axios from "axios";
 import authService from "../../services/authService";
 
 const CssTextField = withStyles({
