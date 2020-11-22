@@ -30,7 +30,7 @@ class App extends Component {
     return (
       <Router>
       <div className="App">
-      <Route path='/activate/' component={Activation}/>
+      <Route path='/activate_account' component={Activation}/>
 
       <Route path='/' exact
         render ={ () => !this.state.isAuthenticated ?
