@@ -102,7 +102,7 @@ class ResearchInfoTests(BaseTest):
         self.assertEqual(401,actual_response.status_code)
     
     def test_fetch_RG_info(self):
-        RG_name = "Meriç_Turan"
+        RG_name = "https://www.researchgate.net/profile/Meric_Turan"
         expected_response = [
             { 
                 "title": "Intelligent network data analytics function in 5G cellular networks using machine learning.",

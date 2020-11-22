@@ -3,6 +3,7 @@ import json
 import atexit
 from apscheduler.schedulers.background import BackgroundScheduler
 from app import db
+from bs4 import BeautifulSoup
 
 from app.profile_management.models import ResearchInformation,Notification,NotificationRelatedUser
 
@@ -24,17 +25,21 @@ class ResearchInfoFetch():
     @staticmethod
     def fetch_research_gate_info(username):
         """
-            Takes ResearchGate name as input and returns fetches the works from ResearchGate
+            Takes Google Scholar account id as input and returns fetches the works from Google Scholar
         """
-        api_url = "https://dblp.org/search/publ/api?q=author%3A{}%3A&format=json".format(username.replace(' ','_'))
+        api_url = "{}/research".format(username)
         try:
             response = requests.get(api_url)
-            response = json.loads(response.text)
-            research_list = response['result']['hits']['hit']
-            return [{'title':i['info']['title'],'description':'','year':int(i['info']['year'])}for i in research_list]
+            soup = BeautifulSoup(response.text, 'html.parser')
+            research_list = []
+            for research in soup.find_all("div",{"class":"nova-e-text nova-e-text--size-l nova-e-text--family-sans-serif nova-e-text--spacing-none nova-e-text--color-inherit nova-v-publication-item__title"}):
+                research_list.append(research.a.string)
+            date_list = []
+            for date in soup.find_all("li",{"class":"nova-e-list__item nova-v-publication-item__meta-data-item"}):
+                date_list.append(date.string.split()[-1])
+            return [{'title':research,'description':'','year':int(year)}for research,year in zip(research_list,date_list)]
         except:
             return []
-    
     @staticmethod
     def update_research_info():
         """
