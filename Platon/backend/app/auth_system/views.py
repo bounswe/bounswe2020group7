@@ -156,6 +156,7 @@ class UserAPI(Resource):
 
 
     # GET request (for the logged-in user to get their own user information)
+    @api.expect(get_self_parser)
     @api.doc(responses={
                 200: "User has been found.",
                 404: "The user is not found.",
