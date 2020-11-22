@@ -11,7 +11,7 @@ from app.follow_system.models import Follow, FollowRequests
 from app.auth_system.models import User
 from app.auth_system.views import login_required
 from app.follow_system.helpers import follow_required
-
+from app.profile_management.helpers import NotificationManager
 
 follow_system_ns = Namespace("Follow System",
                              description="Follow System Endpoints",
@@ -157,14 +157,25 @@ class FollowRequestAPI(Resource):
             else:
                 # Create Follow record if the following user has public profile.
                 follow_record = Follow(form.follower_id.data, form.following_id.data)
-
+                # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                # Add notification to all user that follows the logged in user
+                try:
+                    logged_in_user = User.query.filter(User.id == user_id)
+                    following_users = Follow.query.filter(Follow.following_id == user_id).all()
+                    for user in following_users:
+                        text = "{} started to following {}".format(logged_in_user.name + " " + logged_in_user.surname
+                                                                    ,following_user.name + " " + following_user.surname)
+                        NotificationManager.add_notification(user.follower_id,[user_id],text)
+                except:
+                    return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+                # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             try:
                 db.session.add(follow_record)  # Creating a new database entry.
                 db.session.commit()
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
-            return make_response(jsonify({'msg': 'Follow Request is succesfully added'}), 200)
+            return make_response(jsonify({'msg': 'Follow Request is successfully added'}), 200)
 
 
         else:
@@ -210,7 +221,19 @@ class FollowRequestAPI(Resource):
                     db.session.commit()
                 except:
                     return make_response(jsonify({'error': 'Database Connection Error'}), 500)
-
+                # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                # Add notification to all user that follows the logged in user
+                try:
+                    follower_user = User.query.filter(User.id == follow_request.follower_id)
+                    following_user = User.query.filter(User.id == follow_request.following_id)
+                    following_users = Follow.query.filter(Follow.following_id == follower_user.id).all()
+                    for user in following_users:
+                        text = "{} started to following {}".format(follower_user.name + " " + follower_user.surname
+                                                                    ,following_user.name + " " + following_user.surname)
+                        NotificationManager.add_notification(user.follower_id,[user_id],text)
+                except:
+                    return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+                # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             # Reject if the state of the reply is 2.
             elif form.state.data == 2:
                 try:

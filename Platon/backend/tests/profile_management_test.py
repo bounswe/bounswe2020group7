@@ -1,10 +1,10 @@
 from tests.base_test import BaseTest
 from tests.base_test import TestConfig
 from app.auth_system.models import User
-from app.profile_management.models import ResearchInformation
+from app.profile_management.models import ResearchInformation,Notification,NotificationRelatedUser
 from app.auth_system.views import generate_token
 from app.profile_management.views import ResearchType
-from app.profile_management.helpers import ResearchInfoFetch
+from app.profile_management.helpers import ResearchInfoFetch,NotificationManager
 from app.follow_system.models import Follow
 from app import db
 import jwt
@@ -186,3 +186,77 @@ class ResearchInfoTests(BaseTest):
         actual_result = ResearchInfoFetch.fetch_google_scholar_info(GS_info)
         for i in expected_response:
             self.assertIn(i,actual_result)
+
+class NotificationTests(BaseTest):
+
+    def setUp(self):
+        super().setUp()
+        # Add artificia users to test login feature
+        users = [
+            User("umut@deneme.com",True,"b73ec5e4625ffcb6d0d70826f33be7a75d45b37046e26c4b60d9111266d70e32",3.5,"Umut","Özdemir",False,None,None,None),
+            User("can@deneme.com",False,"cce0c2170d1ae52e099c716165d80119ee36840e3252e57f2b2b4d6bb111d8a5",4.6,"Can","Deneme",True,None,None,None)
+        ]
+        for user in users:
+            db.session.add(user)
+        db.session.commit()
+        notifications = [
+            Notification(1,"Can created a new workspace",None),
+            Notification(2,"Umut deletes a workspace","/workspace/1")
+        ]
+        db.session.add_all(notifications)
+        db.session.commit()
+        related_users = [
+            NotificationRelatedUser(1,2),
+            NotificationRelatedUser(2,1)
+        ]
+        db.session.add_all(related_users)
+        db.session.commit()
+    
+    def test_add_notification(self):
+        new_notification = {'owner_id':1,'text': 'Can deletes his workspace','link':'/workspace/2','related_users': [2]}
+        response = NotificationManager.add_notification(new_notification['owner_id'],new_notification['related_users'],
+                                                        new_notification['text'],new_notification['link'])
+        self.assertTrue(response)
+        self.assertIsNotNone(Notification.query.filter(Notification.link == '/workspace/2').first())
+    
+    def test_get_notification_valid(self):
+        valid_token = generate_token(2,TestConfig.SESSION_DURATION)
+        notification = Notification.query.filter(Notification.id == 2).first()
+
+        expected_response = [{'id':2,'text': 'Umut deletes a workspace','link':'/workspace/1', 'timestamp' : notification.timestamp,'related_users': [1]}]
+        actual_response = self.client.get("/api/profile/notifications",headers = {"auth_token" : valid_token})
+        
+        self.assertEqual(actual_response.status_code,200)
+        self.assertEqual(expected_response[0]['id'],json.loads(actual_response.data)[0]['id'])
+    
+    def test_get_notification_invalid(self):
+        valid_token = generate_token(2,TestConfig.SESSION_DURATION) + "c"
+        
+        expected_response = {'error' : 'Wrong Token Format'}
+        actual_response = self.client.get("/api/profile/notifications",headers = {"auth_token" : valid_token})
+        
+        self.assertEqual(actual_response.status_code,401)
+        self.assertEqual(expected_response,json.loads(actual_response.data))
+    
+    def test_delete_notification_valid(self):
+        valid_token = generate_token(1,TestConfig.SESSION_DURATION)
+        
+        expected_response = {'msg' : 'Successfully Deleted'}
+        actual_response = self.client.delete("/api/profile/notifications",data = {'notification_id' : 1},headers = {"auth_token" : valid_token})
+        
+        self.assertEqual(actual_response.status_code,200)
+        self.assertEqual(expected_response,json.loads(actual_response.data))
+        self.assertIsNone(Notification.query.filter(Notification.id == 1).first())
+        self.assertIsNone(NotificationRelatedUser.query.filter(NotificationRelatedUser.notification_id == 1).first())
+    
+    def test_delete_notification_invalid(self):
+        valid_token = generate_token(1,TestConfig.SESSION_DURATION)
+        
+        expected_response = {'error':'Notification Not Found'}
+        actual_response = self.client.delete("/api/profile/notifications",data = {'notification_id' : 3},headers = {"auth_token" : valid_token})
+        
+        self.assertEqual(actual_response.status_code,404)
+        self.assertEqual(expected_response,json.loads(actual_response.data))
+        self.assertIsNotNone(Notification.query.filter(Notification.id == 1).first())
+        self.assertIsNotNone(NotificationRelatedUser.query.filter(NotificationRelatedUser.notification_id == 1).first())
+
