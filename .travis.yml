@@ -23,7 +23,8 @@ jobs:
         - npm run build
     
     - stage: deploy
-      if: branch = release
+      on:
+        branch: release
       language: python
       addons:
         ssh_known_hosts: 52.59.254.130
