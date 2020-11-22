@@ -12,7 +12,6 @@ import {Link} from 'react-router-dom'
 
 const StyledButton = withStyles({
   root: {
-
     color: colors.secondary,
     "&:hover": {
       backgroundColor: colors.primary,
@@ -91,12 +90,14 @@ export default function SearchAppBar() {
 
 <Link to ='/'>
 
+
             <Logo
             height='5vh'
             width='15vh'
             fill={colors.secondary}
 
              /></Link>
+
 
           <div className={classes.search}>
             <div className={classes.searchIcon}>
@@ -116,7 +117,6 @@ export default function SearchAppBar() {
           <Link to='/login' style={{textDecoration: "none"}}><StyledButton>Login</StyledButton></Link>
           <Link to='/register' style={{textDecoration: "none"}}><StyledButton>Register</StyledButton></Link>
           </div>
-
         </Toolbar>
       </AppBar>
     </div>

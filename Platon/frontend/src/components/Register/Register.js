@@ -33,6 +33,7 @@ const StyledTextField = withStyles({
       color: colors.primaryLight,
     },
 
+
     "& label.Mui-focused": {
       color: colors.tertiary,
     },
@@ -52,7 +53,6 @@ const StyledTextField = withStyles({
     },
   },
 })(TextField);
-
 
 const StyledButton = withStyles({
   root: {
@@ -269,7 +269,6 @@ class Register extends Component {
                 required
                 fullWidth
                 id="email"
-
                 margin="normal"
                 label="Email Address"
                 name="email"
@@ -280,13 +279,11 @@ class Register extends Component {
                 variant="outlined"
                 required
                 fullWidth
-
                 margin="normal"
                 name="password"
                 label="Password"
                 type="password"
                 id="password"
-
                 value={this.state.password}
                 onChange={(e) => this.setState({ password: e.target.value })}
               />

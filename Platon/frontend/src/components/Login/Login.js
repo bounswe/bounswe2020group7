@@ -28,6 +28,7 @@ const CssTextField = withStyles({
       color: colors.primaryLight,
     },
 
+
     "& label.Mui-focused": {
       color: colors.tertiary,
     },
@@ -52,6 +53,7 @@ const StyledButton = withStyles({
   root: {
     background: colors.tertiary,
     color: colors.secondary,
+
 
     "&:hover": {
       backgroundColor: colors.tertiaryDark,
@@ -128,6 +130,7 @@ class Login extends Component {
       this.setState({ fieldEmptyError: "Fields are required" });
       return;
     }
+
     if (!/\S+@\S+\.\S+/.test(this.state.email)) {
       this.setState({ fieldEmptyError: "Invalid email" });
       return;

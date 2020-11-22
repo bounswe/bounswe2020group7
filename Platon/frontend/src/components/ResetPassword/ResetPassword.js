@@ -14,6 +14,7 @@ import AutorenewIcon from "@material-ui/icons/Autorenew";
 import "./ResetPassword.css";
 import Snackbar from "@material-ui/core/Snackbar";
 import config from "../../utils/config";
+
 const CssTextField = withStyles({
   root: {
     "& .MuiInputBase-input": {
@@ -131,7 +132,7 @@ class ResetPassword extends Component {
     const url = config.BASE_URL
     const data = { new_password: this.state.password, new_password_repeat: this.state.passwordAgain };
 
-    fetch(url + "/auth_system/reset_password", {
+    fetch(url + "/api/auth_system/reset_password", {
       method: "POST",
       body: JSON.stringify(data),
       headers:{
@@ -188,6 +189,7 @@ class ResetPassword extends Component {
                 >
                   Enter your new password.
                 </Typography>
+
 
                 <CssTextField
                   variant="outlined"

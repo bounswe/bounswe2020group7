@@ -15,6 +15,7 @@ import { Link as RouteLink } from "react-router-dom";
 import "./ForgotPassword.css";
 import Snackbar from "@material-ui/core/Snackbar";
 import config from "../../utils/config";
+
 const CssTextField = withStyles({
   root: {
     "& .MuiInputBase-input": {
@@ -112,6 +113,7 @@ class ForgotPassword extends Component {
     const data = { e_mail: this.state.email };
     fetch(url + "/auth_system/reset_password", {
       method: "GET",
+
       body: JSON.stringify(data),
     })
       .then((response) => {

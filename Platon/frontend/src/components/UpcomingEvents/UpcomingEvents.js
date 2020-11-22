@@ -28,9 +28,7 @@ const UpcomingEvents = () => {
 
       {Object.keys(upcomingEventsList).map((events, index) => (
 
-
           <UpcomingEventsItem event={upcomingEventsList[events]} key={index} id = {index}/>
-
 
       ))}
     </div>
