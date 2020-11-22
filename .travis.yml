@@ -20,7 +20,7 @@ jobs:
       install:
         - npm cache clean --force
         - npm install
-        - npm run build
+        - CI=false npm run build
     
     - stage: deploy
       if: branch = release AND type != pull_request
