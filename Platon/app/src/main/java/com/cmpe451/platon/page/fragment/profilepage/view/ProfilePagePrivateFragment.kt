@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmpe451.platon.R
@@ -15,11 +16,12 @@ import com.cmpe451.platon.page.fragment.profilepage.contract.ProfilePageContract
 import com.cmpe451.platon.page.fragment.profilepage.model.ProfilePageRepository
 import com.cmpe451.platon.page.fragment.profilepage.presenter.ProfilePagePresenter
 import com.cmpe451.platon.adapter.ProfilePageRecyclerViewAdapter
+import com.cmpe451.platon.databinding.FragmentProfilePageOthersPrivateBinding
 import com.cmpe451.platon.util.Definitions
 
-class ProfilePageFragment : Fragment(), ProfilePageContract.View {
+class ProfilePagePrivateFragment() : Fragment(), ProfilePageContract.View {
 
-    private lateinit var binding: FragmentProfilePageBinding
+    private lateinit var binding: FragmentProfilePageOthersPrivateBinding
     private lateinit var presenter: ProfilePageContract.Presenter
     private lateinit var details: ArrayList<MutableMap<String,String>>
     private lateinit var user :Definitions.User
@@ -27,7 +29,7 @@ class ProfilePageFragment : Fragment(), ProfilePageContract.View {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = FragmentProfilePageBinding.inflate(inflater)
+        binding = FragmentProfilePageOthersPrivateBinding.inflate(inflater)
         details = ArrayList()
         setHasOptionsMenu(true)
         return binding.root
@@ -37,7 +39,6 @@ class ProfilePageFragment : Fragment(), ProfilePageContract.View {
         super.onViewCreated(view, savedInstanceState)
         setListeners()
         initializePresenter()
-        initializeAdapter()
 
         setUser()
     }
@@ -115,26 +116,28 @@ class ProfilePageFragment : Fragment(), ProfilePageContract.View {
         }
     }
 
-    private fun initializeAdapter() {
-        val rvProfilePage = binding.rvProfilePageInfo
-        val adapter = ProfilePageRecyclerViewAdapter(ArrayList())
-        rvProfilePage.adapter = adapter
-        rvProfilePage.layoutManager = LinearLayoutManager(this.activity)
-        adapter.submitList(presenter.getProfilePageDetails())
-    }
 
     private fun setListeners() {
 
         binding.buttonFollowers.setOnClickListener {
-            presenter.onFollowersButtonClicked()
+            presenter.onFollowersButtonPrivateClicked()
         }
 
         binding.buttonFollowing.setOnClickListener {
-            presenter.onFollowingButtonClicked()
+            presenter.onFollowingButtonPrivateClicked()
         }
 
-        binding.buttonEditProfile.setOnClickListener {
-            presenter.onEditProfileButtonClicked()
+        binding.buttonFollow.setOnClickListener {
+            presenter.onFollowButtonClicked()
+            if(binding.buttonFollow.text == "Requested"){
+                binding.buttonFollow.setBackgroundColor(ContextCompat.getColor(this.activity as HomeActivity, R.color.secondary_green_transparent))
+                binding.buttonFollow.text = "Follow"
+            }
+            else {
+                binding.buttonFollow.setBackgroundColor(ContextCompat.getColor(this.activity as HomeActivity, R.color.primary_dark_lighter))
+                binding.buttonFollow.text = "Requested"
+            }
+
         }
 
         //password.addTextChangedListener(textWatcher)

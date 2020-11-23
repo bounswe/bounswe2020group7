@@ -17,7 +17,13 @@ interface ProfilePageContract {
         fun getFollowers(): ArrayList<Definitions.User>
         fun getFollowing(): ArrayList<Definitions.User>
         fun getProfilePageDetails():ArrayList<MutableMap<String, String>>
-        fun getUser(): Definitions.User
+        fun getUser() : Definitions.User
+        fun getUser2(): Definitions.User
+        fun onEditButtonClicked()
+        fun onFollowButtonClicked()
+        fun onFollowersButtonPrivateClicked()
+        fun onFollowingButtonPrivateClicked()
+        fun goToProfilePage(id: Int)
     }
 
 }
