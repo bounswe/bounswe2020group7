@@ -4,6 +4,7 @@ package com.cmpe451.platon.page.fragment.forgotpass.presenter
  * @author Burak Ömür
  */
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Handler
 import android.os.HandlerThread
@@ -20,6 +21,7 @@ import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.page.fragment.forgotpass.contract.ForgotPasswordContract
 import com.cmpe451.platon.page.fragment.forgotpass.model.ForgotPasswordRepository
 import com.cmpe451.platon.page.fragment.register.view.RegisterFragment
+import com.cmpe451.platon.util.Definitions
 import com.google.gson.JsonObject
 import io.reactivex.rxjava3.core.Observer
 import io.reactivex.rxjava3.disposables.Disposable
@@ -42,11 +44,12 @@ class ForgotPasswordPresenter(private var view: ForgotPasswordContract.View?,
 
         val mail = email.text.toString().trim()
 
+        val dialog = Definitions().createProgressBar((view as Fragment).activity as Context)
+
+
         val observer = object :Observer<JsonObject>{
             override fun onSubscribe(d: Disposable?) {
-                Log.i("Subbed", "Subbed!")
-                forgot_btn.isEnabled = false
-                email.isEnabled = false
+                dialog.show()
             }
 
             override fun onNext(t: JsonObject?) {
@@ -66,15 +69,17 @@ class ForgotPasswordPresenter(private var view: ForgotPasswordContract.View?,
             }
 
             override fun onError(e: Throwable?) {
-                Toast.makeText((view as Fragment).activity, "Request not answered", Toast.LENGTH_LONG).show()
-                forgot_btn.isEnabled = true
-                email.isEnabled = true
+                val msg = e?.message
+                if( msg != null && msg.contains("HTTP", true)){
+                    Toast.makeText((view as Fragment).activity, msg.subSequence(0, 8).toString() + " OCCURRED", Toast.LENGTH_LONG).show()
+                }else{
+                    Toast.makeText((view as Fragment).activity, "Server not responding!", Toast.LENGTH_LONG).show()
+                }
+                dialog.dismiss()
             }
 
             override fun onComplete() {
-                forgot_btn.isEnabled = true
-                email.isEnabled = true
-                Log.i("Completed", "Completed!")
+                dialog.dismiss()
             }
 
         }
@@ -114,13 +119,12 @@ class ForgotPasswordPresenter(private var view: ForgotPasswordContract.View?,
             flag = true
         }
 
+        val dialog = Definitions().createProgressBar((view as Fragment).activity as Context)
+
+
         val observer = object :Observer<JsonObject>{
             override fun onSubscribe(d: Disposable?) {
-                Log.i("Subbed", "Subbed!")
-                reset_btn.isActivated = false
-                pass1.isEnabled= false
-                pass2.isEnabled = false
-                token.isEnabled = false
+                dialog.show()
             }
 
             override fun onNext(t: JsonObject?) {
@@ -136,20 +140,17 @@ class ForgotPasswordPresenter(private var view: ForgotPasswordContract.View?,
             }
 
             override fun onError(e: Throwable?) {
-                Toast.makeText((view as Fragment).activity, "Request not answered", Toast.LENGTH_LONG).show()
-                reset_btn.isActivated = true
-                pass1.isEnabled= true
-                pass2.isEnabled = true
-                token.isEnabled = true
+                val msg = e?.message
+                if( msg != null && msg.contains("HTTP", true)){
+                    Toast.makeText((view as Fragment).activity, msg.subSequence(0, 8).toString() + " OCCURRED", Toast.LENGTH_LONG).show()
+                }else{
+                    Toast.makeText((view as Fragment).activity, "Server not responding!", Toast.LENGTH_LONG).show()
+                }
+                dialog.dismiss()
             }
 
             override fun onComplete() {
-                reset_btn.isActivated = true
-                pass1.isEnabled= true
-                pass2.isEnabled = true
-                token.isEnabled = true
-                Log.i("Completed", "Completed!")
-
+                dialog.dismiss()
             }
 
         }

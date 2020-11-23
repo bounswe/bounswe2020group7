@@ -4,6 +4,7 @@ package com.cmpe451.platon.page.fragment.login.presenter
  * @author Burak Ömür
  */
 
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.util.Log
@@ -39,7 +40,6 @@ class LoginPresenter(
         val rememberMe = sharedPreferences.getBoolean("remember_me", false)
 
         if (rememberMe){
-
             Toast.makeText((view as LoginFragment).activity, "Logging In", Toast.LENGTH_LONG).show()
 
             val mail = sharedPreferences.getString("login_mail", null)
@@ -93,13 +93,12 @@ class LoginPresenter(
         val passStr = pass.text.toString().trim()
         val rememberBool = remember.isChecked
 
+
+        val dialog = Definitions().createProgressBar((view as Fragment).activity as Context)
+
         val observer = object :Observer<JsonObject>{
             override fun onSubscribe(d: Disposable?) {
-                login_btn.isEnabled = false
-                remember.isEnabled = false
-                mail.isEnabled = false
-                pass.isEnabled = false
-                Log.i("Subsribed", "Observer subscribed!")
+                dialog.show()
             }
 
             override fun onNext(t: JsonObject?) {
@@ -113,19 +112,20 @@ class LoginPresenter(
                 }
             }
             override fun onError(e: Throwable?) {
-                Toast.makeText((view as Fragment).activity, "Server not responding!", Toast.LENGTH_LONG).show()
-                login_btn.isEnabled = true
-                mail.isEnabled = true
-                pass.isEnabled = true
-                remember.isEnabled = true
-                Log.i("Error", "Error occurred!")
+                Log.e("ERROR", e?.message + "" )
+
+                val msg = e?.message
+                if( msg != null && msg.contains("HTTP", true)){
+                    Toast.makeText((view as Fragment).activity, msg.subSequence(0, 8).toString() + " OCCURRED", Toast.LENGTH_LONG).show()
+                }else{
+                    Toast.makeText((view as Fragment).activity, "Server not responding!", Toast.LENGTH_LONG).show()
+                }
+
+
+                dialog.dismiss()
             }
             override fun onComplete() {
-                login_btn.isEnabled = true
-                mail.isEnabled = true
-                pass.isEnabled = true
-                remember.isEnabled = true
-                Log.i("Complete", "Completed!")
+                dialog.dismiss()
             }
         }
 

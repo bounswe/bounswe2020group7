@@ -1,5 +1,7 @@
 package com.cmpe451.platon.page.fragment.register.presenter
 
+import android.app.AlertDialog
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Handler
 import android.os.HandlerThread
@@ -22,6 +24,7 @@ import com.google.gson.JsonObject
 import io.reactivex.rxjava3.core.Observer
 import io.reactivex.rxjava3.disposables.Disposable
 import java.util.*
+import com.cmpe451.platon.R
 
 class RegisterPresenter(private var view: RegisterContract.View?, private var repository: RegisterRepository, private var sharedPreferences: SharedPreferences, private var navController: NavController) : RegisterContract.Presenter {
     override fun getTermsAndConds(): String {
@@ -67,8 +70,6 @@ class RegisterPresenter(private var view: RegisterContract.View?, private var re
         }
 
 
-
-
         val firstNameStr = firstName.text.toString().trim()
         val lastNameStr = lastName.text.toString().trim()
         val mailStr = mail.text.toString().trim()
@@ -81,17 +82,11 @@ class RegisterPresenter(private var view: RegisterContract.View?, private var re
             flag = true
         }
 
+        val dialog = Definitions().createProgressBar((view as Fragment).activity as Context)
+
         val observer = object :Observer<JsonObject>{
             override fun onSubscribe(d: Disposable?) {
-                register_btn.isEnabled = false
-                firstName.isEnabled = false
-                lastName.isEnabled = false
-                mail.isEnabled = false
-                pass1.isEnabled = false
-                pass2.isEnabled = false
-                terms.isEnabled = false
-                job.isEnabled = false
-                Log.i("Subs", "subsed!")
+                dialog.show()
             }
 
             override fun onNext(t: JsonObject?) {
@@ -108,27 +103,17 @@ class RegisterPresenter(private var view: RegisterContract.View?, private var re
             }
 
             override fun onError(e: Throwable?) {
-                Toast.makeText((view as Fragment).activity, "Server not responding!", Toast.LENGTH_LONG).show()
-                register_btn.isEnabled = true
-                firstName.isEnabled = true
-                lastName.isEnabled = true
-                mail.isEnabled = true
-                pass1.isEnabled = true
-                pass2.isEnabled = true
-                terms.isEnabled = true
-                job.isEnabled = true
+                val msg = e?.message
+                if( msg != null && msg.contains("HTTP", true)){
+                    Toast.makeText((view as Fragment).activity, msg.subSequence(0, 8).toString() + " OCCURRED", Toast.LENGTH_LONG).show()
+                }else{
+                    Toast.makeText((view as Fragment).activity, "Server not responding!", Toast.LENGTH_LONG).show()
+                }
+                dialog.dismiss()
             }
 
             override fun onComplete() {
-                register_btn.isEnabled = true
-                firstName.isEnabled = true
-                lastName.isEnabled = true
-                mail.isEnabled = true
-                pass1.isEnabled = true
-                pass2.isEnabled = true
-                terms.isEnabled = true
-                job.isEnabled = true
-                Log.i("Completed", "Completed!")
+                dialog.dismiss()
             }
 
         }
