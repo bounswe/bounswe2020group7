@@ -52,6 +52,22 @@ class Definitions {
         }
     }
 
+    /**
+     * Activities are serialized according to this.
+     * @param notification_message Title of the activity
+     * @param img Drawable of the activity, nullable
+     */
+    class ActivityStream(
+        val img: Drawable?,
+        val notification_message: String
+
+    ) {
+        /**
+         * Reason for trending is chosen by enumerator.
+         */
+
+    }
+
 
     /**
      * Upcoming events are serialized according to this.

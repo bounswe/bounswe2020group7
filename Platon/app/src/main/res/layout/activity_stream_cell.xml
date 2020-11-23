@@ -10,70 +10,35 @@
     android:elevation="2dp"
     android:orientation="vertical">
 
-    <TableRow
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
 
         <ImageView
-            android:id="@+id/img_trend_project_iv"
+            android:id="@+id/imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_account_24px" />
+            android:layout_margin="@dimen/xxx_large"
+            android:contentDescription="@string/logo_o_str"
+            app:srcCompat="@drawable/ic_o_logo_100" />
 
         <TextView
             android:layout_weight="1"
-            android:id="@+id/title_trend_project_tv"
+            android:id="@+id/title_activity_stream_cell"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="Title"
+            android:gravity="center_vertical"
+            android:text="Notification message"
             android:textColor="@color/primary_dark"
             android:textSize="@dimen/title_text_size"
             tools:ignore="MissingConstraints" />
-    </TableRow>
 
-    <TableRow
-        android:layout_width="match_parent"
-        android:gravity="center"
-        android:layout_height="match_parent">
 
-        <TextView
-            android:layout_weight="1"
-            android:id="@+id/who_trend_project_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/who_str"
-            android:textColor="@color/secondary_purple" />
 
-        <TextView
-            android:layout_weight="1"
-            android:id="@+id/what_trend_project_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/action_str"
-            android:textColor="@color/secondary_purple" />
+    </LinearLayout>
 
-        <TextView
-            android:layout_weight="1"
-            android:id="@+id/whom_trend_project_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/toWhom_str"
-            android:textColor="@color/secondary_purple" />
-    </TableRow>
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:gravity="end"
-        android:layout_height="match_parent" >
-
-        <TextView
-            android:id="@+id/time_trend_project_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/time_str"
-            android:textColor="@color/secondary_orange" />
-    </TableRow>
 
 
 </TableLayout>

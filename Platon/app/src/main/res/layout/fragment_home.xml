@@ -45,6 +45,60 @@
             android:layout_marginTop="@dimen/medium"
             android:shadowColor="@color/primary_dark"
             android:shadowRadius="2"
+            android:fontFamily="@font/dm_sans_bold"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:layout_marginHorizontal="10dp"
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/x_small"
+            android:paddingHorizontal="@dimen/title_logo_padding"
+            android:text="@string/upcoming_events_str"
+            android:textColor="@color/secondary_green"
+            android:textSize="@dimen/project_title_text_size" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:paddingHorizontal="@dimen/medium"
+            android:id="@+id/home_upcoming_events_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/xx_small" />
+
+        <TextView
+            android:layout_marginTop="@dimen/medium"
+            android:shadowColor="@color/primary_dark"
+            android:shadowRadius="2"
+            android:shadowDx="1"
+            android:padding="@dimen/x_small"
+            android:shadowDy="1"
+            android:layout_marginHorizontal="10dp"
+            android:id="@+id/textView3"
+            android:fontFamily="@font/dm_sans_bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+
+            android:text="@string/activity_stream_str"
+            android:textAllCaps="false"
+            android:textColor="@color/purple_700"
+            android:textSize="@dimen/project_title_text_size" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:paddingHorizontal="@dimen/medium"
+            android:fontFamily="@font/dm_sans_bold"
+            android:id="@+id/home_activity_stream_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/xx_small">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <TextView
+            android:layout_marginTop="@dimen/medium"
+            android:shadowColor="@color/primary_dark"
+            android:shadowRadius="2"
             android:shadowDx="1"
             android:padding="@dimen/x_small"
             android:shadowDy="1"
@@ -63,37 +117,13 @@
         <androidx.recyclerview.widget.RecyclerView
             android:paddingHorizontal="@dimen/medium"
             android:fontFamily="@font/dm_sans_bold"
-            android:id="@+id/pre_login_trending_projects_recycler_view"
+            android:id="@+id/home_trending_projects_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/xx_small">
 
         </androidx.recyclerview.widget.RecyclerView>
 
-        <TextView
-            android:layout_marginTop="@dimen/medium"
-            android:shadowColor="@color/primary_dark"
-            android:shadowRadius="2"
-            android:fontFamily="@font/dm_sans_bold"
-            android:shadowDx="1"
-            android:shadowDy="1"
-            android:layout_marginHorizontal="10dp"
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/x_small"
-            android:paddingHorizontal="@dimen/title_logo_padding"
-            android:text="@string/upcoming_events_str"
-            android:textColor="@color/secondary_green"
-            android:textSize="@dimen/project_title_text_size" />
-
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:paddingHorizontal="@dimen/medium"
-            android:id="@+id/pre_login_upcoming_events_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/xx_small" />
 
     </LinearLayout>
 
