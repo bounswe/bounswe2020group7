@@ -78,7 +78,7 @@ class Activation extends Component {
     var urlParams = new URLSearchParams(this.props.location.search);
     const token= urlParams.get('token')
 
-    axios.put(url + "/auth_system/user", formData, {
+    axios.put(url + "/api/auth_system/user", formData, {
         headers: {
           'auth_token': token, //the token is a variable which holds the token
         },
