@@ -62,7 +62,6 @@ class ResearchInfoFetch():
             return [{'title':research,'description':'','year':int(year)}for research,year in zip(research_list,date_list)]
         except:
             return []
-    
     @staticmethod
     def update_research_info_all():
         """

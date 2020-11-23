@@ -13,6 +13,7 @@ import MuiAlert from "@material-ui/lab/Alert";
 import AutorenewIcon from "@material-ui/icons/Autorenew";
 import "./ResetPassword.css";
 import Snackbar from "@material-ui/core/Snackbar";
+import config from "../../utils/config";
 
 const CssTextField = withStyles({
   root: {
@@ -85,7 +86,7 @@ class ResetPassword extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: "",
+      passwordAgain: "",
       password: "",
       showSuccess: false,
       fieldEmptyError: false,
@@ -116,28 +117,27 @@ class ResetPassword extends Component {
     this.setState({ showSuccess: false });
   };
   handleSubmit = () => {
-    if (this.state.email === "" || this.state.email === "") {
+    if (this.state.passwordAgain === "" || this.state.password === "") {
       this.setState({ fieldEmptyError: "Fields are required" });
       return;
     }
-    if (!/\S+@\S+\.\S+/.test(this.state.email) ) {
-      this.setState({ fieldEmptyError: "Invalid email" });
+    if (this.state.passwordAgain!==this.state.password) {
+      this.setState({ fieldEmptyError: "Password mismatch" });
       return;
     }
     //TODO error check
     let path = this.props.location.pathname
     const token = path.split('/')[2]
 
-    const url =
-      "https://react-my-burger-78df4.firebaseio.com";
-    const data = { email: this.state.email, password: this.state.password };
+    const url = config.BASE_URL
+    const data = { new_password: this.state.password, new_password_repeat: this.state.passwordAgain };
 
-    fetch(url + "/resetpassword.json", {
+    fetch(url + "/api/auth_system/reset_password", {
       method: "POST",
       body: JSON.stringify(data),
       headers:{
         'Content-Type': 'application/json',
-        'Authorization': token,
+        'auth_token': token,
       }
     })
       .then((response) => {
@@ -147,7 +147,7 @@ class ResetPassword extends Component {
           });
           this.setState({
 
-            email: "",
+            passwordAgain: "",
             password: "",
 
           });
@@ -187,21 +187,10 @@ class ResetPassword extends Component {
                   className={classes.typography}
                   margin="normal"
                 >
-                  Enter your email address and your new password.
+                  Enter your new password.
                 </Typography>
-                <CssTextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  value={this.state.email}
-                  onChange={(e) => this.setState({ email: e.target.value })}
-                  autoComplete="email"
-                  autoFocus
-                />
+
+
                 <CssTextField
                   variant="outlined"
                   margin="normal"
@@ -214,6 +203,20 @@ class ResetPassword extends Component {
                   value={this.state.password}
                   onChange={(e) => this.setState({ password: e.target.value })}
                   autoComplete="current-password"
+                />
+                <CssTextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="passwordAgain"
+                  label="New Password Again"
+                  name="passwordAgain"
+                  type="password"
+                  value={this.state.passwordAgain}
+                  onChange={(e) => this.setState({ passwordAgain: e.target.value })}
+                  autoComplete="passwordAgain"
+                  autoFocus
                 />
                 <StyledButton
                   type="submit"

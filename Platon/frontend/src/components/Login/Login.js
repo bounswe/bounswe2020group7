@@ -15,6 +15,8 @@ import { Link as RouteLink, Redirect } from "react-router-dom";
 import Snackbar from "@material-ui/core/Snackbar";
 import AppBar from "../AppBar/AppBar";
 import "./Login.css";
+import authService from "../../services/authService";
+
 const CssTextField = withStyles({
   root: {
     "& .MuiInputBase-input": {
@@ -23,6 +25,8 @@ const CssTextField = withStyles({
     "& .Mui-required": {
       color: colors.primaryLight,
     },
+
+
     "& label.Mui-focused": {
       color: colors.tertiary,
     },
@@ -47,6 +51,8 @@ const StyledButton = withStyles({
   root: {
     background: colors.tertiary,
     color: colors.secondary,
+
+
     "&:hover": {
       backgroundColor: colors.tertiaryDark,
     },
@@ -77,6 +83,7 @@ const useStyles = (theme) => ({
   },
   form: {
     width: "100%", // Fix IE 11 issue.
+
     marginTop: theme.spacing(1),
   },
   submit: {
@@ -116,48 +123,37 @@ class Login extends Component {
   };
 
   handleSubmit = () => {
+
     if (this.state.email === "" || this.state.password === "") {
       this.setState({ fieldEmptyError: "Fields are required" });
       return;
     }
-    if (!/\S+@\S+\.\S+/.test(this.state.email) ) {
+
+    if (!/\S+@\S+\.\S+/.test(this.state.email)) {
       this.setState({ fieldEmptyError: "Invalid email" });
       return;
     }
 
-    const url = "https://react-my-burger-78df4.firebaseio.com";
-    const data = { email: this.state.email, password: this.state.password };
-    fetch(url+"/users.json", {
-      method: "POST",
-      body: JSON.stringify(data),
-    })
-      .then((response) => {
-        if (response.status === 200) {
-          this.setState({ isLoggedIn: true });
-          this.props.handlerIsAuthenticated();
-        }
-        return response.json();
-      })
-      .catch((err) => {
-        this.setState({ showError: "Error occured. Check your credientials." });
-        console.log(err);
-      });
-    //const data = { email: this.state.email, password: this.state.password }
-    /*axios.post(url, { email: this.state.email, password: this.state.password })
-    .then( (response) => {
-      //if(response.statusCode === 200){
-      debugger;
-      if(response){
-        this.props.handlerIsAuthenticated();      // Your function call
+    authService.login(this.state.email, this.state.password).then((response) => {
+      if(response.status === 200){
+        this.setState({ isLoggedIn: true });
       }
-    })
-    .catch( (error) =>{
-      debugger;
-      console.log(error);
-    });*/
+      else if(response.status === 401){
+        this.setState({
+          showError:
+            "Error occured. Make sure you have verified your account.",
+        });
+      }
+      else{
+        this.setState({
+          showError: "Error occured. Check your credientials.",
+        });
+      }
+    });
   };
+
   render() {
-    if (this.state.isLoggedIn) {
+    if (this.props.isAuthenticated) {
       return <Redirect to="/" />;
     }
 
