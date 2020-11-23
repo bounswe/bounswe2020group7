@@ -9,7 +9,7 @@ from app.profile_management.forms import ResearchInfoGetForm,research_info_get_p
 from app.profile_management.forms import ResearchInfoUpdateForm, research_info_update_parser,ResearchInfoDeleteFrom,research_info_delete_parser
 from app.profile_management.forms import notification_get_parser,NotificationDeleteForm,notification_delete_parser
 from app.profile_management.models import ResearchInformation,Notification,NotificationRelatedUser
-from app.profile_management.helpers import schedule_regularly
+from app.profile_management.helpers import schedule_regularly,ResearchType
 from app import api, db
 
 profile_management_ns = Namespace("Profile Management",
