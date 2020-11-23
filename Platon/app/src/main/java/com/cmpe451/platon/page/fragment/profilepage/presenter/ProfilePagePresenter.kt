@@ -21,9 +21,9 @@ import com.google.gson.Gson
 class ProfilePagePresenter(private var view: ProfilePageContract.View?, private var repository: ProfilePageRepository, private var sharedPreferences: SharedPreferences, private var navController: NavController) : ProfilePageContract.Presenter {
 
     val token = sharedPreferences.getString("token", null)
-    val user_id = sharedPreferences.getString("user_id", "1")!!.toInt()
+    val user_id = sharedPreferences.getString("user_id", "3")!!.toInt()
     var userInfo: UserInfoResponse? = null
-    var researchInformation: ResearchResponse? = null
+    lateinit var researchInformation: ResearchResponse
 
 
     override fun onFollowersButtonClicked() {
@@ -102,9 +102,10 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
 
     override fun getProjects(): ArrayList<Definitions.TrendingProject> {
         bringResearches()
-        if(researchInformation == null){
-            return ArrayList()
-        }
+        Thread.sleep(2000)
+//        if(researchInformation == null){
+//            return ArrayList()
+//        }
         return researchToTrendingProject(researchInformation!!.research_info)
     }
 
@@ -126,10 +127,10 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
 
     private  fun bringResearches() {
         if (token != null) {
-            repository.getResearches(user_id, token,object: HttpRequestListener {
-                override fun onRequestCompleted(result: String) {
+            val mytok = token.subSequence(1,token.length-1)
+            repository.getResearches(user_id, mytok as String,object: HttpRequestListener {
+                override fun onRequestCompleted(result: String)  {
                     researchInformation = createResearchResponse(result)
-
                 }
 
                 override fun onFailure(errorMessage: String) {
@@ -141,8 +142,8 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
 
     private fun bringUser() {
         if(token != null ){
-            val mytok = token.subSequence(1,token.length-1)
-            repository.getUser(mytok as String,object: HttpRequestListener {
+//            val mytok = token.subSequence(1,token.length-1)
+            repository.getUser(token as String,object: HttpRequestListener {
                 override fun onRequestCompleted(result: String) {
                     userInfo = createUserResponse(result)
                     val ert = 3
@@ -159,10 +160,10 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
         return Gson().fromJson<UserInfoResponse>(responseString, UserInfoResponse::class.java)
     }
 
-    private fun createResearchResponse(responseString: String) : ResearchResponse? {
-        if(responseString == null){
-            return null
-        }
+    private fun createResearchResponse(responseString: String) : ResearchResponse {
+//        if(responseString == null){
+//            return null
+//        }
         return Gson().fromJson<ResearchResponse>(responseString, ResearchResponse::class.java)
     }
 
@@ -176,6 +177,7 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
             var pro = Definitions.TrendingProject(item.title, null, item.description, Definitions.TrendingProject.TREND.PROJECT)
             list.add(pro)
         }
+        var a = 5
         return list
     }
 }

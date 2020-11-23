@@ -65,7 +65,7 @@ class ProfilePageRepository (sharedPreferences: SharedPreferences){
 
         var client: Webservice = RetrofitClient.webservice
 
-        client.getResearches(2, "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MywiZXhwaXJlX3RpbWUiOiIyMDIxLTExLTIzVDE0OjQxOjQxLjQ2MzIyMSJ9.KhsIsUuPUUu38AEZ9GL5IL9TarnUVIQ1isPM9sYA7j8")?.enqueue(object : Callback<JsonObject> {
+        client.getResearches(userId, authToken)?.enqueue(object : Callback<JsonObject> {
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
                 //handle error here
                 val er = 0
