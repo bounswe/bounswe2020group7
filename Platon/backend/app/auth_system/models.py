@@ -12,10 +12,11 @@ class User(db.Model):
     surname = db.Column(db.String(50),nullable=False)
     is_private = db.Column(db.Boolean,nullable=False)
     profile_photo = db.Column(db.String(50))
-    google_scholar_name = db.Column(db.String(50))
-    researchgate_name = db.Column(db.String(50))
+    google_scholar_name = db.Column(db.String(256))
+    researchgate_name = db.Column(db.String(256))
+    job_id = db.Column(db.Integer,db.ForeignKey('jobs.id',ondelete="CASCADE"))
 
-    def __init__(self,e_mail,is_valid,password_hashed,rate,name,surname,is_private,profile_photo,google_scholar_name,researchgate_name):
+    def __init__(self,e_mail,is_valid,password_hashed,rate,name,surname,is_private,profile_photo,google_scholar_name,researchgate_name,job_id):
         self.e_mail = e_mail
         self.is_valid = is_valid
         self.password_hashed = password_hashed
@@ -26,3 +27,4 @@ class User(db.Model):
         self.profile_photo = profile_photo
         self.google_scholar_name = google_scholar_name
         self.researchgate_name = researchgate_name
+        self.job_id = job_id
