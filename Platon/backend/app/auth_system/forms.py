@@ -31,6 +31,7 @@ class GetUserForm(Form):
 	user_id = IntegerField("User ID", validators=[validators.DataRequired()])
 get_user_parser = reqparse.RequestParser()
 get_user_parser.add_argument("user_id", required=True, type=int, help="ID of the requested user.", location="args")
+get_user_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
 
 
 get_self_parser = reqparse.RequestParser()
