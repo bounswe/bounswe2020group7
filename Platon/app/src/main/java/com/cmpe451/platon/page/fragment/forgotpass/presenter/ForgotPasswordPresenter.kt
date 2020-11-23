@@ -7,6 +7,7 @@ package com.cmpe451.platon.page.fragment.forgotpass.presenter
 import android.content.SharedPreferences
 import android.os.Handler
 import android.os.HandlerThread
+import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.widget.Button
@@ -43,7 +44,7 @@ class ForgotPasswordPresenter(private var view: ForgotPasswordContract.View?,
 
         val observer = object :Observer<JsonObject>{
             override fun onSubscribe(d: Disposable?) {
-                TODO("Not yet implemented")
+                Log.i("Subbed", "Subbed!")
             }
 
             override fun onNext(t: JsonObject?) {
@@ -67,7 +68,7 @@ class ForgotPasswordPresenter(private var view: ForgotPasswordContract.View?,
             }
 
             override fun onComplete() {
-                TODO("Not yet implemented")
+                Log.i("Completed", "Completed!")
             }
 
         }
@@ -109,7 +110,7 @@ class ForgotPasswordPresenter(private var view: ForgotPasswordContract.View?,
 
         val observer = object :Observer<JsonObject>{
             override fun onSubscribe(d: Disposable?) {
-                TODO("Not yet implemented")
+                Log.i("Subbed", "Subbed!")
             }
 
             override fun onNext(t: JsonObject?) {
@@ -129,7 +130,7 @@ class ForgotPasswordPresenter(private var view: ForgotPasswordContract.View?,
             }
 
             override fun onComplete() {
-                TODO("Not yet implemented")
+                Log.i("Completed", "Completed!")
             }
 
         }

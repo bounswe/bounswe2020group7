@@ -82,7 +82,7 @@ class RegisterPresenter(private var view: RegisterContract.View?, private var re
 
         val observer = object :Observer<JsonObject>{
             override fun onSubscribe(d: Disposable?) {
-                TODO("Not yet implemented")
+                Log.i("Subs", "subsed!")
             }
 
             override fun onNext(t: JsonObject?) {
@@ -103,7 +103,7 @@ class RegisterPresenter(private var view: RegisterContract.View?, private var re
             }
 
             override fun onComplete() {
-                TODO("Not yet implemented")
+                Log.i("Completed", "Completed!")
             }
 
         }
