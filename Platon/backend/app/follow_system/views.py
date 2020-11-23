@@ -156,7 +156,7 @@ class FollowRequestAPI(Resource):
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
-            if following_user in None:
+            if following_user is None:
                 return make_response(jsonify({'error': 'User not found'}), 400)
                 
             follow_record = ""
@@ -185,7 +185,6 @@ class FollowRequestAPI(Resource):
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
             return make_response(jsonify({'msg': 'Follow Request is successfully added'}), 200)
-
 
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
