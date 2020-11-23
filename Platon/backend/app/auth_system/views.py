@@ -260,10 +260,9 @@ class UserAPI(Resource):
                     # Tries to update the research information of the newly updated user.
                     # If it fails, it does not raise an error.
                     # -as research information is scheduled to be fetched everyday.-
-                    try:
-                        ResearchInfoFetch.update_research_info(existing_user.id)
-                    except:
-                        pass
+                    
+                    ResearchInfoFetch.update_research_info(existing_user.id)
+                    
 
                     # Tries to send the activation mail to the user.
                     # If it fails, an error is raised.
@@ -342,10 +341,10 @@ class UserAPI(Resource):
                     # If it fails, it does not raise an error.
                     # -as research information is scheduled to be fetched everyday.-
                     try:
-                        ResearchInfoFetch.update_research_info(existing_user.id)
+                        ResearchInfoFetch.update_research_info(existing_user.first().id)
                     except:
-                        pass
-                    
+                        pass  
+                   
                     return make_response(jsonify({"message" : "Account information has been successfully updated."}), 200)
                 else:
                     return make_response(jsonify({"error" : "The user is not found."}), 404)
