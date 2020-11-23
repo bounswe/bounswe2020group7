@@ -109,6 +109,14 @@ class RegisterPresenter(private var view: RegisterContract.View?, private var re
 
             override fun onError(e: Throwable?) {
                 Toast.makeText((view as Fragment).activity, "Server not responding!", Toast.LENGTH_LONG).show()
+                register_btn.isEnabled = true
+                firstName.isEnabled = true
+                lastName.isEnabled = true
+                mail.isEnabled = true
+                pass1.isEnabled = true
+                pass2.isEnabled = true
+                terms.isEnabled = true
+                job.isEnabled = true
             }
 
             override fun onComplete() {

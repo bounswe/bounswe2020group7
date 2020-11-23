@@ -67,12 +67,14 @@ class ForgotPasswordPresenter(private var view: ForgotPasswordContract.View?,
 
             override fun onError(e: Throwable?) {
                 Toast.makeText((view as Fragment).activity, "Request not answered", Toast.LENGTH_LONG).show()
+                forgot_btn.isEnabled = true
+                email.isEnabled = true
             }
 
             override fun onComplete() {
-                Log.i("Completed", "Completed!")
                 forgot_btn.isEnabled = true
                 email.isEnabled = true
+                Log.i("Completed", "Completed!")
             }
 
         }
@@ -135,14 +137,19 @@ class ForgotPasswordPresenter(private var view: ForgotPasswordContract.View?,
 
             override fun onError(e: Throwable?) {
                 Toast.makeText((view as Fragment).activity, "Request not answered", Toast.LENGTH_LONG).show()
-            }
-
-            override fun onComplete() {
-                Log.i("Completed", "Completed!")
                 reset_btn.isActivated = true
                 pass1.isEnabled= true
                 pass2.isEnabled = true
                 token.isEnabled = true
+            }
+
+            override fun onComplete() {
+                reset_btn.isActivated = true
+                pass1.isEnabled= true
+                pass2.isEnabled = true
+                token.isEnabled = true
+                Log.i("Completed", "Completed!")
+
             }
 
         }

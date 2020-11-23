@@ -114,6 +114,10 @@ class LoginPresenter(
             }
             override fun onError(e: Throwable?) {
                 Toast.makeText((view as Fragment).activity, "Server not responding!", Toast.LENGTH_LONG).show()
+                login_btn.isEnabled = true
+                mail.isEnabled = true
+                pass.isEnabled = true
+                remember.isEnabled = true
                 Log.i("Error", "Error occurred!")
             }
             override fun onComplete() {
