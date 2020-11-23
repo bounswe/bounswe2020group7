@@ -1,6 +1,5 @@
 from flask import make_response,jsonify,request
 from flask_restplus import Resource,Namespace
-from enum import IntEnum
 
 from app.auth_system.helpers import login_required
 from app.auth_system.models import User
@@ -12,10 +11,6 @@ from app.profile_management.forms import notification_get_parser,NotificationDel
 from app.profile_management.models import ResearchInformation,Notification,NotificationRelatedUser
 from app.profile_management.helpers import schedule_regularly
 from app import api, db
-
-class ResearchType(IntEnum):
-    HAND_WRITTEN = 0
-    FETCHED = 1
 
 profile_management_ns = Namespace("Profile Management",
                                   description="Profile Management Endpoints",

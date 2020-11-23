@@ -3,8 +3,7 @@ from tests.base_test import TestConfig
 from app.auth_system.models import User
 from app.profile_management.models import ResearchInformation,Notification,NotificationRelatedUser
 from app.auth_system.views import generate_token
-from app.profile_management.views import ResearchType
-from app.profile_management.helpers import ResearchInfoFetch,NotificationManager
+from app.profile_management.helpers import ResearchInfoFetch,NotificationManager,ResearchType
 from app.follow_system.models import Follow
 from app import db
 import jwt

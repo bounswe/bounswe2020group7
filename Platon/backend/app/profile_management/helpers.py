@@ -4,8 +4,15 @@ import atexit
 from apscheduler.schedulers.background import BackgroundScheduler
 from app import db
 from bs4 import BeautifulSoup
+from enum import IntEnum
 
+from app.auth_system.models import User
 from app.profile_management.models import ResearchInformation,Notification,NotificationRelatedUser
+
+
+class ResearchType(IntEnum):
+    HAND_WRITTEN = 0
+    FETCHED = 1
 
 class ResearchInfoFetch():
     
@@ -14,6 +21,9 @@ class ResearchInfoFetch():
         """
             Takes Google Scholar account id as input and returns fetches the works from Google Scholar
         """
+        if username is None:
+            return []
+
         api_url = "http://cse.bth.se/~fer/googlescholar-api/googlescholar.php?user={}".format(username)
         try:
             response = requests.get(api_url)
@@ -21,12 +31,24 @@ class ResearchInfoFetch():
             return [{'title':research['title'],'description':'','year':research['year']}for research in response['publications']]
         except:
             return []
+
+    @staticmethod
+    def extract_google_scholar_id(URL):
+        '''
+        Extracts Google Scholar account ID from Google Scholar profile page URL.
+        '''
+        if URL is None:
+            return
+        return URL.split("?user=", 1)[1].split("&",1)[0]
     
     @staticmethod
     def fetch_research_gate_info(username):
         """
-            Takes Google Scholar account id as input and returns fetches the works from Google Scholar
+            Takes Research Gate profile URL as input and returns fetches the works from Research Gate
         """
+        if username is None:
+            return []
+
         api_url = "{}/research".format(username)
         try:
             response = requests.get(api_url)
@@ -41,7 +63,7 @@ class ResearchInfoFetch():
         except:
             return []
     @staticmethod
-    def update_research_info():
+    def update_research_info_all():
         """
             Updates the Google Scholar and ResearchGate information of all users in the system
         """
@@ -49,19 +71,31 @@ class ResearchInfoFetch():
             all_users = User.query.all()
         except:
             return
-        try:
+        else:
             for user in all_users:
-                all_research_of_user = ResearchInformation.query.filter((ResearchInformation.user_id == user.id)&(ResearchInformation.type == int(ResearchType.FETCHED))).all()
-                all_research_new = ResearchInfoFetch.fetch_google_scholar_info(user.google_scholar_name) + ResearchInfoFetch.fetch_research_gate_info(user.researchgate_name)
-                for research in all_research_new:
-                    if research['title'] not in [i.research_title for i in all_research_of_user]:
-                        db.seesion.add(ResearchInformation(user.id,research['title'],research['description'],research['year'],int(ResearchType.FETCHED)))
-                for research in all_research_of_user:
-                    if research.research_title not in [i['title'] for i in all_research_new]:
-                        db.session.delete(research)
-                db.session.commit()
+                update_research_info(user.id)
+
+    @staticmethod
+    def update_research_info(user_id):
+        '''
+        Updates the research information of the user with the given ID.
+        '''
+        try:
+            user = User.query.filter_by(id=user_id).first()
+            all_research_of_user = ResearchInformation.query.filter((ResearchInformation.user_id == user.id)&(ResearchInformation.type == int(ResearchType.FETCHED))).all()
+            
+            google_scholar_id = ResearchInfoFetch.extract_google_scholar_id(user.google_scholar_name)
+            all_research_new = ResearchInfoFetch.fetch_google_scholar_info(google_scholar_id) + ResearchInfoFetch.fetch_research_gate_info(user.researchgate_name)
+            for research in all_research_new:
+                if research['title'] not in [i.research_title for i in all_research_of_user]:
+                    db.session.add(ResearchInformation(user.id,research['title'],research['description'],research['year'],int(ResearchType.FETCHED)))
+            for research in all_research_of_user:
+                if research.research_title not in [i['title'] for i in all_research_new]:
+                    db.session.delete(research)
+            db.session.commit()
         except:
             return
+
 
 class NotificationManager():
     
@@ -91,7 +125,7 @@ class NotificationManager():
 
 def schedule_regularly():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(func=ResearchInfoFetch.update_research_info, trigger="interval",seconds=60*60)
+    scheduler.add_job(func=ResearchInfoFetch.update_research_info_all, trigger="interval",seconds=60*60)
     scheduler.start()
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())
