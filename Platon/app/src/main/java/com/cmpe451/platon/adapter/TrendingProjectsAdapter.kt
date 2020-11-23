@@ -89,6 +89,11 @@ class TrendingProjectsAdapter(private val data: ArrayList<TrendingProject>, priv
         data.clear()
         this.notifyDataSetChanged()
     }
+    fun submitElements(list:ArrayList<TrendingProject>){
+        data.clear()
+        data.addAll(list)
+        notifyDataSetChanged()
+    }
 
 
     // Return the size of your dataset (invoked by the layout manager)

@@ -58,19 +58,6 @@
                 android:textColorLink="@color/secondary_purple" />
         </LinearLayout>
 
-        <EditText
-            android:id="@+id/mail_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:autofillHints=""
-            android:backgroundTint="@color/secondary_purple"
-            android:ems="15"
-            android:hint="@string/prompt_email"
-            android:inputType="textEmailAddress"
-            android:textColor="@color/primary_light"
-            android:textColorHighlight="@color/primary_light"
-            android:textColorHint="@color/secondary_purple"
-            android:textColorLink="@color/secondary_purple" />
 
         <EditText
             android:id="@+id/job_tv"
@@ -85,53 +72,53 @@
             android:textColorHighlight="@color/primary_light"
             android:textColorHint="@color/secondary_purple"
             android:textColorLink="@color/secondary_purple" />
-
         <EditText
-            android:id="@+id/oldpw_tv"
+            android:id="@+id/pp_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autofillHints=""
             android:backgroundTint="@color/secondary_purple"
             android:ems="15"
-            android:hint="@string/old_password"
-            android:inputType="textPassword"
+            android:hint="@string/pp_url_request"
+            android:inputType="text"
             android:textColor="@color/primary_light"
             android:textColorHighlight="@color/primary_light"
             android:textColorHint="@color/secondary_purple"
             android:textColorLink="@color/secondary_purple" />
-
         <EditText
-            android:id="@+id/pw1_tv"
+            android:id="@+id/google_scholar_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autofillHints=""
             android:backgroundTint="@color/secondary_purple"
             android:ems="15"
-            android:hint="@string/new_pass_str"
-            android:inputType="textPassword"
+            android:hint="@string/gs_url_request"
+            android:inputType="text"
             android:textColor="@color/primary_light"
             android:textColorHighlight="@color/primary_light"
             android:textColorHint="@color/secondary_purple"
             android:textColorLink="@color/secondary_purple" />
-
-
-
-
         <EditText
-            android:id="@+id/pw2_tv"
+            android:id="@+id/research_gate_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autofillHints=""
             android:backgroundTint="@color/secondary_purple"
             android:ems="15"
-            android:hint="@string/new_pass_str"
-            android:inputType="textPassword"
+            android:hint="@string/rg_url_request"
+            android:inputType="text"
             android:textColor="@color/primary_light"
             android:textColorHighlight="@color/primary_light"
             android:textColorHint="@color/secondary_purple"
             android:textColorLink="@color/secondary_purple" />
 
-
+        <Switch
+            android:id="@+id/private_switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Private Profile"
+            tools:ignore="UseSwitchCompatOrMaterialXml"
+            />
 
         <Button
             android:id="@+id/button_edit"

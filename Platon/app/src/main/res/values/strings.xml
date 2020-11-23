@@ -72,4 +72,7 @@
     <string name="your_info">Information</string>
     <string name="text_follow">Follow</string>
     <string name="notification_str">Notifications</string>
+    <string name="gs_url_request">Google Scholar Account URL</string>
+    <string name="rg_url_request">Research Gate Account URL</string>
+    <string name="pp_url_request">Profile Page URL</string>
 </resources>

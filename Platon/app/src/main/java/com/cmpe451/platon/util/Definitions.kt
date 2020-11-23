@@ -48,7 +48,7 @@ class Definitions {
          * Reason for trending is chosen by enumerator.
          */
         enum class TREND {
-            POPULAR, MOST_LIKED, NEW_COMERS, HOT
+            POPULAR, MOST_LIKED, NEW_COMERS, HOT, PROJECT
         }
     }
 

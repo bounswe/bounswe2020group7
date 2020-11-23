@@ -15,14 +15,18 @@ import com.cmpe451.platon.page.fragment.profilepage.contract.ProfilePageContract
 import com.cmpe451.platon.page.fragment.profilepage.model.ProfilePageRepository
 import com.cmpe451.platon.page.fragment.profilepage.presenter.ProfilePagePresenter
 import com.cmpe451.platon.adapter.ProfilePageRecyclerViewAdapter
+import com.cmpe451.platon.adapter.TrendingProjectsAdapter
+import com.cmpe451.platon.core.BaseActivity
+import com.cmpe451.platon.databinding.TrendProjectCellBinding
 import com.cmpe451.platon.util.Definitions
 
-class ProfilePageFragment : Fragment(), ProfilePageContract.View {
+class ProfilePageFragment : Fragment(), ProfilePageContract.View, TrendingProjectsAdapter.TrendingProjectButtonClickListener {
 
     private lateinit var binding: FragmentProfilePageBinding
     private lateinit var presenter: ProfilePageContract.Presenter
     private lateinit var details: ArrayList<MutableMap<String,String>>
     private lateinit var user :Definitions.User
+    private lateinit var projects : ArrayList<Definitions.TrendingProject>
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -121,6 +125,11 @@ class ProfilePageFragment : Fragment(), ProfilePageContract.View {
         rvProfilePage.adapter = adapter
         rvProfilePage.layoutManager = LinearLayoutManager(this.activity)
         adapter.submitList(presenter.getProfilePageDetails())
+        val rvProfilePageResearch = binding.rvProfilePageProjects
+        val adapter2 = TrendingProjectsAdapter(ArrayList(), requireContext(), this)
+        rvProfilePageResearch.adapter = adapter2
+        rvProfilePageResearch.layoutManager = LinearLayoutManager(context)
+        adapter2.submitElements(presenter.getProjects())
     }
 
     private fun setListeners() {
@@ -158,5 +167,16 @@ class ProfilePageFragment : Fragment(), ProfilePageContract.View {
         val sharedPreferences = requireContext().getSharedPreferences("token_file", 0)
         val repository = ProfilePageRepository(sharedPreferences)
         presenter = ProfilePagePresenter(this, repository, sharedPreferences, (activity as HomeActivity).navController )
+
+    }
+    override fun onTrendingProjectButtonClicked(binding: TrendProjectCellBinding, position:Int) {
+        if (binding.descTrendProjectTv.visibility == View.GONE){
+            binding.descTrendProjectTv.visibility = View.VISIBLE
+        }else{
+            binding.descTrendProjectTv.visibility = View.GONE
+        }
+
+        binding.descTrendProjectTv.refreshDrawableState()
+        Definitions().vibrate(50, activity as BaseActivity)
     }
 }
