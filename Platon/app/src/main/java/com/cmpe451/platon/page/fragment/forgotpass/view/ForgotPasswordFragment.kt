@@ -57,9 +57,6 @@ class ForgotPasswordFragment : Fragment(), ForgotPasswordContract.View {
         presenter = ForgotPasswordPresenter(this, repository, sharedPreferences, (activity as LoginActivity).navController)
     }
 
-    private fun initViews(root: View) {
-
-    }
 
     private fun setListeners() {
         binding.forgotPassBtn.setOnClickListener {
@@ -67,7 +64,7 @@ class ForgotPasswordFragment : Fragment(), ForgotPasswordContract.View {
         }
 
         binding.resetPassBtn.setOnClickListener {
-            presenter.onResetPasswordClicked(binding.newPass1Et, binding.newPass2Et, binding.tokenEt)
+            presenter.onResetPasswordClicked(binding.resetPassBtn, binding.newPass1Et, binding.newPass2Et, binding.tokenEt)
         }
 
         //password.addTextChangedListener(textWatcher)

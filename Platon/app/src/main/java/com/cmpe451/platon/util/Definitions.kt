@@ -1,9 +1,13 @@
 package com.cmpe451.platon.util
 
+import android.app.AlertDialog
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.view.View
+import androidx.fragment.app.Fragment
+import com.cmpe451.platon.R
 import com.cmpe451.platon.core.BaseActivity
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
@@ -16,7 +20,7 @@ import retrofit2.http.FormUrlEncoded
 class Definitions {
 
     companion object {
-        val API_URL="http://52.59.254.130:5000/"
+        val API_URL="http://18.198.208.63:5000/"
         val API_PORT ="5000"
         val FORGOT_PASS_ADDRESS = ""
         val LOGIN_ADDRESS = ""
@@ -78,6 +82,13 @@ class Definitions {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             vib.vibrate(VibrationEffect.createOneShot(ms, VibrationEffect.DEFAULT_AMPLITUDE))
         }
+    }
+
+    fun createProgressBar(context: Context):AlertDialog{
+        val dialogBuilder = AlertDialog.Builder(context)
+        dialogBuilder.setCancelable(false)
+        dialogBuilder.setView(R.layout.progress_bar)
+        return dialogBuilder.create()
     }
 
 }

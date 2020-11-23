@@ -1,10 +1,13 @@
 package com.cmpe451.platon.page.fragment.register.presenter
 
+import android.app.AlertDialog
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Handler
 import android.os.HandlerThread
 import android.util.Log
 import android.util.Patterns
+import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Toast
@@ -17,6 +20,11 @@ import com.cmpe451.platon.page.fragment.register.model.RegisterRepository
 import com.cmpe451.platon.page.fragment.register.view.RegisterFragment
 import com.cmpe451.platon.page.fragment.register.view.RegisterFragmentDirections
 import com.cmpe451.platon.util.Definitions
+import com.google.gson.JsonObject
+import io.reactivex.rxjava3.core.Observer
+import io.reactivex.rxjava3.disposables.Disposable
+import java.util.*
+import com.cmpe451.platon.R
 
 class RegisterPresenter(private var view: RegisterContract.View?, private var repository: RegisterRepository, private var sharedPreferences: SharedPreferences, private var navController: NavController) : RegisterContract.Presenter {
     override fun getTermsAndConds(): String {
@@ -29,7 +37,7 @@ class RegisterPresenter(private var view: RegisterContract.View?, private var re
         navController.navigate(action)
     }
 
-    override fun onRegisterButtonClicked(firstName: EditText, lastName: EditText, mail: EditText,job:EditText, pass1: EditText, pass2: EditText, terms:CheckBox) {
+    override fun onRegisterButtonClicked(register_btn: Button, firstName: EditText, lastName: EditText, mail: EditText, job:EditText, pass1: EditText, pass2: EditText, terms:CheckBox) {
 
         var flag = false
 
@@ -62,8 +70,6 @@ class RegisterPresenter(private var view: RegisterContract.View?, private var re
         }
 
 
-
-
         val firstNameStr = firstName.text.toString().trim()
         val lastNameStr = lastName.text.toString().trim()
         val mailStr = mail.text.toString().trim()
@@ -76,50 +82,51 @@ class RegisterPresenter(private var view: RegisterContract.View?, private var re
             flag = true
         }
 
-        if (!flag) {
-            if(repository.postRegister(firstNameStr, lastNameStr, mailStr, jobStr, pass1Str)){
+        val dialog = Definitions().createProgressBar((view as Fragment).activity as Context)
 
-                val ht = HandlerThread("MyHandlerThread")
-                ht.start()
-                val handler = Handler(ht.looper)
-                val runnable = Runnable {
-                    var registerFail = false
-                    var registerSuccess = false
-
-                    var counter = 50
-                    while(!registerFail && counter > 0 && !registerSuccess ){
-                        registerFail =  sharedPreferences.getBoolean("register_fail", false)
-                        registerSuccess= sharedPreferences.getBoolean("register_success", false)
-                        Thread.sleep(250)
-                        counter -= 1
-                    }
-
-                    when{
-                        registerSuccess ->{
-                            val runner = Runnable {
-                                val action = PreLoginFragmentDirections.actionPreLoginFragmentToLoginFragment()
-                                navController.navigateUp()
-                                navController.navigate(action)
-                            }
-                            Toast.makeText((view as Fragment).activity, "Successfully registered!", Toast.LENGTH_LONG).show()
-                            ((view as Fragment).activity as BaseActivity).runOnUiThread(runner)
-                        }
-                        registerFail->{
-                            Toast.makeText((view as Fragment).activity, "Failed to register!", Toast.LENGTH_LONG).show()
-                        }
-                        else ->{
-                            Toast.makeText((view as Fragment).activity, "Server not responding!", Toast.LENGTH_LONG).show()
-                        }
-                    }
-
-                    sharedPreferences.edit().remove("register_fail").apply()
-                    sharedPreferences.edit().remove("register_success").apply()
-
-                }
-                handler.post(runnable)
-            }else{
-                Toast.makeText((view as Fragment).activity, "Error", Toast.LENGTH_LONG).show()
+        val observer = object :Observer<JsonObject>{
+            override fun onSubscribe(d: Disposable?) {
+                dialog.show()
             }
+
+            override fun onNext(t: JsonObject?) {
+                val error = t?.has("error")
+
+                if(error != null && !error){
+                    val action = PreLoginFragmentDirections.actionPreLoginFragmentToLoginFragment()
+                    navController.navigateUp()
+                    navController.navigate(action)
+                    Toast.makeText((view as Fragment).activity, "Successfully registered!", Toast.LENGTH_LONG).show()
+                }else{
+                    Toast.makeText((view as Fragment).activity, "Unknown error occurred!", Toast.LENGTH_LONG).show()
+                }
+            }
+
+            override fun onError(e: Throwable?) {
+                val msg = e?.message
+                if( msg != null && msg.contains("HTTP 400", true)){
+                    Toast.makeText((view as Fragment).activity, "Missing data fields or invalid data", Toast.LENGTH_LONG).show()
+                }else if( msg != null && msg.contains("HTTP 409", true)){
+                    Toast.makeText((view as Fragment).activity, "User with the given e-mail address already exists", Toast.LENGTH_LONG).show()
+                }else if( msg != null && msg.contains("HTTP 500", true)){
+                    Toast.makeText((view as Fragment).activity, "The server is not connected to the database", Toast.LENGTH_LONG).show()
+                }else if( msg != null && msg.contains("HTTP 503", true)){
+                    Toast.makeText((view as Fragment).activity, "The server could not send the account activation e-mail", Toast.LENGTH_LONG).show()
+                }else{
+                    Toast.makeText((view as Fragment).activity, "Server not responding!", Toast.LENGTH_LONG).show()
+                }
+                dialog.dismiss()
+            }
+
+            override fun onComplete() {
+                dialog.dismiss()
+            }
+
+        }
+
+
+        if (!flag) {
+            repository.postRegister(observer, firstNameStr, lastNameStr, mailStr, jobStr, pass1Str)
         }
     }
 

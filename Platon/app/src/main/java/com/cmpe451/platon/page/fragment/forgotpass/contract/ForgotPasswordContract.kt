@@ -16,7 +16,7 @@ class ForgotPasswordContract {
     }
 
     interface Presenter : BasePresenter {
-        fun onResetPasswordClicked(pass1: EditText, pass2: EditText, token: EditText)
+        fun onResetPasswordClicked(reset_btn: Button, pass1: EditText, pass2: EditText, token: EditText)
         fun onForgotPassClicked(email: EditText, forgot_btn:Button, pass1: EditText, pass2: EditText, reset_btn:Button, token:EditText)
     }
 

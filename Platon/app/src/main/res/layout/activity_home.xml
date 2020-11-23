@@ -15,7 +15,7 @@
         android:id="@+id/search_among_rb"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primary_dark"
+        android:background="@color/primary_dark_darker"
         android:checkedButton="@id/workspace_rb"
         android:orientation="horizontal"
         android:paddingHorizontal="@dimen/medium"
@@ -23,24 +23,24 @@
 
         <TextView
             android:id="@+id/textView4"
-            android:textColor="@color/primary_light"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Search among:" />
+            android:text="Search among:"
+            android:textColor="@color/primary_light" />
 
         <RadioButton
             android:id="@+id/workspace_rb"
-            android:textColor="@color/primary_light"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/workspaces_str" />
+            android:text="@string/workspaces_str"
+            android:textColor="@color/primary_light" />
 
         <RadioButton
             android:id="@+id/user_rb"
-            android:textColor="@color/primary_light"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/users_str" />
+            android:text="@string/users_str"
+            android:textColor="@color/primary_light" />
     </RadioGroup>
 
     <androidx.recyclerview.widget.RecyclerView
