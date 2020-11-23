@@ -36,7 +36,7 @@ def follow_required(param_loc,requested_user_id_key):
                 return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
             if requested_user is None:
                 return make_response(jsonify({'error': 'Requested user can not be found'}),404)
-            if not requested_user.is_private:
+            if requested_user.is_private:
                 try:
                     follow = Follow.query.filter((Follow.follower_id == user_id)&(Follow.following_id == requested_user.id)).first()
                 except:
