@@ -107,8 +107,6 @@
             android:fontFamily="@font/dm_sans_bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
-
             android:text="@string/trending_projects_str"
             android:textAllCaps="false"
             android:textColor="@color/secondary_purple"
