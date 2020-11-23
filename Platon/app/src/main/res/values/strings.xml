@@ -55,6 +55,7 @@
     <string name="desc_str">Description of project</string>
     <string name="why_str">The reason of trending</string>
     <string name="todo_str">TODO</string>
+    <string name="activity_stream_str">Activity Stream</string>
     <string name="trending_projects_str">Trending Projects</string>
     <string name="upcoming_events_str">Upcoming Events</string>
     <string name="upcoming_event_str">Upcoming Event</string>
