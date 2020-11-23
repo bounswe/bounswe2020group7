@@ -64,7 +64,7 @@ class ForgotPasswordFragment : Fragment(), ForgotPasswordContract.View {
         }
 
         binding.resetPassBtn.setOnClickListener {
-            presenter.onResetPasswordClicked(binding.newPass1Et, binding.newPass2Et, binding.tokenEt)
+            presenter.onResetPasswordClicked(binding.resetPassBtn, binding.newPass1Et, binding.newPass2Et, binding.tokenEt)
         }
 
         //password.addTextChangedListener(textWatcher)

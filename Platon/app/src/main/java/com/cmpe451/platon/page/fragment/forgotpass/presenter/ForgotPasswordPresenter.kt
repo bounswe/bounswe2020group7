@@ -45,6 +45,8 @@ class ForgotPasswordPresenter(private var view: ForgotPasswordContract.View?,
         val observer = object :Observer<JsonObject>{
             override fun onSubscribe(d: Disposable?) {
                 Log.i("Subbed", "Subbed!")
+                forgot_btn.isEnabled = false
+                email.isEnabled = false
             }
 
             override fun onNext(t: JsonObject?) {
@@ -69,6 +71,8 @@ class ForgotPasswordPresenter(private var view: ForgotPasswordContract.View?,
 
             override fun onComplete() {
                 Log.i("Completed", "Completed!")
+                forgot_btn.isEnabled = true
+                email.isEnabled = true
             }
 
         }
@@ -80,7 +84,7 @@ class ForgotPasswordPresenter(private var view: ForgotPasswordContract.View?,
     }
 
 
-    override fun onResetPasswordClicked(pass1: EditText, pass2: EditText, token: EditText) {
+    override fun onResetPasswordClicked(reset_btn: Button, pass1: EditText, pass2: EditText, token: EditText) {
 
         var flag = false
 
@@ -111,6 +115,10 @@ class ForgotPasswordPresenter(private var view: ForgotPasswordContract.View?,
         val observer = object :Observer<JsonObject>{
             override fun onSubscribe(d: Disposable?) {
                 Log.i("Subbed", "Subbed!")
+                reset_btn.isActivated = false
+                pass1.isEnabled= false
+                pass2.isEnabled = false
+                token.isEnabled = false
             }
 
             override fun onNext(t: JsonObject?) {
@@ -131,6 +139,10 @@ class ForgotPasswordPresenter(private var view: ForgotPasswordContract.View?,
 
             override fun onComplete() {
                 Log.i("Completed", "Completed!")
+                reset_btn.isActivated = true
+                pass1.isEnabled= true
+                pass2.isEnabled = true
+                token.isEnabled = true
             }
 
         }

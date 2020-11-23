@@ -64,7 +64,7 @@ class LoginFragment : Fragment(), LoginContract.View  {
         // login button listener
         binding.loginBtn.setOnClickListener {
             // call presenter
-            presenter.onLoginButtonClicked(binding.emailEt, binding.passEt, binding.rememberChk)
+            presenter.onLoginButtonClicked(binding.loginBtn, binding.emailEt, binding.passEt, binding.rememberChk)
         }
 
         binding.dontHaveAccBtn.setOnClickListener {
@@ -72,10 +72,9 @@ class LoginFragment : Fragment(), LoginContract.View  {
         }
 
         binding.forgotPwBtn.setOnClickListener {
-            presenter.onForgotPasswordClicked(binding.emailEt)
+            presenter.onForgotPasswordClicked()
         }
 
-        //password.addTextChangedListener(textWatcher)
     }
 
 

@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.util.Log
 import android.util.Patterns
+import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Toast
@@ -68,7 +69,7 @@ class LoginPresenter(
     }
 
 
-    override fun onLoginButtonClicked(mail: EditText, pass: EditText, remember: CheckBox) {
+    override fun onLoginButtonClicked(login_btn: Button, mail: EditText, pass: EditText, remember: CheckBox) {
 
         // define flag of problem
         var flag = false
@@ -94,6 +95,10 @@ class LoginPresenter(
 
         val observer = object :Observer<JsonObject>{
             override fun onSubscribe(d: Disposable?) {
+                login_btn.isEnabled = false
+                remember.isEnabled = false
+                mail.isEnabled = false
+                pass.isEnabled = false
                 Log.i("Subsribed", "Observer subscribed!")
             }
 
@@ -104,13 +109,18 @@ class LoginPresenter(
                     Toast.makeText((view as Fragment).activity, "Login successful!", Toast.LENGTH_LONG).show()
                     triggerLogin(token, rememberBool, mailStr, passStr)
                 }else{
-                    Toast.makeText((view as Fragment).activity, "Some error occurred!", Toast.LENGTH_LONG).show()
+                    Toast.makeText((view as Fragment).activity, "Input error!", Toast.LENGTH_LONG).show()
                 }
             }
             override fun onError(e: Throwable?) {
+                Toast.makeText((view as Fragment).activity, "Server not responding!", Toast.LENGTH_LONG).show()
                 Log.i("Error", "Error occurred!")
             }
             override fun onComplete() {
+                login_btn.isEnabled = true
+                mail.isEnabled = true
+                pass.isEnabled = true
+                remember.isEnabled = true
                 Log.i("Complete", "Completed!")
             }
         }
@@ -127,7 +137,7 @@ class LoginPresenter(
         navController.navigate(action)
     }
 
-    override fun onForgotPasswordClicked(mail: EditText) {
+    override fun onForgotPasswordClicked() {
         Definitions().vibrate(50, (view as Fragment).activity as BaseActivity)
         val action = LoginFragmentDirections.actionLoginFragmentToForgotPasswordFragment()
         ((view as LoginFragment).activity as LoginActivity).navController.navigate(action)

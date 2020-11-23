@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.util.Log
 import android.util.Patterns
+import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Toast
@@ -33,7 +34,7 @@ class RegisterPresenter(private var view: RegisterContract.View?, private var re
         navController.navigate(action)
     }
 
-    override fun onRegisterButtonClicked(firstName: EditText, lastName: EditText, mail: EditText,job:EditText, pass1: EditText, pass2: EditText, terms:CheckBox) {
+    override fun onRegisterButtonClicked(register_btn: Button, firstName: EditText, lastName: EditText, mail: EditText, job:EditText, pass1: EditText, pass2: EditText, terms:CheckBox) {
 
         var flag = false
 
@@ -82,6 +83,14 @@ class RegisterPresenter(private var view: RegisterContract.View?, private var re
 
         val observer = object :Observer<JsonObject>{
             override fun onSubscribe(d: Disposable?) {
+                register_btn.isEnabled = false
+                firstName.isEnabled = false
+                lastName.isEnabled = false
+                mail.isEnabled = false
+                pass1.isEnabled = false
+                pass2.isEnabled = false
+                terms.isEnabled = false
+                job.isEnabled = false
                 Log.i("Subs", "subsed!")
             }
 
@@ -103,6 +112,14 @@ class RegisterPresenter(private var view: RegisterContract.View?, private var re
             }
 
             override fun onComplete() {
+                register_btn.isEnabled = true
+                firstName.isEnabled = true
+                lastName.isEnabled = true
+                mail.isEnabled = true
+                pass1.isEnabled = true
+                pass2.isEnabled = true
+                terms.isEnabled = true
+                job.isEnabled = true
                 Log.i("Completed", "Completed!")
             }
 

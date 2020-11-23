@@ -49,7 +49,7 @@ class RegisterFragment : Fragment(), RegisterContract.View {
 
     private fun setListeners() {
         binding.registerBtn.setOnClickListener {
-            presenter.onRegisterButtonClicked(binding.firstnameTv, binding.lastnameTv, binding.mailTv, binding.jobTv, binding.pw1Tv, binding.pw2Tv, binding.termsChk)
+            presenter.onRegisterButtonClicked(binding.registerBtn, binding.firstnameTv, binding.lastnameTv, binding.mailTv, binding.jobTv, binding.pw1Tv, binding.pw2Tv, binding.termsChk)
         }
 
         binding.alreadHaveBtn.setOnClickListener {
