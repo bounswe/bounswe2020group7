@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primary_dark"
+    android:fillViewport="true"
+    tools:context=".page.activity.HomeActivity">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+
+        <TextView
+            android:layout_margin="@dimen/medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/dm_sans_regular"
+            android:lineSpacingExtra="8sp"
+            android:text="Welcome to PLATON"
+            android:textColor="@color/primary_light"
+            android:textStyle="bold"
+            android:textSize="@dimen/title_text_size" />
+
+        <TextView
+            android:textAlignment="center"
+            android:layout_marginHorizontal="@dimen/medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/dm_sans_bold"
+            android:lineSpacingExtra="6sp"
+            android:text="Discover research and connect with your scientific community."
+            android:textColor="@color/primary_light"
+            android:textSize="18sp" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+        <TextView
+            android:layout_marginTop="@dimen/medium"
+            android:shadowColor="@color/primary_dark"
+            android:shadowRadius="2"
+            android:shadowDx="1"
+            android:padding="@dimen/x_small"
+            android:shadowDy="1"
+            android:layout_marginHorizontal="10dp"
+            android:id="@+id/textView"
+            android:fontFamily="@font/dm_sans_bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+
+            android:text="@string/trending_projects_str"
+            android:textAllCaps="false"
+            android:textColor="@color/secondary_purple"
+            android:textSize="@dimen/project_title_text_size" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:paddingHorizontal="@dimen/medium"
+            android:fontFamily="@font/dm_sans_bold"
+            android:id="@+id/pre_login_trending_projects_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/xx_small">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <TextView
+            android:layout_marginTop="@dimen/medium"
+            android:shadowColor="@color/primary_dark"
+            android:shadowRadius="2"
+            android:fontFamily="@font/dm_sans_bold"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:layout_marginHorizontal="10dp"
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/x_small"
+            android:paddingHorizontal="@dimen/title_logo_padding"
+            android:text="@string/upcoming_events_str"
+            android:textColor="@color/secondary_green"
+            android:textSize="@dimen/project_title_text_size" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:paddingHorizontal="@dimen/medium"
+            android:id="@+id/pre_login_upcoming_events_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/xx_small" />
+
+    </LinearLayout>
+
+</ScrollView>

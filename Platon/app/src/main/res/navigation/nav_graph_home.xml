@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph_home"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.cmpe451.platon.page.fragment.home.view.HomeFragment"
+        android:label="Home" >
+        <action
+            android:id="@+id/action_homeFragment_to_profilePageFragment"
+            app:destination="@id/profilePageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profilePageFragment"
+        android:name="com.cmpe451.platon.page.fragment.profilepage.view.ProfilePageFragment"
+        android:label="Your Profile" >
+        <action
+            android:id="@+id/action_profilePageFragment_to_followersFollowingFragment"
+            app:destination="@id/followersFollowingFragment" />
+        <action
+            android:id="@+id/action_profilePageFragment_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/followersFollowingFragment"
+        android:name="com.cmpe451.platon.page.fragment.profilepage.view.FollowersFollowingFragment"
+        android:label="Details" >
+        <argument
+            android:name="follower_or_following"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <action
+            android:id="@+id/action_followersFollowingFragment_to_profilePagePrivateFragment"
+            app:destination="@id/profilePagePrivateFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.cmpe451.platon.page.fragment.profilepage.view.EditProfileFragment"
+        android:label="Edit Your Profile" />
+    <fragment
+        android:id="@+id/profilePagePrivateFragment"
+        android:name="com.cmpe451.platon.page.fragment.profilepage.view.ProfilePagePrivateFragment"
+        android:label="Profile" >
+        <argument
+            android:name="id"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_profilePagePrivateFragment_to_followersFollowingFragment"
+            app:destination="@id/followersFollowingFragment" />
+    </fragment>
+</navigation>
