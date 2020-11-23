@@ -4,13 +4,11 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.util.Log
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import com.cmpe451.platon.page.fragment.profilepage.contract.ProfilePageContract
 import com.cmpe451.platon.page.fragment.profilepage.model.ProfilePageRepository
-import com.cmpe451.platon.page.fragment.profilepage.view.FollowerListFragment
-import com.cmpe451.platon.page.fragment.profilepage.view.FollowingListFragment
-import com.cmpe451.platon.page.fragment.profilepage.view.ProfilePageFragment
-import com.cmpe451.platon.page.fragment.profilepage.view.ProfilePageFragmentDirections
+import com.cmpe451.platon.page.fragment.profilepage.view.*
 import com.cmpe451.platon.util.Definitions
 
 
@@ -24,8 +22,9 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
     }
 
     override fun onEditProfileButtonClicked() {
-        Toast.makeText((view as ProfilePageFragment).activity, "Edit PP not yet implemented", Toast.LENGTH_SHORT).show()
+        navController.navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToEditProfileFragment())
     }
+
 
     override fun getFollowers(): ArrayList<Definitions.User> {
         return repository.fetchFollowers((view as FollowerListFragment).activity)
@@ -40,7 +39,32 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
     }
 
     override fun getUser(): Definitions.User {
-        return repository.fetchUser((view as ProfilePageFragment).activity)
+        return  repository.fetchUser((view as Fragment).activity)
+//        sharedPreferences.edit().putString("name", user.name)
+//        sharedPreferences.edit().putString("surname", user.surname)
+//        sharedPreferences.edit().putFloat("rating", user.rating as Float)
+//        sharedPreferences.edit().putString("bio", user.bio)
+//        return user
+        
+    }
+    override fun getUser2(): Definitions.User {
+        return repository.fetchUser((view as Fragment).activity)
+    }
+
+    override fun onEditButtonClicked() {
+        Toast.makeText((view as EditProfileFragment).activity, "Edit PP not yet implemented", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onFollowButtonClicked() {
+//        navController.navigate(ProfilePagePrivateFragmentDirections.actionProfilePagePrivateFragmentToFollowersFollowingFragment())
+    }
+
+    override fun onFollowersButtonPrivateClicked() {
+        navController.navigate(ProfilePagePrivateFragmentDirections.actionProfilePagePrivateFragmentToFollowersFollowingFragment())
+    }
+
+    override fun onFollowingButtonPrivateClicked() {
+        navController.navigate(ProfilePagePrivateFragmentDirections.actionProfilePagePrivateFragmentToFollowersFollowingFragment())
     }
 
 
@@ -54,5 +78,9 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
 
     override fun onDestroy() {
         this.view = null
+    }
+
+    override fun goToProfilePage(id: Int) {
+        navController.navigate(FollowersFollowingFragmentDirections.actionFollowersFollowingFragmentToProfilePagePrivateFragment(id))
     }
 }

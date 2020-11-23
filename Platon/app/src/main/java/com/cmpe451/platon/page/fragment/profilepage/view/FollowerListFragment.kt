@@ -40,9 +40,13 @@ class FollowerListFragment : Fragment(), ProfilePageContract.View{
         super.onViewCreated(view, savedInstanceState)
         initializePresenter()
         val rvFollowers = binding.rvFollow
-        val a = presenter.getFollowers()
-        followers.addAll(a)
-        rvFollowers.adapter = FollowerFollowingRecyclerViewAdapter(followers)
+        followers.addAll(presenter.getFollowers())
+        val adapter = FollowerFollowingRecyclerViewAdapter(ArrayList()) { id:Int->
+//            (activity as HomeActivity).navController.navigate(FollowersFollowingFragmentDirections.actionFollowersFollowingFragmentToProfilePagePrivateFragment(id))
+            presenter.goToProfilePage(id)
+        }
+        rvFollowers.adapter = adapter
+        adapter.submitList(followers)
         rvFollowers.layoutManager = LinearLayoutManager(this.activity)
 
     }

@@ -15,18 +15,39 @@
     <fragment
         android:id="@+id/profilePageFragment"
         android:name="com.cmpe451.platon.page.fragment.profilepage.view.ProfilePageFragment"
-        android:label="ProfilePageFragment" >
+        android:label="Your Profile" >
         <action
             android:id="@+id/action_profilePageFragment_to_followersFollowingFragment"
             app:destination="@id/followersFollowingFragment" />
+        <action
+            android:id="@+id/action_profilePageFragment_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
     </fragment>
     <fragment
         android:id="@+id/followersFollowingFragment"
         android:name="com.cmpe451.platon.page.fragment.profilepage.view.FollowersFollowingFragment"
-        android:label="FollowersFollowingFragment" >
+        android:label="" >
         <argument
             android:name="follower_or_following"
             app:argType="integer"
             android:defaultValue="0" />
+        <action
+            android:id="@+id/action_followersFollowingFragment_to_profilePagePrivateFragment"
+            app:destination="@id/profilePagePrivateFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.cmpe451.platon.page.fragment.profilepage.view.EditProfileFragment"
+        android:label="Edit Your Profile" />
+    <fragment
+        android:id="@+id/profilePagePrivateFragment"
+        android:name="com.cmpe451.platon.page.fragment.profilepage.view.ProfilePagePrivateFragment"
+        android:label="Profile" >
+        <argument
+            android:name="id"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_profilePagePrivateFragment_to_followersFollowingFragment"
+            app:destination="@id/followersFollowingFragment" />
     </fragment>
 </navigation>

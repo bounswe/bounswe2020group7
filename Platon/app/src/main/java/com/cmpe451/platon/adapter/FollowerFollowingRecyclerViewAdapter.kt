@@ -11,17 +11,20 @@ import com.cmpe451.platon.databinding.FragmentFollowerFollowingItemBinding
 import com.cmpe451.platon.page.fragment.profilepage.contract.ProfilePageContract
 import com.cmpe451.platon.util.Definitions
 
-class FollowerFollowingRecyclerViewAdapter(private val dataSet: ArrayList<Definitions.User>) : RecyclerView.Adapter<FollowerFollowingRecyclerViewAdapter.ViewHolder>(),  ProfilePageContract.View {
+class FollowerFollowingRecyclerViewAdapter(private val dataSet: ArrayList<Definitions.User>, val clickCallback:(Int) ->Unit) : RecyclerView.Adapter<FollowerFollowingRecyclerViewAdapter.ViewHolder>(),  ProfilePageContract.View {
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         val view: View = v
 
         init {
             // Define click listener for the ViewHolder's View.
         }
-        fun bind(model:Definitions.User, view:View){
+        fun bind(model:Definitions.User, view:View, clickCallback:(Int)->Unit){
 
             val nameText :TextView = view.findViewById(R.id.text_profile_page_info_title)
             nameText.text = model.name + " " + model.surname
+            nameText.setOnClickListener{
+                clickCallback.invoke(model.id)
+            }
         }
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -40,7 +43,7 @@ class FollowerFollowingRecyclerViewAdapter(private val dataSet: ArrayList<Defini
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(dataSet[position], holder.view)
+        holder.bind(dataSet[position], holder.view, clickCallback)
 
     }
 
