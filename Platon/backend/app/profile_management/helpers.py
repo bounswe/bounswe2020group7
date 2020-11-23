@@ -88,7 +88,7 @@ class ResearchInfoFetch():
             all_research_new = ResearchInfoFetch.fetch_google_scholar_info(google_scholar_id) + ResearchInfoFetch.fetch_research_gate_info(user.researchgate_name)
             for research in all_research_new:
                 if research['title'] not in [i.research_title for i in all_research_of_user]:
-                    db.session.add(ResearchInformation(user.id,research['title'],research['description'],research['year'],int(ResearchType.FETCHED)))
+                    db.session.add(ResearchInformation(user.id,research['title'].title(),research['description'],research['year'],int(ResearchType.FETCHED)))
             for research in all_research_of_user:
                 if research.research_title not in [i['title'] for i in all_research_new]:
                     db.session.delete(research)

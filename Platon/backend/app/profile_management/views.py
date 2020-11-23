@@ -67,13 +67,16 @@ class ResearchInformationAPI(Resource):
         """
         form = ResearchInfoUpdateForm(request.form)
         if form.validate():
+            
+            research_info = ResearchInformation.query.filter((ResearchInformation.id == form.research_id.data) & (ResearchInformation.user_id == user_id))
+            if research_info is None:
+                return make_response(jsonify({'error':'Please give an appropriate research ID'}),400)
+            update_dict = {}
+            for key, value in form.data.items():
+                if value and key != 'research_id':
+                    update_dict[key] = value
             try:
-                research_info = ResearchInformation.query.filter((ResearchInformation.id == form.research_id.data) & (ResearchInformation.user_id == user_id))
-                if research_info is None:
-                    return make_response(jsonify({'error':'Please give an appropriate research ID'}),400)
-                research_info.research_title = form.research_title.data if form.research_title.data != '' else research_info.research_title
-                research_info.description = form.description.data if form.description.data != '' else research_info.description
-                research_info.year = form.year.data if form.year.data !=  -1 else research_info.year
+                research_info.update(update_dict)
                 db.session.commit()
             except:
                 return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
