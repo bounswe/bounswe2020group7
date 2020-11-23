@@ -134,7 +134,7 @@ class ResearchInformationAPI(Resource):
 
             return make_response(jsonify(jobsList), 200)
 
-        @api.doc(responses={201: 'Successfully Created', 400: 'Wrong Input Format', 401: 'Authantication Problem',
+        @api.doc(responses={201: 'Successfully Created', 400: 'Wrong Input Format', 401: 'Authentication Problem',
                             500: 'Database Connection Problem'})
         @api.expect(jobs_post_parser)
         def post(self):
@@ -153,7 +153,7 @@ class ResearchInformationAPI(Resource):
             else:
                 return make_response(jsonify({'error': 'Wrong input format'}), 400)
 
-        @api.doc(responses={201: 'Successfully Updated', 400: 'Wrong Input Format', 401: 'Authantication Problem',
+        @api.doc(responses={201: 'Successfully Updated', 400: 'Wrong Input Format', 401: 'Authentication Problem',
                             500: 'Database Connection Problem'})
         @api.expect(jobs_put_parser)
         def put(self):
@@ -174,7 +174,7 @@ class ResearchInformationAPI(Resource):
             else:
                 return make_response(jsonify({'error': 'Wrong input format'}), 400)
 
-        @api.doc(responses={200: 'Successfully Deleted', 400: 'Wrong Input Format', 401: 'Authantication Problem',
+        @api.doc(responses={200: 'Successfully Deleted', 400: 'Wrong Input Format', 401: 'Authentication Problem',
                             500: 'Database Connection Problem'})
         @api.expect(jobs_delete_parser)
         def delete(self):
@@ -186,7 +186,7 @@ class ResearchInformationAPI(Resource):
                 try:
                     job = Jobs.query.filter(Jobs.id == form.id.data).first()
                     if job is None:
-                        return make_response(jsonify({'error': 'Skill does not exist'}), 400)
+                        return make_response(jsonify({'error': 'Job does not exist'}), 400)
                     db.session.delete(job)
                     db.session.commit()
                     return make_response(jsonify({'msg': 'Successfully Deleted'}), 200)
@@ -210,7 +210,7 @@ class ResearchInformationAPI(Resource):
             except:
                 return make_response(jsonify({'error': 'Database Connection Problem'}), 500)
             if skills is []:
-                return make_response(jsonify({'error': 'Jobs not found'}), 404)
+                return make_response(jsonify({'error': 'Skills not found'}), 404)
 
             skillsList = []
             for skill in skills:
@@ -218,7 +218,7 @@ class ResearchInformationAPI(Resource):
 
             return make_response(jsonify(skillsList), 200)
 
-        @api.doc(responses={201: 'Successfully Created', 400: 'Wrong Input Format', 401: 'Authantication Problem',
+        @api.doc(responses={201: 'Successfully Created', 400: 'Wrong Input Format', 401: 'Authentication Problem',
                             500: 'Database Connection Problem'})
         @api.expect(skills_post_parser)
         def post(self):
@@ -237,7 +237,7 @@ class ResearchInformationAPI(Resource):
             else:
                 return make_response(jsonify({'error': 'Wrong input format'}), 400)
 
-        @api.doc(responses={201: 'Successfully Updated', 400: 'Wrong Input Format', 401: 'Authantication Problem',
+        @api.doc(responses={201: 'Successfully Updated', 400: 'Wrong Input Format', 401: 'Authentication Problem',
                             500: 'Database Connection Problem'})
         @api.expect(skills_put_parser)
         def put(self):
@@ -258,7 +258,7 @@ class ResearchInformationAPI(Resource):
             else:
                 return make_response(jsonify({'error': 'Wrong input format'}), 400)
 
-        @api.doc(responses={200: 'Successfully Deleted', 400: 'Wrong Input Format', 401: 'Authantication Problem',
+        @api.doc(responses={200: 'Successfully Deleted', 400: 'Wrong Input Format', 401: 'Authentication Problem',
                             500: 'Database Connection Problem'})
         @api.expect(skills_delete_parser)
         def delete(self):
