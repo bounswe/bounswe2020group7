@@ -93,9 +93,7 @@ class RegisterPresenter(private var view: RegisterContract.View?, private var re
                 val error = t?.has("error")
 
                 if(error != null && !error){
-                    val action = PreLoginFragmentDirections.actionPreLoginFragmentToLoginFragment()
                     navController.navigateUp()
-                    navController.navigate(action)
                     Toast.makeText((view as Fragment).activity, "Successfully registered!", Toast.LENGTH_LONG).show()
                 }else{
                     Toast.makeText((view as Fragment).activity, "Unknown error occurred!", Toast.LENGTH_LONG).show()

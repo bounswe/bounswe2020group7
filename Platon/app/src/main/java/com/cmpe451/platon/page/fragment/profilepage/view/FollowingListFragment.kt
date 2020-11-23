@@ -12,6 +12,7 @@ import com.cmpe451.platon.page.fragment.profilepage.contract.ProfilePageContract
 import com.cmpe451.platon.page.fragment.profilepage.model.ProfilePageRepository
 import com.cmpe451.platon.page.fragment.profilepage.presenter.ProfilePagePresenter
 import com.cmpe451.platon.adapter.FollowerFollowingRecyclerViewAdapter
+import com.cmpe451.platon.networkmodels.ResearchResponse
 import com.cmpe451.platon.util.Definitions
 
 class FollowingListFragment : Fragment(), ProfilePageContract.View{
@@ -47,6 +48,11 @@ class FollowingListFragment : Fragment(), ProfilePageContract.View{
         adapter.submitList(following)
         rvFollowers.layoutManager = LinearLayoutManager(this.activity)
     }
+
+    override fun researchesFetched(researchInfo: ResearchResponse) {
+        TODO("Not yet implemented")
+    }
+
     override fun initializePresenter(){
         val sharedPreferences = requireContext().getSharedPreferences("token_file", 0)
         val repository = ProfilePageRepository(sharedPreferences)

@@ -2,12 +2,13 @@ package com.cmpe451.platon.page.fragment.profilepage.contract
 
 import com.cmpe451.platon.core.BasePresenter
 import com.cmpe451.platon.core.BaseView
+import com.cmpe451.platon.networkmodels.ResearchResponse
 import com.cmpe451.platon.util.Definitions
 
 interface ProfilePageContract {
 
     interface View : BaseView<Presenter> {
-
+        fun researchesFetched(researchInfo : ResearchResponse)
     }
 
     interface Presenter : BasePresenter {
@@ -24,7 +25,7 @@ interface ProfilePageContract {
         fun onFollowersButtonPrivateClicked()
         fun onFollowingButtonPrivateClicked()
         fun goToProfilePage(id: Int)
-        fun getProjects(): ArrayList<Definitions.TrendingProject>
+        fun bringResearches()
     }
 
 }

@@ -21,7 +21,7 @@ import com.google.gson.Gson
 class ProfilePagePresenter(private var view: ProfilePageContract.View?, private var repository: ProfilePageRepository, private var sharedPreferences: SharedPreferences, private var navController: NavController) : ProfilePageContract.Presenter {
 
     val token = sharedPreferences.getString("token", null)
-    val user_id = sharedPreferences.getString("user_id", "3")!!.toInt()
+    val user_id = sharedPreferences.getString("user_id", "4")!!.toInt()
     var userInfo: UserInfoResponse? = null
     lateinit var researchInformation: ResearchResponse
 
@@ -100,14 +100,6 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
         navController.navigate(FollowersFollowingFragmentDirections.actionFollowersFollowingFragmentToProfilePagePrivateFragment(id))
     }
 
-    override fun getProjects(): ArrayList<Definitions.TrendingProject> {
-        bringResearches()
-        Thread.sleep(2000)
-//        if(researchInformation == null){
-//            return ArrayList()
-//        }
-        return researchToTrendingProject(researchInformation!!.research_info)
-    }
 
     private fun bringFollowers() {
         repository.getFollowers(1,"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MywiZXhwaXJlX3RpbWUiOiIyMDIxLTExLTIzVDE0OjQxOjQxLjQ2MzIyMSJ9.KhsIsUuPUUu38AEZ9GL5IL9TarnUVIQ1isPM9sYA7j8",object: HttpRequestListener {
@@ -125,12 +117,13 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
         )
     }
 
-    private  fun bringResearches() {
+     override fun bringResearches() {
         if (token != null) {
             val mytok = token.subSequence(1,token.length-1)
             repository.getResearches(user_id, mytok as String,object: HttpRequestListener {
                 override fun onRequestCompleted(result: String)  {
                     researchInformation = createResearchResponse(result)
+                    view?.researchesFetched(researchInformation)
                 }
 
                 override fun onFailure(errorMessage: String) {
@@ -161,9 +154,7 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
     }
 
     private fun createResearchResponse(responseString: String) : ResearchResponse {
-//        if(responseString == null){
-//            return null
-//        }
+
         return Gson().fromJson<ResearchResponse>(responseString, ResearchResponse::class.java)
     }
 

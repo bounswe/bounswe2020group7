@@ -8,7 +8,6 @@ import com.cmpe451.platon.util.Definitions.UpcomingEvent
 interface PreLoginContract {
 
     interface View : BaseView<Presenter> {
-
     }
 
     interface Presenter : BasePresenter {
