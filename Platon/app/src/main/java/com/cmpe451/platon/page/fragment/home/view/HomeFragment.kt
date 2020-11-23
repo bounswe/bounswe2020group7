@@ -2,6 +2,7 @@ package com.cmpe451.platon.page.fragment.home.view
 
 import android.os.Bundle
 import android.view.*
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.cmpe451.platon.R
@@ -50,6 +51,12 @@ class HomeFragment : Fragment(), HomeContract.View  {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
+
+        val search = (menu.findItem(R.id.search_btn)?.actionView as SearchView)
+        search.setQuery("", false)
+        search.isIconified = true
+
+        menu.findItem(R.id.notification_btn)?.isVisible = true
         menu.findItem(R.id.registerFragment).isVisible = false
         menu.findItem(R.id.loginFragment).isVisible = false
         menu.findItem(R.id.logout_menu_btn).isVisible = true

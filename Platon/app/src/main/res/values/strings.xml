@@ -71,4 +71,5 @@
     <string name="projects">Projects</string>
     <string name="your_info">Information</string>
     <string name="text_follow">Follow</string>
+    <string name="notification_str">Notifications</string>
 </resources>

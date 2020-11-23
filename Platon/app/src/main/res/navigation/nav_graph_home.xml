@@ -26,7 +26,7 @@
     <fragment
         android:id="@+id/followersFollowingFragment"
         android:name="com.cmpe451.platon.page.fragment.profilepage.view.FollowersFollowingFragment"
-        android:label="" >
+        android:label="Details" >
         <argument
             android:name="follower_or_following"
             app:argType="integer"

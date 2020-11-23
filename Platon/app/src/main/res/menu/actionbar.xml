@@ -27,5 +27,15 @@
         android:title="@string/search_str"
         android:visible="true"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
+
+
+    <item
+        android:id="@+id/notification_btn"
+        android:icon="@drawable/ic_notifications_24px"
+        android:title="@string/notification_str"
+        android:visible="true"
+        app:showAsAction="ifRoom"
+
+        />
 </menu>

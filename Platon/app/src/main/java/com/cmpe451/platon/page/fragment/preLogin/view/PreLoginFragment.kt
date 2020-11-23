@@ -4,9 +4,11 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.widget.SearchView
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -90,6 +92,20 @@ class PreLoginFragment : Fragment(), PreLoginContract.View, TrendingProjectsAdap
 
         Definitions().vibrate(50, activity as BaseActivity)
     }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+
+        val search = (menu.findItem(R.id.search_btn)?.actionView as SearchView)
+        search.setQuery("", false)
+        search.isIconified = true
+
+        menu.findItem(R.id.notification_btn)?.isVisible = false
+        menu.findItem(R.id.registerFragment).isVisible = true
+        menu.findItem(R.id.loginFragment).isVisible = true
+        menu.findItem(R.id.logout_menu_btn).isVisible = false
+    }
+
 
     override fun onTrendingProjectButtonClicked(binding: TrendProjectCellBinding, position:Int) {
         if (binding.descTrendProjectTv.visibility == View.GONE){

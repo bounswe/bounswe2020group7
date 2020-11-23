@@ -74,11 +74,13 @@ class ForgotPasswordFragment : Fragment(), ForgotPasswordContract.View {
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
 
+
+
         // clear search bar, and make it iconified
         val search = (menu.findItem(R.id.search_btn)?.actionView as SearchView)
         search.setQuery("", false)
         search.isIconified = true
-
+        menu.findItem(R.id.notification_btn)?.isVisible = false
         // hide all elements in the menu
         menu.findItem(R.id.registerFragment)?.isVisible = false
         menu.findItem(R.id.loginFragment)?.isVisible = false

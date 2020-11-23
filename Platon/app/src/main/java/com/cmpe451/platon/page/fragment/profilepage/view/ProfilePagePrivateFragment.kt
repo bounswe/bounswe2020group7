@@ -154,6 +154,7 @@ class ProfilePagePrivateFragment() : Fragment(), ProfilePageContract.View {
         menu.findItem(R.id.registerFragment)?.isVisible = false
         menu.findItem(R.id.loginFragment)?.isVisible = false
         menu.findItem(R.id.search_btn)?.isVisible = false
+        menu.findItem(R.id.notification_btn)?.isVisible = false
     }
 
     override fun initializePresenter(){

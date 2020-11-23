@@ -11,6 +11,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.cmpe451.platon.R
 import com.cmpe451.platon.databinding.FragmentFollowingFollowersBinding
 import com.cmpe451.platon.adapter.FollowViewPagerAdapter
+import com.cmpe451.platon.core.BaseActivity
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
@@ -42,6 +43,8 @@ class FollowersFollowingFragment : Fragment(){
         var tab = tabLayout.getTabAt(pos)
         tab?.select()
         setHasOptionsMenu(true)
+
+
         return binding.root
     }
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -55,6 +58,7 @@ class FollowersFollowingFragment : Fragment(){
         menu.findItem(R.id.registerFragment)?.isVisible = false
         menu.findItem(R.id.loginFragment)?.isVisible = false
         menu.findItem(R.id.search_btn)?.isVisible = false
+        menu.findItem(R.id.notification_btn)?.isVisible = false
     }
 
 }
