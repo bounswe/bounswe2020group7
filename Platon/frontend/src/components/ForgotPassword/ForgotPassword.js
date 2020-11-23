@@ -110,11 +110,8 @@ class ForgotPassword extends Component {
       return;
     }
     const url = config.BASE_URL
-    const data = { e_mail: this.state.email };
-    fetch(url + "/auth_system/reset_password", {
+    fetch(url + "/api/auth_system/reset_password?e_mail=" + this.state.email, {
       method: "GET",
-
-      body: JSON.stringify(data),
     })
       .then((response) => {
         if (response.status === 200) {
