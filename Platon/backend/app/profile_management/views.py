@@ -113,12 +113,14 @@ class ResearchInformationAPI(Resource):
 
     @profile_management_ns.route("/jobs")
     class JobsAPI(Resource):
-
         """
-            Returns all job names
+            Get/Post/Put/Delete endpoints of Jobs are implemented in this class
         """
         @api.doc(responses={200: 'Valid Response', 404: 'Empty List', 500: 'Database Connection Problem'})
         def get(self):
+            """
+                Returns all job names
+            """
             try:
                 jobs = Jobs.query.all()
             except:
@@ -132,13 +134,13 @@ class ResearchInformationAPI(Resource):
 
             return make_response(jsonify(jobsList), 200)
 
-        """
-            Creates a new job
-        """
         @api.doc(responses={201: 'Successfully Created', 400: 'Wrong Input Format', 401: 'Authantication Problem',
                             500: 'Database Connection Problem'})
         @api.expect(jobs_post_parser)
         def post(self):
+            """
+                Creates a new job
+            """
             form = JobsPostForm(request.form)
             if form.validate():
                 new_job = Jobs(form.name.data)
@@ -151,13 +153,13 @@ class ResearchInformationAPI(Resource):
             else:
                 return make_response(jsonify({'error': 'Wrong input format'}), 400)
 
-        """
-            Updates a job
-        """
         @api.doc(responses={201: 'Successfully Updated', 400: 'Wrong Input Format', 401: 'Authantication Problem',
                             500: 'Database Connection Problem'})
         @api.expect(jobs_put_parser)
         def put(self):
+            """
+                Updates a job
+            """
             form = JobsPutForm(request.form)
             if form.validate():
                 try:
@@ -172,13 +174,13 @@ class ResearchInformationAPI(Resource):
             else:
                 return make_response(jsonify({'error': 'Wrong input format'}), 400)
 
-        """
-            Deletes a job
-        """
         @api.doc(responses={200: 'Successfully Deleted', 400: 'Wrong Input Format', 401: 'Authantication Problem',
                             500: 'Database Connection Problem'})
         @api.expect(jobs_delete_parser)
         def delete(self):
+            """
+                Deletes a job
+            """
             form = JobsDeleteForm(request.form)
             if form.validate():
                 try:
@@ -195,12 +197,14 @@ class ResearchInformationAPI(Resource):
 
     @profile_management_ns.route("/skills")
     class SkillsAPI(Resource):
-
         """
-            Returns all skill names
+            Get/Post/Put/Delete endpoints of Skills are implemented in this class
         """
         @api.doc(responses={200: 'Valid Response', 404: 'Empty List', 500: 'Database Connection Problem'})
         def get(self):
+            """
+                Returns all skill names
+            """
             try:
                 skills = Skills.query.all()
             except:
@@ -214,13 +218,13 @@ class ResearchInformationAPI(Resource):
 
             return make_response(jsonify(skillsList), 200)
 
-        """
-            Creates a skill
-        """
         @api.doc(responses={201: 'Successfully Created', 400: 'Wrong Input Format', 401: 'Authantication Problem',
                             500: 'Database Connection Problem'})
         @api.expect(skills_post_parser)
         def post(self):
+            """
+                Creates a skill
+            """
             form = SkillsPostForm(request.form)
             if form.validate():
                 new_skill = Skills(form.name.data)
@@ -233,13 +237,13 @@ class ResearchInformationAPI(Resource):
             else:
                 return make_response(jsonify({'error': 'Wrong input format'}), 400)
 
-        """
-            Updates a skill
-        """
         @api.doc(responses={201: 'Successfully Updated', 400: 'Wrong Input Format', 401: 'Authantication Problem',
                             500: 'Database Connection Problem'})
         @api.expect(skills_put_parser)
         def put(self):
+            """
+                Updates a skill
+            """
             form = SkillsPutForm(request.form)
             if form.validate():
                 try:
@@ -254,13 +258,13 @@ class ResearchInformationAPI(Resource):
             else:
                 return make_response(jsonify({'error': 'Wrong input format'}), 400)
 
-        """
-            Deletes a skill
-        """
         @api.doc(responses={200: 'Successfully Deleted', 400: 'Wrong Input Format', 401: 'Authantication Problem',
                             500: 'Database Connection Problem'})
         @api.expect(skills_delete_parser)
         def delete(self):
+            """
+                Deletes a skill
+            """
             form = SkillsDeleteForm(request.form)
             if form.validate():
                 try:
