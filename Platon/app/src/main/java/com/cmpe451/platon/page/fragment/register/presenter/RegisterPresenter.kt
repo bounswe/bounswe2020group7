@@ -98,14 +98,20 @@ class RegisterPresenter(private var view: RegisterContract.View?, private var re
                     navController.navigate(action)
                     Toast.makeText((view as Fragment).activity, "Successfully registered!", Toast.LENGTH_LONG).show()
                 }else{
-                    Toast.makeText((view as Fragment).activity, "Failed to register!", Toast.LENGTH_LONG).show()
+                    Toast.makeText((view as Fragment).activity, "Unknown error occurred!", Toast.LENGTH_LONG).show()
                 }
             }
 
             override fun onError(e: Throwable?) {
                 val msg = e?.message
-                if( msg != null && msg.contains("HTTP", true)){
-                    Toast.makeText((view as Fragment).activity, msg.subSequence(0, 8).toString() + " OCCURRED", Toast.LENGTH_LONG).show()
+                if( msg != null && msg.contains("HTTP 400", true)){
+                    Toast.makeText((view as Fragment).activity, "Missing data fields or invalid data", Toast.LENGTH_LONG).show()
+                }else if( msg != null && msg.contains("HTTP 409", true)){
+                    Toast.makeText((view as Fragment).activity, "User with the given e-mail address already exists", Toast.LENGTH_LONG).show()
+                }else if( msg != null && msg.contains("HTTP 500", true)){
+                    Toast.makeText((view as Fragment).activity, "The server is not connected to the database", Toast.LENGTH_LONG).show()
+                }else if( msg != null && msg.contains("HTTP 503", true)){
+                    Toast.makeText((view as Fragment).activity, "The server could not send the account activation e-mail", Toast.LENGTH_LONG).show()
                 }else{
                     Toast.makeText((view as Fragment).activity, "Server not responding!", Toast.LENGTH_LONG).show()
                 }

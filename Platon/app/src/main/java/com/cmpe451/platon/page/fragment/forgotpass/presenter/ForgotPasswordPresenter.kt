@@ -63,15 +63,22 @@ class ForgotPasswordPresenter(private var view: ForgotPasswordContract.View?,
                     pass1.visibility = View.VISIBLE
                     pass2.visibility = View.VISIBLE
                 }else{
-                    Toast.makeText((view as Fragment).activity, "No matching e-mail found!", Toast.LENGTH_LONG).show()
+                    Toast.makeText((view as Fragment).activity, "Some unknown error occurred!", Toast.LENGTH_LONG).show()
                 }
 
             }
 
             override fun onError(e: Throwable?) {
                 val msg = e?.message
-                if( msg != null && msg.contains("HTTP", true)){
-                    Toast.makeText((view as Fragment).activity, msg.subSequence(0, 8).toString() + " OCCURRED", Toast.LENGTH_LONG).show()
+
+                if( msg != null && msg.contains("HTTP 400", true)){
+                    Toast.makeText((view as Fragment).activity, "Input Format Error", Toast.LENGTH_LONG).show()
+                }else if( msg != null && msg.contains("HTTP 401", true)){
+                    Toast.makeText((view as Fragment).activity,  "Account Problems", Toast.LENGTH_LONG).show()
+                }else if( msg != null && msg.contains("HTTP 404", true)){
+                    Toast.makeText((view as Fragment).activity, "E-mail not found", Toast.LENGTH_LONG).show()
+                }else if( msg != null && msg.contains("HTTP 500", true)){
+                    Toast.makeText((view as Fragment).activity, "Database Connection/E-mail Server Error", Toast.LENGTH_LONG).show()
                 }else{
                     Toast.makeText((view as Fragment).activity, "Server not responding!", Toast.LENGTH_LONG).show()
                 }
@@ -134,15 +141,20 @@ class ForgotPasswordPresenter(private var view: ForgotPasswordContract.View?,
                     Toast.makeText((view as Fragment).activity, "Successfully changed!", Toast.LENGTH_LONG).show()
                     navController.navigateUp()
                 }else{
-                    Toast.makeText((view as Fragment).activity, "Failed to change password!", Toast.LENGTH_LONG).show()
+                    Toast.makeText((view as Fragment).activity, "Some unknown error occurred!", Toast.LENGTH_LONG).show()
                 }
 
             }
 
             override fun onError(e: Throwable?) {
                 val msg = e?.message
-                if( msg != null && msg.contains("HTTP", true)){
-                    Toast.makeText((view as Fragment).activity, msg.subSequence(0, 8).toString() + " OCCURRED", Toast.LENGTH_LONG).show()
+
+                if( msg != null && msg.contains("HTTP 400", true)){
+                    Toast.makeText((view as Fragment).activity, "Passwords are not matched", Toast.LENGTH_LONG).show()
+                }else if( msg != null && msg.contains("HTTP 401", true)){
+                    Toast.makeText((view as Fragment).activity,  "Authorization Error", Toast.LENGTH_LONG).show()
+                }else if( msg != null && msg.contains("HTTP 500", true)){
+                    Toast.makeText((view as Fragment).activity, "Database Connection/E-mail Server Error", Toast.LENGTH_LONG).show()
                 }else{
                     Toast.makeText((view as Fragment).activity, "Server not responding!", Toast.LENGTH_LONG).show()
                 }

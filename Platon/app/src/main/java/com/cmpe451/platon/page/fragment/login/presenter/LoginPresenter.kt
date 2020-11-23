@@ -108,19 +108,26 @@ class LoginPresenter(
                     Toast.makeText((view as Fragment).activity, "Login successful!", Toast.LENGTH_LONG).show()
                     triggerLogin(token, rememberBool, mailStr, passStr)
                 }else{
-                    Toast.makeText((view as Fragment).activity, "Input error!", Toast.LENGTH_LONG).show()
+                    Toast.makeText((view as Fragment).activity, "Token is null!", Toast.LENGTH_LONG).show()
                 }
             }
+
             override fun onError(e: Throwable?) {
                 Log.e("ERROR", e?.message + "" )
 
                 val msg = e?.message
-                if( msg != null && msg.contains("HTTP", true)){
-                    Toast.makeText((view as Fragment).activity, msg.subSequence(0, 8).toString() + " OCCURRED", Toast.LENGTH_LONG).show()
+
+                if(msg != null && msg.contains("HTTP 400", true)){
+                    Toast.makeText((view as Fragment).activity, "Input Format Error", Toast.LENGTH_LONG).show()
+                }else if(msg != null && msg.contains("HTTP 401", true)){
+                    Toast.makeText((view as Fragment).activity, "Account Problems", Toast.LENGTH_LONG).show()
+                }else if(msg != null && msg.contains("HTTP 404", true)){
+                    Toast.makeText((view as Fragment).activity, "E-mail not found", Toast.LENGTH_LONG).show()
+                }else if(msg != null && msg.contains("HTTP 500", true)){
+                    Toast.makeText((view as Fragment).activity, "Database Connection/E-mail Server Error", Toast.LENGTH_LONG).show()
                 }else{
                     Toast.makeText((view as Fragment).activity, "Server not responding!", Toast.LENGTH_LONG).show()
                 }
-
 
                 dialog.dismiss()
             }
