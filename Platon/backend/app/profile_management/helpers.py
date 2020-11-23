@@ -4,8 +4,15 @@ import atexit
 from apscheduler.schedulers.background import BackgroundScheduler
 from app import db
 from bs4 import BeautifulSoup
+from enum import IntEnum
 
+from app.auth_system.models import User
 from app.profile_management.models import ResearchInformation,Notification,NotificationRelatedUser
+
+
+class ResearchType(IntEnum):
+    HAND_WRITTEN = 0
+    FETCHED = 1
 
 class ResearchInfoFetch():
     
@@ -31,7 +38,7 @@ class ResearchInfoFetch():
         Extracts Google Scholar account ID from Google Scholar profile page URL.
         '''
         if URL is None:
-            return None
+            return
         return URL.split("?user=", 1)[1].split("&",1)[0]
     
     @staticmethod
@@ -57,7 +64,7 @@ class ResearchInfoFetch():
             return []
     
     @staticmethod
-    def update_research_info():
+    def update_research_info_all():
         """
             Updates the Google Scholar and ResearchGate information of all users in the system
         """
@@ -82,7 +89,7 @@ class ResearchInfoFetch():
             all_research_new = ResearchInfoFetch.fetch_google_scholar_info(google_scholar_id) + ResearchInfoFetch.fetch_research_gate_info(user.researchgate_name)
             for research in all_research_new:
                 if research['title'] not in [i.research_title for i in all_research_of_user]:
-                    db.seesion.add(ResearchInformation(user.id,research['title'],research['description'],research['year'],int(ResearchType.FETCHED)))
+                    db.session.add(ResearchInformation(user.id,research['title'],research['description'],research['year'],int(ResearchType.FETCHED)))
             for research in all_research_of_user:
                 if research.research_title not in [i['title'] for i in all_research_new]:
                     db.session.delete(research)
@@ -119,7 +126,7 @@ class NotificationManager():
 
 def schedule_regularly():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(func=ResearchInfoFetch.update_research_info, trigger="interval",seconds=60*60)
+    scheduler.add_job(func=ResearchInfoFetch.update_research_info_all, trigger="interval",seconds=60*60)
     scheduler.start()
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())

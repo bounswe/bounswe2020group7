@@ -7,7 +7,7 @@ from app import api, mail, db
 from app.auth_system.forms import LoginForm,login_parser
 from app.auth_system.forms import ResetPasswordGetForm,reset_password_get_parser
 from app.auth_system.forms import ResetPasswordPostForm,reset_password_post_parser
-from app.auth_system.forms import GetUserForm, get_user_parser
+from app.auth_system.forms import GetUserForm, get_user_parser, get_self_parser
 from app.auth_system.forms import CreateUserForm, create_user_parser
 from app.auth_system.forms import UpdateUserForm, update_user_parser
 from app.auth_system.forms import DeleteUserForm, delete_user_parser
@@ -235,22 +235,23 @@ class UserAPI(Resource):
                                         surname=form.surname.data,
                                         is_private=False,
                                         rate=-1.0,
-                                        profile_photo=form.data.items().get("profile_photo"),
-                                        google_scholar_name=form.data.items().get("google_scholar_name"),
-                                        researchgate_name=form.data.items().get("researchgate_name"),
+                                        profile_photo=form.profile_photo.data,
+                                        google_scholar_name=form.google_scholar_name.data,
+                                        researchgate_name=form.researchgate_name.data,
                                         job_id=new_user_job.id
                                         )
-                        # DO NOT FORGET TO WRITE CODE FOR "JOB" CREATION
                         db.session.add(new_user)
                         db.session.commit()
                     except:
                         return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
                     
-                    # Tries to update the research information of the newly registered user.
+                    # Tries to update the research information of the newly updated user.
+                    # If it fails, it does not raise an error.
+                    # -as research information is scheduled to be fetched everyday.-
                     try:
-                        ResearchInfoFetch.update_research_info(new_user.id)
-                    except Exception as e:
-                        print(str(e))
+                        ResearchInfoFetch.update_research_info(existing_user.id)
+                    except:
+                        pass
 
                     # Tries to send the activation mail to the user.
                     # If it fails, an error is raised.
@@ -324,12 +325,14 @@ class UserAPI(Resource):
                         db.session.commit()
                     except:
                         return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
-                    
+                
                     # Tries to update the research information of the newly updated user.
+                    # If it fails, it does not raise an error.
+                    # -as research information is scheduled to be fetched everyday.-
                     try:
-                        ResearchInfoFetch.update_research_info(new_user.id)
-                    except Exception as e:
-                        print(str(e))
+                        ResearchInfoFetch.update_research_info(existing_user.id)
+                    except:
+                        pass
                     
                     return make_response(jsonify({"message" : "Account information has been successfully updated."}), 200)
                 else:
