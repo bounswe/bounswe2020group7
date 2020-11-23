@@ -8,6 +8,8 @@ import android.widget.CheckBox
 import android.widget.EditText
 import com.cmpe451.platon.core.BasePresenter
 import com.cmpe451.platon.core.BaseView
+import com.google.gson.JsonObject
+import io.reactivex.rxjava3.core.Observer
 
 interface LoginContract {
 

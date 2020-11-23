@@ -17,6 +17,10 @@ import com.cmpe451.platon.page.fragment.register.model.RegisterRepository
 import com.cmpe451.platon.page.fragment.register.view.RegisterFragment
 import com.cmpe451.platon.page.fragment.register.view.RegisterFragmentDirections
 import com.cmpe451.platon.util.Definitions
+import com.google.gson.JsonObject
+import io.reactivex.rxjava3.core.Observer
+import io.reactivex.rxjava3.disposables.Disposable
+import java.util.*
 
 class RegisterPresenter(private var view: RegisterContract.View?, private var repository: RegisterRepository, private var sharedPreferences: SharedPreferences, private var navController: NavController) : RegisterContract.Presenter {
     override fun getTermsAndConds(): String {
@@ -76,50 +80,37 @@ class RegisterPresenter(private var view: RegisterContract.View?, private var re
             flag = true
         }
 
-        if (!flag) {
-            if(repository.postRegister(firstNameStr, lastNameStr, mailStr, jobStr, pass1Str)){
-
-                val ht = HandlerThread("MyHandlerThread")
-                ht.start()
-                val handler = Handler(ht.looper)
-                val runnable = Runnable {
-                    var registerFail = false
-                    var registerSuccess = false
-
-                    var counter = 50
-                    while(!registerFail && counter > 0 && !registerSuccess ){
-                        registerFail =  sharedPreferences.getBoolean("register_fail", false)
-                        registerSuccess= sharedPreferences.getBoolean("register_success", false)
-                        Thread.sleep(250)
-                        counter -= 1
-                    }
-
-                    when{
-                        registerSuccess ->{
-                            val runner = Runnable {
-                                val action = PreLoginFragmentDirections.actionPreLoginFragmentToLoginFragment()
-                                navController.navigateUp()
-                                navController.navigate(action)
-                            }
-                            Toast.makeText((view as Fragment).activity, "Successfully registered!", Toast.LENGTH_LONG).show()
-                            ((view as Fragment).activity as BaseActivity).runOnUiThread(runner)
-                        }
-                        registerFail->{
-                            Toast.makeText((view as Fragment).activity, "Failed to register!", Toast.LENGTH_LONG).show()
-                        }
-                        else ->{
-                            Toast.makeText((view as Fragment).activity, "Server not responding!", Toast.LENGTH_LONG).show()
-                        }
-                    }
-
-                    sharedPreferences.edit().remove("register_fail").apply()
-                    sharedPreferences.edit().remove("register_success").apply()
-
-                }
-                handler.post(runnable)
-            }else{
-                Toast.makeText((view as Fragment).activity, "Error", Toast.LENGTH_LONG).show()
+        val observer = object :Observer<JsonObject>{
+            override fun onSubscribe(d: Disposable?) {
+                TODO("Not yet implemented")
             }
+
+            override fun onNext(t: JsonObject?) {
+                val error = t?.has("error")
+
+                if(error != null && !error){
+                    val action = PreLoginFragmentDirections.actionPreLoginFragmentToLoginFragment()
+                    navController.navigateUp()
+                    navController.navigate(action)
+                    Toast.makeText((view as Fragment).activity, "Successfully registered!", Toast.LENGTH_LONG).show()
+                }else{
+                    Toast.makeText((view as Fragment).activity, "Failed to register!", Toast.LENGTH_LONG).show()
+                }
+            }
+
+            override fun onError(e: Throwable?) {
+                Toast.makeText((view as Fragment).activity, "Server not responding!", Toast.LENGTH_LONG).show()
+            }
+
+            override fun onComplete() {
+                TODO("Not yet implemented")
+            }
+
+        }
+
+
+        if (!flag) {
+            repository.postRegister(observer, firstNameStr, lastNameStr, mailStr, jobStr, pass1Str)
         }
     }
 

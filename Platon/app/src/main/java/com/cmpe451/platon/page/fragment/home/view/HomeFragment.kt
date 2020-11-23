@@ -42,10 +42,6 @@ class HomeFragment : Fragment(), HomeContract.View  {
         presenter = HomePresenter(this, repository, sharedPreferences, (activity as HomeActivity).navController )
     }
 
-    private fun initViews(root: View) {
-
-    }
-
 
     private fun setListeners() {
         //password.addTextChangedListener(textWatcher)

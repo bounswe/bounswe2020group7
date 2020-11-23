@@ -7,5 +7,4 @@ import android.content.SharedPreferences
 class HomeRepository(sharedPreferences: SharedPreferences){
 
 
-
 }
