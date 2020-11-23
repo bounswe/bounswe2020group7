@@ -72,7 +72,7 @@ class ResetPasswordAPI(Resource):
             if not user.is_valid:
                 return make_response(jsonify({'error' : 'Please activate your account'}),401)
             token = generate_token(user.id,app.config['LINK_DURATION'])
-            if send_email(user.e_mail,"Password Reset Link","Click the following link to change tour password\nToken: {}".format(token),"{}/resetpassword/{}".format(app.config["FRONTEND_HOSTNAME"],token)):
+            if send_email(user.e_mail,"Password Reset Link","Click the following link to change tour password\nDo not forget to activate your account today, the link expires in 20 minutes!\nToken: {}".format(token),"{}/resetpassword/{}".format(app.config["FRONTEND_HOSTNAME"],token)):
                 return make_response(jsonify({'mgs' : 'E-mail is successfully sent'}),200)
             else:
                 return make_response(jsonify({'error' : 'E-mail Server Error'}),500)
@@ -260,8 +260,7 @@ class UserAPI(Resource):
                         send_email(
                                     recipient_email=new_user.e_mail,
                                     subject="Activate Your Platon Account",
-                                    message_body='''Please activate your Platon account by clicking the activation link below.
-                                                    Do not forget to activate your account today, the link expires in one day!''',
+                                    message_body="Please activate your Platon account by clicking the activation link below.\nDo not forget to activate your account today, the link expires in one day!\nToken: {}".format(account_activation_token),
                                     message_link="{}/activate_account?token={}".format(app.config["FRONTEND_HOSTNAME"],account_activation_token)
                                     )
                     except:

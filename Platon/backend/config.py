@@ -6,7 +6,7 @@ DEBUG = True
 import os
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
-FRONTEND_HOSTNAME = "http://ec2-52-59-254-130.eu-central-1.compute.amazonaws.com/"
+FRONTEND_HOSTNAME = "http://ec2-52-59-254-130.eu-central-1.compute.amazonaws.com"
 
 # Define the database - we are working with
 mysql_user = os.getenv('MYSQL_USER')
@@ -28,7 +28,7 @@ JWT_SESSION_KEY = "secret"
 JWT_ALGORITHM = 'HS256'
 SESSION_DURATION = datetime.timedelta(minutes=24*365*60)
 
-LINK_DURATION = datetime.timedelta(minutes=5)
+LINK_DURATION = datetime.timedelta(minutes=20)
 
 MAIL_SERVER = 'smtp.gmail.com'
 MAIL_PORT = 465
