@@ -70,4 +70,6 @@
     <string name="old_password">Old password</string>
     <string name="new_password">New Password</string>
     <string name="text_follow">Follow</string>
+    <string name="your_info">Information</string>
+    <string name="projects">Projects</string>
 </resources>
