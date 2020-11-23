@@ -19,4 +19,7 @@ interface Webservice {
     fun getResearches(@Query("user_id") userId: Int,
                      @Header("auth_token") auth_token: String ) : Call<JsonObject>?
 
+    @GET("api/auth_system/user")
+    fun getUserInfo(@Header("auth_token") auth_token: String ) : Call<JsonObject>?
+
 }

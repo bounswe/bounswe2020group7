@@ -84,4 +84,26 @@ class ProfilePageRepository (sharedPreferences: SharedPreferences){
 
         })
     }
+
+    fun getUser(authToken: String, callback: HttpRequestListener){
+
+        var client: Webservice = RetrofitClient.webservice
+
+        client.getUserInfo(authToken)?.enqueue(object : Callback<JsonObject> {
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                //handle error here
+                val er = 0
+            }
+
+            override fun onResponse(
+                call: Call<JsonObject>,
+                response: Response<JsonObject>
+            ) {
+                //your raw string response
+                val stringResponse = response.body().toString()
+                callback.onRequestCompleted(stringResponse)
+            }
+
+        })
+    }
 }

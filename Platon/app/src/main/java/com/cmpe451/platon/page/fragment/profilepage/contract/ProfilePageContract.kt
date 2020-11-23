@@ -26,6 +26,7 @@ interface ProfilePageContract {
         fun goToProfilePage(id: Int)
         fun bringFollowers()
         fun bringResearches()
+        fun bringUser()
     }
 
 }
