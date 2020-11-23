@@ -41,14 +41,14 @@ class GetFollowingsAPI(Resource):
             if followSearch is []:
                 return make_response(jsonify({'error': 'User not found'}), 404)
 
-            mylist = []
+            following_users = []
             for follow in followSearch:
-                following_user = User.query.filter(User.id == follow.following_id).first()
-                mylist.append({'id': following_user.id, 'name': following_user.name, 'surname': following_user.surname,
-                               'e_mail': following_user.e_mail, 'rate': following_user.rate,
-                               'is_private': following_user.is_private})
+                following_users.append(User.query.filter(User.id == follow.following_id).first())
 
-            return make_response(jsonify(mylist), 200)
+            return make_response(jsonify({'followings': [
+                {'id': following_user.id, 'name': following_user.name, 'surname': following_user.surname,
+                 'e_mail': following_user.e_mail, 'rate': following_user.rate,
+                 'is_private': following_user.is_private} for following_user in following_users]}), 200)
 
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
@@ -78,14 +78,14 @@ class GetFollowersAPI(Resource):
             if followSearch is []:
                 return make_response(jsonify({'error': 'User not found'}), 404)
 
-            mylist = []
+            follower_users = []
             for follow in followSearch:
-                follower_user = User.query.filter(User.id == follow.follower_id).first()
-                mylist.append({'id': follower_user.id, 'name': follower_user.name, 'surname': follower_user.surname,
-                               'e_mail': follower_user.e_mail, 'rate': follower_user.rate,
-                               'is_private': follower_user.is_private})
+                follower_users.append(User.query.filter(User.id == follow.follower_id).first())
 
-            return make_response(jsonify(mylist), 200)
+            return make_response(jsonify({'followers': [
+                {'id': follower_user.id, 'name': follower_user.name, 'surname': follower_user.surname,
+                 'e_mail': follower_user.e_mail, 'rate': follower_user.rate,
+                 'is_private': follower_user.is_private} for follower_user in follower_users]}), 200)
 
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
@@ -121,14 +121,14 @@ class FollowRequestAPI(Resource):
             if followSearch is []:
                 return make_response(jsonify({'error': 'No Follow Request Found'}), 404)
 
-            mylist = []
+            follower_users = []
             for follow in followSearch:
-                follower_user = User.query.filter(User.id == follow.follower_id).first()
-                mylist.append({'id': follower_user.id, 'name': follower_user.name, 'surname': follower_user.surname,
-                               'e_mail': follower_user.e_mail, 'rate': follower_user.rate,
-                               'is_private': follower_user.is_private})
+                follower_users.append(User.query.filter(User.id == follow.follower_id).first())
 
-            return make_response(jsonify(mylist), 200)
+            return make_response(jsonify({'follow_requests': [
+                {'id': follower_user.id, 'name': follower_user.name, 'surname': follower_user.surname,
+                 'e_mail': follower_user.e_mail, 'rate': follower_user.rate,
+                 'is_private': follower_user.is_private} for follower_user in follower_users]}), 200)
 
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
