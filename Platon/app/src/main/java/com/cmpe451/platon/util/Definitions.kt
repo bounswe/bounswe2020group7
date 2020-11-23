@@ -29,7 +29,7 @@ class Definitions {
         val UPCOMING_EVENTS_ADDRESS = ""
     }
 
-    class User(val name: String, val surname: String, val rating: Double, val bio: String)
+    class User(val id: Int, val name: String, val surname: String, val rating: Double, val bio: String)
   
     /**
      * Trending projects are serialized according to this.

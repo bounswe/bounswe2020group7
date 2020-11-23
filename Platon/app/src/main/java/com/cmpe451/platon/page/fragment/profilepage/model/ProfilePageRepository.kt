@@ -26,6 +26,6 @@ class ProfilePageRepository (sharedPreferences: SharedPreferences){
         return arrayListOf(mutableMapOf("title" to "Biography", "info" to user.bio))
     }
     fun fetchUser(context: Context?):User{
-        return User(4,"Orkan", "Akisu", 3.0, "Cmpejdfhkjdsfhajkhajk;dafhkj;dahfjdskahfdjskhfjksahfjksdhjdhfjsdhfdkjshfkjsdhfjdhjfhsdjfhsjdfbjsdbfsdkjbfdksdf")
+        return User(4,"Orkan", "Akisu", 4.0, "Cmpejdfhkjdsfhajkhajk;dafhkj;dahfjdskahfdjskhfjksahfjksdhjdhfjsdhfdkjshfkjsdhfjdhjfhsdjfhsjdfbjsdbfsdkjbfdksdf")
     }
 }

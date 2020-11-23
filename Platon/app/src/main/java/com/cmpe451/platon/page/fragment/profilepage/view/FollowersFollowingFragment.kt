@@ -2,10 +2,13 @@ package com.cmpe451.platon.page.fragment.profilepage.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
+import com.cmpe451.platon.R
 import com.cmpe451.platon.databinding.FragmentFollowingFollowersBinding
 import com.cmpe451.platon.adapter.FollowViewPagerAdapter
 import com.google.android.material.tabs.TabLayout
@@ -38,7 +41,20 @@ class FollowersFollowingFragment : Fragment(){
         }.attach()
         var tab = tabLayout.getTabAt(pos)
         tab?.select()
+        setHasOptionsMenu(true)
         return binding.root
+    }
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+
+        // clear search bar, and make it icon
+        val search = (menu.findItem(R.id.search_btn)?.actionView as SearchView)
+        search.setQuery("", false)
+        search.isIconified = true
+
+        menu.findItem(R.id.registerFragment)?.isVisible = false
+        menu.findItem(R.id.loginFragment)?.isVisible = false
+        menu.findItem(R.id.search_btn)?.isVisible = false
     }
 
 }
