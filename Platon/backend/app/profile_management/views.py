@@ -186,7 +186,7 @@ class ResearchInformationAPI(Resource):
                 try:
                     job = Jobs.query.filter(Jobs.id == form.id.data).first()
                     if job is None:
-                        return make_response(jsonify({'error': 'You can not delete other user\'s information'}), 400)
+                        return make_response(jsonify({'error': 'Skill does not exist'}), 400)
                     db.session.delete(job)
                     db.session.commit()
                     return make_response(jsonify({'msg': 'Successfully Deleted'}), 200)
@@ -270,7 +270,7 @@ class ResearchInformationAPI(Resource):
                 try:
                     skill = Skills.query.filter(Skills.id == form.id.data).first()
                     if skill is None:
-                        return make_response(jsonify({'error': 'You can not delete other user\'s information'}), 400)
+                        return make_response(jsonify({'error': 'Skill does not exist'}), 400)
                     db.session.delete(skill)
                     db.session.commit()
                     return make_response(jsonify({'msg': 'Successfully Deleted'}), 200)
