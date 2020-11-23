@@ -6,10 +6,14 @@ import android.util.Log
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
+import com.cmpe451.platon.`interface`.HttpRequestListener
+import com.cmpe451.platon.networkmodels.Follower
+import com.cmpe451.platon.networkmodels.ResearchResponse
 import com.cmpe451.platon.page.fragment.profilepage.contract.ProfilePageContract
 import com.cmpe451.platon.page.fragment.profilepage.model.ProfilePageRepository
 import com.cmpe451.platon.page.fragment.profilepage.view.*
 import com.cmpe451.platon.util.Definitions
+import com.google.gson.Gson
 
 
 class ProfilePagePresenter(private var view: ProfilePageContract.View?, private var repository: ProfilePageRepository, private var sharedPreferences: SharedPreferences, private var navController: NavController) : ProfilePageContract.Presenter {
@@ -28,6 +32,7 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
 
     override fun getFollowers(): ArrayList<Definitions.User> {
         return repository.fetchFollowers((view as FollowerListFragment).activity)
+
     }
 
     override fun getFollowing(): ArrayList<Definitions.User> {
@@ -45,6 +50,7 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
 //        sharedPreferences.edit().putFloat("rating", user.rating as Float)
 //        sharedPreferences.edit().putString("bio", user.bio)
 //        return user
+
         
     }
     override fun getUser2(): Definitions.User {
@@ -82,5 +88,43 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
 
     override fun goToProfilePage(id: Int) {
         navController.navigate(FollowersFollowingFragmentDirections.actionFollowersFollowingFragmentToProfilePagePrivateFragment(id))
+    }
+
+    override fun bringFollowers() {
+        repository.getFollowers(1,"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MywiZXhwaXJlX3RpbWUiOiIyMDIxLTExLTIzVDE0OjQxOjQxLjQ2MzIyMSJ9.KhsIsUuPUUu38AEZ9GL5IL9TarnUVIQ1isPM9sYA7j8",object: HttpRequestListener {
+
+            override fun onRequestCompleted(result: String) {
+                val followers = createFollowersResponse(result!!)
+                val ert = 3
+            }
+
+            override fun onFailure(errorMessage: String) {
+
+            }
+        }
+
+        )
+    }
+
+    override  fun bringResearches() {
+        repository.getResearches(2, "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MywiZXhwaXJlX3RpbWUiOiIyMDIxLTExLTIzVDE0OjQxOjQxLjQ2MzIyMSJ9.KhsIsUuPUUu38AEZ9GL5IL9TarnUVIQ1isPM9sYA7j8",object: HttpRequestListener {
+            override fun onRequestCompleted(result: String) {
+                val rese = createResearchResponse(result)
+                val ert = 3
+            }
+
+            override fun onFailure(errorMessage: String) {
+
+            }
+        })
+    }
+
+    private fun createResearchResponse(responseString: String) : ResearchResponse {
+        return Gson().fromJson<ResearchResponse>(responseString, ResearchResponse::class.java)
+    }
+
+
+    private fun createFollowersResponse(responseString: String) : List<Follower> {
+        return Gson().fromJson<List<Follower>>(responseString, Follower::class.java)
     }
 }
