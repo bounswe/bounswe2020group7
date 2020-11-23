@@ -260,8 +260,7 @@ class UserAPI(Resource):
                         send_email(
                                     recipient_email=new_user.e_mail,
                                     subject="Activate Your Platon Account",
-                                    message_body='''Please activate your Platon account by clicking the activation link below.
-                                                    Do not forget to activate your account today, the link expires in one day!''',
+                                    message_body='''Please activate your Platon account by clicking the activation link below.\n\nDo not forget to activate your account today, the link expires in one day!''',
                                     message_link="{}/activate_account?token={}".format(app.config["FRONTEND_HOSTNAME"],account_activation_token)
                                     )
                     except:
