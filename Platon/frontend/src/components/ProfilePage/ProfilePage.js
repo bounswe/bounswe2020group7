@@ -13,6 +13,18 @@ import Box from "@material-ui/core/Box";
 import NavBar from "../NavBar/NavBar";
 import jwt_decode from "jwt-decode";
 import requestService from "../../services/requestService";
+import {Link} from 'react-router-dom'
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import ListItemText from '@material-ui/core/ListItemText';
+import PersonIcon from '@material-ui/icons/Person';
+import Avatar from '@material-ui/core/Avatar';
+import colors from "../../utils/colors";
+import config from "../../utils/config";
+import axios from 'axios'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -60,8 +72,11 @@ class ProfilePage extends React.Component {
     this.state = {
       followers: [],
       followings: [],
+      researchs: [],
+      selectedFollowButton: [],
       user: null,
       value: 0,
+      job: "",
     };
   }
 
@@ -76,6 +91,7 @@ class ProfilePage extends React.Component {
     requestService.followers(decoded.id).then((response) => {
       this.setState({
         followers: response.data.followers,
+        selectedFollowButton: Array(response.data.followers.length).fill("Follow"),
       });
     });
     requestService.getUser(decoded.id).then((response) => {
@@ -83,6 +99,51 @@ class ProfilePage extends React.Component {
         user: response.data,
       });
     });
+    requestService.getResearchs(decoded.id).then((response) => {
+      this.setState({
+        researchs: response.data.research_info,
+      });
+    });
+  }
+  handlerFollow = (index, following_id) =>{
+
+    let prevState = this.state.selectedFollowButton
+    prevState[index] = this.state.selectedFollowButton[index] === "Follow" ? "Unfollow" : "Follow"
+    this.setState({
+      selectedFollowButton:prevState,
+    })
+    //TODO
+
+    /*
+    const token = localStorage.getItem("jwtToken");
+    const decoded = jwt_decode(token);
+    let formData = new FormData();
+
+    formData.append("follower_id", decoded.id);
+    formData.append("following_id ", following_id);
+    const url = config.BASE_URL
+    axios.post(url + "/api/follow/follow_requests", formData, {
+        headers: {
+          'auth_token': token, //the token is a variable which holds the token
+        },
+      })
+      .then((response) => {
+        console.log(response)
+        if (response.status === 200) {
+          let prevState = this.state.selectedFollowButton
+          prevState[index] = this.state.selectedFollowButton[index] === "Follow" ? "Unfollow" : "Follow"
+          this.setState({
+            selectedFollowButton:prevState,
+          })
+        }
+        return response;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+  */
+
   }
 
   handleChange = (event, newValue) => {
@@ -92,7 +153,7 @@ class ProfilePage extends React.Component {
   };
 
   render() {
-    console.log(this.state.user);
+
     const { classes } = this.props;
     return (
       <div className="Landing">
@@ -118,7 +179,7 @@ class ProfilePage extends React.Component {
                   {this.state.user.name} {this.state.user.surname}
                 </p>
               )}
-              <p className="GeneralSmallFont">Explanation</p>
+              {this.state.user && (<p className="GeneralSmallFont">{this.state.user.job}</p>)}
             </Col>
             <Col>
               <Row>
@@ -133,18 +194,19 @@ class ProfilePage extends React.Component {
                   </p>
                 </Col>
               </Row>
+              <Link to = 'editProfile'>
               <Button
                 className="ProfileFollowButton"
                 variant="primary"
                 size="lg"
                 block
               >
-                Follow
-              </Button>
+                Edit Profile
+              </Button></Link>
               <Row className="RatingColumn">
                 <Rating
                   name="half-rating-read"
-                  defaultValue={3.5}
+                  defaultValue={0}
                   precision={0.5}
                   readOnly
                   size="large"
@@ -169,45 +231,68 @@ class ProfilePage extends React.Component {
             </AppBar>
             <TabPanel value={this.state.value} index={0}>
               <Row>
+
+                {this.state.researchs.map((value, index) => {
+                  return(
                 <Col>
-                  <Card className="ProfileProjectsCard">
-                    <Card.Body>
-                      <Card.Title>My Project's Name</Card.Title>
-                      <Card.Text>My project's explanation.</Card.Text>
-                    </Card.Body>
-                  </Card>
-                </Col>
-                <Col>
-                  <Card className="ProfileProjectsCard">
-                    <Card.Body>
-                      <Card.Title>My Project's Name</Card.Title>
-                      <Card.Text>My project's explanation.</Card.Text>
-                    </Card.Body>
-                  </Card>
-                </Col>
-                <Col>
-                  <Card className="ProfileProjectsCard">
-                    <Card.Body>
-                      <Card.Title>My Project's Name</Card.Title>
-                      <Card.Text>My project's explanation.</Card.Text>
-                    </Card.Body>
-                  </Card>
-                </Col>
-                <Col>
-                  <Card className="ProfileProjectsCard">
-                    <Card.Body>
-                      <Card.Title>My Project's Name</Card.Title>
-                      <Card.Text>My project's explanation.</Card.Text>
-                    </Card.Body>
-                  </Card>
-                </Col>
+                <Card className="ProfileProjectsCard">
+                  <Card.Body>
+                    <Card.Title>{value.title}</Card.Title>
+                    <Card.Text>Year: {value.year}</Card.Text>
+                  </Card.Body>
+                </Card>
+              </Col>)
+                })}
+
               </Row>
             </TabPanel>
             <TabPanel value={this.state.value} index={1}>
-              Item Two
+            <List>
+
+              {this.state.followers.map((value, index) => {
+                return(
+                <ListItem>
+                  <ListItemAvatar>
+                    <Avatar>
+                      <PersonIcon />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                  style={{color: colors.secondary}}
+                    primary={`${value.name} ${value.name}`}
+
+                  />
+                  <ListItemSecondaryAction>
+                <Button id={"FollowButton" + index} key={index} onClick={this.handlerFollow.bind(this,index,value.id)}>{this.state.selectedFollowButton[index]}</Button>
+                  </ListItemSecondaryAction>
+                </ListItem>
+            )})}
+            </List>
             </TabPanel>
             <TabPanel value={this.state.value} index={2}>
-              Item Three
+            <List>
+              {this.state.followings.map((value, index) => {
+                return(
+                <ListItem>
+                  <ListItemAvatar>
+                    <Avatar>
+                      <PersonIcon />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                  style={{color: colors.secondary}}
+                    primary={`${value.name} ${value.name}`}
+
+                  />
+                  {/*
+                  <ListItemSecondaryAction>
+
+                      <Button>Follow</Button>
+
+                  </ListItemSecondaryAction>*/}
+                </ListItem>
+            )})}
+            </List>
             </TabPanel>
           </div>
         </Container>

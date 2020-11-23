@@ -10,7 +10,7 @@ const followings = (id) => {
     axios.defaults.headers.common["auth_token"] = `${token}`;
     return axios.get(url + "/api/follow/followings", {params})
         .then(response => {
-            //eğer kullanıcı bulunursa (user.data.status = true) 
+            //eğer kullanıcı bulunursa (user.data.status = true)
             if (response) {
                 console.log("takip ettiklerim",response);
             }
@@ -26,12 +26,12 @@ const followers = (id) => {
     const url = config.BASE_URL;
     const params = {
         following_id: id,
-    };  
+    };
     const token = localStorage.getItem("jwtToken");
     axios.defaults.headers.common["auth_token"] = `${token}`;
     return axios.get(url + "/api/follow/followers", {params})
         .then(response => {
-            //eğer kullanıcı bulunursa (user.data.status = true) 
+            //eğer kullanıcı bulunursa (user.data.status = true)
             if (response) {
             }
             return response;
@@ -52,7 +52,7 @@ const getUser = (id) => {
     axios.defaults.headers.common["auth_token"] = `${token}`;
     return axios.get(url + "/api/auth_system/user", {params})
         .then(response => {
-            //eğer kullanıcı bulunursa (user.data.status = true) 
+            //eğer kullanıcı bulunursa (user.data.status = true)
             if (response) {
             }
             return response;
@@ -63,5 +63,25 @@ const getUser = (id) => {
         });
 
 }
+const getResearchs = (id) => {
+    const url = config.BASE_URL;
+    const params = {
+        user_id: id,
+    };
+    const token = localStorage.getItem("jwtToken");
+    axios.defaults.headers.common["auth_token"] = `${token}`;
+    return axios.get(url + "/api/profile/research_information", {params})
+        .then(response => {
+            //eğer kullanıcı bulunursa (user.data.status = true)
+            if (response) {
+            }
+            return response;
+        })
+        .catch(err => {
+            console.log(err)
+            return err.response;
+        });
 
-export default { followings, followers, getUser };
+}
+export default { followings, followers, getUser, getResearchs };
+
