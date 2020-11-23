@@ -1,0 +1,67 @@
+import axios from 'axios';
+import config from '../utils/config';
+
+const followings = (id) => {
+    const url = config.BASE_URL;
+    const params = {
+        follower_id: id,
+    };
+    const token = localStorage.getItem("jwtToken");
+    axios.defaults.headers.common["auth_token"] = `${token}`;
+    return axios.get(url + "/api/follow/followings", {params})
+        .then(response => {
+            //eğer kullanıcı bulunursa (user.data.status = true) 
+            if (response) {
+                console.log("takip ettiklerim",response);
+            }
+            return response;
+        })
+        .catch(err => {
+            console.log(err)
+            return err.response;
+        });
+}
+
+const followers = (id) => {
+    const url = config.BASE_URL;
+    const params = {
+        following_id: id,
+    };  
+    const token = localStorage.getItem("jwtToken");
+    axios.defaults.headers.common["auth_token"] = `${token}`;
+    return axios.get(url + "/api/follow/followers", {params})
+        .then(response => {
+            //eğer kullanıcı bulunursa (user.data.status = true) 
+            if (response) {
+            }
+            return response;
+        })
+        .catch(err => {
+            console.log(err)
+            return err.response;
+        });
+
+}
+
+const getUser = (id) => {
+    const url = config.BASE_URL;
+    const params = {
+        user_id: id,
+    };
+    const token = localStorage.getItem("jwtToken");
+    axios.defaults.headers.common["auth_token"] = `${token}`;
+    return axios.get(url + "/api/auth_system/user", {params})
+        .then(response => {
+            //eğer kullanıcı bulunursa (user.data.status = true) 
+            if (response) {
+            }
+            return response;
+        })
+        .catch(err => {
+            console.log(err)
+            return err.response;
+        });
+
+}
+
+export default { followings, followers, getUser };
