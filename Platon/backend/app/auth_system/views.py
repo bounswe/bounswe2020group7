@@ -305,7 +305,7 @@ class UserAPI(Resource):
             # Tries to connect to the database.
             # If it fails, an error is raised.
             try:
-                existing_user = User.query.filter_by(id=user_id).first()
+                existing_user = User.query.filter_by(id=user_id)
             except:
                 return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
             else:
@@ -329,12 +329,13 @@ class UserAPI(Resource):
 
                         # Replaces the "job" in the form data with its ID.
                         form.data["job"] = new_user_job.id
+                        new_attributes = {}
                         for key, value in form.data.items():
                             if value:
-                                setattr(existing_user, key, value)
-                        db.session.add(existing_user)
+                                new_attributes[key] = value
+                        existing_user.update(new_attributes)
                         db.session.commit()
-                    except:
+                    except Exception as e:
                         return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
                 
                     # Tries to update the research information of the newly updated user.
