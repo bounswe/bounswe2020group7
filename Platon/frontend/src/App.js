@@ -33,6 +33,11 @@ class App extends Component {
       })
     }
   }
+  handlerSuccessfulLogin = () => {
+      this.setState({
+        isAuthenticated: true
+      })
+  }
 
   render() {
 
@@ -48,7 +53,7 @@ class App extends Component {
       <Route path='/profile' exact  component={ProfilePage}/>
       <Route path='/editprofile' exact  component={EditProfile}/>
 
-      <Route path='/login' exact component={() => <Login isAuthenticated={this.state.isAuthenticated} />}/>
+      <Route path='/login' exact component={() => <Login isAuthenticated={this.state.isAuthenticated} handlerSuccessfulLogin={this.handlerSuccessfulLogin} />}/>
       <Route path='/register' exact  component={Register}/>
       <Route path='/forgotpassword' exact component={ForgotPassword}/>
       <Route path='/resetpassword'  component={ResetPassword}/>

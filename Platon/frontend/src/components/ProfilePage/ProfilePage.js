@@ -4,12 +4,14 @@ import AppBar from "../AppBar/AppBar";
 import { Container, Col, Row, Button, Card } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Rating from '@material-ui/lab/Rating';
+import NavBar from "../NavBar/NavBar";
 
 const ProfilePage = (props) => {
+
     return (
       <div className="Landing">
         <div className="AppBar">
-          <AppBar />
+          <NavBar />
         </div>
         
         <Container className = "ProfilePageContainer">

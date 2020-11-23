@@ -138,6 +138,7 @@ class Login extends Component {
       if(response.status!==null){
         if(response.status === 200){
           this.setState({ isLoggedIn: true });
+          this.props.handlerSuccessfulLogin();
         }
         else if(response.status === 401){
           this.setState({
@@ -155,6 +156,7 @@ class Login extends Component {
   };
 
   render() {
+    console.log("mu acaba"+this.props.isAuthenticated)
     if (this.props.isAuthenticated) {
       return <Redirect to="/" />;
     }
