@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
 import com.cmpe451.platon.databinding.FragmentFollowerFollowingItemBinding
+import com.cmpe451.platon.networkmodels.ResearchResponse
 import com.cmpe451.platon.page.fragment.profilepage.contract.ProfilePageContract
 import com.cmpe451.platon.util.Definitions
 
@@ -45,6 +46,10 @@ class FollowerFollowingRecyclerViewAdapter(private val dataSet: ArrayList<Defini
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(dataSet[position], holder.view, clickCallback)
 
+    }
+
+    override fun researchesFetched(researchInfo: ResearchResponse) {
+        TODO("Not yet implemented")
     }
 
     override fun initializePresenter() {

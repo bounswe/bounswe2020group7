@@ -17,6 +17,7 @@ import com.cmpe451.platon.page.fragment.profilepage.model.ProfilePageRepository
 import com.cmpe451.platon.page.fragment.profilepage.presenter.ProfilePagePresenter
 import com.cmpe451.platon.adapter.ProfilePageRecyclerViewAdapter
 import com.cmpe451.platon.databinding.FragmentProfilePageOthersPrivateBinding
+import com.cmpe451.platon.networkmodels.ResearchResponse
 import com.cmpe451.platon.util.Definitions
 
 class ProfilePagePrivateFragment() : Fragment(), ProfilePageContract.View {
@@ -155,6 +156,10 @@ class ProfilePagePrivateFragment() : Fragment(), ProfilePageContract.View {
         menu.findItem(R.id.loginFragment)?.isVisible = false
         menu.findItem(R.id.search_btn)?.isVisible = false
         menu.findItem(R.id.notification_btn)?.isVisible = false
+    }
+
+    override fun researchesFetched(researchInfo: ResearchResponse) {
+        TODO("Not yet implemented")
     }
 
     override fun initializePresenter(){

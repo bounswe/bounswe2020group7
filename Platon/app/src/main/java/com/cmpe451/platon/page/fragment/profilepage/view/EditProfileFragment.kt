@@ -9,6 +9,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import com.cmpe451.platon.R
 import com.cmpe451.platon.databinding.FragmentEditProfileBinding
+import com.cmpe451.platon.networkmodels.ResearchResponse
 import com.cmpe451.platon.page.activity.HomeActivity
 import com.cmpe451.platon.page.fragment.profilepage.contract.ProfilePageContract
 import com.cmpe451.platon.page.fragment.profilepage.model.ProfilePageRepository
@@ -63,6 +64,10 @@ class EditProfileFragment : Fragment(), ProfilePageContract.View {
         menu.findItem(R.id.loginFragment)?.isVisible = false
         menu.findItem(R.id.search_btn)?.isVisible = false
         menu.findItem(R.id.notification_btn)?.isVisible = false
+    }
+
+    override fun researchesFetched(researchInfo: ResearchResponse) {
+        TODO("Not yet implemented")
     }
 
     override fun initializePresenter(){

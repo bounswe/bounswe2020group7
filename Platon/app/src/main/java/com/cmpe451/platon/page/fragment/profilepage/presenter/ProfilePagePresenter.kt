@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import com.cmpe451.platon.`interface`.HttpRequestListener
 import com.cmpe451.platon.networkmodels.Follower
+import com.cmpe451.platon.networkmodels.Research
 import com.cmpe451.platon.networkmodels.ResearchResponse
 import com.cmpe451.platon.networkmodels.UserInfoResponse
 import com.cmpe451.platon.page.fragment.profilepage.contract.ProfilePageContract
@@ -20,7 +21,8 @@ import com.google.gson.Gson
 class ProfilePagePresenter(private var view: ProfilePageContract.View?, private var repository: ProfilePageRepository, private var sharedPreferences: SharedPreferences, private var navController: NavController) : ProfilePageContract.Presenter {
 
     val token = sharedPreferences.getString("token", null)
-    lateinit var userInfo: UserInfoResponse
+    val user_id = sharedPreferences.getString("user_id", "4")!!.toInt()
+    var userInfo: UserInfoResponse? = null
     lateinit var researchInformation: ResearchResponse
 
 
@@ -98,7 +100,8 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
         navController.navigate(FollowersFollowingFragmentDirections.actionFollowersFollowingFragmentToProfilePagePrivateFragment(id))
     }
 
-    override fun bringFollowers() {
+
+    private fun bringFollowers() {
         repository.getFollowers(1,"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MywiZXhwaXJlX3RpbWUiOiIyMDIxLTExLTIzVDE0OjQxOjQxLjQ2MzIyMSJ9.KhsIsUuPUUu38AEZ9GL5IL9TarnUVIQ1isPM9sYA7j8",object: HttpRequestListener {
 
             override fun onRequestCompleted(result: String) {
@@ -114,12 +117,13 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
         )
     }
 
-    override  fun bringResearches() {
+     override fun bringResearches() {
         if (token != null) {
-            repository.getResearches(2, token,object: HttpRequestListener {
-                override fun onRequestCompleted(result: String) {
+            val mytok = token.subSequence(1,token.length-1)
+            repository.getResearches(user_id, mytok as String,object: HttpRequestListener {
+                override fun onRequestCompleted(result: String)  {
                     researchInformation = createResearchResponse(result)
-
+                    view?.researchesFetched(researchInformation)
                 }
 
                 override fun onFailure(errorMessage: String) {
@@ -129,10 +133,10 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
         }
     }
 
-    override fun bringUser() {
+    private fun bringUser() {
         if(token != null ){
-            val mytok = token.subSequence(1,token.length-1)
-            repository.getUser(mytok as String,object: HttpRequestListener {
+//            val mytok = token.subSequence(1,token.length-1)
+            repository.getUser(token as String,object: HttpRequestListener {
                 override fun onRequestCompleted(result: String) {
                     userInfo = createUserResponse(result)
                     val ert = 3
@@ -150,11 +154,21 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
     }
 
     private fun createResearchResponse(responseString: String) : ResearchResponse {
+
         return Gson().fromJson<ResearchResponse>(responseString, ResearchResponse::class.java)
     }
 
 
     private fun createFollowersResponse(responseString: String) : List<Follower> {
         return Gson().fromJson<List<Follower>>(responseString, Follower::class.java)
+    }
+    private fun researchToTrendingProject(research:List<Research>) : ArrayList<Definitions.TrendingProject>{
+        var list = ArrayList<Definitions.TrendingProject>()
+        for(item in research){
+            var pro = Definitions.TrendingProject(item.title, null, item.description, Definitions.TrendingProject.TREND.PROJECT)
+            list.add(pro)
+        }
+        var a = 5
+        return list
     }
 }

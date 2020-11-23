@@ -5,15 +5,15 @@ package com.cmpe451.platon.adapter
  */
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.databinding.TrendProjectCellBinding
-import com.cmpe451.platon.util.Definitions.TrendingProject
+import com.cmpe451.platon.networkmodels.Research
+import com.cmpe451.platon.util.Definitions
 
-class TrendingProjectsAdapter(private val data: ArrayList<TrendingProject>, private val context: Context, private val trendingProjectsButtonClickListener: TrendingProjectButtonClickListener) :
+class TrendingProjectsAdapter(private val data: ArrayList<Definitions.TrendingProject>, private val context: Context, private val trendingProjectsButtonClickListener: TrendingProjectButtonClickListener) :
 
         RecyclerView.Adapter<TrendingProjectsAdapter.TrendProjectViewHolder>() {
 
@@ -54,7 +54,7 @@ class TrendingProjectsAdapter(private val data: ArrayList<TrendingProject>, priv
         holder.binding.descTrendProjectTv.text = data[position].description
         holder.binding.titleTrendProjectTv.text = data[position].project_title
         holder.binding.titleTrendProjectTv.setCompoundDrawables(drawable, null, null, null)
-        holder.binding.whyTrendProjectTv.text = data[position].reason.toString()
+        holder.binding.whyTrendProjectTv.text = "Popular"
 
         holder.bindData(holder.binding, position, trendingProjectsButtonClickListener)
     }
@@ -63,7 +63,7 @@ class TrendingProjectsAdapter(private val data: ArrayList<TrendingProject>, priv
     /**
      * Adds element to given position
      */
-    fun addElement(position: Int, element:TrendingProject){
+    fun addElement(position: Int, element: Definitions.TrendingProject){
         data.add(position, element)
         this.notifyItemInserted(position)
     }
@@ -78,7 +78,7 @@ class TrendingProjectsAdapter(private val data: ArrayList<TrendingProject>, priv
     /**
      * Updates element at given position
      */
-    fun updateElement(position: Int, element: TrendingProject){
+    fun updateElement(position: Int, element: Definitions.TrendingProject){
         data[position] = element
         this.notifyItemChanged(position)
     }
@@ -88,6 +88,11 @@ class TrendingProjectsAdapter(private val data: ArrayList<TrendingProject>, priv
     fun clearElements(){
         data.clear()
         this.notifyDataSetChanged()
+    }
+    fun submitElements(list: List<Definitions.TrendingProject>){
+        data.clear()
+        data.addAll(list)
+        notifyDataSetChanged()
     }
 
 
