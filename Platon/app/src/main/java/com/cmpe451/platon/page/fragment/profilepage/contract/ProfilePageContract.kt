@@ -24,6 +24,9 @@ interface ProfilePageContract {
         fun onFollowersButtonPrivateClicked()
         fun onFollowingButtonPrivateClicked()
         fun goToProfilePage(id: Int)
+        fun bringFollowers()
+        fun bringResearches()
+        fun bringUser()
     }
 
 }

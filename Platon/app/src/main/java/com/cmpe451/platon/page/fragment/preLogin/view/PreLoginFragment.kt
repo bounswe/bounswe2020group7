@@ -31,8 +31,6 @@ class PreLoginFragment : Fragment(), PreLoginContract.View, TrendingProjectsAdap
     private lateinit var trendingProjectsRecyclerView: RecyclerView
     private lateinit var upcomingEventsRecyclerView: RecyclerView
 
-    private lateinit var textHello: TextView
-
     lateinit var binding: FragmentPreLoginBinding
 
 
