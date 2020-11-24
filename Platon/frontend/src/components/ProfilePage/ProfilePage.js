@@ -122,31 +122,10 @@ class ProfilePage extends React.Component {
     let formData = new FormData();
 
     formData.append("follower_id", decoded.id);
-    formData.append("following_id", following_id);
+    formData.append("following_id ", following_id);
 
 
     const url = config.BASE_URL
-    /*
-    let request = new XMLHttpRequest();
-
-    request.open('POST', url + "/api/follow/follow_requests");
-    request.setRequestHeader("auth_token", token)
-    request.send(formData);
-
-    if(followButtonState==="Follow"){
-      let request = new XMLHttpRequest();
-
-      request.open('POST', url + "/api/follow/follow_requests");
-      request.setRequestHeader("auth_token", token)
-      request.send(formData);
-      if(request.status===200){
-        prevState[index] = "Unfollow"
-        this.setState({
-          selectedFollowButton:prevState,
-        })
-      }
-    }
-    */
 
     if(followButtonState==="Follow"){
     axios.post(url + "/api/follow/follow_requests", formData, {
@@ -308,7 +287,7 @@ class ProfilePage extends React.Component {
                   </ListItemAvatar>
                   <ListItemText
                   style={{color: colors.secondary}}
-                    primary={`${value.name} ${value.surname}`}
+                    primary={`${value.name} ${value.name}`}
 
                   />
                   <ListItemSecondaryAction>
@@ -332,13 +311,13 @@ class ProfilePage extends React.Component {
                   </ListItemAvatar>
                   <ListItemText
                   style={{color: colors.secondary}}
-                    primary={`${value.name} ${value.surname}`}
+                    primary={`${value.name} ${value.name}`}
 
                   />
                   {
                   <ListItemSecondaryAction>
 
-                      <Button  id={"FollowButtonInFollowings" + index} key={index}>Unfollow</Button>
+                      <Button  id={"FollowButtonInFollowings" + index} key={index}>Follow</Button>
                       <Button style={{backgroundColor: "#F44336"}}>Report</Button>
 
                   </ListItemSecondaryAction>}
