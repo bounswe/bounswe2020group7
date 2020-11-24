@@ -8,7 +8,8 @@ import { fade, makeStyles, withStyles} from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
 import Logo from '../Logo/Logo';
 import colors from '../../utils/colors';
-import {Link} from 'react-router-dom'
+import {Link, Redirect} from 'react-router-dom'
+import authService from "../../services/authService";
 
 const StyledButton = withStyles({
   root: {
@@ -80,6 +81,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function handleLogout(){
+  authService.logout();
+  window.location.reload();
+}
+
 export default function NavBar() {
   const classes = useStyles();
 
@@ -115,7 +121,7 @@ export default function NavBar() {
 
           <div>
           <Link to='/' style={{textDecoration: "none"}}><StyledButton>Home</StyledButton></Link>
-          <Link to='/' style={{textDecoration: "none"}}><StyledButton>Log Out</StyledButton></Link>
+          <StyledButton onClick={handleLogout}>Log Out</StyledButton>
           </div>
         </Toolbar>
       </AppBar>

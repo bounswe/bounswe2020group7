@@ -14,6 +14,7 @@ import AutorenewIcon from "@material-ui/icons/Autorenew";
 import "./ResetPassword.css";
 import Snackbar from "@material-ui/core/Snackbar";
 import config from "../../utils/config";
+import axios from 'axios'
 
 const CssTextField = withStyles({
   root: {
@@ -131,14 +132,15 @@ class ResetPassword extends Component {
 
     const url = config.BASE_URL
     const data = { new_password: this.state.password, new_password_repeat: this.state.passwordAgain };
-
-    fetch(url + "/api/auth_system/reset_password", {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers:{
-        'Content-Type': 'application/json',
-        'auth_token': token,
-      }
+    let formData = new FormData();
+    formData.append("new_password",this.state.password);
+    formData.append("new_password_repeat ", this.state.passwordAgain);
+    //axios.defaults.headers.common["auth_token"] = `${token}`
+    axios.post(url + "/api/auth_system/user", formData, {
+      headers: {
+        'Content-type':'application/x-www-form-urlencoded',
+        'auth_token': token, //the token is a variable which holds the token
+      },
     })
       .then((response) => {
         if (response.status === 200) {

@@ -146,6 +146,12 @@ class Login extends Component {
               "Error occured. Make sure you have verified your account.",
           });
         }
+        else if(response.status === 404){
+          this.setState({
+            showError:
+              "There is no such user!",
+          });
+        }
       }
       else{
         this.setState({
@@ -156,7 +162,6 @@ class Login extends Component {
   };
 
   render() {
-    console.log("mu acaba"+this.props.isAuthenticated)
     if (this.props.isAuthenticated) {
       return <Redirect to="/" />;
     }
