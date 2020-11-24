@@ -49,3 +49,6 @@ class NotificationDeleteForm(Form):
 notification_delete_parser = reqparse.RequestParser()
 notification_delete_parser.add_argument('notification_id',required=True,type=int,help='ID of the Notification that will be deleted',location='form')
 notification_delete_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
+
+front_page_parser = reqparse.RequestParser()
+front_page_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')

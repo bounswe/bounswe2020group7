@@ -163,13 +163,18 @@ class FollowRequestAPI(Resource):
             if following_user.is_private:
                 # Create FollowRequest record if the following user has private profile.
                 follow_record = FollowRequests(form.follower_id.data, form.following_id.data)
+                logged_in_user = User.query.filter(User.id == user_id).first()
+                text = "{} sent you a follow request".format(logged_in_user.name + " " + logged_in_user.surname)
+                NotificationManager.add_notification(form.following_id.data,[logged_in_user.id],text)
             else:
                 # Create Follow record if the following user has public profile.
                 follow_record = Follow(form.follower_id.data, form.following_id.data)
                 try:
+                    logged_in_user = User.query.filter(User.id == user_id).first()
+                    text = "{} started to following you".format(logged_in_user.name + " " + logged_in_user.surname)
+                    NotificationManager.add_notification(form.following_id.data,[logged_in_user.id],text)
                     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     # Add notification to all user that follows the logged in user
-                    logged_in_user = User.query.filter(User.id == user_id).first()
                     following_users = Follow.query.filter(Follow.following_id == user_id).all()
                     for user in following_users:
                         text = "{} started to following {}".format(logged_in_user.name + " " + logged_in_user.surname
