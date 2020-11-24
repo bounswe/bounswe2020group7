@@ -1,0 +1,63 @@
+.Landing{
+    min-height: 100vh;
+    height: 100%;
+    background-color: #313638;
+}
+
+.ProfilePageContainer{
+    padding-top: 2%;
+}
+
+.ProfilePhoto{
+    max-width: 100%;
+}
+
+.ProfilePageLine{
+    border: 2px solid #E0DFD5;
+}
+
+.GeneralSmallFont{
+    color: #E0DFD5;
+    font-family: 'Rubik', sans-serif !important;
+    font-size: 16px;
+}
+
+.GeneralMediumFont{
+    color: #E0DFD5;
+    font-family: 'Rubik', sans-serif !important;
+    font-size: 20px;
+}
+
+.GeneralLargeFont{
+    color: #E0DFD5;
+    font-family: 'Rubik', sans-serif;
+    font-size: 48px;
+}
+
+.ProfileFollowButton{
+    background-color: #B0DB06 !important;
+    border-color: #B0DB06 !important;
+    font-family: 'Rubik', sans-serif !important;
+}
+
+.FollowInformation{
+    padding-top: 5px;
+    color: #E0DFD5;
+    font-family: 'Rubik', sans-serif !important;
+    font-size: 20px; 
+    text-align: center;
+}
+
+.RatingColumn{
+    justify-content: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.ProfileProjectsCard{
+    background-color: #E0DFD5 !important;
+}
+
+.MuiTabs-flexContainer{
+    background-color: #313638 !important;
+}
