@@ -16,14 +16,13 @@ import com.cmpe451.platon.page.fragment.profilepage.contract.ProfilePageContract
 import com.cmpe451.platon.page.fragment.profilepage.model.ProfilePageRepository
 import com.cmpe451.platon.page.fragment.profilepage.presenter.ProfilePagePresenter
 import com.cmpe451.platon.adapter.ProfilePageRecyclerViewAdapter
-import com.cmpe451.platon.adapter.TrendingProjectsAdapter
-import com.cmpe451.platon.adapter.UpcomingEventsAdapter
 import com.cmpe451.platon.adapter.UserProjectsRecyclerViewAdapter
 import com.cmpe451.platon.core.BaseActivity
-import com.cmpe451.platon.databinding.TrendProjectCellBinding
 import com.cmpe451.platon.databinding.UserProjectsCellBinding
+import com.cmpe451.platon.networkmodels.Followers
 import com.cmpe451.platon.networkmodels.Research
 import com.cmpe451.platon.networkmodels.ResearchResponse
+import com.cmpe451.platon.networkmodels.UserInfoResponse
 import com.cmpe451.platon.util.Definitions
 
 class ProfilePageFragment : Fragment(), ProfilePageContract.View, UserProjectsRecyclerViewAdapter.UserProjectButtonClickListener {
@@ -51,15 +50,71 @@ class ProfilePageFragment : Fragment(), ProfilePageContract.View, UserProjectsRe
         super.onViewCreated(view, savedInstanceState)
         setListeners()
         initializePresenter()
-        presenter.bringResearches()
         initializeAdapter()
+        presenter.bringUser()
+        presenter.bringResearches()
 
-        setUser()
     }
-    private fun setUser(){
-        user = presenter.getUser()
+
+
+    private fun initializeAdapter() {
+
+
+        userProjectsRecyclerView = binding.rvProfilePageProjects
+        userProjectsAdapter = UserProjectsRecyclerViewAdapter(ArrayList(), requireContext(), this)
+        userProjectsRecyclerView.adapter = userProjectsAdapter
+        userProjectsRecyclerView.layoutManager = LinearLayoutManager(this.activity)
+
+
+
+        informationsRecyclerView = binding.rvProfilePageInfo
+        informationsAdapter = ProfilePageRecyclerViewAdapter(ArrayList())
+        informationsRecyclerView.adapter = informationsAdapter
+        informationsRecyclerView.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL, false)
+
+
+    }
+
+    private fun setListeners() {
+
+        binding.buttonFollowers.setOnClickListener {
+            presenter.onFollowersButtonClicked()
+        }
+
+        binding.buttonFollowing.setOnClickListener {
+            presenter.onFollowingButtonClicked()
+        }
+
+        binding.buttonEditProfile.setOnClickListener {
+            presenter.onEditProfileButtonClicked()
+        }
+
+        //password.addTextChangedListener(textWatcher)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+
+        // clear search bar, and make it icon
+        val search = (menu.findItem(R.id.search_btn)?.actionView as SearchView)
+        search.setQuery("", false)
+        search.isIconified = true
+
+        menu.findItem(R.id.registerFragment)?.isVisible = false
+        menu.findItem(R.id.loginFragment)?.isVisible = false
+        menu.findItem(R.id.search_btn)?.isVisible = false
+        menu.findItem(R.id.notification_btn)?.isVisible = false
+    }
+
+    override fun researchesFetched(reserachInfo: ResearchResponse) {
+        val ert = reserachInfo
+        userProjectsAdapter.submitElements(reserachInfo.research_info)
+    }
+
+    override fun fetchUser(userInfo: UserInfoResponse) {
+        val user = userInfo
         binding.textNameSurname.text = user.name + " " + user.surname
-        when(user.rating){
+        when(user.rate){
             1.0 -> {
                 binding.firstStarYellow.visibility = View.VISIBLE
                 binding.secondStarYellow.visibility = View.GONE
@@ -128,62 +183,25 @@ class ProfilePageFragment : Fragment(), ProfilePageContract.View, UserProjectsRe
             }
             else -> binding.textRate.visibility = View.VISIBLE
         }
-    }
-
-    private fun initializeAdapter() {
-
-
-        userProjectsRecyclerView = binding.rvProfilePageProjects
-        userProjectsAdapter = UserProjectsRecyclerViewAdapter(ArrayList(), requireContext(), this)
-        userProjectsRecyclerView.adapter = userProjectsAdapter
-        userProjectsRecyclerView.layoutManager = LinearLayoutManager(this.activity)
-
-
-
-        informationsRecyclerView = binding.rvProfilePageInfo
-        informationsAdapter = ProfilePageRecyclerViewAdapter(ArrayList())
-        informationsRecyclerView.adapter = informationsAdapter
-        informationsRecyclerView.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL, false)
-        (informationsRecyclerView.adapter as ProfilePageRecyclerViewAdapter).submitList(presenter.getProfilePageDetails())
-
-
-    }
-
-    private fun setListeners() {
-
-        binding.buttonFollowers.setOnClickListener {
-            presenter.onFollowersButtonClicked()
+        var info = ArrayList<MutableMap<String,String>>()
+        if(user.e_mail != ""){
+            info.add(mutableMapOf("title" to "E-Mail Address", "info" to user.e_mail))
         }
-
-        binding.buttonFollowing.setOnClickListener {
-            presenter.onFollowingButtonClicked()
+        if(user.job != ""){
+            info.add(mutableMapOf("title" to "Job", "info" to user.job))
         }
-
-        binding.buttonEditProfile.setOnClickListener {
-            presenter.onEditProfileButtonClicked()
+        if(user.google_scholar_name != ""){
+            info.add(mutableMapOf("title" to "Google Scholar", "info"  to user.google_scholar_name))
         }
+        if(user.researchgate_name != ""){
+            info.add(mutableMapOf("title" to "ResearchGate", "info"  to user.researchgate_name))
+        }
+        informationsAdapter.submitList(info)
 
-        //password.addTextChangedListener(textWatcher)
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        super.onPrepareOptionsMenu(menu)
 
-        // clear search bar, and make it icon
-        val search = (menu.findItem(R.id.search_btn)?.actionView as SearchView)
-        search.setQuery("", false)
-        search.isIconified = true
 
-        menu.findItem(R.id.registerFragment)?.isVisible = false
-        menu.findItem(R.id.loginFragment)?.isVisible = false
-        menu.findItem(R.id.search_btn)?.isVisible = false
-        menu.findItem(R.id.notification_btn)?.isVisible = false
-    }
-
-    override fun researchesFetched(reserachInfo: ResearchResponse) {
-        val ert = reserachInfo
-        userProjectsAdapter.submitElements(reserachInfo.research_info)
-    }
 
     override fun initializePresenter(){
         val sharedPreferences = requireContext().getSharedPreferences("token_file", 0)

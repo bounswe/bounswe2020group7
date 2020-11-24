@@ -102,7 +102,7 @@ class LoginPresenter(
             }
 
             override fun onNext(t: JsonObject?) {
-                val token = t?.get("token").toString()
+                val token = t?.get("token")?.asString
                 if (token != "null"){
                     sharedPreferences.edit().putString("token", token).apply()
                     Toast.makeText((view as Fragment).activity, "Login successful!", Toast.LENGTH_LONG).show()
