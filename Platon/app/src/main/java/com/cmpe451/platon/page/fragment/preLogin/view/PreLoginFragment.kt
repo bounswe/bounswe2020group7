@@ -37,6 +37,7 @@ class PreLoginFragment : Fragment(), PreLoginContract.View, TrendingProjectsAdap
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         binding = FragmentPreLoginBinding.inflate(layoutInflater)
+        setHasOptionsMenu(true)
         return binding.root
     }
 
@@ -98,7 +99,7 @@ class PreLoginFragment : Fragment(), PreLoginContract.View, TrendingProjectsAdap
         search.setQuery("", false)
         search.isIconified = true
 
-        menu.findItem(R.id.notification_btn)?.isVisible = false
+        menu.findItem(R.id.notification_btn).isVisible = false
         menu.findItem(R.id.registerFragment).isVisible = true
         menu.findItem(R.id.loginFragment).isVisible = true
         menu.findItem(R.id.logout_menu_btn).isVisible = false

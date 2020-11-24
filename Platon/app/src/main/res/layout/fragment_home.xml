@@ -67,22 +67,22 @@
             android:layout_marginTop="@dimen/xx_small" />
 
         <TextView
-            android:layout_marginTop="@dimen/medium"
-            android:shadowColor="@color/primary_dark"
-            android:shadowRadius="2"
-            android:shadowDx="1"
-            android:padding="@dimen/x_small"
-            android:shadowDy="1"
-            android:layout_marginHorizontal="10dp"
             android:id="@+id/textView3"
-            android:fontFamily="@font/dm_sans_bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="@dimen/medium"
+            android:fontFamily="@font/dm_sans_bold"
+            android:padding="@dimen/x_small"
+            android:shadowColor="@color/primary_dark"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"
 
 
             android:text="@string/activity_stream_str"
             android:textAllCaps="false"
-            android:textColor="@color/purple_700"
+            android:textColor="@color/secondary_orange"
             android:textSize="@dimen/project_title_text_size" />
 
         <androidx.recyclerview.widget.RecyclerView
