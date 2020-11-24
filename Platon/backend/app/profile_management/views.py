@@ -8,6 +8,7 @@ from app.follow_system.models import Follow
 from app.profile_management.forms import ResearchInfoGetForm,research_info_get_parser, ResearchInfoPostForm,research_info_post_parser
 from app.profile_management.forms import ResearchInfoUpdateForm, research_info_update_parser,ResearchInfoDeleteFrom,research_info_delete_parser
 from app.profile_management.forms import notification_get_parser,NotificationDeleteForm,notification_delete_parser
+from app.profile_management.forms import front_page_parser
 from app.profile_management.models import ResearchInformation,Notification,NotificationRelatedUser
 from app.profile_management.helpers import schedule_regularly,ResearchType
 from app import api, db
@@ -157,26 +158,64 @@ class NotificationAPI(Resource):
             return make_response(jsonify({'error':'Wrong input format'}),400)
 
 
-@auth_system_ns.route("/home_page")
-class HomePage(Resource):
+@profile_management_ns.route("/front_page")
+class FrontPage(Resource):
     '''
-    Temporary endpoint for homepage for presentation purposes.
+    Temporary API for front page for presentation purposes.
     '''
 
     # GET request
+    @api.expect(front_page_parser)
+    @api.doc(responses={
+                200: "OK",
+                500: "The server does not respond."
+            })
     def get(self):
         activities = [
-            {},
-            {},
-            {},
-            {},
-            {},
-            {},
-            {},
-            {},
-            {},
-            {}
+                {
+                    "message": "Christophe Daussy has created the project 'Frequency metrology and clocks'.",
+                    "image": "https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/christophe_daussy.jpg"
+                },
+                {
+                    "message": "Gwen Stacy has created the project 'Spider Genome Database'.",
+                    "image": "https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/gwen_stacy.jpg"
+                },
+                {
+                    "message": "Christophe Daussy has changed the state of the project 'Frequency metrology and clocks' to 'Search for Collaborators'.",
+                    "image": "https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/christophe_daussy.jpg"
+                },
+                {
+                    "message": "Christophe Daussy has started following Gwen Stacy.",
+                    "image": "https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/christophe_daussy.jpg"
+                },
+                {
+                    "message": "Tony Stark has created the project 'Health effects of cooking in cast iron'.",
+                    "image": "https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/tony_stark.jpg"
+                },
+                {
+                    "message": "Tony Stark has changed the state of the project 'Health effects of cooking in cast iron' to 'Search for Collaborators'.",
+                    "image": "https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/tony_stark.jpg"
+                },
+                {
+                    "message":  "Gwen Stacy has started following Tony Stark.",
+                    "image": "https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/gwen_stacy.jpg"
+                },
+                {
+                    "message": "John Nash has changed the state of the project 'Non-cooperative games' to 'Published'.",
+                    "image": "https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/john_nash.jpg"
+                },
+                {
+                    "message":  "Gwen Stacy has started following John Nash.",
+                    "image": "https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/gwen_stacy.jpg"
+                },
+                {
+                    "message": "John Nash has started following Gwen Stacy.",
+                    "image": "https://raw.githubusercontent.com/bounswe/bounswe2020group7/master/non_project/john_nash.jpg"
+                }
         ]
+
+        return make_response(jsonify(activities),200)
+
 
 def register_resources(api):
     schedule_regularly()
