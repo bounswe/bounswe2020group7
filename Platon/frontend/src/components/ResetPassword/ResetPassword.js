@@ -131,15 +131,13 @@ class ResetPassword extends Component {
     const token = path.split('/')[2]
 
     const url = config.BASE_URL
-    const data = { new_password: this.state.password, new_password_repeat: this.state.passwordAgain };
     let formData = new FormData();
     formData.append("new_password",this.state.password);
-    formData.append("new_password_repeat ", this.state.passwordAgain);
+    formData.append("new_password_repeat", this.state.passwordAgain);
     //axios.defaults.headers.common["auth_token"] = `${token}`
-    axios.post(url + "/api/auth_system/user", formData, {
+    axios.post(url + "/api/auth_system/reset_password", formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
-        'auth_token': token, //the token is a variable which holds the token
+        'auth_token': token //the token is a variable which holds the token
       },
     })
       .then((response) => {
