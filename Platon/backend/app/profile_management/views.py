@@ -157,6 +157,27 @@ class NotificationAPI(Resource):
             return make_response(jsonify({'error':'Wrong input format'}),400)
 
 
+@auth_system_ns.route("/home_page")
+class HomePage(Resource):
+    '''
+    Temporary endpoint for homepage for presentation purposes.
+    '''
+
+    # GET request
+    def get(self):
+        activities = [
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {}
+        ]
+
 def register_resources(api):
     schedule_regularly()
     api.add_namespace(profile_management_ns)
