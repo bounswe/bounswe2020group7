@@ -11,6 +11,8 @@ import jwt_decode from "jwt-decode";
 import config from "../../utils/config";
 import Snackbar from "@material-ui/core/Snackbar";
 import { Link } from "react-router-dom";
+import requestService from "../../services/requestService";
+
 const StyledTextField = withStyles({
     root: {
       "& .MuiInputBase-input": {
@@ -49,11 +51,39 @@ class EditProfile extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      name:"",
+      surname:"",
+      job: "",
+      skills: "",
+      is_private: false,
+      profile_photo: "",
       google_scholar_name: "",
+      researchgate_name: "",
       showSuccess: false,
       fieldEmptyError: false,
+      user: null
      }
   }
+
+  componentDidMount(){
+    const token = localStorage.getItem("jwtToken");
+    const decoded = jwt_decode(token);
+    requestService.getUser(decoded.id).then((response) => {
+      this.setState({
+        user: response.data,
+      });
+      this.setState({
+        name: this.state.user.name,
+        surname: this.state.user.surname,
+        job: this.state.user.job,
+        profile_photo: this.state.user.profile_photo,
+        google_scholar_name: this.state.user.google_scholar_name,
+        researchgate_name: this.state.user.researchgate_name,
+      })
+    });
+
+  }
+
   handleCloseFieldEmpty = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -74,9 +104,38 @@ class EditProfile extends Component {
   handleSubmit = () => {
     const token = localStorage.getItem("jwtToken");
     const decoded = jwt_decode(token);
-    let formData = new FormData();
 
-    formData.append("google_scholar_name", this.state.google_scholar_name);
+    let formData = new FormData();
+    let dbcheck = false
+
+    if(this.state.name !== this.state.user.name){
+      formData.append("name", this.state.name)
+      dbcheck=true
+    }
+    if(this.state.surname !== this.state.user.surname){
+      formData.append("surname", this.state.surname)
+      dbcheck=true
+    }
+    if(this.state.job !== this.state.user.job){
+      formData.append("job", this.state.job)
+      dbcheck=true
+    }
+    if(this.state.profile_photo !== this.state.user.profile_photo){
+      formData.append("profile_photo", this.state.profile_photo)
+      dbcheck=true
+    }
+    if(this.state.google_scholar_name !== this.state.user.google_scholar_name){
+      formData.append("google_scholar_name", this.state.google_scholar_name)
+      dbcheck=true
+    }
+    if(this.state.researchgate_name !== this.state.user.researchgate_name){
+      formData.append("researchgate_name", this.state.researchgate_name)
+      dbcheck=true
+    }
+
+    if(!dbcheck){
+      return
+    }
     const url = config.BASE_URL
     axios.put(url + "/api/auth_system/user", formData, {
         headers: {
@@ -100,7 +159,9 @@ class EditProfile extends Component {
       });
   }
   render() {
+
     return (
+
       <div className="Landing">
         <div className="AppBar">
           <NavBar />
@@ -121,15 +182,17 @@ class EditProfile extends Component {
                 </Col>
             </Row>
 
-
+            {this.state.user !== null ? (<div>
             <Row className="mb-3 justify-content-center">
                 <Col sm={6}>
                     <Row>
                         <Col sm={6}>
-                            <StyledTextField className="EditProfileTextInput" id="outlined-basic" label="First Name" variant="outlined" fullWidth />
+                            <StyledTextField defaultValue={this.state.user.name} className="EditProfileTextInput" id="outlined-basic" label="First Name" variant="outlined" fullWidth
+                            onChange={(e) => this.setState({ name: e.target.value })}/>
                         </Col>
                         <Col sm={6}>
-                            <StyledTextField className="EditProfileTextInput" id="outlined-basic" label="Second Name" variant="outlined" fullWidth />
+                            <StyledTextField defaultValue={this.state.user.surname}  className="EditProfileTextInput" id="outlined-basic" label="Second Name" variant="outlined" fullWidth
+                            onChange={(e) => this.setState({ surname: e.target.value })}/>
                         </Col>
                     </Row>
                 </Col>
@@ -137,40 +200,32 @@ class EditProfile extends Component {
 
             <Row className="mb-3 justify-content-center">
                 <Col sm={6}>
-                    <StyledTextField className="EditProfileTextInput" id="outlined-basic" label="E-mail" variant="outlined" fullWidth />
-                </Col>
-            </Row>
-
-            <Row className="mb-3 justify-content-center">
-                <Col sm={6}>
-                    <StyledTextField className="EditProfileTextInput" id="outlined-basic" label="Password" variant="outlined" type="password" fullWidth />
-                </Col>
-            </Row>
-
-            <Row className="mb-3 justify-content-center">
-                <Col sm={6}>
-                    <StyledTextField className="EditProfileTextInput" id="outlined-basic" label="Job" variant="outlined" fullWidth />
+                    <StyledTextField defaultValue={this.state.user.job} className="EditProfileTextInput" id="outlined-basic" label="Job" variant="outlined" fullWidth
+                    onChange={(e) => this.setState({ job: e.target.value })}/>
                 </Col>
             </Row>
             <Row className="mb-3 justify-content-center">
                 <Col sm={6}>
-                    <StyledTextField className="EditProfileTextInput" id="outlined-basic" label="Skills" variant="outlined" fullWidth />
+                    <StyledTextField defaultValue={this.state.user.skills} className="EditProfileTextInput" id="outlined-basic" label="Skills" variant="outlined" fullWidth
+                    onChange={(e) => this.setState({ skills: e.target.value })}/>
                 </Col>
             </Row>
             <Row className="mb-3 justify-content-center">
                 <Col sm={6}>
-                    <StyledTextField className="EditProfileTextInput" id="outlined-basic" label="Profile Photo Url" variant="outlined" fullWidth />
+                    <StyledTextField defaultValue={this.state.user.profile_photo} className="EditProfileTextInput" id="outlined-basic" label="Profile Photo Url" variant="outlined" fullWidth
+                    onChange={(e) =>  this.setState({ profile_photo: e.target.value })}/>
                 </Col>
             </Row>
             <Row className="mb-3 justify-content-center">
                 <Col sm={6}>
-                    <StyledTextField className="EditProfileTextInput" id="outlined-basic" label="Google Scholar Url" variant="outlined" fullWidth
+                    <StyledTextField defaultValue={this.state.user.google_scholar_name} className="EditProfileTextInput" id="outlined-basic" label="Google Scholar Url" variant="outlined" fullWidth
                      onChange={(e) => this.setState({ google_scholar_name: e.target.value })}/>
                 </Col>
             </Row>
             <Row className="mb-3 justify-content-center">
                 <Col sm={6}>
-                    <StyledTextField className="EditProfileTextInput" id="outlined-basic" label="Research Gate Url" variant="outlined" fullWidth />
+                    <StyledTextField defaultValue={this.state.user.researchgate_name}  className="EditProfileTextInput" id="outlined-basic" label="Research Gate Url" variant="outlined" fullWidth
+                    onChange={(e) => this.setState({ researchgate_name: e.target.value })}/>
                 </Col>
             </Row>
 
@@ -181,6 +236,7 @@ class EditProfile extends Component {
                     </Button>
                 </Col>
             </Row>
+            </div>): null}
         </Container>
         {this.state.fieldEmptyError && (
               <Snackbar
