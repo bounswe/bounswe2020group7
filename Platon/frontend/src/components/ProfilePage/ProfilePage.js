@@ -74,12 +74,13 @@ class ProfilePage extends React.Component {
       followings: [],
       researchs: [],
       selectedFollowButton: [],
+      followings_id_arr: [],
       user: null,
       value: 0,
       job: "",
+      renderTrigger: false,
     };
   }
-
   componentDidMount() {
     const token = localStorage.getItem("jwtToken");
     const decoded = jwt_decode(token);
@@ -87,12 +88,20 @@ class ProfilePage extends React.Component {
       this.setState({
         followings: response.data.followings,
       });
+      let temp_followings_id_arr = []
+      for(var obj in this.state.followings){
+        temp_followings_id_arr.push(this.state.followings[obj].id)
+      }
+      this.setState({
+        followings_id_arr: temp_followings_id_arr
+      })
     });
     requestService.followers(decoded.id).then((response) => {
       this.setState({
         followers: response.data.followers,
         selectedFollowButton: Array(response.data.followers.length).fill("Follow"),
       });
+
     });
     requestService.getUser(decoded.id).then((response) => {
       this.setState({
@@ -122,7 +131,7 @@ class ProfilePage extends React.Component {
     let formData = new FormData();
 
     formData.append("follower_id", decoded.id);
-    formData.append("following_id ", following_id);
+    formData.append("following_id", following_id);
 
 
     const url = config.BASE_URL
@@ -131,15 +140,16 @@ class ProfilePage extends React.Component {
     axios.post(url + "/api/follow/follow_requests", formData, {
         headers: {
           'auth_token': token, //the token is a variable which holds the token
-          'Content-Type': 'multipart/form-data'
         },
       })
       .then((response) => {
         console.log(response)
         if (response.status === 200) {
-          prevState[index] = this.state.selectedFollowButton[index] === "Follow" ? "Unfollow" : "Follow"
+
+          let temp_followings_id_arr = [following_id, ...this.state.followings_id_arr]
+
           this.setState({
-            selectedFollowButton:prevState,
+            followings_id_arr: temp_followings_id_arr
           })
         }
         return response;
@@ -148,29 +158,6 @@ class ProfilePage extends React.Component {
         console.log(err);
       });
     }
-    else {
-      axios.delete(url + "/api/follow/follow_requests", formData, {
-        headers: {
-          'auth_token': token, //the token is a variable which holds the token
-          'Content-Type': 'multipart/form-data'
-        },
-      })
-      .then((response) => {
-        console.log(response)
-        if (response.status === 200) {
-          prevState[index] = this.state.selectedFollowButton[index] === "Follow" ? "Unfollow" : "Follow"
-          this.setState({
-            selectedFollowButton:prevState,
-          })
-        }
-        return response;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    }
-
-
 
   }
 
@@ -278,6 +265,8 @@ class ProfilePage extends React.Component {
             <List>
 
               {this.state.followers.map((value, index) => {
+
+
                 return(
                 <ListItem>
                   <ListItemAvatar>
@@ -287,11 +276,11 @@ class ProfilePage extends React.Component {
                   </ListItemAvatar>
                   <ListItemText
                   style={{color: colors.secondary}}
-                    primary={`${value.name} ${value.name}`}
+                    primary={`${value.name} ${value.surname}`}
 
                   />
                   <ListItemSecondaryAction>
-                <Button id={"FollowButton" + index} key={index} onClick={this.handlerFollow.bind(this,index,value.id)}>{this.state.selectedFollowButton[index]}</Button>
+                <Button id={"FollowButton" + index} key={index} onClick={this.handlerFollow.bind(this,index,value.id)}>{this.state.followings_id_arr.includes(value.id)  ? "Unfollow" : "Follow"}</Button>
                 <Button style={{backgroundColor: "#F44336"}}>Report</Button>
 
                   </ListItemSecondaryAction>
@@ -311,7 +300,7 @@ class ProfilePage extends React.Component {
                   </ListItemAvatar>
                   <ListItemText
                   style={{color: colors.secondary}}
-                    primary={`${value.name} ${value.name}`}
+                    primary={`${value.name} ${value.surname}`}
 
                   />
                   {
