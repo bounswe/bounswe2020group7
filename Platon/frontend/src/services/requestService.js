@@ -12,7 +12,7 @@ const followings = (id) => {
         .then(response => {
             //eğer kullanıcı bulunursa (user.data.status = true)
             if (response) {
-                console.log("takip ettiklerim",response);
+                console.log(response);
             }
             return response;
         })
