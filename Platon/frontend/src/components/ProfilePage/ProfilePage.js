@@ -106,31 +106,37 @@ class ProfilePage extends React.Component {
     });
   }
   handlerFollow = (index, following_id) =>{
-
+    /*
     let prevState = this.state.selectedFollowButton
     prevState[index] = this.state.selectedFollowButton[index] === "Follow" ? "Unfollow" : "Follow"
     this.setState({
       selectedFollowButton:prevState,
-    })
+    })*/
     //TODO
 
-    /*
+    let prevState = this.state.selectedFollowButton
+    const followButtonState = prevState[index]
+
     const token = localStorage.getItem("jwtToken");
     const decoded = jwt_decode(token);
     let formData = new FormData();
 
     formData.append("follower_id", decoded.id);
     formData.append("following_id ", following_id);
+
+
     const url = config.BASE_URL
+
+    if(followButtonState==="Follow"){
     axios.post(url + "/api/follow/follow_requests", formData, {
         headers: {
           'auth_token': token, //the token is a variable which holds the token
+          'Content-Type': 'multipart/form-data'
         },
       })
       .then((response) => {
         console.log(response)
         if (response.status === 200) {
-          let prevState = this.state.selectedFollowButton
           prevState[index] = this.state.selectedFollowButton[index] === "Follow" ? "Unfollow" : "Follow"
           this.setState({
             selectedFollowButton:prevState,
@@ -141,8 +147,30 @@ class ProfilePage extends React.Component {
       .catch((err) => {
         console.log(err);
       });
+    }
+    else {
+      axios.delete(url + "/api/follow/follow_requests", formData, {
+        headers: {
+          'auth_token': token, //the token is a variable which holds the token
+          'Content-Type': 'multipart/form-data'
+        },
+      })
+      .then((response) => {
+        console.log(response)
+        if (response.status === 200) {
+          prevState[index] = this.state.selectedFollowButton[index] === "Follow" ? "Unfollow" : "Follow"
+          this.setState({
+            selectedFollowButton:prevState,
+          })
+        }
+        return response;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    }
 
-  */
+
 
   }
 
@@ -264,6 +292,8 @@ class ProfilePage extends React.Component {
                   />
                   <ListItemSecondaryAction>
                 <Button id={"FollowButton" + index} key={index} onClick={this.handlerFollow.bind(this,index,value.id)}>{this.state.selectedFollowButton[index]}</Button>
+                <Button style={{backgroundColor: "#F44336"}}>Report</Button>
+
                   </ListItemSecondaryAction>
                 </ListItem>
             )})}
@@ -284,12 +314,13 @@ class ProfilePage extends React.Component {
                     primary={`${value.name} ${value.name}`}
 
                   />
-                  {/*
+                  {
                   <ListItemSecondaryAction>
 
-                      <Button>Follow</Button>
+                      <Button  id={"FollowButtonInFollowings" + index} key={index}>Follow</Button>
+                      <Button style={{backgroundColor: "#F44336"}}>Report</Button>
 
-                  </ListItemSecondaryAction>*/}
+                  </ListItemSecondaryAction>}
                 </ListItem>
             )})}
             </List>

@@ -152,7 +152,11 @@ class EditProfile extends Component {
                     <StyledTextField className="EditProfileTextInput" id="outlined-basic" label="Job" variant="outlined" fullWidth />
                 </Col>
             </Row>
-
+            <Row className="mb-3 justify-content-center">
+                <Col sm={6}>
+                    <StyledTextField className="EditProfileTextInput" id="outlined-basic" label="Skills" variant="outlined" fullWidth />
+                </Col>
+            </Row>
             <Row className="mb-3 justify-content-center">
                 <Col sm={6}>
                     <StyledTextField className="EditProfileTextInput" id="outlined-basic" label="Profile Photo Url" variant="outlined" fullWidth />

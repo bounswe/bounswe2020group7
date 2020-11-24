@@ -138,7 +138,7 @@ class ResetPassword extends Component {
     //axios.defaults.headers.common["auth_token"] = `${token}`
     axios.post(url + "/api/auth_system/user", formData, {
       headers: {
-        'Content-type':'application/x-www-form-urlencoded',
+        'Content-Type': 'multipart/form-data',
         'auth_token': token, //the token is a variable which holds the token
       },
     })
