@@ -19,7 +19,7 @@ class TestConfig:
     mysql_user = "root"
     mysql_password = "rootpassword"
     mysql_host = "18.198.208.63"
-   mysql_port = "3306"
+    mysql_port = "3306"
     mysql_database = "platondb_test"
 
     SQLALCHEMY_DATABASE_URI = "mysql+pymysql://{}:{}@{}:{}/{}".format(mysql_user, mysql_password, mysql_host, mysql_port, mysql_database)
