@@ -30,7 +30,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/profile_page_margin"
-                android:text="Suzan Uskudarli"
+                android:text="@string/loading_str"
                 android:textColor="@color/primary_light"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toTopOf="@id/ll_stars"

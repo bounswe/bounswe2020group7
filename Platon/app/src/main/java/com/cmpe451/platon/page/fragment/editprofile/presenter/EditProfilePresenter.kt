@@ -5,7 +5,6 @@ import androidx.navigation.NavController
 import com.cmpe451.platon.`interface`.HttpRequestListener
 import com.cmpe451.platon.page.fragment.editprofile.contract.EditProfileContract
 import com.cmpe451.platon.page.fragment.editprofile.model.EditProfileRepository
-import com.cmpe451.platon.page.fragment.editprofile.view.EditProfileFragmentDirections
 
 import com.cmpe451.platon.util.Definitions
 
