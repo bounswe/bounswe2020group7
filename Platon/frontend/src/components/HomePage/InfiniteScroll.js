@@ -2,11 +2,8 @@ import React, { Component } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import qwest from 'qwest';
 import Commentt from './Comment'
-
-const api = {
-    baseUrl: 'https://api.soundcloud.com',
-    client_id: 'caf73ef1e709f839664ab82bef40fa96'
-};
+import config from '../../utils/config';
+import requestService from "../../services/requestService";
 
 class InfiniteScroller extends Component {
     constructor(props) {
@@ -14,48 +11,28 @@ class InfiniteScroller extends Component {
 
         this.state = {
             tracks: [],
-            hasMoreItems: true,
-            nextHref: false
         };
     }
 
     loadItems(page) {
         var self = this;
 
-        var url = api.baseUrl + '/users/8665091/favorites';
-        if(this.state.nextHref) {
-            url = this.state.nextHref;
-        }
-
-        qwest.get(url, {
-            client_id: api.client_id,
-            linked_partitioning: 1,
-            page_size: 10
-        }, {
-            cache: true
-        })
-            .then(function(xhr, resp) {
+        var url = config.BASE_URL + '/api/profile/front_page';
+        requestService.getFeed().then((resp) =>{
                 if(resp) {
+                    console.log(resp)
                     var tracks = self.state.tracks;
-                    resp.collection.map((track) => {
+                    resp.data.map( (track) => {
                         if(track.artwork_url == null) {
-                            track.artwork_url = track.user.avatar_url;
+                            track.artwork_url = track.image;
                         }
-
                         tracks.push(track);
                     });
 
-                    if(resp.next_href) {
                         self.setState({
                             tracks: tracks,
-                            nextHref: resp.next_href
-                        });
-                    } else {
-                        self.setState({
-                            hasMoreItems: false
-                        });
+                        })
                     }
-                }
             });
     }
 
@@ -66,11 +43,10 @@ class InfiniteScroller extends Component {
         this.state.tracks.map((track, i) => {
             items.push(
                 <Commentt
-                    title={track.title}
+                    title={track.message}
                     actions={this.actions}
-                    author={<a>{track.title}</a>}
+                    author={<a>{track.message}</a>}
                     avatar={track.artwork_url}
-
                 />
             );
         });
@@ -79,7 +55,7 @@ class InfiniteScroller extends Component {
             <InfiniteScroll
                 pageStart={0}
                 loadMore={this.loadItems.bind(this)}
-                hasMore={this.state.hasMoreItems}
+                hasMore={this.state.tracks.length<20}
                 loader={loader}>
 
                 <div className="tracks">

@@ -83,5 +83,38 @@ const getResearchs = (id) => {
         });
 
 }
-export default { followings, followers, getUser, getResearchs };
+const getNotifications = () => {
+    const url = config.BASE_URL;
+    const token = localStorage.getItem("jwtToken");
+    axios.defaults.headers.common["auth_token"] = `${token}`;
+    return axios.get(url + "/api/profile/notifications" )
+        .then(response => {
+            if (response) {
+            }
+            return response;
+        })
+        .catch(err => {
+            console.log(err)
+            return err.response;
+        });
+
+}
+
+const getFeed = () => {
+    const url = config.BASE_URL;
+    const token = localStorage.getItem("jwtToken");
+    axios.defaults.headers.common["auth_token"] = `${token}`;
+    return axios.get(url + "/api/profile/front_page" )
+        .then(response => {
+            if (response) {
+            }
+            return response;
+        })
+        .catch(err => {
+            console.log(err)
+            return err.response;
+        });
+
+}
+export default { followings, followers, getUser, getResearchs,getNotifications,getFeed };
 
