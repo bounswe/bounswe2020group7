@@ -335,7 +335,7 @@ class UserAPI(Resource):
                                 new_attributes[key] = value
                         existing_user.update(new_attributes)
                         db.session.commit()
-                    except Exception as e:
+                    except:
                         return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
                 
                     # Tries to update the research information of the newly updated user.
