@@ -260,9 +260,10 @@ class UserAPI(Resource):
                     # Tries to update the research information of the newly updated user.
                     # If it fails, it does not raise an error.
                     # -as research information is scheduled to be fetched everyday.-
-                    
-                    ResearchInfoFetch.update_research_info(existing_user.id)
-                    
+                    try:
+                        ResearchInfoFetch.update_research_info(new_user.id)
+                    except:
+                        pass
 
                     # Tries to send the activation mail to the user.
                     # If it fails, an error is raised.
