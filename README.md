@@ -8,6 +8,8 @@ To see our first application click [here](http://platonapi-env.eba-uiumcp2a.eu-c
 
 You can find more information on the [Wiki page](https://github.com/bounswe/bounswe2020group7/wiki) of our repository.
 
+## Cmpe 451
+<img src="https://github.com/bounswe/bounswe2020group7/blob/master/non_project/group.png">
 
 ## Cmpe 352
 ![IMG_2192](https://user-images.githubusercontent.com/45578933/75605022-e3938180-5aef-11ea-9ae6-1539c1a79d4f.jpeg)
