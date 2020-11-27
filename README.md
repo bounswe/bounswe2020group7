@@ -1,11 +1,13 @@
-# BOUNSWE 2020 GROUP 7
+# BOUNSWE 2020 GROUP 7 - PLATON PROJECT
 
 This project repository was prepared by the 7th group for CMPE 352 course.
 
 To see our first application click [here](http://platonapi-env.eba-uiumcp2a.eu-central-1.elasticbeanstalk.com/).
 
 You can find more information on the [Wiki page](https://github.com/bounswe/bounswe2020group7/wiki) of our repository.
+<img src="https://github.com/bounswe/bounswe2020group7/blob/master/non_project/platon-logo.jpeg">
 
+## Cmpe 352
 ![IMG_2192](https://user-images.githubusercontent.com/45578933/75605022-e3938180-5aef-11ea-9ae6-1539c1a79d4f.jpeg)
 _Front line from left to right: Mehmet Temizel, H. Ramazan Yurt, Oyku Yilmaz, Meltem Arslan, Burak Omur._
 
