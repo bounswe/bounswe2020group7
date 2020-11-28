@@ -11,6 +11,7 @@ import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.http.Field
 
 class ProfilePageRepository (sharedPreferences: SharedPreferences){
     fun fetchFollowers(context: Context?) : ArrayList<User>{
@@ -41,12 +42,11 @@ class ProfilePageRepository (sharedPreferences: SharedPreferences){
 
         var client: Webservice = RetrofitClient.webservice
 
-        client.getFollowers(3, "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MywiZXhwaXJlX3RpbWUiOiIyMDIxLTExLTIzVDE0OjQxOjQxLjQ2MzIyMSJ9.KhsIsUuPUUu38AEZ9GL5IL9TarnUVIQ1isPM9sYA7j8")?.enqueue(object : Callback<JsonObject> {
+        client.getFollowers(followingId, authToken)?.enqueue(object : Callback<JsonObject> {
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
                 //handle error here
                 val er = 0
             }
-
             override fun onResponse(
                 call: Call<JsonObject>,
                 response: Response<JsonObject>
@@ -57,10 +57,52 @@ class ProfilePageRepository (sharedPreferences: SharedPreferences){
                 callback.onRequestCompleted(stringResponse)
                 val ert = 5
             }
-
         })
     }
-
+//    fun editProfile(name:String?, surname:String?,job:String?, isPrivate:Boolean?,profilePhoto:String?,
+//                    google_scholar_name:String?,researchgate_name:String?,auth_token :String){
+//        var client: Webservice = RetrofitClient.webservice
+//        client.editUserInfo(name,surname,job, isPrivate,profilePhoto,google_scholar_name,researchgate_name,auth_token)?.enqueue(object : Callback<JsonObject> {
+//            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+//                //handle error here
+//                val er = 0
+//            }
+//            override fun onResponse(
+//                call: Call<JsonObject>,
+//                response: Response<JsonObject>
+//            ) {
+//                //your raw string response
+//
+//                val stringResponse = (response.body() as JsonObject).toString()
+//                callback.onRequestCompleted(stringResponse)
+//                val ert = 5
+//            }
+//        })
+//
+//    }
+//    fun getFollowing(followingId: Int, authToken: String, callback: HttpRequestListener){
+//
+//        var client: Webservice = RetrofitClient.webservice
+//
+//        client.getFollowing(followingId, authToken)?.enqueue(object : Callback<JsonObject> {
+//            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+//                //handle error here
+//                val er = 0
+//            }
+//
+//            override fun onResponse(
+//                call: Call<JsonObject>,
+//                response: Response<JsonObject>
+//            ) {
+//                //your raw string response
+//
+//                val stringResponse = (response.body() as JsonObject).toString()
+//                callback.onRequestCompleted(stringResponse)
+//                val ert = 5
+//            }
+//
+//        })
+//    }
     fun getResearches(userId: Int, authToken: String, callback: HttpRequestListener){
 
         var client: Webservice = RetrofitClient.webservice

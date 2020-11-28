@@ -36,8 +36,8 @@
     <string name="prompt_name">Name</string>
     <string name="remember_me_str">Remember me</string>
     <string name="username_str">Username</string>
-    <string name="text_follower"> 0 Followers</string>
-    <string name="text_following">0 Following</string>
+    <string name="text_follower">Followers</string>
+    <string name="text_following">Following</string>
     <string name="text_edit_profile">Edit Profile</string>
     <string name="firstName_str">First Name</string>
     <string name="lastName_str">Last Name</string>
@@ -76,4 +76,5 @@
     <string name="gs_url_request">Google Scholar Account URL</string>
     <string name="rg_url_request">Research Gate Account URL</string>
     <string name="pp_url_request">Profile Page URL</string>
+    <string name="loading_str">Loading...</string>
 </resources>

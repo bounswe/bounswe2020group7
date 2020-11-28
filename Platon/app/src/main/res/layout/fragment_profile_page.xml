@@ -30,7 +30,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/profile_page_margin"
-                android:text="Suzan Uskudarli"
+                android:text="@string/loading_str"
                 android:textColor="@color/primary_light"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toTopOf="@id/ll_stars"
@@ -85,7 +85,7 @@
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:text="No ratings yet"
-                    android:textColor="@color/primary_dark" />
+                    android:textColor="@color/primary_light" />
 
                 <ImageView
                     android:id="@+id/firstStarYellow"
@@ -228,7 +228,7 @@
             android:text="@string/your_info"
             android:textColor="@color/secondary_green"
             android:textSize="@dimen/project_title_text_size"
- />
+            />
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_profile_page_info"
             android:layout_width="match_parent"

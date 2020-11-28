@@ -13,20 +13,20 @@ class HomeRepository(sharedPreferences: SharedPreferences){
         return arrayListOf(
             Definitions.ActivityStream(
                 context?.let { ActivityCompat.getDrawable(it, R.drawable.ic_home_24px) },
-                "Ertuğrul Margot Robbie'nin fotoğrafını beğendi"
+                "Edison created lightbulb project"
             ),
             Definitions.ActivityStream(
                 context?.let { ActivityCompat.getDrawable(it, R.drawable.ic_home_24px) },
-                "Einstein Rölativite projesini takip etmeyi bıraktı.",
+                "Einstein unfollowed Relativity Theory",
 
                 ),
             Definitions.ActivityStream(
                 context?.let { ActivityCompat.getDrawable(it, R.drawable.ic_home_24px) },
-                "Emanuel Chinenye Emenike yeni bir proje yarattı.",
+                "Burak Ömür joined artificial intelligent project",
             ),
             Definitions.ActivityStream(
                 context?.let { ActivityCompat.getDrawable(it, R.drawable.ic_home_24px) },
-                "Kendi sağlığınız ve çevrenizdekilerin sağlığı için evde kal"
+                "Alper Ahmetoğlu registered Platon."
             )
         )
     }

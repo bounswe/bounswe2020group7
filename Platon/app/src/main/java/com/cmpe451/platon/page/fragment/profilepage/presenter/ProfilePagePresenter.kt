@@ -1,16 +1,11 @@
 package com.cmpe451.platon.page.fragment.profilepage.presenter
 
-import android.content.Intent
 import android.content.SharedPreferences
-import android.util.Log
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import com.cmpe451.platon.`interface`.HttpRequestListener
-import com.cmpe451.platon.networkmodels.Follower
-import com.cmpe451.platon.networkmodels.Research
-import com.cmpe451.platon.networkmodels.ResearchResponse
-import com.cmpe451.platon.networkmodels.UserInfoResponse
+import com.cmpe451.platon.networkmodels.*
 import com.cmpe451.platon.page.fragment.profilepage.contract.ProfilePageContract
 import com.cmpe451.platon.page.fragment.profilepage.model.ProfilePageRepository
 import com.cmpe451.platon.page.fragment.profilepage.view.*
@@ -22,16 +17,17 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
 
     val token = sharedPreferences.getString("token", null)
     val user_id = sharedPreferences.getString("user_id", "4")!!.toInt()
-    var userInfo: UserInfoResponse? = null
+    lateinit var userInfo: UserInfoResponse
     lateinit var researchInformation: ResearchResponse
 
 
     override fun onFollowersButtonClicked() {
-        navController.navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToFollowersFollowingFragment(0))
+        navController.navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToFollowerFragment())
+
     }
 
     override fun onFollowingButtonClicked() {
-        navController.navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToFollowersFollowingFragment(1))
+        navController.navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToFollowFragment())
     }
 
     override fun onEditProfileButtonClicked() {
@@ -39,49 +35,22 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
     }
 
 
-    override fun getFollowers(): ArrayList<Definitions.User> {
-        bringUser()
-        return repository.fetchFollowers((view as FollowerListFragment).activity)
-
-    }
-
-    override fun getFollowing(): ArrayList<Definitions.User> {
-        return repository.fetchFollowing((view as FollowingListFragment).activity)
-    }
-
-    override fun getProfilePageDetails(): ArrayList<MutableMap<String, String>> {
-        return repository.fetchProfilePageDetails((view as ProfilePageFragment).activity)
-    }
-
     override fun getUser(): Definitions.User {
         return  repository.fetchUser((view as Fragment).activity)
-//        sharedPreferences.edit().putString("name", user.name)
-//        sharedPreferences.edit().putString("surname", user.surname)
-//        sharedPreferences.edit().putFloat("rating", user.rating as Float)
-//        sharedPreferences.edit().putString("bio", user.bio)
-//        return user
-
-        
     }
     override fun getUser2(): Definitions.User {
         return repository.fetchUser((view as Fragment).activity)
     }
 
     override fun onEditButtonClicked() {
-        Toast.makeText((view as EditProfileFragment).activity, "Edit PP not yet implemented", Toast.LENGTH_SHORT).show()
+        Toast.makeText((view as Fragment).activity, "Edit PP not yet implemented", Toast.LENGTH_SHORT).show()
     }
 
     override fun onFollowButtonClicked() {
 //        navController.navigate(ProfilePagePrivateFragmentDirections.actionProfilePagePrivateFragmentToFollowersFollowingFragment())
     }
 
-    override fun onFollowersButtonPrivateClicked() {
-        navController.navigate(ProfilePagePrivateFragmentDirections.actionProfilePagePrivateFragmentToFollowersFollowingFragment())
-    }
 
-    override fun onFollowingButtonPrivateClicked() {
-        navController.navigate(ProfilePagePrivateFragmentDirections.actionProfilePagePrivateFragmentToFollowersFollowingFragment())
-    }
 
 
     override fun onStart() {
@@ -96,31 +65,10 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
         this.view = null
     }
 
-    override fun goToProfilePage(id: Int) {
-        navController.navigate(FollowersFollowingFragmentDirections.actionFollowersFollowingFragmentToProfilePagePrivateFragment(id))
-    }
-
-
-    private fun bringFollowers() {
-        repository.getFollowers(1,"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MywiZXhwaXJlX3RpbWUiOiIyMDIxLTExLTIzVDE0OjQxOjQxLjQ2MzIyMSJ9.KhsIsUuPUUu38AEZ9GL5IL9TarnUVIQ1isPM9sYA7j8",object: HttpRequestListener {
-
-            override fun onRequestCompleted(result: String) {
-                val followers = createFollowersResponse(result!!)
-                val ert = 3
-            }
-
-            override fun onFailure(errorMessage: String) {
-
-            }
-        }
-
-        )
-    }
-
      override fun bringResearches() {
         if (token != null) {
-            val mytok = token.subSequence(1,token.length-1)
-            repository.getResearches(user_id, mytok as String,object: HttpRequestListener {
+//            val mytok = token.subSequence(1,token.length-1)
+            repository.getResearches(user_id, token,object: HttpRequestListener {
                 override fun onRequestCompleted(result: String)  {
                     researchInformation = createResearchResponse(result)
                     view?.researchesFetched(researchInformation)
@@ -133,13 +81,14 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
         }
     }
 
-    private fun bringUser() {
+    override fun bringUser() {
         if(token != null ){
 //            val mytok = token.subSequence(1,token.length-1)
-            repository.getUser(token as String,object: HttpRequestListener {
+            repository.getUser(token,object: HttpRequestListener {
                 override fun onRequestCompleted(result: String) {
                     userInfo = createUserResponse(result)
-                    val ert = 3
+                    view?.fetchUser(userInfo)
+                    sharedPreferences.edit().putString("user_id", userInfo.id.toString()).apply()
                 }
 
                 override fun onFailure(errorMessage: String) {
@@ -159,16 +108,6 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
     }
 
 
-    private fun createFollowersResponse(responseString: String) : List<Follower> {
-        return Gson().fromJson<List<Follower>>(responseString, Follower::class.java)
-    }
-    private fun researchToTrendingProject(research:List<Research>) : ArrayList<Definitions.TrendingProject>{
-        var list = ArrayList<Definitions.TrendingProject>()
-        for(item in research){
-            var pro = Definitions.TrendingProject(item.title, null, item.description, Definitions.TrendingProject.TREND.PROJECT)
-            list.add(pro)
-        }
-        var a = 5
-        return list
-    }
+
+
 }

@@ -120,25 +120,46 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="14" />
-                            <option name="y" value="-508" />
+                            <option name="x" value="-350" />
+                            <option name="y" value="-540" />
                           </Point>
                         </option>
                       </LayoutPositions>
                     </value>
                   </entry>
-                  <entry key="followersFollowingFragment">
+                  <entry key="followFragment">
                     <value>
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="-453" />
-                            <option name="y" value="-454" />
+                            <option name="x" value="12" />
+                            <option name="y" value="12" />
                           </Point>
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="action_followersFollowingFragment_to_profilePagePrivateFragment">
+                            <entry key="action_followFragment_to_otherProfileFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
+                  <entry key="followerFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="-789" />
+                            <option name="y" value="74" />
+                          </Point>
+                        </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_followerFragment_to_otherProfileFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -169,6 +190,27 @@
                       </LayoutPositions>
                     </value>
                   </entry>
+                  <entry key="otherProfileFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="206" />
+                            <option name="y" value="-375" />
+                          </Point>
+                        </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_otherProfileFragment_to_followFragment2">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
                   <entry key="profilePageFragment">
                     <value>
                       <LayoutPositions>
@@ -185,28 +227,12 @@
                                 <LayoutPositions />
                               </value>
                             </entry>
-                            <entry key="action_profilePageFragment_to_followersFollowingFragment">
+                            <entry key="action_profilePageFragment_to_followFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
                             </entry>
-                          </map>
-                        </option>
-                      </LayoutPositions>
-                    </value>
-                  </entry>
-                  <entry key="profilePagePrivateFragment">
-                    <value>
-                      <LayoutPositions>
-                        <option name="myPosition">
-                          <Point>
-                            <option name="x" value="12" />
-                            <option name="y" value="12" />
-                          </Point>
-                        </option>
-                        <option name="myPositions">
-                          <map>
-                            <entry key="action_profilePagePrivateFragment_to_followersFollowingFragment">
+                            <entry key="action_profilePageFragment_to_followerFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
