@@ -127,7 +127,7 @@ class LoginPresenter(
                 }else if(msg != null && msg.contains("HTTP 500", true)){
                     Toast.makeText((view as Fragment).activity, "Database Connection/E-mail Server Error", Toast.LENGTH_LONG).show()
                 }else{
-                    Toast.makeText((view as Fragment).activity, "Server not responding!", Toast.LENGTH_LONG).show()
+                    Toast.makeText((view as Fragment).activity, "Try Again!", Toast.LENGTH_LONG).show()
                 }
 
                 dialog.dismiss()

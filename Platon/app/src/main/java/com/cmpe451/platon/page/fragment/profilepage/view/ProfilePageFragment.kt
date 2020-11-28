@@ -19,8 +19,6 @@ import com.cmpe451.platon.adapter.ProfilePageRecyclerViewAdapter
 import com.cmpe451.platon.adapter.UserProjectsRecyclerViewAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.UserProjectsCellBinding
-import com.cmpe451.platon.networkmodels.Followers
-import com.cmpe451.platon.networkmodels.Research
 import com.cmpe451.platon.networkmodels.ResearchResponse
 import com.cmpe451.platon.networkmodels.UserInfoResponse
 import com.cmpe451.platon.util.Definitions
@@ -50,14 +48,11 @@ class ProfilePageFragment : Fragment(), ProfilePageContract.View, UserProjectsRe
         initializePresenter()
         initializeAdapter()
         presenter.bringUser()
-        presenter.bringResearches()
         setListeners()
     }
 
 
     private fun initializeAdapter() {
-
-
         userProjectsRecyclerView = binding.rvProfilePageProjects
         userProjectsAdapter = UserProjectsRecyclerViewAdapter(ArrayList(), requireContext(), this)
         userProjectsRecyclerView.adapter = userProjectsAdapter
@@ -104,9 +99,9 @@ class ProfilePageFragment : Fragment(), ProfilePageContract.View, UserProjectsRe
         menu.findItem(R.id.notification_btn)?.isVisible = false
     }
 
-    override fun researchesFetched(reserachInfo: ResearchResponse) {
-        val ert = reserachInfo
-        userProjectsAdapter.submitElements(reserachInfo.research_info)
+    override fun researchesFetched(researchInfo: ResearchResponse) {
+        val ert = researchInfo
+        userProjectsAdapter.submitElements(researchInfo.research_info)
     }
 
     override fun fetchUser(userInfo: UserInfoResponse) {
@@ -181,7 +176,7 @@ class ProfilePageFragment : Fragment(), ProfilePageContract.View, UserProjectsRe
             }
             else -> binding.textRate.visibility = View.VISIBLE
         }
-        var info = ArrayList<MutableMap<String,String>>()
+        val info = ArrayList<MutableMap<String,String>>()
         if(user.e_mail != ""){
             info.add(mutableMapOf("title" to "E-Mail Address", "info" to user.e_mail))
         }

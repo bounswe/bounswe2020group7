@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.util.Base64.decode
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.cmpe451.platon.R
@@ -12,6 +13,8 @@ import com.cmpe451.platon.core.BaseActivity
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import retrofit2.http.FormUrlEncoded
+import java.lang.Byte.decode
+import java.util.*
 
 
 /**

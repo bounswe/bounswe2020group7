@@ -13,9 +13,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
 
-//import com.cmpe451.elevator.HttpRequest
-
-
 class RegisterRepository(val sharedPreferences: SharedPreferences){
 
     fun postRegister(observer:Observer<JsonObject> , firstName:String, lastName:String, mail:String, job:String, pass:String){

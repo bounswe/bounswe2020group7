@@ -16,12 +16,7 @@ interface Webservice {
     fun getFollowing(@Query("follower_id") followingId: Int,
                      @Header("auth_token") auth_token: String ) : Call<JsonObject>?
 
-    @GET("api/profile/research_information")
-    fun getResearches(@Query("user_id") userId: Int,
-                     @Header("auth_token") auth_token: String ) : Call<JsonObject>?
 
-    @GET("api/auth_system/self")
-    fun getUserInfo(@Header("auth_token") auth_token: String ) : Call<JsonObject>?
 
     @FormUrlEncoded
     @PUT("api/auth_system/user")

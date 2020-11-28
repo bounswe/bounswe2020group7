@@ -7,9 +7,6 @@ import com.cmpe451.platon.R
 import com.cmpe451.platon.util.Definitions.TrendingProject
 import com.cmpe451.platon.util.Definitions.UpcomingEvent
 
-//import com.cmpe451.elevator.HttpRequest
-
-
 class PreLoginRepository(sharedPreferences: SharedPreferences){
 
 

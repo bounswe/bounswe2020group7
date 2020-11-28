@@ -1,6 +1,7 @@
 package com.cmpe451.platon.page.fragment.profilepage.presenter
 
 import android.content.SharedPreferences
+import android.util.Log
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -11,12 +12,14 @@ import com.cmpe451.platon.page.fragment.profilepage.model.ProfilePageRepository
 import com.cmpe451.platon.page.fragment.profilepage.view.*
 import com.cmpe451.platon.util.Definitions
 import com.google.gson.Gson
+import io.reactivex.rxjava3.core.Observer
+import io.reactivex.rxjava3.disposables.Disposable
 
 
 class ProfilePagePresenter(private var view: ProfilePageContract.View?, private var repository: ProfilePageRepository, private var sharedPreferences: SharedPreferences, private var navController: NavController) : ProfilePageContract.Presenter {
 
     val token = sharedPreferences.getString("token", null)
-    val user_id = sharedPreferences.getString("user_id", "2")!!.toInt()
+    var user_id = 0
     lateinit var userInfo: UserInfoResponse
     lateinit var researchInformation: ResearchResponse
 
@@ -64,47 +67,63 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
     }
 
      override fun bringResearches() {
-        if (token != null) {
-//            val mytok = token.subSequence(1,token.length-1)
-            repository.getResearches(user_id, token,object: HttpRequestListener {
-                override fun onRequestCompleted(result: String)  {
-                    researchInformation = createResearchResponse(result)
-                    view?.researchesFetched(researchInformation)
+        if (token != null && user_id != 0) {
+
+            val observer=object :Observer<ResearchResponse>{
+                override fun onSubscribe(d: Disposable?) {
+                    Log.i("Fettch Research...", "Fetching!!")
                 }
 
-                override fun onFailure(errorMessage: String) {
-
+                override fun onNext(t: ResearchResponse?) {
+                    if(t != null){
+                        view?.researchesFetched(t)
+                        researchInformation = t
+                    }
                 }
-            })
+
+                override fun onError(e: Throwable?) {
+                    Log.i("Fettch Ress errr...", "Error!!")
+                }
+
+                override fun onComplete() {
+                    Log.i("Completed Ress...", "Compp!!")
+                }
+
+            }
+
+            repository.getResearches(observer, user_id, token)
         }
     }
 
     override fun bringUser() {
         if(token != null ){
-//            val mytok = token.subSequence(1,token.length-1)
-            repository.getUser(token,object: HttpRequestListener {
-                override fun onRequestCompleted(result: String) {
-                    userInfo = createUserResponse(result)
-                    view?.fetchUser(userInfo)
-                    sharedPreferences.edit().putString("user_id", userInfo.id.toString()).apply()
+            val observer=object :Observer<UserInfoResponse>{
+                override fun onSubscribe(d: Disposable?) {
+                    Log.i("Fettch User...", "Fetching!!")
                 }
 
-                override fun onFailure(errorMessage: String) {
-
+                override fun onNext(t: UserInfoResponse?) {
+                    if(t != null){
+                        view?.fetchUser(t)
+                        userInfo = t
+                        user_id = userInfo.id
+                        bringResearches()
+                    }
                 }
-            })
+
+                override fun onError(e: Throwable?) {
+                    Log.i("Fettch User errr...", "Error!!")
+                }
+
+                override fun onComplete() {
+                    Log.i("Completed User...", "Compp!!")
+                }
+
+            }
+
+
+            repository.getUser(observer, token)
+
         }
     }
-
-    private fun createUserResponse(responseString: String) : UserInfoResponse {
-        return Gson().fromJson<UserInfoResponse>(responseString, UserInfoResponse::class.java)
-    }
-
-    private fun createResearchResponse(responseString: String) : ResearchResponse {
-        return Gson().fromJson<ResearchResponse>(responseString, ResearchResponse::class.java)
-    }
-
-
-
-
 }

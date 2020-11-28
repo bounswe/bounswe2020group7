@@ -21,9 +21,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-//import com.cmpe451.elevator.HttpRequest
-
-
 class LoginRepository(val sharedPreferences: SharedPreferences){
     fun tryToLogin(observer: Observer<JsonObject> , mailStr: String, passStr: String) {
         val api = ApiClient()
