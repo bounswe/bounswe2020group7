@@ -118,6 +118,7 @@
             android:layout_height="wrap_content"
             android:text="Private Profile"
             tools:ignore="UseSwitchCompatOrMaterialXml"
+
             />
 
         <Button

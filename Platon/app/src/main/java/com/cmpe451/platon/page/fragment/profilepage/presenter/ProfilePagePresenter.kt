@@ -16,7 +16,7 @@ import com.google.gson.Gson
 class ProfilePagePresenter(private var view: ProfilePageContract.View?, private var repository: ProfilePageRepository, private var sharedPreferences: SharedPreferences, private var navController: NavController) : ProfilePageContract.Presenter {
 
     val token = sharedPreferences.getString("token", null)
-    val user_id = sharedPreferences.getString("user_id", "4")!!.toInt()
+    val user_id = sharedPreferences.getString("user_id", "2")!!.toInt()
     lateinit var userInfo: UserInfoResponse
     lateinit var researchInformation: ResearchResponse
 
@@ -30,17 +30,15 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
         navController.navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToFollowFragment())
     }
 
-    override fun onEditProfileButtonClicked() {
-        navController.navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToEditProfileFragment())
+    override fun onEditProfileButtonClicked(name: String, surname: String, job: String, isPrivate: Boolean, profilePhoto: String, googleScholar: String, researchGate: String) {
+        navController.navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToEditProfileFragment(name, surname,job,isPrivate,profilePhoto,googleScholar,researchGate))
     }
 
 
-    override fun getUser(): Definitions.User {
-        return  repository.fetchUser((view as Fragment).activity)
-    }
-    override fun getUser2(): Definitions.User {
-        return repository.fetchUser((view as Fragment).activity)
-    }
+//    override fun getUser(): Definitions.User {
+//        return  repository.fetchUser((view as Fragment).activity)
+//    }
+
 
     override fun onEditButtonClicked() {
         Toast.makeText((view as Fragment).activity, "Edit PP not yet implemented", Toast.LENGTH_SHORT).show()
@@ -103,7 +101,6 @@ class ProfilePagePresenter(private var view: ProfilePageContract.View?, private 
     }
 
     private fun createResearchResponse(responseString: String) : ResearchResponse {
-
         return Gson().fromJson<ResearchResponse>(responseString, ResearchResponse::class.java)
     }
 

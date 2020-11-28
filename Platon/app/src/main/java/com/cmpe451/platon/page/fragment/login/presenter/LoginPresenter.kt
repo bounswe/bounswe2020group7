@@ -106,6 +106,7 @@ class LoginPresenter(
                 if (token != "null"){
                     sharedPreferences.edit().putString("token", token).apply()
                     Toast.makeText((view as Fragment).activity, "Login successful!", Toast.LENGTH_LONG).show()
+
                     triggerLogin(token, rememberBool, mailStr, passStr)
                 }else{
                     Toast.makeText((view as Fragment).activity, "Token is null!", Toast.LENGTH_LONG).show()

@@ -59,50 +59,7 @@ class ProfilePageRepository (sharedPreferences: SharedPreferences){
             }
         })
     }
-//    fun editProfile(name:String?, surname:String?,job:String?, isPrivate:Boolean?,profilePhoto:String?,
-//                    google_scholar_name:String?,researchgate_name:String?,auth_token :String){
-//        var client: Webservice = RetrofitClient.webservice
-//        client.editUserInfo(name,surname,job, isPrivate,profilePhoto,google_scholar_name,researchgate_name,auth_token)?.enqueue(object : Callback<JsonObject> {
-//            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-//                //handle error here
-//                val er = 0
-//            }
-//            override fun onResponse(
-//                call: Call<JsonObject>,
-//                response: Response<JsonObject>
-//            ) {
-//                //your raw string response
-//
-//                val stringResponse = (response.body() as JsonObject).toString()
-//                callback.onRequestCompleted(stringResponse)
-//                val ert = 5
-//            }
-//        })
-//
-//    }
-//    fun getFollowing(followingId: Int, authToken: String, callback: HttpRequestListener){
-//
-//        var client: Webservice = RetrofitClient.webservice
-//
-//        client.getFollowing(followingId, authToken)?.enqueue(object : Callback<JsonObject> {
-//            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-//                //handle error here
-//                val er = 0
-//            }
-//
-//            override fun onResponse(
-//                call: Call<JsonObject>,
-//                response: Response<JsonObject>
-//            ) {
-//                //your raw string response
-//
-//                val stringResponse = (response.body() as JsonObject).toString()
-//                callback.onRequestCompleted(stringResponse)
-//                val ert = 5
-//            }
-//
-//        })
-//    }
+
     fun getResearches(userId: Int, authToken: String, callback: HttpRequestListener){
 
         var client: Webservice = RetrofitClient.webservice

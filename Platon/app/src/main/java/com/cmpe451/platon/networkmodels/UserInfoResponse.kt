@@ -10,4 +10,5 @@ data class UserInfoResponse (
         val researchgate_name:String,
         val rate:Double,
         val profile_photo:String
+//        val isPrivate:Boolean
 )
