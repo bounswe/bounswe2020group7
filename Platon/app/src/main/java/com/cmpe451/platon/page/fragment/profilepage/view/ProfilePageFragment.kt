@@ -30,8 +30,7 @@ class ProfilePageFragment : Fragment(), ProfilePageContract.View, UserProjectsRe
     private lateinit var binding: FragmentProfilePageBinding
     private lateinit var presenter: ProfilePageContract.Presenter
     private lateinit var details: ArrayList<MutableMap<String,String>>
-    private lateinit var user :Definitions.User
-    private lateinit var projects : List<Research>
+    private lateinit var user :UserInfoResponse
     private lateinit var userProjectsRecyclerView: RecyclerView
     private lateinit var userProjectsAdapter: UserProjectsRecyclerViewAdapter
     private lateinit var informationsRecyclerView: RecyclerView
@@ -48,12 +47,11 @@ class ProfilePageFragment : Fragment(), ProfilePageContract.View, UserProjectsRe
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setListeners()
         initializePresenter()
         initializeAdapter()
         presenter.bringUser()
         presenter.bringResearches()
-
+        setListeners()
     }
 
 
@@ -86,7 +84,7 @@ class ProfilePageFragment : Fragment(), ProfilePageContract.View, UserProjectsRe
         }
 
         binding.buttonEditProfile.setOnClickListener {
-            presenter.onEditProfileButtonClicked()
+            presenter.onEditProfileButtonClicked(user.name, user.surname, user.job, false, user.profile_photo, user.google_scholar_name, user.researchgate_name)
         }
 
         //password.addTextChangedListener(textWatcher)
@@ -112,7 +110,7 @@ class ProfilePageFragment : Fragment(), ProfilePageContract.View, UserProjectsRe
     }
 
     override fun fetchUser(userInfo: UserInfoResponse) {
-        val user = userInfo
+        user = userInfo
         binding.textNameSurname.text = user.name + " " + user.surname
         when(user.rate){
             1.0 -> {

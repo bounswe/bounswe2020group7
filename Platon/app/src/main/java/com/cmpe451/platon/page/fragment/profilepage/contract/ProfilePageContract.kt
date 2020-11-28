@@ -17,9 +17,7 @@ interface ProfilePageContract {
     interface Presenter : BasePresenter {
         fun onFollowersButtonClicked()
         fun onFollowingButtonClicked()
-        fun onEditProfileButtonClicked()
-        fun getUser() : Definitions.User
-        fun getUser2(): Definitions.User
+        fun onEditProfileButtonClicked(name:String, surname:String, job:String, isPrivate:Boolean, profilePhoto:String, googleScholar:String, researchGate:String)
         fun onEditButtonClicked()
         fun onFollowButtonClicked()
         fun bringResearches()

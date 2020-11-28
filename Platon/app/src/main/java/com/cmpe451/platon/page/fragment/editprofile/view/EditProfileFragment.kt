@@ -1,6 +1,7 @@
 package com.cmpe451.platon.page.fragment.editprofile.view
 
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -19,7 +20,14 @@ class EditProfileFragment : Fragment(), EditProfileContract.View {
 
     private lateinit var binding: FragmentEditProfileBinding
     private lateinit var presenter: EditProfileContract.Presenter
-    private lateinit var user : Definitions.User
+    private lateinit var name:String
+    private lateinit var surname:String
+    private lateinit var job:String
+    private var isPrivate:Boolean = false
+    private lateinit var profilePhoto:String
+    private lateinit var google:String
+    private lateinit var researchgate:String
+
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -33,7 +41,7 @@ class EditProfileFragment : Fragment(), EditProfileContract.View {
         super.onViewCreated(view, savedInstanceState)
         setListeners()
         initializePresenter()
-//        setUserInfo()
+        setUserInfo()
     }
     private fun setListeners() {
         binding.buttonEdit.setOnClickListener {
@@ -60,11 +68,27 @@ class EditProfileFragment : Fragment(), EditProfileContract.View {
             presenter.onEditButtonClicked(name, surname,job, binding.privateSwitch.isChecked,null, google_scholar_name, researchgate_name)
         }
     }
-    //    private fun setUserInfo(){
-//        user = presenter.getUser2()
-//        binding.firstnameTv.setText(user.name)
-//        binding.lastnameTv.setText(user.surname)
-//    }
+    private fun setUserInfo(){
+        arguments?.let {
+            val safeArgs = EditProfileFragmentArgs.fromBundle(it)
+            name = safeArgs.name
+            surname = safeArgs.surname
+            job = safeArgs.job
+            isPrivate = safeArgs.isPrivate
+            profilePhoto = safeArgs.profilePhoto
+            google = safeArgs.googleScholar
+            researchgate = safeArgs.researchGate
+        }
+        binding.firstnameTv.setText(name)
+        binding.lastnameTv.setText(surname)
+        binding.jobTv.setText(job)
+        binding.privateSwitch.isChecked = isPrivate
+        binding.ppTv.setText(profilePhoto)
+        binding.googleScholarTv.setText(google)
+        binding.researchGateTv.setText(researchgate)
+
+
+    }
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
 
