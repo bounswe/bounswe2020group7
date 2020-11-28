@@ -12,12 +12,11 @@ from app import db
 import jwt
 import json
 
+class JobsAndSkillsTests(BaseTest):
 
-class ResearchInfoTests(BaseTest):
-    
     def setUp(self):
         super().setUp()
-        # Add artificia users to test login feature
+        # Add artificial users to test login feature
         users = [
             User("umut@deneme.com",True,"b73ec5e4625ffcb6d0d70826f33be7a75d45b37046e26c4b60d9111266d70e32",3.5,"Umut","Özdemir",False,None,None,None),
             User("can@deneme.com",False,"cce0c2170d1ae52e099c716165d80119ee36840e3252e57f2b2b4d6bb111d8a5",4.6,"Can","Deneme",True,None,None,None)
@@ -25,22 +24,7 @@ class ResearchInfoTests(BaseTest):
         for user in users:
             db.session.add(user)
         db.session.commit()
-        research_infos = [
-            ResearchInformation(1,"Multi Model Sensor Fusion","A Multi Model Sensor Fusion using Extended Kalman Filters",2020,ResearchType.FETCHED),
-            ResearchInformation(1,"Estimating Channel Coefficients using ANN","Using a CNN Model Estimate Channel Coefficients of a 2D Diffusion based Channel",2020,ResearchType.HAND_WRITTEN),
-            ResearchInformation(2,"An Academic Collaboration Platform","An Academic Collaboration Platform named Platon",2020,ResearchType.FETCHED)
 
-        ]
-        for research_info in research_infos:
-            db.session.add(research_info)
-        db.session.commit()
-        follows = [
-            Follow(1,2),
-            Follow(2,1)
-        ]
-        for follow in follows:
-            db.session.add(follow)
-        db.session.commit()
         jobs = [
             Jobs("Teacher"),
             Jobs("Student"),
@@ -57,62 +41,6 @@ class ResearchInfoTests(BaseTest):
         for skill in skills:
             db.session.add(skill)
         db.session.commit()
-
-    def test_add_research_info_valid(self):
-        valid_token = generate_token(1,TestConfig.SESSION_DURATION)
-        data = {
-            'research_title' : 'Radar Preprocessing using DBCAN Clustring',
-            'description' : 'Preprocessing the radar hits using DBCAN Algorithm',
-            'year' : 2020
-        }
-        expected_response = {
-            'msg' : 'Successfully added'
-        }
-        actual_response = self.client.post("/api/profile/research_information",data=data,headers={'auth_token' : valid_token})
-        self.assertEqual(expected_response,json.loads(actual_response.data))
-        self.assertEqual(201,actual_response.status_code)
-        self.assertIsNotNone(ResearchInformation.query.filter(ResearchInformation.research_title == 'Radar Preprocessing using DBCAN Clustring').first())
-    
-
-    def test_add_research_info_invalid(self):
-        valid_token = generate_token(1,TestConfig.SESSION_DURATION)
-        data = {
-            'title' : 'Radar Preprocessing using DBCAN Clustring',
-            'description' : 'Preprocessing the radar hits using DBCAN Algorithm'
-        }
-        expected_response = {
-            'error' : 'Wrong input format'
-        }
-        actual_response = self.client.post("/api/profile/research_information",data=data,headers={'auth_token' : valid_token})
-        self.assertEqual(expected_response,json.loads(actual_response.data))
-        self.assertEqual(400,actual_response.status_code)
-        self.assertIsNone(ResearchInformation.query.filter(ResearchInformation.research_title == 'Radar Preprocessing using DBCAN Clustring').first())
-       
-    def test_remove_research_info_valid(self):
-        valid_token = generate_token(1,TestConfig.SESSION_DURATION)
-        data = {
-            'research_id':1
-        }
-        expected_result = {
-            'msg':'Successfully Deleted'
-        }
-        actual_response = self.client.delete("/api/profile/research_information",data=data,headers={'auth_token' : valid_token})
-        self.assertEqual(expected_result,json.loads(actual_response.data))
-        self.assertEqual(200,actual_response.status_code)
-        self.assertIsNone(ResearchInformation.query.filter(ResearchInformation.id == 1).first())
-        
-    def test_remove_research_info_invalid(self):
-        valid_token = generate_token(2,TestConfig.SESSION_DURATION)
-        data = {
-            'research_id':1
-        }
-        expected_result = {
-            'error':'You can not delete other user\'s information'
-        }
-        actual_response = self.client.delete("/api/profile/research_information",data=data,headers={'auth_token' : valid_token})
-        self.assertEqual(expected_result,json.loads(actual_response.data))
-        self.assertEqual(400,actual_response.status_code)
-        self.assertIsNotNone(ResearchInformation.query.filter(ResearchInformation.id == 1).first())
 
     def test_get_research_info_invalid(self):
         invalid_token = generate_token(1,TestConfig.SESSION_DURATION) + "c"
@@ -306,6 +234,107 @@ class ResearchInfoTests(BaseTest):
         self.assertEqual(expected_result, json.loads(actual_response.data))
         self.assertEqual(400, actual_response.status_code)
         self.assertIsNotNone(Skills.query.filter(Skills.id == 100).first())
+
+class ResearchInfoTests(BaseTest):
+    
+    def setUp(self):
+        super().setUp()
+        # Add artificia users to test login feature
+        users = [
+            User("umut@deneme.com",True,"b73ec5e4625ffcb6d0d70826f33be7a75d45b37046e26c4b60d9111266d70e32",3.5,"Umut","Özdemir",False,None,None,None),
+            User("can@deneme.com",False,"cce0c2170d1ae52e099c716165d80119ee36840e3252e57f2b2b4d6bb111d8a5",4.6,"Can","Deneme",True,None,None,None)
+        ]
+        for user in users:
+            db.session.add(user)
+        db.session.commit()
+        research_infos = [
+            ResearchInformation(1,"Multi Model Sensor Fusion","A Multi Model Sensor Fusion using Extended Kalman Filters",2020,ResearchType.FETCHED),
+            ResearchInformation(1,"Estimating Channel Coefficients using ANN","Using a CNN Model Estimate Channel Coefficients of a 2D Diffusion based Channel",2020,ResearchType.HAND_WRITTEN),
+            ResearchInformation(2,"An Academic Collaboration Platform","An Academic Collaboration Platform named Platon",2020,ResearchType.FETCHED)
+
+        ]
+        for research_info in research_infos:
+            db.session.add(research_info)
+        db.session.commit()
+        follows = [
+            Follow(1,2),
+            Follow(2,1)
+        ]
+        for follow in follows:
+            db.session.add(follow)
+        db.session.commit()
+        jobs = [
+            Jobs("Teacher"),
+            Jobs("Student"),
+            Jobs("Assistant")
+        ]
+        for job in jobs:
+            db.session.add(job)
+        db.session.commit()
+        skills = [
+            Skills("Java"),
+            Skills("C"),
+            Skills("Python")
+        ]
+        for skill in skills:
+            db.session.add(skill)
+        db.session.commit()
+
+    def test_add_research_info_valid(self):
+        valid_token = generate_token(1,TestConfig.SESSION_DURATION)
+        data = {
+            'research_title' : 'Radar Preprocessing using DBCAN Clustring',
+            'description' : 'Preprocessing the radar hits using DBCAN Algorithm',
+            'year' : 2020
+        }
+        expected_response = {
+            'msg' : 'Successfully added'
+        }
+        actual_response = self.client.post("/api/profile/research_information",data=data,headers={'auth_token' : valid_token})
+        self.assertEqual(expected_response,json.loads(actual_response.data))
+        self.assertEqual(201,actual_response.status_code)
+        self.assertIsNotNone(ResearchInformation.query.filter(ResearchInformation.research_title == 'Radar Preprocessing using DBCAN Clustring').first())
+    
+
+    def test_add_research_info_invalid(self):
+        valid_token = generate_token(1,TestConfig.SESSION_DURATION)
+        data = {
+            'title' : 'Radar Preprocessing using DBCAN Clustring',
+            'description' : 'Preprocessing the radar hits using DBCAN Algorithm'
+        }
+        expected_response = {
+            'error' : 'Wrong input format'
+        }
+        actual_response = self.client.post("/api/profile/research_information",data=data,headers={'auth_token' : valid_token})
+        self.assertEqual(expected_response,json.loads(actual_response.data))
+        self.assertEqual(400,actual_response.status_code)
+        self.assertIsNone(ResearchInformation.query.filter(ResearchInformation.research_title == 'Radar Preprocessing using DBCAN Clustring').first())
+       
+    def test_remove_research_info_valid(self):
+        valid_token = generate_token(1,TestConfig.SESSION_DURATION)
+        data = {
+            'research_id':1
+        }
+        expected_result = {
+            'msg':'Successfully Deleted'
+        }
+        actual_response = self.client.delete("/api/profile/research_information",data=data,headers={'auth_token' : valid_token})
+        self.assertEqual(expected_result,json.loads(actual_response.data))
+        self.assertEqual(200,actual_response.status_code)
+        self.assertIsNone(ResearchInformation.query.filter(ResearchInformation.id == 1).first())
+        
+    def test_remove_research_info_invalid(self):
+        valid_token = generate_token(2,TestConfig.SESSION_DURATION)
+        data = {
+            'research_id':1
+        }
+        expected_result = {
+            'error':'You can not delete other user\'s information'
+        }
+        actual_response = self.client.delete("/api/profile/research_information",data=data,headers={'auth_token' : valid_token})
+        self.assertEqual(expected_result,json.loads(actual_response.data))
+        self.assertEqual(400,actual_response.status_code)
+        self.assertIsNotNone(ResearchInformation.query.filter(ResearchInformation.id == 1).first())
 
     def test_fetch_RG_info(self):
         RG_name = "Meriç_Turan"
