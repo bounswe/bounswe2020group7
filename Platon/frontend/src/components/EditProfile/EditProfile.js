@@ -12,7 +12,7 @@ import config from "../../utils/config";
 import Snackbar from "@material-ui/core/Snackbar";
 import { Link } from "react-router-dom";
 import requestService from "../../services/requestService";
-
+import Spinner from '../Spinner/Spinner'
 const StyledTextField = withStyles({
     root: {
       "& .MuiInputBase-input": {
@@ -63,6 +63,7 @@ class EditProfile extends Component {
       fieldEmptyError: false,
       user: null,
       profileId: null,
+      isLoading: true,
      }
   }
 
@@ -84,7 +85,11 @@ class EditProfile extends Component {
         google_scholar_name: this.state.user.google_scholar_name,
         researchgate_name: this.state.user.researchgate_name,
       })
+      this.setState({
+        isLoading: false
+      })
     });
+
 
   }
 
@@ -163,14 +168,14 @@ class EditProfile extends Component {
       });
   }
   render() {
-
+    console.log(this.state.isLoading)
     return (
-
       <div className="Landing">
+
         <div className="AppBar">
           <NavBar />
         </div>
-
+        { this.state.isLoading ? <Spinner/> :
         <Container className = "ProfilePageContainer">
         <Row className="mb-3 justify-content-center">
                 <Col sm={6}>
@@ -186,7 +191,7 @@ class EditProfile extends Component {
                 </Col>
             </Row>
 
-            {this.state.user !== null ? (<div>
+
             <Row className="mb-3 justify-content-center">
                 <Col sm={6}>
                     <Row>
@@ -240,8 +245,8 @@ class EditProfile extends Component {
                     </Button>
                 </Col>
             </Row>
-            </div>): null}
-        </Container>
+
+        </Container> }
         {this.state.fieldEmptyError && (
               <Snackbar
                 open={this.state.fieldEmptyError}
@@ -272,7 +277,9 @@ class EditProfile extends Component {
                 </Alert>
               </Snackbar>
             )}
+
       </div>
+
     );
   }
 }
