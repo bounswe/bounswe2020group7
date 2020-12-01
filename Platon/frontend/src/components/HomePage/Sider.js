@@ -4,6 +4,8 @@ import React from 'react'
 import colors from "../../utils/colors";
 import {Link} from 'react-router-dom'
 import requestService from "../../services/requestService";
+import jwt_decode from "jwt-decode";
+
 const { SubMenu } = Menu;
 
 class Sider extends React.Component {
@@ -11,13 +13,18 @@ class Sider extends React.Component {
         super(props)
         this.state = {
             notifications:null,
+            profileId: null,
         }
     }
     handleClick = e => {
         console.log('click ');
     };
     componentDidMount(){
-
+        const token = localStorage.getItem("jwtToken");
+        const decoded = jwt_decode(token);
+        this.setState({
+            profileId: decoded.id
+        })
         requestService.getNotifications().then((response) => {
             this.setState({
                 notifications: response.data,
@@ -47,7 +54,7 @@ class Sider extends React.Component {
                     }
                 >
                 </SubMenu>
-                <Link to ='/profile'>
+                <Link to ={`/${this.state.profileId}`}>
                 <SubMenu key="sub2" icon={<AppstoreOutlined />}  title=" Profile">
 
                 </SubMenu></Link>
