@@ -84,7 +84,8 @@ class ProfilePage extends React.Component {
   componentDidMount() {
     const token = localStorage.getItem("jwtToken");
     const decoded = jwt_decode(token);
-    requestService.followings(decoded.id).then((response) => {
+    const profileId = this.props.match.params.profileId
+    requestService.followings(profileId).then((response) => {
       this.setState({
         followings: response.data.followings,
       });
@@ -96,19 +97,19 @@ class ProfilePage extends React.Component {
         followings_id_arr: temp_followings_id_arr
       })
     });
-    requestService.followers(decoded.id).then((response) => {
+    requestService.followers(profileId).then((response) => {
       this.setState({
         followers: response.data.followers,
         selectedFollowButton: Array(response.data.followers.length).fill("Follow"),
       });
 
     });
-    requestService.getUser(decoded.id).then((response) => {
+    requestService.getUser(profileId).then((response) => {
       this.setState({
         user: response.data,
       });
     });
-    requestService.getResearchs(decoded.id).then((response) => {
+    requestService.getResearchs(profileId).then((response) => {
       this.setState({
         researchs: response.data.research_info,
       });
@@ -135,27 +136,6 @@ class ProfilePage extends React.Component {
 
 
     const url = config.BASE_URL
-    /*
-    let request = new XMLHttpRequest();
-
-    request.open('POST', url + "/api/follow/follow_requests");
-    request.setRequestHeader("auth_token", token)
-    request.send(formData);
-
-    if(followButtonState==="Follow"){
-      let request = new XMLHttpRequest();
-
-      request.open('POST', url + "/api/follow/follow_requests");
-      request.setRequestHeader("auth_token", token)
-      request.send(formData);
-      if(request.status===200){
-        prevState[index] = "Unfollow"
-        this.setState({
-          selectedFollowButton:prevState,
-        })
-      }
-    }
-    */
 
     if(followButtonState==="Follow"){
     axios.post(url + "/api/follow/follow_requests", formData, {
@@ -247,7 +227,9 @@ class ProfilePage extends React.Component {
                   readOnly
                   size="large"
                 />
+
               </Row>
+              <h2>ID: {this.props.match.params.profileId}</h2>
             </Col>
           </Row>
         </Container>

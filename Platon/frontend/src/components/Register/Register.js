@@ -204,7 +204,7 @@ class Register extends Component {
             checkbox: false,
           });
         }
-        return response.json();
+
       })
       .catch((err) => {
         this.setState({ showError: "Error occured. Check your credientials." });
