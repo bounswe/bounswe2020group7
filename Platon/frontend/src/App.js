@@ -58,7 +58,8 @@ class App extends Component {
       <Route path='/register' exact  component={Register}/>
       <Route path='/forgotpassword' exact component={ForgotPassword}/>
       <Route path='/resetpassword'  component={ResetPassword}/>
-      <Route path="*" component={NotFound} />
+      <Route path="*"><NotFound isAuthenticated={this.state.isAuthenticated} /></Route>
+
 
       </div>
       </Switch>
