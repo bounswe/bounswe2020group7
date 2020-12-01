@@ -19,7 +19,10 @@ const login = (email, password) => {
             }
             return user;
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+            console.log(err)
+            return err.response;
+        });
 
 }
 

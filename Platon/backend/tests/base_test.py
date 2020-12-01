@@ -18,7 +18,7 @@ class TestConfig:
     # Define the database - we are working with
     mysql_user = "root"
     mysql_password = "rootpassword"
-    mysql_host = "52.59.254.130"
+    mysql_host = "18.198.208.63"
     mysql_port = "3306"
     mysql_database = "platondb_test"
 

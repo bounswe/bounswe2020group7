@@ -135,14 +135,23 @@ class Login extends Component {
     }
 
     authService.login(this.state.email, this.state.password).then((response) => {
-      if(response.status === 200){
-        this.setState({ isLoggedIn: true });
-      }
-      else if(response.status === 401){
-        this.setState({
-          showError:
-            "Error occured. Make sure you have verified your account.",
-        });
+      if(response.status!==null){
+        if(response.status === 200){
+          this.setState({ isLoggedIn: true });
+          this.props.handlerSuccessfulLogin();
+        }
+        else if(response.status === 401){
+          this.setState({
+            showError:
+              "Error occured. Make sure you have verified your account.",
+          });
+        }
+        else if(response.status === 404){
+          this.setState({
+            showError:
+              "There is no such user!",
+          });
+        }
       }
       else{
         this.setState({

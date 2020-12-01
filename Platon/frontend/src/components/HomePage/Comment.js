@@ -75,13 +75,13 @@ class Commentt extends React.Component {
                     <Avatar
                         src={this.props.avatar}
                         alt="Han Solo"
+                        style={{width:'300px',height:'300px'}}
+                        width={300}
+                        height={300}
                     />
                 }
                 content={
                     <p>
-                        We supply a series of design principles, practical patterns and high quality design
-                        resources (Sketch and Axure), to help people create their product prototypes beautifully
-                        and efficiently.
                     </p>
                 }
                 datetime={

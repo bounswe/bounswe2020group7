@@ -72,7 +72,7 @@ class ResetPasswordAPI(Resource):
             if not user.is_valid:
                 return make_response(jsonify({'error' : 'Please activate your account'}),401)
             token = generate_token(user.id,app.config['LINK_DURATION'])
-            if send_email(user.e_mail,"Password Reset Link","Click the following link to change tour password\nToken: {}".format(token),"{}/resetpassword/{}".format(app.config["FRONTEND_HOSTNAME"],token)):
+            if send_email(user.e_mail,"Password Reset Link","Click the following link to change tour password\nDo not forget to activate your account today, the link expires in 20 minutes!\nToken: {}".format(token),"{}/resetpassword/{}".format(app.config["FRONTEND_HOSTNAME"],token)):
                 return make_response(jsonify({'mgs' : 'E-mail is successfully sent'}),200)
             else:
                 return make_response(jsonify({'error' : 'E-mail Server Error'}),500)
@@ -107,6 +107,44 @@ class ResetPasswordAPI(Resource):
         else:
             return make_response(jsonify({'error' : 'Write new password twice'}),400)
 
+@auth_system_ns.route("/self")
+class GetSelfAPI(Resource):
+
+    # GET request (for the logged-in user to get their own user information)
+    @api.expect(get_self_parser)
+    @api.doc(responses={
+                200: "User has been found.",
+                404: "The user is not found.",
+                500: "The server is not connected to the database."
+            })
+    @login_required
+    def get(user_id, self):
+        # Tries to connect to the database.
+        # If it fails, an error is raised.
+        try:
+            logged_in_user = User.query.filter_by(id=user_id).first()
+            user_job = Jobs.query.filter(Jobs.id == logged_in_user.job_id).first()
+        except:
+            return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+        else:
+            # Checks whether there is an already existing user in the database with the given user ID.
+            # If yes, user information is returned.
+            # If not, an error is raised.
+            if logged_in_user is not None:
+                account_information = { 
+                                        "id": logged_in_user.id,
+                                        "name": logged_in_user.name,
+                                        "surname": logged_in_user.surname,
+                                        "rate": logged_in_user.rate,
+                                        "profile_photo": logged_in_user.profile_photo,
+                                        "e_mail": logged_in_user.e_mail,
+                                        "google_scholar_name": logged_in_user.google_scholar_name,
+                                        "researchgate_name": logged_in_user.researchgate_name,
+                                        "job": user_job.name
+                                        }
+                return make_response(jsonify(account_information), 200)
+            else:
+                return make_response(jsonify({"error" : "The user is not found."}), 404)
 
 @auth_system_ns.route("/user")
 class UserAPI(Resource):
@@ -135,6 +173,7 @@ class UserAPI(Resource):
             # If it fails, an error is raised.
             try:
                 existing_user = User.query.filter_by(id=form.user_id.data).first()
+                user_job = Jobs.query.filter(Jobs.id == existing_user.job_id).first()
             except:
                 return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
             else:
@@ -143,49 +182,22 @@ class UserAPI(Resource):
                 # If not, an error is raised.
                 if existing_user is not None:
                     # DO NOT FORGET TO WRITE CODE FOR PRIVATE ACCOUNTS
-                    account_information = {
-                                            "name": existing_user.name,
-                                            "surname": existing_user.surname,
-                                            "google_scholar_name": existing_user.google_scholar_name,
-                                            "researchgate_name": existing_user.researchgate_name
-                                            }
+                    account_information = { 
+                                        "id": existing_user.id,
+                                        "name": existing_user.name,
+                                        "surname": existing_user.surname,
+                                        "rate": existing_user.rate,
+                                        "profile_photo": existing_user.profile_photo,
+                                        "e_mail": existing_user.e_mail,
+                                        "google_scholar_name": existing_user.google_scholar_name,
+                                        "researchgate_name": existing_user.researchgate_name,
+                                        "job": user_job.name
+                                        }
                     return make_response(jsonify(account_information), 200)
                 else:
                     return make_response(jsonify({"error" : "The user is not found."}), 404)
         else:
             return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
-
-
-    # GET request (for the logged-in user to get their own user information)
-    @api.expect(get_self_parser)
-    @api.doc(responses={
-                200: "User has been found.",
-                404: "The user is not found.",
-                500: "The server is not connected to the database."
-            })
-    @login_required
-    def get(user_id, self):
-        # Tries to connect to the database.
-        # If it fails, an error is raised.
-        try:
-            logged_in_user = User.query.filter_by(id=user_id).first()
-        except:
-            return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
-        else:
-            # Checks whether there is an already existing user in the database with the given user ID.
-            # If yes, user information is returned.
-            # If not, an error is raised.
-            if logged_in_user is not None:
-                account_information = {
-                                        "name": logged_in_user.name,
-                                        "surname": logged_in_user.surname,
-                                        "google_scholar_name": logged_in_user.google_scholar_name,
-                                        "researchgate_name": logged_in_user.researchgate_name
-                                        }
-                return make_response(jsonify(account_information), 200)
-            else:
-                return make_response(jsonify({"error" : "The user is not found."}), 404)
-
 
     # POST request
     @api.expect(create_user_parser)
@@ -249,7 +261,7 @@ class UserAPI(Resource):
                     # If it fails, it does not raise an error.
                     # -as research information is scheduled to be fetched everyday.-
                     try:
-                        ResearchInfoFetch.update_research_info(existing_user.id)
+                        ResearchInfoFetch.update_research_info(new_user.id)
                     except:
                         pass
 
@@ -260,7 +272,7 @@ class UserAPI(Resource):
                         send_email(
                                     recipient_email=new_user.e_mail,
                                     subject="Activate Your Platon Account",
-                                    message_body='''Please activate your Platon account by clicking the activation link below.\n\nDo not forget to activate your account today, the link expires in one day!''',
+                                    message_body="Please activate your Platon account by clicking the activation link below.\nDo not forget to activate your account today, the link expires in one day!\nToken: {}".format(account_activation_token),
                                     message_link="{}/activate_account?token={}".format(app.config["FRONTEND_HOSTNAME"],account_activation_token)
                                     )
                     except:
@@ -293,7 +305,7 @@ class UserAPI(Resource):
             # Tries to connect to the database.
             # If it fails, an error is raised.
             try:
-                existing_user = User.query.filter_by(id=user_id).first()
+                existing_user = User.query.filter_by(id=user_id)
             except:
                 return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
             else:
@@ -317,10 +329,11 @@ class UserAPI(Resource):
 
                         # Replaces the "job" in the form data with its ID.
                         form.data["job"] = new_user_job.id
+                        new_attributes = {}
                         for key, value in form.data.items():
                             if value:
-                                setattr(existing_user, key, value)
-                        db.session.add(existing_user)
+                                new_attributes[key] = value
+                        existing_user.update(new_attributes)
                         db.session.commit()
                     except:
                         return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
@@ -329,10 +342,10 @@ class UserAPI(Resource):
                     # If it fails, it does not raise an error.
                     # -as research information is scheduled to be fetched everyday.-
                     try:
-                        ResearchInfoFetch.update_research_info(existing_user.id)
+                        ResearchInfoFetch.update_research_info(existing_user.first().id)
                     except:
-                        pass
-                    
+                        pass  
+                   
                     return make_response(jsonify({"message" : "Account information has been successfully updated."}), 200)
                 else:
                     return make_response(jsonify({"error" : "The user is not found."}), 404)

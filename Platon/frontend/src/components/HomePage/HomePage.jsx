@@ -7,6 +7,7 @@ import 'moment/locale/zh-cn';
 import { Layout } from 'antd';
 import Sider from './Sider'
 import colors from "../../utils/colors";
+import NavBar from '../NavBar/NavBar';
 
 const { Header,Footer } = Layout;
 
@@ -62,7 +63,7 @@ class HomePage extends React.Component {
             background : colors.primaryDark
         }}>
             <Layout>
-                <AppBar/>
+                <NavBar/>
             </Layout>
             <Layout>
                 <Layout

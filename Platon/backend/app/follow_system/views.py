@@ -41,14 +41,14 @@ class GetFollowingsAPI(Resource):
             if followSearch is []:
                 return make_response(jsonify({'error': 'User not found'}), 404)
 
-            mylist = []
+            following_users = []
             for follow in followSearch:
-                following_user = User.query.filter(User.id == follow.following_id).first()
-                mylist.append({'id': following_user.id, 'name': following_user.name, 'surname': following_user.surname,
-                               'e_mail': following_user.e_mail, 'rate': following_user.rate,
-                               'is_private': following_user.is_private})
+                following_users.append(User.query.filter(User.id == follow.following_id).first())
 
-            return make_response(jsonify(mylist), 200)
+            return make_response(jsonify({'followings': [
+                {'id': following_user.id, 'name': following_user.name, 'surname': following_user.surname,
+                 'e_mail': following_user.e_mail, 'rate': following_user.rate,
+                 'is_private': following_user.is_private} for following_user in following_users]}), 200)
 
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
@@ -78,14 +78,14 @@ class GetFollowersAPI(Resource):
             if followSearch is []:
                 return make_response(jsonify({'error': 'User not found'}), 404)
 
-            mylist = []
+            follower_users = []
             for follow in followSearch:
-                follower_user = User.query.filter(User.id == follow.follower_id).first()
-                mylist.append({'id': follower_user.id, 'name': follower_user.name, 'surname': follower_user.surname,
-                               'e_mail': follower_user.e_mail, 'rate': follower_user.rate,
-                               'is_private': follower_user.is_private})
+                follower_users.append(User.query.filter(User.id == follow.follower_id).first())
 
-            return make_response(jsonify(mylist), 200)
+            return make_response(jsonify({'followers': [
+                {'id': follower_user.id, 'name': follower_user.name, 'surname': follower_user.surname,
+                 'e_mail': follower_user.e_mail, 'rate': follower_user.rate,
+                 'is_private': follower_user.is_private} for follower_user in follower_users]}), 200)
 
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
@@ -121,14 +121,14 @@ class FollowRequestAPI(Resource):
             if followSearch is []:
                 return make_response(jsonify({'error': 'No Follow Request Found'}), 404)
 
-            mylist = []
+            follower_users = []
             for follow in followSearch:
-                follower_user = User.query.filter(User.id == follow.follower_id).first()
-                mylist.append({'id': follower_user.id, 'name': follower_user.name, 'surname': follower_user.surname,
-                               'e_mail': follower_user.e_mail, 'rate': follower_user.rate,
-                               'is_private': follower_user.is_private})
+                follower_users.append(User.query.filter(User.id == follow.follower_id).first())
 
-            return make_response(jsonify(mylist), 200)
+            return make_response(jsonify({'follow_requests': [
+                {'id': follower_user.id, 'name': follower_user.name, 'surname': follower_user.surname,
+                 'e_mail': follower_user.e_mail, 'rate': follower_user.rate,
+                 'is_private': follower_user.is_private} for follower_user in follower_users]}), 200)
 
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
@@ -156,27 +156,33 @@ class FollowRequestAPI(Resource):
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
-            if following_user in None:
+            if following_user is None:
                 return make_response(jsonify({'error': 'User not found'}), 400)
                 
             follow_record = ""
             if following_user.is_private:
                 # Create FollowRequest record if the following user has private profile.
                 follow_record = FollowRequests(form.follower_id.data, form.following_id.data)
+                logged_in_user = User.query.filter(User.id == user_id).first()
+                text = "{} sent you a follow request".format(logged_in_user.name + " " + logged_in_user.surname)
+                NotificationManager.add_notification(form.following_id.data,[logged_in_user.id],text)
             else:
                 # Create Follow record if the following user has public profile.
                 follow_record = Follow(form.follower_id.data, form.following_id.data)
-                # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                # Add notification to all user that follows the logged in user
                 try:
-                    logged_in_user = User.query.filter(User.id == user_id)
+                    logged_in_user = User.query.filter(User.id == user_id).first()
+                    text = "{} started to following you".format(logged_in_user.name + " " + logged_in_user.surname)
+                    NotificationManager.add_notification(form.following_id.data,[logged_in_user.id],text)
+                    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    # Add notification to all user that follows the logged in user
                     following_users = Follow.query.filter(Follow.following_id == user_id).all()
                     for user in following_users:
                         text = "{} started to following {}".format(logged_in_user.name + " " + logged_in_user.surname
-                                                                    ,following_user.name + " " + following_user.surname)
+                                                                        ,following_user.name + " " + following_user.surname)
                         NotificationManager.add_notification(user.follower_id,[user_id],text)
                 except:
                     return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
                 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             try:
                 db.session.add(follow_record)  # Creating a new database entry.
@@ -185,7 +191,6 @@ class FollowRequestAPI(Resource):
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
             return make_response(jsonify({'msg': 'Follow Request is successfully added'}), 200)
-
 
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
@@ -233,8 +238,8 @@ class FollowRequestAPI(Resource):
                 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 # Add notification to all user that follows the logged in user
                 try:
-                    follower_user = User.query.filter(User.id == follow_request.follower_id)
-                    following_user = User.query.filter(User.id == follow_request.following_id)
+                    follower_user = User.query.filter(User.id == follow_request.follower_id).first()
+                    following_user = User.query.filter(User.id == follow_request.following_id).first()
                     following_users = Follow.query.filter(Follow.following_id == follower_user.id).all()
                     for user in following_users:
                         text = "{} started to following {}".format(follower_user.name + " " + follower_user.surname
