@@ -42,7 +42,18 @@ interface ApiInterface {
     fun getResearches(@Query("user_id") userId: Int,
                       @Header("auth_token") auth_token: String ) : Observable<ResearchResponse>?
 
-
+    @FormUrlEncoded
+    @PUT("api/auth_system/user")
+    fun editUserInfo(@Field("name") name:String?,
+                     @Field("surname") surname:String?,
+                     @Field("job") job:String?,
+                     @Field("is_valid") is_valid:Boolean?,
+                     @Field("is_private") is_private:Boolean?,
+                     @Field("profile_photo") profilePhoto:String?,
+                     @Field("google_scholar_name") google_scholar_name:String?,
+                     @Field("researchgate_name") researchgate_name:String?,
+                     @Header("auth_token") auth_token :String
+    ) :Observable<JsonObject>?
 
 
 }
