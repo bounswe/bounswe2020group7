@@ -61,13 +61,17 @@ class EditProfile extends Component {
       researchgate_name: "",
       showSuccess: false,
       fieldEmptyError: false,
-      user: null
+      user: null,
+      profileId: null,
      }
   }
 
   componentDidMount(){
     const token = localStorage.getItem("jwtToken");
     const decoded = jwt_decode(token);
+    this.setState({
+      profileId: decoded.id
+    })
     requestService.getUser(decoded.id).then((response) => {
       this.setState({
         user: response.data,
@@ -170,7 +174,7 @@ class EditProfile extends Component {
         <Container className = "ProfilePageContainer">
         <Row className="mb-3 justify-content-center">
                 <Col sm={6}>
-                    <Link to='profile'>
+                    <Link to={`/${this.state.profileId}`}>
                         Back to profile
                     </Link>
                 </Col>
