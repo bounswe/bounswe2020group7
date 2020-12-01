@@ -210,7 +210,7 @@ class ProfilePage extends React.Component {
                   </p>
                 </Col>
               </Row>
-              <Link to = 'editProfile'>
+              <Link to = {`/${this.props.match.params.profileId}/edit`}>
               <Button
                 className="ProfileFollowButton"
                 variant="primary"
