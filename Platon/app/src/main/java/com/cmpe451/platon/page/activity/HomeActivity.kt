@@ -10,9 +10,11 @@ import android.widget.Button
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
@@ -22,9 +24,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.SearchElementsAdapter
 import com.cmpe451.platon.core.BaseActivity
-import com.cmpe451.platon.page.fragment.home.view.HomeFragmentDirections
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.cmpe451.platon.databinding.ActivityHomeBinding
+import com.cmpe451.platon.page.fragment.login.LoginViewModel
+import com.cmpe451.platon.page.fragment.profilepage.presenter.ProfilePageViewModel
 
 class HomeActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickListener {
 
@@ -32,18 +35,21 @@ class HomeActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickList
     lateinit var navController: NavController
     val myDataset = ArrayList<String>()
     private lateinit var searchRecyclerView: RecyclerView
-
+    var token:String? = null
     lateinit var binding : ActivityHomeBinding
 
-    private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener {
-        item ->
+    private val mProfilePageViewModel: ProfilePageViewModel by viewModels()
 
-        item.onNavDestinationSelected(navController) || true
+
+    private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener {
+        item -> item.onNavDestinationSelected(navController)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_Platon)
         super.onCreate(savedInstanceState)
+
+        token = intent.extras?.get("token").toString()
 
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -66,6 +72,14 @@ class HomeActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickList
         searchRecyclerView.adapter = SearchElementsAdapter(myDataset,this, this)
         searchRecyclerView.layoutManager = LinearLayoutManager(this)
         (searchRecyclerView.adapter as SearchElementsAdapter).notifyDataSetChanged()
+
+
+        if (token != null){
+            mProfilePageViewModel.fetchUser(token!!)
+        }else{
+            finish()
+        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

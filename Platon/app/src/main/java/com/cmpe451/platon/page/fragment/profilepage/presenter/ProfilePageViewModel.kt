@@ -3,6 +3,7 @@ package com.cmpe451.platon.page.fragment.profilepage.presenter
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmpe451.platon.networkmodels.models.Research
 import com.cmpe451.platon.networkmodels.models.User
@@ -10,21 +11,24 @@ import com.cmpe451.platon.page.fragment.profilepage.model.ProfilePageRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class ProfilePageViewModel(application: Application): AndroidViewModel(application) {
+class ProfilePageViewModel: ViewModel() {
 
-    //val getResearches: LiveData<List<Research>>
-    //val getUsers: LiveData<List<User>>
+
+    var getUser:LiveData<User>
+    val getResearches: LiveData<List<Research>>
     private var repository: ProfilePageRepository = ProfilePageRepository()
 
     init {
-        //getResearches = repository.getResearches
-        //getUsers = repository.getUsers
+        getUser = repository.getUser
+        getResearches = repository.getResearches
     }
 
-    fun insertResearch(research: Research){
-        viewModelScope.launch(Dispatchers.IO){
-            //repository.insert(research)
+    fun fetchUser(token:String?){
+        if(token != null){
+            repository.getUser(token)
         }
+
     }
 
-}
+
+    }

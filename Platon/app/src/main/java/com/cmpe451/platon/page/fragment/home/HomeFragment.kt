@@ -1,4 +1,4 @@
-package com.cmpe451.platon.page.fragment.home.view
+package com.cmpe451.platon.page.fragment.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,6 +6,8 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
@@ -17,6 +19,7 @@ import com.cmpe451.platon.databinding.ActivityStreamCellBinding
 import com.cmpe451.platon.databinding.FragmentHomeBinding
 import com.cmpe451.platon.databinding.TrendProjectCellBinding
 import com.cmpe451.platon.databinding.UpcomingEventCellBinding
+import com.cmpe451.platon.networkmodels.models.User
 import com.cmpe451.platon.util.Definitions
 
 class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonClickListener, UpcomingEventsAdapter.UpcomingButtonClickListener, ActivityStreamAdapter.ActivityStreamButtonClickListener {
@@ -25,6 +28,7 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
     private lateinit var upcomingEventsRecyclerView: RecyclerView
     private lateinit var activityStreamRecyclerView: RecyclerView
     private lateinit var binding: FragmentHomeBinding
+    private val mHomeViewModel: HomeViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,41 +45,35 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViews(view)
+        initViews()
         setListeners()
     }
 
 
 
-    private fun initViews(root: View) {
-        val myTrendingProject: ArrayList<Definitions.TrendingProject>? = null
+    private fun initViews() {
+        val myTrendingProject: ArrayList<Definitions.TrendingProject> = mHomeViewModel.getTrendingProjects()
+        val myUpcomingEvents: ArrayList<Definitions.UpcomingEvent> = mHomeViewModel.getUpcomingEvents()
+        val myActivities: ArrayList<Definitions.ActivityStream> = mHomeViewModel.getActivities()
 
-        val myUpcomingEvents: ArrayList<Definitions.UpcomingEvent>? = null
+        trendingProjectsRecyclerView = binding.homeTrendingProjectsRecyclerView
+        trendingProjectsRecyclerView.adapter = TrendingProjectsAdapter(myTrendingProject, requireContext(), this)
+        trendingProjectsRecyclerView.layoutManager = LinearLayoutManager(context)
 
-        val myActivities:ArrayList<Definitions.ActivityStream>? = null
+        upcomingEventsRecyclerView = binding.homeUpcomingEventsRecyclerView
+        upcomingEventsRecyclerView.adapter = UpcomingEventsAdapter(myUpcomingEvents,requireContext(), this)
+        upcomingEventsRecyclerView.layoutManager = LinearLayoutManager(context,
+            LinearLayoutManager.HORIZONTAL, false)
 
-        if (myTrendingProject != null){
-            trendingProjectsRecyclerView = binding.homeTrendingProjectsRecyclerView
-            trendingProjectsRecyclerView.adapter = TrendingProjectsAdapter(myTrendingProject, requireContext(), this)
-            trendingProjectsRecyclerView.layoutManager = LinearLayoutManager(context)
-        }
-        if (myUpcomingEvents != null){
-            upcomingEventsRecyclerView = binding.homeUpcomingEventsRecyclerView
-            upcomingEventsRecyclerView.adapter = UpcomingEventsAdapter(myUpcomingEvents,requireContext(), this)
-            upcomingEventsRecyclerView.layoutManager = LinearLayoutManager(context,
-                LinearLayoutManager.HORIZONTAL, false)
-        }
-        if (myActivities != null){
-            activityStreamRecyclerView = binding.homeActivityStreamRecyclerView
-            activityStreamRecyclerView.adapter = ActivityStreamAdapter(myActivities, requireContext(), this)
-            activityStreamRecyclerView.layoutManager = LinearLayoutManager(context)
-        }
-
+        activityStreamRecyclerView = binding.homeActivityStreamRecyclerView
+        activityStreamRecyclerView.adapter = ActivityStreamAdapter(myActivities, requireContext(), this)
+        activityStreamRecyclerView.layoutManager = LinearLayoutManager(context)
     }
 
 
     private fun setListeners() {
-        //password.addTextChangedListener(textWatcher)
+
+
     }
 
 

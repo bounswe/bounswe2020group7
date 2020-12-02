@@ -1,6 +1,8 @@
-package com.cmpe451.platon.page.fragment.editprofile.model
+package com.cmpe451.platon.page.fragment.editprofile
 
 import android.content.SharedPreferences
+import android.widget.Toast
+import androidx.lifecycle.MutableLiveData
 import com.cmpe451.platon.util.RetrofitClient
 import com.cmpe451.platon.util.Webservice
 import com.google.gson.JsonObject
@@ -12,7 +14,10 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
 
-class EditProfileRepository(val sharedPreferences: SharedPreferences) {
+class EditProfileRepository() {
+
+    var responseCode : MutableLiveData<Int> = MutableLiveData()
+
     fun editUser(name:String?,surname:String?,
                  job:String?, isPrivate:Boolean?,
                  profilePhoto:String?,
@@ -21,12 +26,11 @@ class EditProfileRepository(val sharedPreferences: SharedPreferences) {
 
 
         val service = RetrofitClient.getService()
-
         val call = service.editUserInfo(name, surname, job, true, isPrivate, profilePhoto, google_scholar_name, researchgate_name, authToken)!!
 
         call.enqueue(object :Callback<JsonObject>{
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-
+                responseCode.value = response.code()
             }
 
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
@@ -35,4 +39,5 @@ class EditProfileRepository(val sharedPreferences: SharedPreferences) {
 
         })
     }
+
 }

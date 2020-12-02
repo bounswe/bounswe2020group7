@@ -1,36 +1,23 @@
-package com.cmpe451.platon.page.fragment.login.presenter
+package com.cmpe451.platon.page.fragment.login
 
-import android.app.Application
 import android.util.Patterns
-import android.widget.Button
-import android.widget.CheckBox
 import android.widget.EditText
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.viewModelScope
-import com.cmpe451.platon.networkmodels.models.User
-import com.cmpe451.platon.page.fragment.login.model.LoginRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import androidx.lifecycle.ViewModel
 
-class LoginViewModel (application: Application): AndroidViewModel(application) {
+class LoginViewModel: ViewModel() {
 
-    var getUser: LiveData<User>
     var getToken:LiveData<String>
+    var getResponseCode:LiveData<Int>
+
     private var repository: LoginRepository = LoginRepository()
 
     init {
-        getUser = repository.getUser
         getToken = repository.getToken
+        getResponseCode = repository.getResponseCode
     }
 
-    fun insertUser(user: User){
-        viewModelScope.launch(Dispatchers.IO){
-            //repository.insert(user)
-        }
-    }
-
-    fun tryToLogin(loginBtn: Button, emailEt: EditText, passEt: EditText, rememberChk: CheckBox) {
+    fun tryToLogin(emailEt: EditText, passEt: EditText) {
         // define flag of problem
         var flag = false
 
@@ -51,7 +38,6 @@ class LoginViewModel (application: Application): AndroidViewModel(application) {
         // gather
         val mailStr = emailEt.text.toString().trim()
         val passStr = passEt.text.toString().trim()
-        val rememberBool = rememberChk.isChecked
 
         if (!flag){
             repository.tryToLogin(mailStr, passStr)

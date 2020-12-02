@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.cmpe451.platon.page.fragment.home.view.HomeFragment"
+        android:name="com.cmpe451.platon.page.fragment.home.HomeFragment"
         android:label="Home" >
         <action
             android:id="@+id/action_homeFragment_to_profilePageFragment"
@@ -28,7 +28,7 @@
     </fragment>
     <fragment
         android:id="@+id/editProfileFragment"
-        android:name="com.cmpe451.platon.page.fragment.editprofile.view.EditProfileFragment"
+        android:name="com.cmpe451.platon.page.fragment.editprofile.EditProfileFragment"
         android:label="Edit" >
     </fragment>
     <fragment

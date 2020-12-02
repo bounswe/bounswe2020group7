@@ -1,5 +1,6 @@
 package com.cmpe451.platon.util
 
+import com.cmpe451.platon.networkmodels.models.User
 import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.http.*
@@ -40,7 +41,7 @@ interface Webservice {
                      @Field("job") job: String) : Call<JsonObject>?
 
     @GET("api/auth_system/self")
-    fun getUserInfo(@Header("auth_token") auth_token: String ) : Call<JsonObject>?
+    fun getUserInfo(@Header("auth_token") auth_token: String ) : Call<User>?
 
     @GET("api/profile/research_information")
     fun getResearches(@Query("user_id") userId: Int,

@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,13 +19,15 @@ import com.cmpe451.platon.adapter.UserProjectsRecyclerViewAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentProfilePageBinding
 import com.cmpe451.platon.databinding.UserProjectsCellBinding
+import com.cmpe451.platon.page.fragment.home.HomeViewModel
 import com.cmpe451.platon.page.fragment.profilepage.presenter.ProfilePageViewModel
 import com.cmpe451.platon.util.Definitions
 
 class ProfilePageFragment : Fragment(), UserProjectsRecyclerViewAdapter.UserProjectButtonClickListener {
 
     private lateinit var binding: FragmentProfilePageBinding
-    lateinit var mProfilePageViewModel: ProfilePageViewModel
+    private val mProfilePageViewModel: ProfilePageViewModel by activityViewModels()
+    private val mHomeViewModel: HomeViewModel by activityViewModels()
 
     private lateinit var userProjectsRecyclerView: RecyclerView
     private lateinit var userProjectsAdapter: UserProjectsRecyclerViewAdapter
@@ -37,9 +41,6 @@ class ProfilePageFragment : Fragment(), UserProjectsRecyclerViewAdapter.UserProj
         // Inflate the layout for this fragment
         binding = FragmentProfilePageBinding.inflate(inflater)
 
-        //init viewModels
-        mProfilePageViewModel= ViewModelProvider(this).get(ProfilePageViewModel::class.java)
-
         setHasOptionsMenu(true)
         return binding.root
     }
@@ -49,16 +50,27 @@ class ProfilePageFragment : Fragment(), UserProjectsRecyclerViewAdapter.UserProj
         //initializePresenter()
         initializeAdapter()
 
-        /*
-        mProfilePageViewModel.getUsers.observe(viewLifecycleOwner, { t ->
-            if(t != null && t.isNotEmpty()){
+
+        if(mProfilePageViewModel.getUser.value != null){
+            val x = ArrayList<Map<String, String>>()
+            x.add(mapOf(Pair("title", "E-mail"), Pair("info", mProfilePageViewModel.getUser.value!!.e_mail)))
+            x.add(mapOf(Pair("title", "Job"), Pair("info", mProfilePageViewModel.getUser.value!!.job)))
+            x.add(mapOf(Pair("title", "Rating"), Pair("info", mProfilePageViewModel.getUser.value!!.rate.toString())))
+            informationsAdapter.submitList(x)
+
+            binding.textNameSurname.text = mProfilePageViewModel.getUser.value!!.name + " " + mProfilePageViewModel.getUser.value!!.surname
+
+        }
+
+        mProfilePageViewModel.getUser.observe(viewLifecycleOwner, { t ->
+            if(t != null){
                 val x = ArrayList<Map<String, String>>()
-                x.add(mapOf(Pair("title", "E-mail"), Pair("info", t[0].e_mail)))
-                x.add(mapOf(Pair("title", "Job"), Pair("info", t[0].job)))
-                x.add(mapOf(Pair("title", "Rating"), Pair("info", t[0].rate.toString())))
+                x.add(mapOf(Pair("title", "E-mail"), Pair("info", t.e_mail)))
+                x.add(mapOf(Pair("title", "Job"), Pair("info", t.job)))
+                x.add(mapOf(Pair("title", "Rating"), Pair("info", t.rate.toString())))
                 informationsAdapter.submitList(x)
 
-                binding.textNameSurname.text = t[0].name + " " + t[0].surname
+                binding.textNameSurname.text = t.name + " " + t.surname
 
             }
         })
@@ -69,8 +81,6 @@ class ProfilePageFragment : Fragment(), UserProjectsRecyclerViewAdapter.UserProj
             }
             }
         )
-
-         */
 
         setListeners()
     }
@@ -103,6 +113,8 @@ class ProfilePageFragment : Fragment(), UserProjectsRecyclerViewAdapter.UserProj
         binding.buttonEditProfile.setOnClickListener {
             findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToEditProfileFragment())
         }
+
+
 
         //password.addTextChangedListener(textWatcher)
     }
