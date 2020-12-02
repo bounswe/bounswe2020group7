@@ -1,4 +1,4 @@
-.Landing{
+.ProfilePageLanding{
     min-height: 100vh;
     height: 100%;
     background-color: #313638;
@@ -44,7 +44,7 @@
     padding-top: 5px;
     color: #E0DFD5;
     font-family: 'Rubik', sans-serif !important;
-    font-size: 20px; 
+    font-size: 20px;
     text-align: center;
 }
 
@@ -60,4 +60,12 @@
 
 .MuiTabs-flexContainer{
     background-color: #313638 !important;
+}
+
+.ProfilePageSpinner{
+    margin: 20vh 0px;
+    height: 50vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

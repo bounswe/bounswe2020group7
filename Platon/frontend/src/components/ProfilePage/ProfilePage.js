@@ -25,7 +25,7 @@ import Avatar from '@material-ui/core/Avatar';
 import colors from "../../utils/colors";
 import config from "../../utils/config";
 import axios from 'axios'
-
+import Spinner from '../Spinner/Spinner'
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -79,12 +79,14 @@ class ProfilePage extends React.Component {
       value: 0,
       job: "",
       renderTrigger: false,
+      isLoading: true,
     };
   }
   componentDidMount() {
     const token = localStorage.getItem("jwtToken");
     const decoded = jwt_decode(token);
     const profileId = this.props.match.params.profileId
+    Promise.all([
     requestService.followings(profileId).then((response) => {
       this.setState({
         followings: response.data.followings,
@@ -96,24 +98,25 @@ class ProfilePage extends React.Component {
       this.setState({
         followings_id_arr: temp_followings_id_arr
       })
-    });
+    }),
     requestService.followers(profileId).then((response) => {
       this.setState({
         followers: response.data.followers,
         selectedFollowButton: Array(response.data.followers.length).fill("Follow"),
       });
 
-    });
+    }),
     requestService.getUser(profileId).then((response) => {
       this.setState({
         user: response.data,
       });
-    });
+    }),
     requestService.getResearchs(profileId).then((response) => {
       this.setState({
         researchs: response.data.research_info,
       });
-    });
+    }),
+  ]).then(() => this.setState({isLoading: false}));
   }
   handlerFollow = (index, following_id) =>{
     /*
@@ -172,11 +175,12 @@ class ProfilePage extends React.Component {
 
     const { classes } = this.props;
     return (
-      <div className="Landing">
+      <div className="ProfilePageLanding">
         <div className="AppBar">
           <NavBar />
         </div>
-
+        { this.state.isLoading ? <div className="ProfilePageSpinner"><Spinner/></div> :
+        <div>
         <Container className="ProfilePageContainer">
           <h2 className="GeneralLargeFont">My Profile</h2>
           <hr className="ProfilePageLine" />
@@ -229,7 +233,6 @@ class ProfilePage extends React.Component {
                 />
 
               </Row>
-              <h2>ID: {this.props.match.params.profileId}</h2>
             </Col>
           </Row>
         </Container>
@@ -319,6 +322,8 @@ class ProfilePage extends React.Component {
             </TabPanel>
           </div>
         </Container>
+        </div>
+  }
       </div>
     );
   }
