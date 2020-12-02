@@ -5,36 +5,45 @@ package com.cmpe451.platon.page.fragment.forgotpass.model
  */
 
 import android.content.SharedPreferences
-import com.cmpe451.platon.util.ApiClient
-import com.cmpe451.platon.util.ApiInterface
+import com.cmpe451.platon.util.RetrofitClient
 import com.google.gson.JsonObject
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observer
 import io.reactivex.rxjava3.schedulers.Schedulers
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class ForgotPasswordRepository(val sharedPreferences: SharedPreferences) {
-    fun postPasswordForgotten(observer : Observer<JsonObject> ,  mail: String) {
-        val api = ApiClient()
-        api.initRetrofit()
-        val service = api.getRetrofit().create(ApiInterface::class.java)
-
+    fun postPasswordForgotten( mail: String) {
+        val service = RetrofitClient.getService()
         val call = service.resetPasswordSendKeycode(mail)!!
 
-        call.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(observer)
+        call.enqueue(object : Callback<JsonObject>{
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+            }
+
+
+        })
     }
 
-    fun postResetPassword(observer : Observer<JsonObject> , token: String, pass1: String, pass2: String) {
-        val api = ApiClient()
-        api.initRetrofit()
-        val service = api.getRetrofit().create(ApiInterface::class.java)
+    fun postResetPassword(token: String, pass1: String, pass2: String) {
+        val service = RetrofitClient.getService()
 
         val call = service.resetPassword(pass1, pass2, token)!!
 
 
-        call.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(observer)
+        call.enqueue(object : Callback<JsonObject>{
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+            }
+
+
+        })
     }
 }

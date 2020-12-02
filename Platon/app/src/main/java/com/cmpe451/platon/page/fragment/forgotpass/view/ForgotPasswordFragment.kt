@@ -13,19 +13,14 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import com.cmpe451.platon.R
 import com.cmpe451.platon.databinding.FragmentForgotPasswordBinding
-import com.cmpe451.platon.page.activity.LoginActivity
-import com.cmpe451.platon.page.fragment.forgotpass.presenter.ForgotPasswordPresenter
-import com.cmpe451.platon.page.fragment.forgotpass.model.ForgotPasswordRepository
-import com.cmpe451.platon.page.fragment.forgotpass.contract.ForgotPasswordContract
 
 /**
  * Forgot Password's fragment class
  * If user forgets his/her password, s/he will be viewing this fragment class.
  */
-class ForgotPasswordFragment : Fragment(), ForgotPasswordContract.View {
+class ForgotPasswordFragment : Fragment() {
 
     // define
-    private lateinit var presenter: ForgotPasswordContract.Presenter
     private lateinit var binding: FragmentForgotPasswordBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,26 +40,17 @@ class ForgotPasswordFragment : Fragment(), ForgotPasswordContract.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        initializePresenter()
         setListeners()
-    }
-
-
-    override fun initializePresenter() {
-        val sharedPreferences = requireContext().getSharedPreferences("token_file", 0)
-        val repository = ForgotPasswordRepository(sharedPreferences)
-        presenter = ForgotPasswordPresenter(this, repository, sharedPreferences, (activity as LoginActivity).navController)
     }
 
 
     private fun setListeners() {
         binding.forgotPassBtn.setOnClickListener {
-            presenter.onForgotPassClicked(binding.emailEt, binding.forgotPassBtn, binding.newPass1Et, binding.newPass2Et, binding.resetPassBtn, binding.tokenEt)
+            //presenter.onForgotPassClicked(binding.emailEt, binding.forgotPassBtn, binding.newPass1Et, binding.newPass2Et, binding.resetPassBtn, binding.tokenEt)
         }
 
         binding.resetPassBtn.setOnClickListener {
-            presenter.onResetPasswordClicked(binding.resetPassBtn, binding.newPass1Et, binding.newPass2Et, binding.tokenEt)
+            //presenter.onResetPasswordClicked(binding.resetPassBtn, binding.newPass1Et, binding.newPass2Et, binding.tokenEt)
         }
 
         //password.addTextChangedListener(textWatcher)

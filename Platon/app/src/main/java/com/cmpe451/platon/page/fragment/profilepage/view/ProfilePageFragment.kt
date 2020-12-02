@@ -7,47 +7,71 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
-import com.cmpe451.platon.databinding.FragmentProfilePageBinding
-import com.cmpe451.platon.page.activity.HomeActivity
-import com.cmpe451.platon.page.fragment.profilepage.contract.ProfilePageContract
-import com.cmpe451.platon.page.fragment.profilepage.model.ProfilePageRepository
-import com.cmpe451.platon.page.fragment.profilepage.presenter.ProfilePagePresenter
 import com.cmpe451.platon.adapter.ProfilePageRecyclerViewAdapter
 import com.cmpe451.platon.adapter.UserProjectsRecyclerViewAdapter
 import com.cmpe451.platon.core.BaseActivity
+import com.cmpe451.platon.databinding.FragmentProfilePageBinding
 import com.cmpe451.platon.databinding.UserProjectsCellBinding
-import com.cmpe451.platon.networkmodels.ResearchResponse
-import com.cmpe451.platon.networkmodels.UserInfoResponse
+import com.cmpe451.platon.page.fragment.profilepage.presenter.ProfilePageViewModel
 import com.cmpe451.platon.util.Definitions
 
-class ProfilePageFragment : Fragment(), ProfilePageContract.View, UserProjectsRecyclerViewAdapter.UserProjectButtonClickListener {
+class ProfilePageFragment : Fragment(), UserProjectsRecyclerViewAdapter.UserProjectButtonClickListener {
 
     private lateinit var binding: FragmentProfilePageBinding
-    private lateinit var presenter: ProfilePageContract.Presenter
-    private lateinit var details: ArrayList<MutableMap<String,String>>
-    private lateinit var user :UserInfoResponse
+    lateinit var mProfilePageViewModel: ProfilePageViewModel
+
     private lateinit var userProjectsRecyclerView: RecyclerView
     private lateinit var userProjectsAdapter: UserProjectsRecyclerViewAdapter
     private lateinit var informationsRecyclerView: RecyclerView
     private lateinit var informationsAdapter: ProfilePageRecyclerViewAdapter
 
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         binding = FragmentProfilePageBinding.inflate(inflater)
-        details = ArrayList()
+
+        //init viewModels
+        mProfilePageViewModel= ViewModelProvider(this).get(ProfilePageViewModel::class.java)
+
         setHasOptionsMenu(true)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initializePresenter()
+        //initializePresenter()
         initializeAdapter()
-        presenter.bringUser()
+
+        /*
+        mProfilePageViewModel.getUsers.observe(viewLifecycleOwner, { t ->
+            if(t != null && t.isNotEmpty()){
+                val x = ArrayList<Map<String, String>>()
+                x.add(mapOf(Pair("title", "E-mail"), Pair("info", t[0].e_mail)))
+                x.add(mapOf(Pair("title", "Job"), Pair("info", t[0].job)))
+                x.add(mapOf(Pair("title", "Rating"), Pair("info", t[0].rate.toString())))
+                informationsAdapter.submitList(x)
+
+                binding.textNameSurname.text = t[0].name + " " + t[0].surname
+
+            }
+        })
+
+        mProfilePageViewModel.getResearches.observe(viewLifecycleOwner, { t->
+            if(t != null && t.isNotEmpty()) {
+                userProjectsAdapter.submitElements(t)
+            }
+            }
+        )
+
+         */
+
         setListeners()
     }
 
@@ -64,22 +88,20 @@ class ProfilePageFragment : Fragment(), ProfilePageContract.View, UserProjectsRe
         informationsAdapter = ProfilePageRecyclerViewAdapter(ArrayList())
         informationsRecyclerView.adapter = informationsAdapter
         informationsRecyclerView.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL, false)
-
-
     }
 
     private fun setListeners() {
 
         binding.buttonFollowers.setOnClickListener {
-            presenter.onFollowersButtonClicked()
+           findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToFollowerFragment())
         }
 
         binding.buttonFollowing.setOnClickListener {
-            presenter.onFollowingButtonClicked()
+            findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToFollowFragment())
         }
 
         binding.buttonEditProfile.setOnClickListener {
-            presenter.onEditProfileButtonClicked(user.name, user.surname, user.job, false, user.profile_photo, user.google_scholar_name, user.researchgate_name)
+            findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToEditProfileFragment())
         }
 
         //password.addTextChangedListener(textWatcher)
@@ -99,109 +121,6 @@ class ProfilePageFragment : Fragment(), ProfilePageContract.View, UserProjectsRe
         menu.findItem(R.id.notification_btn)?.isVisible = false
     }
 
-    override fun researchesFetched(researchInfo: ResearchResponse) {
-        val ert = researchInfo
-        userProjectsAdapter.submitElements(researchInfo.research_info)
-    }
-
-    override fun fetchUser(userInfo: UserInfoResponse) {
-        user = userInfo
-        binding.textNameSurname.text = user.name + " " + user.surname
-        when(user.rate){
-            1.0 -> {
-                binding.firstStarYellow.visibility = View.VISIBLE
-                binding.secondStarYellow.visibility = View.GONE
-                binding.thirdStarYellow.visibility = View.GONE
-                binding.forthStarYellow.visibility = View.GONE
-                binding.fifthStarYellow.visibility = View.GONE
-                binding.firstGrayStar.visibility = View.VISIBLE
-                binding.secondGrayStar.visibility = View.VISIBLE
-                binding.thirdGrayStar.visibility = View.VISIBLE
-                binding.forthGrayStar.visibility = View.VISIBLE
-                binding.fifthGrayStar.visibility = View.GONE
-                binding.textRate.visibility = View.GONE
-            }
-            2.0 -> {
-                binding.firstStarYellow.visibility = View.VISIBLE
-                binding.secondStarYellow.visibility = View.VISIBLE
-                binding.thirdStarYellow.visibility = View.GONE
-                binding.forthStarYellow.visibility = View.GONE
-                binding.fifthStarYellow.visibility = View.GONE
-                binding.firstGrayStar.visibility = View.VISIBLE
-                binding.secondGrayStar.visibility = View.VISIBLE
-                binding.thirdGrayStar.visibility = View.VISIBLE
-                binding.forthGrayStar.visibility = View.GONE
-                binding.fifthGrayStar.visibility = View.GONE
-                binding.textRate.visibility = View.GONE
-            }
-            3.0 -> {
-                binding.firstStarYellow.visibility = View.VISIBLE
-                binding.secondStarYellow.visibility = View.VISIBLE
-                binding.thirdStarYellow.visibility = View.VISIBLE
-                binding.forthStarYellow.visibility = View.GONE
-                binding.fifthStarYellow.visibility = View.GONE
-                binding.firstGrayStar.visibility = View.VISIBLE
-                binding.secondGrayStar.visibility = View.VISIBLE
-                binding.thirdGrayStar.visibility = View.GONE
-                binding.forthGrayStar.visibility = View.GONE
-                binding.fifthGrayStar.visibility = View.GONE
-                binding.textRate.visibility = View.GONE
-            }
-            4.0 -> {
-                binding.firstStarYellow.visibility = View.VISIBLE
-                binding.secondStarYellow.visibility = View.VISIBLE
-                binding.thirdStarYellow.visibility = View.VISIBLE
-                binding.forthStarYellow.visibility = View.VISIBLE
-                binding.fifthStarYellow.visibility = View.GONE
-                binding.firstGrayStar.visibility = View.VISIBLE
-                binding.secondGrayStar.visibility = View.GONE
-                binding.thirdGrayStar.visibility = View.GONE
-                binding.forthGrayStar.visibility = View.GONE
-                binding.fifthGrayStar.visibility = View.GONE
-                binding.textRate.visibility = View.GONE
-            }
-            5.0 -> {
-                binding.firstStarYellow.visibility = View.VISIBLE
-                binding.secondStarYellow.visibility = View.VISIBLE
-                binding.thirdStarYellow.visibility = View.VISIBLE
-                binding.forthStarYellow.visibility = View.VISIBLE
-                binding.fifthStarYellow.visibility = View.VISIBLE
-                binding.firstGrayStar.visibility = View.GONE
-                binding.secondGrayStar.visibility = View.GONE
-                binding.thirdGrayStar.visibility = View.GONE
-                binding.forthGrayStar.visibility = View.GONE
-                binding.fifthGrayStar.visibility = View.GONE
-                binding.textRate.visibility = View.GONE
-
-            }
-            else -> binding.textRate.visibility = View.VISIBLE
-        }
-        val info = ArrayList<MutableMap<String,String>>()
-        if(user.e_mail != ""){
-            info.add(mutableMapOf("title" to "E-Mail Address", "info" to user.e_mail))
-        }
-        if(user.job != ""){
-            info.add(mutableMapOf("title" to "Job", "info" to user.job))
-        }
-        if(user.google_scholar_name != ""){
-            info.add(mutableMapOf("title" to "Google Scholar", "info"  to user.google_scholar_name))
-        }
-        if(user.researchgate_name != ""){
-            info.add(mutableMapOf("title" to "ResearchGate", "info"  to user.researchgate_name))
-        }
-        informationsAdapter.submitList(info)
-
-    }
-
-
-
-
-    override fun initializePresenter(){
-        val sharedPreferences = requireContext().getSharedPreferences("token_file", 0)
-        val repository = ProfilePageRepository(sharedPreferences)
-        presenter = ProfilePagePresenter(this, repository, sharedPreferences, (activity as HomeActivity).navController )
-
-    }
 
 
     override fun onUserProjectButtonClicked(binding: UserProjectsCellBinding, position: Int) {

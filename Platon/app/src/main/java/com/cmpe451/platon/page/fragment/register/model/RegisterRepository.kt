@@ -1,9 +1,7 @@
 package com.cmpe451.platon.page.fragment.register.model
 
 import android.content.SharedPreferences
-import android.util.Log
-import com.cmpe451.platon.util.ApiClient
-import com.cmpe451.platon.util.ApiInterface
+import com.cmpe451.platon.util.RetrofitClient
 import com.google.gson.JsonObject
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observer
@@ -15,16 +13,20 @@ import java.util.*
 
 class RegisterRepository(val sharedPreferences: SharedPreferences){
 
-    fun postRegister(observer:Observer<JsonObject> , firstName:String, lastName:String, mail:String, job:String, pass:String){
-
-        val api = ApiClient()
-        api.initRetrofit()
-        val service = api.getRetrofit().create(ApiInterface::class.java)
+    fun postRegister(firstName:String, lastName:String, mail:String, job:String, pass:String){
+        val service = RetrofitClient.getService()
 
         val call = service.makeRegister(mail, pass, firstName, lastName, job)!!
-        call.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(observer)
+        call.enqueue(object:Callback<JsonObject>{
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+
+        })
     }
 
 

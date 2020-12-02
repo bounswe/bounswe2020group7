@@ -11,15 +11,13 @@ import androidx.fragment.app.Fragment
 import com.cmpe451.platon.R
 import com.cmpe451.platon.databinding.FragmentEditProfileBinding
 import com.cmpe451.platon.page.activity.HomeActivity
-import com.cmpe451.platon.page.fragment.editprofile.contract.EditProfileContract
 import com.cmpe451.platon.page.fragment.editprofile.model.EditProfileRepository
 import com.cmpe451.platon.page.fragment.editprofile.presenter.EditProfilePresenter
 import com.cmpe451.platon.util.Definitions
 
-class EditProfileFragment : Fragment(), EditProfileContract.View {
+class EditProfileFragment : Fragment() {
 
     private lateinit var binding: FragmentEditProfileBinding
-    private lateinit var presenter: EditProfileContract.Presenter
     private lateinit var name:String
     private lateinit var surname:String
     private lateinit var job:String
@@ -40,7 +38,6 @@ class EditProfileFragment : Fragment(), EditProfileContract.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setListeners()
-        initializePresenter()
         setUserInfo()
     }
     private fun setListeners() {
@@ -65,20 +62,11 @@ class EditProfileFragment : Fragment(), EditProfileContract.View {
             if(!binding.researchGateTv.text.isNullOrEmpty()){
                 researchgate_name  = binding.researchGateTv.text.toString()
             }
-            presenter.onEditButtonClicked(name, surname,job, binding.privateSwitch.isChecked,null, google_scholar_name, researchgate_name)
+            //presenter.onEditButtonClicked(name, surname,job, binding.privateSwitch.isChecked,null, google_scholar_name, researchgate_name)
         }
     }
     private fun setUserInfo(){
-        arguments?.let {
-            val safeArgs = EditProfileFragmentArgs.fromBundle(it)
-            name = safeArgs.name
-            surname = safeArgs.surname
-            job = safeArgs.job
-            isPrivate = safeArgs.isPrivate
-            profilePhoto = safeArgs.profilePhoto
-            google = safeArgs.googleScholar
-            researchgate = safeArgs.researchGate
-        }
+
         binding.firstnameTv.setText(name)
         binding.lastnameTv.setText(surname)
         binding.jobTv.setText(job)
@@ -103,11 +91,4 @@ class EditProfileFragment : Fragment(), EditProfileContract.View {
         menu.findItem(R.id.notification_btn)?.isVisible = false
     }
 
-
-
-    override fun initializePresenter(){
-        val sharedPreferences = requireContext().getSharedPreferences("token_file", 0)
-        val repository = EditProfileRepository(sharedPreferences)
-        presenter = EditProfilePresenter(this, repository, sharedPreferences, (activity as HomeActivity).navController )
-    }
 }

@@ -6,25 +6,15 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.cmpe451.platon.R
 import com.cmpe451.platon.databinding.FragmentProfilePageOthersPrivateBinding
-import com.cmpe451.platon.networkmodels.UserInfoResponse
-import com.cmpe451.platon.page.activity.HomeActivity
-import com.cmpe451.platon.page.fragment.otherprofile.contract.OtherProfileContract
-import com.cmpe451.platon.page.fragment.otherprofile.model.OtherProfileRepository
-import com.cmpe451.platon.page.fragment.otherprofile.presenter.OtherProfilePresenter
-import com.cmpe451.platon.util.Definitions
 
-class OtherProfileFragment: Fragment(), OtherProfileContract.View {
+class OtherProfileFragment: Fragment() {
 
 
     private lateinit var binding: FragmentProfilePageOthersPrivateBinding
-    private lateinit var presenter: OtherProfileContract.Presenter
     private lateinit var details: ArrayList<MutableMap<String,String>>
-    private lateinit var user : UserInfoResponse
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -37,12 +27,10 @@ class OtherProfileFragment: Fragment(), OtherProfileContract.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setListeners()
-        initializePresenter()
-
         setUser()
     }
     private fun setUser(){
-        user = presenter.getUser()
+        /*user = presenter.getUser()
         binding.textNameSurname.text = user.name + " " + user.surname
         when(user.rate){
             1.0 -> {
@@ -113,9 +101,11 @@ class OtherProfileFragment: Fragment(), OtherProfileContract.View {
             }
             else -> binding.textRate.visibility = View.VISIBLE
         }
+
+         */
     }
     private fun setListeners() {
-
+    /*
         binding.buttonFollowers.setOnClickListener {
             presenter.onFollowersButtonClicked()
         }
@@ -137,6 +127,8 @@ class OtherProfileFragment: Fragment(), OtherProfileContract.View {
 
         }
 
+     */
+
         //password.addTextChangedListener(textWatcher)
     }
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -152,10 +144,6 @@ class OtherProfileFragment: Fragment(), OtherProfileContract.View {
         menu.findItem(R.id.search_btn)?.isVisible = false
         menu.findItem(R.id.notification_btn)?.isVisible = false
     }
-    override fun initializePresenter(){
-        val sharedPreferences = requireContext().getSharedPreferences("token_file", 0)
-        val repository = OtherProfileRepository(sharedPreferences)
-        presenter = OtherProfilePresenter(this, repository, sharedPreferences, (activity as HomeActivity).navController )
-    }
+
 
 }

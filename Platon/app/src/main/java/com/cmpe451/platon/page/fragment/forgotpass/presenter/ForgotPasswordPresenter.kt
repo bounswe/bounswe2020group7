@@ -6,32 +6,23 @@ package com.cmpe451.platon.page.fragment.forgotpass.presenter
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.os.Handler
-import android.os.HandlerThread
-import android.util.Log
 import android.util.Patterns
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
-import com.cmpe451.platon.core.BaseActivity
-import com.cmpe451.platon.page.fragment.forgotpass.contract.ForgotPasswordContract
 import com.cmpe451.platon.page.fragment.forgotpass.model.ForgotPasswordRepository
-import com.cmpe451.platon.page.fragment.register.view.RegisterFragment
 import com.cmpe451.platon.util.Definitions
 import com.google.gson.JsonObject
 import io.reactivex.rxjava3.core.Observer
 import io.reactivex.rxjava3.disposables.Disposable
 
-class ForgotPasswordPresenter(private var view: ForgotPasswordContract.View?,
-                              private var repository: ForgotPasswordRepository,
+class ForgotPasswordPresenter(private var repository: ForgotPasswordRepository,
                               private var sharedPreferences: SharedPreferences,
-                              private var navController: NavController) : ForgotPasswordContract.Presenter {
+                              private var navController: NavController) {
 
-    override fun onForgotPassClicked(email: EditText, forgot_btn:Button, pass1: EditText, pass2: EditText, reset_btn:Button, token:EditText) {
+    fun onForgotPassClicked(email: EditText, forgot_btn:Button, pass1: EditText, pass2: EditText, reset_btn:Button, token:EditText) {
 
         var flag = false
         if (email.text.isNullOrEmpty() || !Patterns.EMAIL_ADDRESS.matcher(
@@ -44,6 +35,7 @@ class ForgotPasswordPresenter(private var view: ForgotPasswordContract.View?,
 
         val mail = email.text.toString().trim()
 
+        /*
         val dialog = Definitions().createProgressBar((view as Fragment).activity as Context)
 
 
@@ -90,15 +82,15 @@ class ForgotPasswordPresenter(private var view: ForgotPasswordContract.View?,
             }
 
         }
-
+*/
 
         if (!flag) {
-            repository.postPasswordForgotten(observer, mail)
+            repository.postPasswordForgotten(mail)
         }
     }
 
 
-    override fun onResetPasswordClicked(reset_btn: Button, pass1: EditText, pass2: EditText, token: EditText) {
+    fun onResetPasswordClicked(reset_btn: Button, pass1: EditText, pass2: EditText, token: EditText) {
 
         var flag = false
 
@@ -125,7 +117,7 @@ class ForgotPasswordPresenter(private var view: ForgotPasswordContract.View?,
             pass2.error = "Passwords must match!"
             flag = true
         }
-
+        /*
         val dialog = Definitions().createProgressBar((view as Fragment).activity as Context)
 
 
@@ -167,24 +159,12 @@ class ForgotPasswordPresenter(private var view: ForgotPasswordContract.View?,
 
         }
 
-
+*/
         if (!flag){
-            repository.postResetPassword(observer, tokenStr, pass1Str, pass2Str)
+            repository.postResetPassword(tokenStr, pass1Str, pass2Str)
         }
 
     }
 
-
-    override fun onStart() {
-        TODO("Not yet implemented")
-    }
-
-    override fun onPause() {
-        TODO("Not yet implemented")
-    }
-
-    override fun onDestroy() {
-        this.view = null
-    }
 
 }

@@ -7,14 +7,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
 
-class ProfilePageRecyclerViewAdapter(private val dataSet: ArrayList<MutableMap<String, String>>) : RecyclerView.Adapter<ProfilePageRecyclerViewAdapter.ViewHolder>()  {
+class ProfilePageRecyclerViewAdapter(private var dataSet: ArrayList<Map<String, String>>) : RecyclerView.Adapter<ProfilePageRecyclerViewAdapter.ViewHolder>()  {
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         val view: View = v
 
         init {
             // Define click listener for the ViewHolder's View.
         }
-        fun bind(model:MutableMap<String, String>){
+        fun bind(model:Map<String, String>){
             val title : TextView = view.findViewById(R.id.text_profile_page_info_title)
             title.text = model["title"]
             val detail : TextView = view.findViewById(R.id.text_profile_page_info)
@@ -34,9 +34,9 @@ class ProfilePageRecyclerViewAdapter(private val dataSet: ArrayList<MutableMap<S
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(dataSet[position])
     }
-    fun submitList(list:ArrayList<MutableMap<String, String>>){
+    fun submitList(list:ArrayList<Map<String, String>>){
         this.dataSet.clear()
-        this.dataSet.addAll(list)
+        this.dataSet = list
         notifyDataSetChanged()
     }
 

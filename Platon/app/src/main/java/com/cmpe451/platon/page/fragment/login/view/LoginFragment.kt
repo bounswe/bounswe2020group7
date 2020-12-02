@@ -4,31 +4,34 @@ package com.cmpe451.platon.page.fragment.login.view
  * @author Burak Ömür
  */
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
-import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.cmpe451.platon.R
 import com.cmpe451.platon.databinding.FragmentLoginBinding
-import com.cmpe451.platon.page.activity.LoginActivity
-import com.cmpe451.platon.page.fragment.login.contract.LoginContract
-import com.cmpe451.platon.page.fragment.login.model.LoginRepository
-import com.cmpe451.platon.page.fragment.login.presenter.LoginPresenter
-import com.cmpe451.platon.util.ApiClient
-import com.cmpe451.platon.util.ApiInterface
+import com.cmpe451.platon.page.activity.HomeActivity
+import com.cmpe451.platon.page.fragment.login.presenter.LoginViewModel
+import com.cmpe451.platon.util.Definitions
 
 /**
  * Login Fragment class of application
  * If user tries to login to app, it will be viewing this fragment
  */
-class LoginFragment : Fragment(), LoginContract.View  {
+class LoginFragment : Fragment() {
+
+    private lateinit var mLoginViewModel: LoginViewModel
 
     //definitions
-    private lateinit var presenter: LoginContract.Presenter
     private lateinit var binding: FragmentLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +42,7 @@ class LoginFragment : Fragment(), LoginContract.View  {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
+        mLoginViewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
         binding = FragmentLoginBinding.inflate(inflater)
         return binding.root
     }
@@ -46,38 +50,38 @@ class LoginFragment : Fragment(), LoginContract.View  {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initializePresenter()
+
         setListeners()
         // check if auto-login possible
-        presenter.onPreLoginAutomated()
-    }
-
-    override fun initializePresenter(){
-        val sharedPreferences = requireContext().getSharedPreferences("token_file", 0)
-        val repository = LoginRepository(sharedPreferences)
-        presenter = LoginPresenter(this, repository, sharedPreferences, (activity as LoginActivity).navController )
     }
 
 
     private fun setListeners() {
-
         // login button listener
         binding.loginBtn.setOnClickListener {
             // call presenter
-            presenter.onLoginButtonClicked(binding.loginBtn, binding.emailEt, binding.passEt, binding.rememberChk)
+            mLoginViewModel.tryToLogin(binding.loginBtn, binding.emailEt, binding.passEt, binding.rememberChk)
         }
 
         binding.dontHaveAccBtn.setOnClickListener {
-            presenter.onAlreadyHaveAccountClicked()
+            onAlreadyHaveAccountClicked()
         }
 
         binding.forgotPwBtn.setOnClickListener {
-            presenter.onForgotPasswordClicked()
+            onForgotPasswordClicked()
         }
 
+
+        mLoginViewModel.getToken.observe(viewLifecycleOwner, { t->
+            if(t!= null && t.isNotEmpty()){
+                activity?.finish()
+                activity?.startActivity(Intent(activity, HomeActivity::class.java))
+            }
+        })
+
+
+
     }
-
-
 
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -94,15 +98,29 @@ class LoginFragment : Fragment(), LoginContract.View  {
         menu.findItem(R.id.notification_btn)?.isVisible = false
     }
 
-    override fun setFields(mail: String, pass: String, b: Boolean) {
+    fun setFields(mail: String, pass: String, b: Boolean) {
         binding.emailEt.setText(mail)
         binding.passEt.setText(pass)
         binding.rememberChk.isChecked = b
     }
 
-    override fun clickLogin() {
+    fun clickLogin() {
         binding.loginBtn.performClick()
     }
 
+
+    private fun onAlreadyHaveAccountClicked() {
+        Definitions().vibrate(50, activity as Activity)
+        val action = LoginFragmentDirections.actionLoginFragmentToRegisterFragment()
+        findNavController().navigate(action)
+
+    }
+
+    fun onForgotPasswordClicked() {
+        Definitions().vibrate(50, activity as Activity)
+        val action = LoginFragmentDirections.actionLoginFragmentToForgotPasswordFragment()
+        findNavController().navigate(action)
+
+    }
 
 }

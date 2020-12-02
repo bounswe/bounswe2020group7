@@ -5,10 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.cmpe451.platon.databinding.TrendProjectCellBinding
 import com.cmpe451.platon.databinding.UserProjectsCellBinding
-import com.cmpe451.platon.networkmodels.Research
-import com.cmpe451.platon.util.Definitions
+import com.cmpe451.platon.networkmodels.models.Research
+import com.cmpe451.platon.networkmodels.models.Researches
 
 class UserProjectsRecyclerViewAdapter(private val data: ArrayList<Research>, private val context: Context, private val userProjectsButtonClickListener: UserProjectButtonClickListener) :
 

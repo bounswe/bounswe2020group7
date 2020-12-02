@@ -4,34 +4,59 @@ package com.cmpe451.platon.page.fragment.login.model
  * @author Burak Ömür
  */
 
-import android.content.SharedPreferences
 import android.util.Log
-import com.cmpe451.platon.page.fragment.login.presenter.LoginPresenter
-import com.cmpe451.platon.util.ApiClient
-import com.cmpe451.platon.util.ApiInterface
-import com.cmpe451.platon.util.Definitions
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.cmpe451.platon.networkmodels.models.User
+import com.cmpe451.platon.util.RetrofitClient
+import com.google.gson.Gson
 import com.google.gson.JsonObject
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observer
-import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.coroutines.flow.callbackFlow
-import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class LoginRepository(val sharedPreferences: SharedPreferences){
-    fun tryToLogin(observer: Observer<JsonObject> , mailStr: String, passStr: String) {
-        val api = ApiClient()
-        api.initRetrofit()
-        val service = api.getRetrofit().create(ApiInterface::class.java)
+class LoginRepository {
+
+    var getToken: MutableLiveData<String> = MutableLiveData(null)
+    var getUser: MutableLiveData<User> = MutableLiveData(null)
+
+
+    fun tryToLogin( mailStr: String, passStr: String) {
+
+        val service = RetrofitClient.getService()
 
         val call = service.makeLogin(mailStr, passStr)!!
 
-        call.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(observer)
+        call.enqueue(object : Callback<JsonObject>{
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                if (response.code() == 200){
+                    val token = JSONObject(response.body().toString()).get("token").toString()
+                    getToken.value = token
+                    val newCall = service.getUserInfo(token)!!
+
+                    newCall.enqueue(object: Callback<JsonObject>{
+                        override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                            if (response.code() == 200) {
+                                getUser.value = Gson().fromJson(response.body().toString(), User::class.java)
+
+                            }
+                        }
+                        override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                        }
+
+                    })
+
+                    Log.i("Token is", token)
+                }
+
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                Log.i("Errortess",call.toString())
+            }
+
+        })
     }
 
 

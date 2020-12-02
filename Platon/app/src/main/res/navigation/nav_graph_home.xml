@@ -30,26 +30,6 @@
         android:id="@+id/editProfileFragment"
         android:name="com.cmpe451.platon.page.fragment.editprofile.view.EditProfileFragment"
         android:label="Edit" >
-        <argument
-            android:name="name"
-            app:argType="string" />
-        <argument
-            android:name="surname"
-            app:argType="string" />
-        <argument
-            android:name="job"
-            app:argType="string" />
-        <argument
-            android:name="isPrivate"
-            app:argType="boolean" />
-        <argument android:name="profilePhoto"
-            app:argType="string" />
-        <argument
-            android:name="googleScholar"
-            app:argType="string" />
-        <argument
-            android:name="researchGate"
-            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/followFragment"

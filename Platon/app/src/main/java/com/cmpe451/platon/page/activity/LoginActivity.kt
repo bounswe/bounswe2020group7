@@ -11,6 +11,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
+import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.NavController
@@ -23,6 +24,7 @@ import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.SearchElementsAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.ActivityLoginBinding
+import com.cmpe451.platon.page.fragment.login.presenter.LoginViewModel
 
 /**
  * Main starter activity of the application.
@@ -55,6 +57,8 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
         //set action bar to custom toolbar
         setSupportActionBar(toolbar)
         // set navigation controller to control toolbar ui.
+
+
 
         NavigationUI.setupActionBarWithNavController(this, navController)
         // initialize general views

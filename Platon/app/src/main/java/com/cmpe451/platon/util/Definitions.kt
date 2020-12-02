@@ -1,5 +1,6 @@
 package com.cmpe451.platon.util
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.drawable.Drawable
@@ -32,7 +33,7 @@ class Definitions {
         val UPCOMING_EVENTS_ADDRESS = ""
     }
 
-    class User(val id: Int, val name: String, val surname: String, val rating: Double, val bio: String)
+    //class User(val id: Int, val name: String, val surname: String, val rating: Double, val bio: String)
   
     /**
      * Trending projects are serialized according to this.
@@ -96,7 +97,7 @@ class Definitions {
     }
 
 
-    fun vibrate(ms: Long = 50, activity: BaseActivity){
+    fun vibrate(ms: Long = 50, activity: Activity){
         val vib = activity.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             vib.vibrate(VibrationEffect.createOneShot(ms, VibrationEffect.DEFAULT_AMPLITUDE))

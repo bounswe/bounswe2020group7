@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.databinding.TrendProjectCellBinding
-import com.cmpe451.platon.networkmodels.Research
 import com.cmpe451.platon.util.Definitions
 
 class TrendingProjectsAdapter(private val data: ArrayList<Definitions.TrendingProject>, private val context: Context, private val trendingProjectsButtonClickListener: TrendingProjectButtonClickListener) :
