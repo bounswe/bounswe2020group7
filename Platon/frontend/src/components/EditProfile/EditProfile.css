@@ -37,3 +37,17 @@
 .MuiFormLabel-root{
     color:#E0DFD5 !important;
 }
+
+.EditProfileLanding{
+    min-height: 100vh;
+    height: 100%;
+    background-color: #313638;
+}
+.EditProfileSpinner{
+    margin: 20vh 0px;
+
+    height: 50vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

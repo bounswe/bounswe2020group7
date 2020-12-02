@@ -168,14 +168,14 @@ class EditProfile extends Component {
       });
   }
   render() {
-    console.log(this.state.isLoading)
+
     return (
-      <div className="Landing">
+      <div className="EditProfileLanding">
 
         <div className="AppBar">
           <NavBar />
         </div>
-        { this.state.isLoading ? <Spinner/> :
+        { this.state.isLoading ? <div className="EditProfileSpinner"><Spinner/></div> :
         <Container className = "ProfilePageContainer">
         <Row className="mb-3 justify-content-center">
                 <Col sm={6}>
