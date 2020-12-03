@@ -177,7 +177,7 @@ class ProfilePage extends React.Component {
   };
 
   render() {
-
+    console.log(this.state.user);
     const { classes } = this.props;
     return (
       <div className="ProfilePageLanding">
@@ -195,7 +195,7 @@ class ProfilePage extends React.Component {
             <Col sm={2}>
               <img
                 className="ProfilePhoto"
-                src={"https://image.flaticon.com/icons/svg/2317/2317981.svg"}
+                src={this.state.user.profile_photo ? this.state.user.profile_photo : "https://picsum.photos/500/500"}
                 alt="UserImage"
               />
             </Col>

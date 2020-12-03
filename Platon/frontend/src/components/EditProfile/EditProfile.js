@@ -4,7 +4,7 @@ import NavBar from "../NavBar/NavBar";
 import colors from "../../utils/colors";
 import { Container, Col, Row, Button } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { TextField, withStyles } from '@material-ui/core';
+import { TextField, withStyles, Switch, FormControlLabel } from '@material-ui/core';
 import axios from 'axios';
 import MuiAlert from "@material-ui/lab/Alert";
 import jwt_decode from "jwt-decode";
@@ -87,6 +87,7 @@ class EditProfile extends Component {
         profile_photo: this.state.user.profile_photo,
         google_scholar_name: this.state.user.google_scholar_name,
         researchgate_name: this.state.user.researchgate_name,
+        is_private: this.state.user.is_private,
       })
       this.setState({
         isLoading: false
@@ -114,6 +115,13 @@ class EditProfile extends Component {
 
     this.setState({ showSuccess: false });
   };
+
+  handleSwitch = (event) => {
+    this.setState({
+      is_private: !this.state.is_private
+    })
+  };
+
   handleSubmit = () => {
     const token = localStorage.getItem("jwtToken");
     const decoded = jwt_decode(token);
@@ -143,6 +151,10 @@ class EditProfile extends Component {
     }
     if(this.state.researchgate_name !== this.state.user.researchgate_name){
       formData.append("researchgate_name", this.state.researchgate_name)
+      dbcheck=true
+    }
+    if(this.state.is_private !== this.state.user.is_private){
+      formData.append("is_private", this.state.is_private)
       dbcheck=true
     }
 
@@ -240,6 +252,21 @@ class EditProfile extends Component {
                 <Col sm={6}>
                     <StyledTextField defaultValue={this.state.user.researchgate_name}  className="EditProfileTextInput" id="outlined-basic" label="Research Gate Url" variant="outlined" fullWidth
                     onChange={(e) => this.setState({ researchgate_name: e.target.value })}/>
+                </Col>
+            </Row>
+
+            <Row className="mb-3 justify-content-center">
+                <Col sm={6}>
+                <FormControlLabel
+                control={
+                <Switch
+                  checked={this.state.is_private}
+                  onChange={this.handleSwitch} 
+                  name="checkedA"
+                  inputProps={{ 'aria-label': 'secondary checkbox' }}
+                />}
+                label={this.state.is_private ? "Private" : "Public"}
+                />
                 </Col>
             </Row>
 
