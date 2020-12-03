@@ -1,4 +1,5 @@
 .ProfilePageLanding{
+
     min-height: 100vh;
     height: 100%;
     background-color: #313638;
@@ -45,6 +46,7 @@
     color: #E0DFD5;
     font-family: 'Rubik', sans-serif !important;
     font-size: 20px;
+
     text-align: center;
 }
 
@@ -68,4 +70,5 @@
     display: flex;
     justify-content: center;
     align-items: center;
+
 }

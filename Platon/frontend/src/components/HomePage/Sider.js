@@ -14,17 +14,20 @@ class Sider extends React.Component {
         this.state = {
             notifications:null,
             profileId: null,
+
         }
     }
     handleClick = e => {
         console.log('click ');
     };
     componentDidMount(){
+
         const token = localStorage.getItem("jwtToken");
         const decoded = jwt_decode(token);
         this.setState({
             profileId: decoded.id
         })
+
         requestService.getNotifications().then((response) => {
             this.setState({
                 notifications: response.data,
@@ -55,6 +58,7 @@ class Sider extends React.Component {
                 >
                 </SubMenu>
                 <Link to ={`/${this.state.profileId}`}>
+
                 <SubMenu key="sub2" icon={<AppstoreOutlined />}  title=" Profile">
 
                 </SubMenu></Link>

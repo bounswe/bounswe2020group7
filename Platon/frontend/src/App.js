@@ -3,7 +3,9 @@ import Landing from './components/Landing/Landing';
 import React, { Component } from 'react';
 
 import HomePage from './components/HomePage/HomePage'
+
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
+
 import ForgotPassword from './components/ForgotPassword/ForgotPassword'
 import ResetPassword from './components/ResetPassword/ResetPassword'
 import Login from './components/Login/Login'
@@ -12,7 +14,9 @@ import ProfilePage from './components/ProfilePage/ProfilePage'
 import EditProfile from './components/EditProfile/EditProfile';
 import Activation from './components/Activation/Activation'
 import { setAuthorizationToken } from './helpers/setAuthorizationToken';
+
 import NotFound from './components/NotFound/NotFound';
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -27,6 +31,7 @@ class App extends Component {
     const jwtToken = localStorage.getItem("jwtToken");
     if (jwtToken) {
       setAuthorizationToken(jwtToken);
+
       this.setState({
         isAuthenticated: true
       })
@@ -42,7 +47,9 @@ class App extends Component {
 
     return (
       <Router>
+
 <Switch>
+
 
       <div className="App">
       <Route path='/activate_account' component={Activation}/>
@@ -54,6 +61,7 @@ class App extends Component {
       <Route path='/:profileId(\d+)' exact component={ProfilePage}/>
       <Route path='/:profileId(\d+)/edit' exact component={EditProfile}/>
 
+
       <Route path='/login' exact component={() => <Login isAuthenticated={this.state.isAuthenticated} handlerSuccessfulLogin={this.handlerSuccessfulLogin} />}/>
       <Route path='/register' exact  component={Register}/>
       <Route path='/forgotpassword' exact component={ForgotPassword}/>
@@ -64,6 +72,7 @@ class App extends Component {
 
       </div>
       </Switch>
+
     </Router>
      );
   }

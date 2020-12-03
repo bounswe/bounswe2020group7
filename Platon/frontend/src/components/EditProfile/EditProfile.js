@@ -13,6 +13,7 @@ import Snackbar from "@material-ui/core/Snackbar";
 import { Link } from "react-router-dom";
 import requestService from "../../services/requestService";
 import Spinner from '../Spinner/Spinner'
+
 const StyledTextField = withStyles({
     root: {
       "& .MuiInputBase-input": {
@@ -64,6 +65,7 @@ class EditProfile extends Component {
       user: null,
       profileId: null,
       isLoading: true,
+
      }
   }
 
@@ -73,6 +75,7 @@ class EditProfile extends Component {
     this.setState({
       profileId: decoded.id
     })
+
     requestService.getUser(decoded.id).then((response) => {
       this.setState({
         user: response.data,
@@ -89,6 +92,7 @@ class EditProfile extends Component {
         isLoading: false
       })
     });
+
 
 
   }
@@ -180,6 +184,7 @@ class EditProfile extends Component {
         <Row className="mb-3 justify-content-center">
                 <Col sm={6}>
                     <Link to={`/${this.state.profileId}`}>
+
                         Back to profile
                     </Link>
                 </Col>
@@ -247,6 +252,7 @@ class EditProfile extends Component {
             </Row>
 
         </Container> }
+
         {this.state.fieldEmptyError && (
               <Snackbar
                 open={this.state.fieldEmptyError}

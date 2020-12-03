@@ -13,6 +13,7 @@ const followings = (id) => {
             //eğer kullanıcı bulunursa (user.data.status = true)
             if (response) {
                 console.log(response);
+
             }
             return response;
         })
