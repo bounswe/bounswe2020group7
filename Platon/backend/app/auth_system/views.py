@@ -140,7 +140,8 @@ class GetSelfAPI(Resource):
                                         "e_mail": logged_in_user.e_mail,
                                         "google_scholar_name": logged_in_user.google_scholar_name,
                                         "researchgate_name": logged_in_user.researchgate_name,
-                                        "job": user_job.name
+                                        "job": user_job.name,
+                                        "is_private": logged_in_user.is_private
                                         }
                 return make_response(jsonify(account_information), 200)
             else:
@@ -191,7 +192,8 @@ class UserAPI(Resource):
                                         "e_mail": existing_user.e_mail,
                                         "google_scholar_name": existing_user.google_scholar_name,
                                         "researchgate_name": existing_user.researchgate_name,
-                                        "job": user_job.name
+                                        "job": user_job.name,
+                                        "is_private": existing_user.is_private
                                         }
                     return make_response(jsonify(account_information), 200)
                 else:
