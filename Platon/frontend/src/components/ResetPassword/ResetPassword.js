@@ -128,9 +128,12 @@ class ResetPassword extends Component {
     }
     //TODO error check
     let path = this.props.location.pathname
+    console.log("path", path)
     const token = path.split('/')[2]
-
+    console.log("token ", token)
     const url = config.BASE_URL
+
+
     let formData = new FormData();
     formData.append("new_password",this.state.password);
     formData.append("new_password_repeat", this.state.passwordAgain);
@@ -152,7 +155,8 @@ class ResetPassword extends Component {
 
           });
         }
-        return response.json();
+        return response;
+
       })
       .catch((err) => {
         console.log(err);

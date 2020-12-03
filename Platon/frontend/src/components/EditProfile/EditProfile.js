@@ -12,6 +12,7 @@ import config from "../../utils/config";
 import Snackbar from "@material-ui/core/Snackbar";
 import { Link } from "react-router-dom";
 import requestService from "../../services/requestService";
+import Spinner from '../Spinner/Spinner'
 
 const StyledTextField = withStyles({
     root: {
@@ -61,13 +62,20 @@ class EditProfile extends Component {
       researchgate_name: "",
       showSuccess: false,
       fieldEmptyError: false,
-      user: null
+      user: null,
+      profileId: null,
+      isLoading: true,
+
      }
   }
 
   componentDidMount(){
     const token = localStorage.getItem("jwtToken");
     const decoded = jwt_decode(token);
+    this.setState({
+      profileId: decoded.id
+    })
+
     requestService.getUser(decoded.id).then((response) => {
       this.setState({
         user: response.data,
@@ -80,7 +88,12 @@ class EditProfile extends Component {
         google_scholar_name: this.state.user.google_scholar_name,
         researchgate_name: this.state.user.researchgate_name,
       })
+      this.setState({
+        isLoading: false
+      })
     });
+
+
 
   }
 
@@ -161,16 +174,17 @@ class EditProfile extends Component {
   render() {
 
     return (
+      <div className="EditProfileLanding">
 
-      <div className="Landing">
         <div className="AppBar">
           <NavBar />
         </div>
-
+        { this.state.isLoading ? <div className="EditProfileSpinner"><Spinner/></div> :
         <Container className = "ProfilePageContainer">
         <Row className="mb-3 justify-content-center">
                 <Col sm={6}>
-                    <Link to='profile'>
+                    <Link to={`/${this.state.profileId}`}>
+
                         Back to profile
                     </Link>
                 </Col>
@@ -182,7 +196,7 @@ class EditProfile extends Component {
                 </Col>
             </Row>
 
-            {this.state.user !== null ? (<div>
+
             <Row className="mb-3 justify-content-center">
                 <Col sm={6}>
                     <Row>
@@ -236,8 +250,9 @@ class EditProfile extends Component {
                     </Button>
                 </Col>
             </Row>
-            </div>): null}
-        </Container>
+
+        </Container> }
+
         {this.state.fieldEmptyError && (
               <Snackbar
                 open={this.state.fieldEmptyError}
@@ -268,7 +283,9 @@ class EditProfile extends Component {
                 </Alert>
               </Snackbar>
             )}
+
       </div>
+
     );
   }
 }
