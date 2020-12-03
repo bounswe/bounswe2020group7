@@ -1,5 +1,5 @@
 from flask import make_response, jsonify, request
-from flask_restplus import Resource, Namespace
+from flask_restplus import Resource, Namespace, fields
 from flask import current_app as app
 
 from app import api, db
@@ -21,16 +21,43 @@ follow_system_ns = Namespace("Follow System",
                              description="Follow System Endpoints",
                              path="/follow")
 
-# Private Account Restrictions not implemented.
+user_data_model = api.model('User Data', {
+        'id': fields.Integer,
+        'name': fields.String,
+        'surname': fields.String,
+        'e_mail': fields.String,
+        'rate': fields.Float,
+        'is_private': fields.Boolean
+    })
+
+followers_model = api.model('Followers', {
+    'followers': fields.List(
+        fields.Nested(user_data_model)
+    )
+})
+
+followings_model = api.model('Followings', {
+    'followings': fields.List(
+        fields.Nested(user_data_model)
+    )
+})
+
+follow_requests_model = api.model('Follow Requests', {
+    'follow request senders': fields.List(
+        fields.Nested(user_data_model)
+    )
+})
+
 @follow_system_ns.route("/followings")
 class GetFollowingsAPI(Resource):
 
-    @api.doc(responses={200: 'Followings List is successfully returned',
-                        404: 'Followings List is empty',
+    @api.doc(responses={404: 'Followings List is empty',
                         400: 'Input Format Error',
                         500: 'Database Connection Error'})
+    @api.response(200, 'Followings List is successfully returned', followings_model)
     @api.expect(get_followings_parser)
     @login_required
+    @follow_required(param_loc='form',requested_user_id_key='follower_id')
     def get(user_id, self):
         '''
             Takes follower_id as input and returns the followings as a list.
@@ -55,16 +82,16 @@ class GetFollowingsAPI(Resource):
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
 
 
-# Private Account Restrictions not implemented.
 @follow_system_ns.route("/followers")
 class GetFollowersAPI(Resource):
 
-    @api.doc(responses={200: 'Followers List is successfully returned',
-                        404: 'Followers List is empty',
+    @api.doc(responses={404: 'Followers List is empty',
                         400: 'Input Format Error',
                         500: ' Database Connection Error'})
+    @api.response(200, 'Followers List is successfully returned', followers_model)
     @api.expect(get_followers_parser)
     @login_required
+    @follow_required(param_loc='form',requested_user_id_key='following_id')
     def get(user_id, self):
         '''
             Takes following_id as input and returns the followers as a list.
@@ -92,11 +119,11 @@ class GetFollowersAPI(Resource):
 @follow_system_ns.route("/follow_requests")
 class FollowRequestAPI(Resource):
 
-    @api.doc(responses={200: 'Follow Requests List is successfully returned',
-                        404: 'Follow Requests List is empty',
+    @api.doc(responses={404: 'Follow Requests List is empty',
                         400: 'Input Format Error',
                         401: 'Current user is unauthorized to see the Follow Requests',
                         500: 'Database Connection Error'})
+    @api.response(200, 'Follow Requests List is successfully returned', follow_requests_model)
     @api.expect(get_follow_requests_parser)
     @login_required
     def get(user_id, self):
