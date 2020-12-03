@@ -8,40 +8,23 @@ import androidx.lifecycle.ViewModel
 class LoginViewModel: ViewModel() {
 
     var getToken:LiveData<String>
-    var getResponseCode:LiveData<Int>
+    var getResponseCode:LiveData<String>
 
     private var repository: LoginRepository = LoginRepository()
 
     init {
-        getToken = repository.getToken
-        getResponseCode = repository.getResponseCode
+        getToken = repository.token
+        getResponseCode = repository.loginResponse
     }
 
-    fun tryToLogin(emailEt: EditText, passEt: EditText) {
+    fun tryToLogin(email: String, pass: String):Boolean {
         // define flag of problem
-        var flag = false
-
-        // check mail bo
-        if (emailEt.text.isNullOrEmpty() || !Patterns.EMAIL_ADDRESS.matcher(
-                emailEt.text.toString().trim()
-            ).matches()){
-            emailEt.error = "Required field / Wrong input"
-            flag = true
-        }
-
-        // check password box
-        if( passEt.text.isNullOrEmpty()){
-            passEt.error = "Required"
-            flag = true
-        }
-
-        // gather
-        val mailStr = emailEt.text.toString().trim()
-        val passStr = passEt.text.toString().trim()
+        val flag = email.isEmpty() || pass.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()
 
         if (!flag){
-            repository.tryToLogin(mailStr, passStr)
+            repository.tryToLogin(email, pass)
         }
+        return flag
     }
 
 

@@ -1,5 +1,7 @@
 package com.cmpe451.platon.page.fragment.preLogin.view
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -7,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
@@ -24,6 +27,8 @@ class PreLoginFragment : Fragment(),TrendingProjectsAdapter.TrendingProjectButto
     private lateinit var trendingProjectsRecyclerView: RecyclerView
     private lateinit var upcomingEventsRecyclerView: RecyclerView
 
+    private lateinit var sharedPreferences: SharedPreferences
+
     lateinit var binding: FragmentPreLoginBinding
 
 
@@ -31,7 +36,17 @@ class PreLoginFragment : Fragment(),TrendingProjectsAdapter.TrendingProjectButto
         // Inflate the layout for this fragment
         binding = FragmentPreLoginBinding.inflate(layoutInflater)
         setHasOptionsMenu(true)
+        sharedPreferences = activity?.getSharedPreferences("token_file", Context.MODE_PRIVATE)!!
+        doAutoLogin()
         return binding.root
+    }
+
+    private fun doAutoLogin(){
+        val mail = sharedPreferences.getString("mail", null)
+        val pass = sharedPreferences.getString("pass", null)
+        if(mail != null && pass != null){
+            findNavController().navigate(PreLoginFragmentDirections.actionPreLoginFragmentToLoginFragment())
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -122,9 +122,8 @@ class HomeActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickList
 
     private fun onLogOutButtonClicked(){
         val sharedPrefs = getSharedPreferences("token_file", 0)
-        sharedPrefs.edit().remove("login_mail").apply()
-        sharedPrefs.edit().remove("login_pass").apply()
-        sharedPrefs.edit().putBoolean("remember_me", false).apply()
+        sharedPrefs.edit().remove("mail").apply()
+        sharedPrefs.edit().remove("pass").apply()
         sharedPrefs.edit().remove("token").apply()
         finish()
         startActivity(Intent(this, LoginActivity::class.java))

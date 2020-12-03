@@ -5,6 +5,7 @@ package com.cmpe451.platon.page.fragment.login
  */
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -14,13 +15,16 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.cmpe451.platon.R
+import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentLoginBinding
 import com.cmpe451.platon.page.activity.HomeActivity
 import com.cmpe451.platon.util.Definitions
@@ -32,35 +36,68 @@ import com.cmpe451.platon.util.Definitions
 class LoginFragment : Fragment() {
 
     //definitions
-    private val mLoginViewModel: LoginViewModel by activityViewModels()
+    private val mLoginViewModel: LoginViewModel by viewModels()
     private lateinit var binding: FragmentLoginBinding
     private lateinit var sharedPreferences: SharedPreferences
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        // say it has its own menu
-        setHasOptionsMenu(true)
-    }
+    private lateinit var dialog: AlertDialog
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         binding = FragmentLoginBinding.inflate(inflater)
         sharedPreferences = activity?.getSharedPreferences("token_file", Context.MODE_PRIVATE)!!
+        setHasOptionsMenu(true)
         return binding.root
+    }
+
+    private fun doAutoLogin(){
+        val mail = sharedPreferences.getString("mail", null)
+        val pass = sharedPreferences.getString("pass", null)
+        if(mail != null && pass != null){
+            binding.emailEt.setText(mail)
+            binding.passEt.setText(pass)
+            binding.rememberChk.isChecked = true
+            binding.loginBtn.performClick()
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setListeners()
+        doAutoLogin()
     }
 
 
     private fun setListeners() {
+        setFieldListeners()
+        setButtonListeners()
+        setObservers()
+    }
+
+    private fun setFieldListeners(){
+        binding.emailEt.setOnFocusChangeListener {v,b ->
+            if(!b){
+                if((v as TextView).text.isNullOrEmpty()) v.error = "Required!"
+                else v.error = null
+            }
+        }
+
+        binding.passEt.setOnFocusChangeListener {v,b ->
+            if(!b){
+                if((v as TextView).text.isNullOrEmpty()) v.error = "Required!"
+                else v.error = null
+            }
+        }
+    }
+
+    private fun setButtonListeners(){
+        dialog =Definitions().createProgressBar(activity as BaseActivity)
+
         // login button listener
         binding.loginBtn.setOnClickListener {
-            // call presenter
-            binding.loginBtn.isEnabled = false
-            mLoginViewModel.tryToLogin(binding.emailEt, binding.passEt)
+            val email = binding.emailEt.text.toString().trim()
+            val pass = binding.passEt.text.toString().trim()
+            if (!mLoginViewModel.tryToLogin(email, pass)) dialog.show()
         }
 
         binding.dontHaveAccBtn.setOnClickListener {
@@ -74,44 +111,33 @@ class LoginFragment : Fragment() {
             val action = LoginFragmentDirections.actionLoginFragmentToForgotPasswordFragment()
             findNavController().navigate(action)
         }
+    }
 
-
+    private fun setObservers(){
         mLoginViewModel.getToken.observe(viewLifecycleOwner, { t->
             if(t!= null && t.isNotEmpty()){
                 sharedPreferences.edit().putString("token", t).apply()
+
+                if(binding.rememberChk.isChecked){
+                    sharedPreferences.edit().putString("mail", binding.emailEt.text.toString().trim()).apply()
+                    sharedPreferences.edit().putString("pass", binding.passEt.text.toString().trim()).apply()
+                }
+
                 activity?.finish()
                 activity?.startActivity(Intent(activity, HomeActivity::class.java).putExtra("token", t))
             }
+            dialog.dismiss()
         })
 
         mLoginViewModel.getResponseCode.observe(viewLifecycleOwner, {t->
-            binding.loginBtn.isEnabled = true
-            if(t!=null && t != 200){
-                Log.i("Code is", t.toString())
-                when (t){
-                    400->{
-                        Toast.makeText(activity, "Input Format Error", Toast.LENGTH_LONG).show()
-                    }
-                    401->{
-                        Toast.makeText(activity, "Account Problems", Toast.LENGTH_LONG).show()
-                    }
-                    404->{
-                        Toast.makeText(activity, "E-mail not found", Toast.LENGTH_LONG).show()
-                    }
-                    500->{
-                        Toast.makeText(activity, "Database Connection/E-mail Server Error", Toast.LENGTH_LONG).show()
-                    }
-                    501->{
-                        Toast.makeText(activity, "Please, Try Again!", Toast.LENGTH_LONG).show()
-                    }
-                    else ->{
-                        Toast.makeText(activity, "Try Again!", Toast.LENGTH_LONG).show()
-                    }
-                }
-            }
+            if(t!=null) Toast.makeText(activity, t, Toast.LENGTH_LONG).show()
+            dialog.dismiss()
+            sharedPreferences.edit().remove("mail").apply()
+            sharedPreferences.edit().remove("pass").apply()
+            sharedPreferences.edit().remove("token").apply()
         })
-
     }
+
 
 
     override fun onPrepareOptionsMenu(menu: Menu) {

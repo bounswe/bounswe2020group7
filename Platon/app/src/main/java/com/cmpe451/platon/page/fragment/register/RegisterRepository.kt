@@ -1,29 +1,43 @@
-package com.cmpe451.platon.page.fragment.register.model
+package com.cmpe451.platon.page.fragment.register
 
 import android.content.SharedPreferences
+import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import com.cmpe451.platon.util.RetrofitClient
 import com.google.gson.JsonObject
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observer
 import io.reactivex.rxjava3.schedulers.Schedulers
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
 
-class RegisterRepository(val sharedPreferences: SharedPreferences){
+class RegisterRepository(){
+
+    var registerResponse:MutableLiveData<String> = MutableLiveData()
+
 
     fun postRegister(firstName:String, lastName:String, mail:String, job:String, pass:String){
         val service = RetrofitClient.getService()
 
         val call = service.makeRegister(mail, pass, firstName, lastName, job)!!
-        call.enqueue(object:Callback<JsonObject>{
+        call.enqueue(object : Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                TODO("Not yet implemented")
+                when (response.isSuccessful) {
+                    true -> registerResponse.value = "success"
+                    false -> if (response.errorBody() != null) {
+                        registerResponse.value =
+                            JSONObject(response.errorBody()!!.string()).get("error").toString()
+                    } else {
+                        registerResponse . value = "Unknown error!"
+                    }
+                }
             }
 
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                TODO("Not yet implemented")
+                registerResponse.value = "Unknown error!"
             }
 
         })

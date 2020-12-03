@@ -15,8 +15,8 @@ import retrofit2.Response
 
 class LoginRepository() {
 
-    var getToken: MutableLiveData<String> = MutableLiveData(null)
-    var getResponseCode: MutableLiveData<Int> = MutableLiveData(null)
+    var token: MutableLiveData<String> = MutableLiveData()
+    var loginResponse: MutableLiveData<String> = MutableLiveData()
 
 
     fun tryToLogin( mailStr: String, passStr: String) {
@@ -26,17 +26,20 @@ class LoginRepository() {
 
         call.enqueue(object : Callback<JsonObject>{
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                if (response.code() == 200){
-                    val token = JSONObject(response.body().toString()).get("token").toString()
-                    getToken.value = token
-                    Log.i("Token is", token)
+                when (response.isSuccessful) {
+                    true -> {
+                        token.value = JSONObject(response.body().toString()).get("token").toString()
+                    }
+                    false -> if (response.errorBody() != null) {
+                        loginResponse.value = JSONObject(response.errorBody()!!.string()).get("error").toString()
+                    } else {
+                        loginResponse.value = "Unknown error!"
+                    }
                 }
-                getResponseCode.value = response.code()
-
             }
 
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                getResponseCode.value = 501
+                loginResponse.value = "Unknown error!"
             }
         })
     }

@@ -37,7 +37,7 @@
     </fragment>
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.cmpe451.platon.page.fragment.register.view.RegisterFragment"
+        android:name="com.cmpe451.platon.page.fragment.register.RegisterFragment"
         android:label="Register" >
         <action
             android:id="@+id/action_registerFragment_to_loginFragment"
