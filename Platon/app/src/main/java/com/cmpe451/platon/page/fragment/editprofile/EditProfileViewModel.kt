@@ -10,7 +10,7 @@ class EditProfileViewModel:ViewModel() {
     val getResponseCode = repository.responseCode
 
     fun editProfile(firstnameTv:TextView, lastnameTv:TextView,
-                            jobTv:TextView, isPrivate:Boolean?,
+                            jobTv:TextView, isPrivateUser:Boolean,
                             profilePhotoTv:TextView,
                             googleScholarTv:TextView,
                             researchGateTv:TextView, token:String?){
@@ -40,7 +40,10 @@ class EditProfileViewModel:ViewModel() {
         if(!profilePhotoTv.text.isNullOrEmpty()){
             profilePhoto  = profilePhotoTv.text.toString()
         }
-
+        var isPrivate:Boolean? = null
+        if(!profilePhotoTv.text.isNullOrEmpty()){
+            isPrivate  = isPrivateUser
+        }
 
         if(token != null) {
             repository.editUser(name, surname, job, isPrivate, profilePhoto, google_scholar_name, researchgate_name, token)

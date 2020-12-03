@@ -6,15 +6,12 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Button
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
@@ -26,8 +23,7 @@ import com.cmpe451.platon.adapter.SearchElementsAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.cmpe451.platon.databinding.ActivityHomeBinding
-import com.cmpe451.platon.page.fragment.login.LoginViewModel
-import com.cmpe451.platon.page.fragment.profilepage.presenter.ProfilePageViewModel
+import com.cmpe451.platon.page.fragment.profilepage.ProfilePageViewModel
 
 class HomeActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickListener {
 

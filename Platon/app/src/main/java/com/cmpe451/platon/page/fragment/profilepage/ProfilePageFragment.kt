@@ -1,4 +1,4 @@
-package com.cmpe451.platon.page.fragment.profilepage.view
+package com.cmpe451.platon.page.fragment.profilepage
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,8 +8,6 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,8 +18,9 @@ import com.cmpe451.platon.adapter.UserProjectsRecyclerViewAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentProfilePageBinding
 import com.cmpe451.platon.databinding.UserProjectsCellBinding
+import com.cmpe451.platon.page.activity.HomeActivity
 import com.cmpe451.platon.page.fragment.home.HomeViewModel
-import com.cmpe451.platon.page.fragment.profilepage.presenter.ProfilePageViewModel
+import com.cmpe451.platon.page.fragment.profilepage.ProfilePageFragmentDirections
 import com.cmpe451.platon.util.Definitions
 
 class ProfilePageFragment : Fragment(), UserProjectsRecyclerViewAdapter.UserProjectButtonClickListener {
@@ -60,6 +59,9 @@ class ProfilePageFragment : Fragment(), UserProjectsRecyclerViewAdapter.UserProj
             informationsAdapter.submitList(x)
 
             binding.textNameSurname.text = mProfilePageViewModel.getUser.value!!.name + " " + mProfilePageViewModel.getUser.value!!.surname
+            mProfilePageViewModel.fetchResearch((activity as HomeActivity).token,
+                mProfilePageViewModel.getUser.value?.id
+            )
 
         }
 
@@ -98,23 +100,33 @@ class ProfilePageFragment : Fragment(), UserProjectsRecyclerViewAdapter.UserProj
         informationsRecyclerView = binding.rvProfilePageInfo
         informationsAdapter = ProfilePageRecyclerViewAdapter(ArrayList())
         informationsRecyclerView.adapter = informationsAdapter
-        informationsRecyclerView.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL, false)
+        informationsRecyclerView.layoutManager = LinearLayoutManager(context,LinearLayoutManager.VERTICAL, false)
     }
 
     private fun setListeners() {
 
         binding.buttonFollowers.setOnClickListener {
-           findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToFollowFragment("follower"))
+           findNavController().navigate(
+               ProfilePageFragmentDirections.actionProfilePageFragmentToFollowFragment(
+                   "follower"
+               )
+           )
         }
 
         binding.buttonFollowing.setOnClickListener {
-            findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToFollowFragment("following"))
+            findNavController().navigate(
+                ProfilePageFragmentDirections.actionProfilePageFragmentToFollowFragment(
+                    "following"
+                )
+            )
         }
 
         binding.buttonEditProfile.setOnClickListener {
             findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToEditProfileFragment())
         }
-
+        binding.addProjectIv.setOnClickListener{
+            findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToAddResearchInfoFragment())
+        }
 
 
         //password.addTextChangedListener(textWatcher)

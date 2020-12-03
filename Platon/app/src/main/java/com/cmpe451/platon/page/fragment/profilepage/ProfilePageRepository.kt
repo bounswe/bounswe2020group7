@@ -1,9 +1,7 @@
-package com.cmpe451.platon.page.fragment.profilepage.model
+package com.cmpe451.platon.page.fragment.profilepage
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.cmpe451.platon.networkmodels.models.OtherUser
 import com.cmpe451.platon.networkmodels.models.Research
 import com.cmpe451.platon.networkmodels.models.Researches
 import com.cmpe451.platon.networkmodels.models.User
@@ -32,6 +30,7 @@ class ProfilePageRepository() {
                 Log.i("Home Repo", response.code().toString())
                 if(response.code() == 200){
                     getUser.value =  response.body()
+                    var o = 5
                 }
                 else{
                     call.clone().enqueue(this)
@@ -47,22 +46,21 @@ class ProfilePageRepository() {
     }
 
 
-    fun getFollowers(followingId: Int, authToken: String){}
-
     fun getResearches( userId: Int, authToken: String){
 
         val service = RetrofitClient.getService()
 
         val call = service.getResearches(userId, authToken)!!
 
-        call.enqueue(object: Callback<JsonObject>{
+        call.enqueue(object: Callback<Researches>{
             override fun onResponse(
-                call: Call<JsonObject>,
-                response: Response<JsonObject>
+                call: Call<Researches>, response: Response<Researches>
             ) {
+                var rs = response.body()
+                getResearches.value = rs?.research_info
             }
 
-            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+            override fun onFailure(call: Call<Researches>, t: Throwable) {
             }
 
         })

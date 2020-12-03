@@ -17,8 +17,7 @@ import com.cmpe451.platon.databinding.FragmentFollowersFollowingListBinding
 import com.cmpe451.platon.networkmodels.models.FollowPerson
 import com.cmpe451.platon.networkmodels.models.OtherUser
 import com.cmpe451.platon.page.activity.HomeActivity
-import com.cmpe451.platon.page.fragment.follow.view.FollowFragmentArgs
-import com.cmpe451.platon.page.fragment.profilepage.presenter.ProfilePageViewModel
+import com.cmpe451.platon.page.fragment.profilepage.ProfilePageViewModel
 
 class FollowFragment:Fragment() {
     private lateinit var binding: FragmentFollowersFollowingListBinding

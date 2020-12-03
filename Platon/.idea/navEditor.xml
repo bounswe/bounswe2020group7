@@ -115,6 +115,18 @@
             <LayoutPositions>
               <option name="myPositions">
                 <map>
+                  <entry key="addResearchInfoFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="-637" />
+                            <option name="y" value="190" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
                   <entry key="editProfileFragment">
                     <value>
                       <LayoutPositions>
@@ -139,27 +151,6 @@
                         <option name="myPositions">
                           <map>
                             <entry key="action_followFragment_to_otherProfileFragment">
-                              <value>
-                                <LayoutPositions />
-                              </value>
-                            </entry>
-                          </map>
-                        </option>
-                      </LayoutPositions>
-                    </value>
-                  </entry>
-                  <entry key="followerFragment">
-                    <value>
-                      <LayoutPositions>
-                        <option name="myPosition">
-                          <Point>
-                            <option name="x" value="-721" />
-                            <option name="y" value="72" />
-                          </Point>
-                        </option>
-                        <option name="myPositions">
-                          <map>
-                            <entry key="action_followerFragment_to_otherProfileFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -228,11 +219,6 @@
                               </value>
                             </entry>
                             <entry key="action_profilePageFragment_to_followFragment">
-                              <value>
-                                <LayoutPositions />
-                              </value>
-                            </entry>
-                            <entry key="action_profilePageFragment_to_followerFragment">
                               <value>
                                 <LayoutPositions />
                               </value>

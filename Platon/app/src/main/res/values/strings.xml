@@ -77,4 +77,8 @@
     <string name="rg_url_request">Research Gate Account URL</string>
     <string name="pp_url_request">Profile Page URL</string>
     <string name="loading_str">Loading...</string>
+    <string name="project_description_str">Project Description</string>
+    <string name="text_add_project">Add Project</string>
+    <string name="project_year_str">Year</string>
+    <string name="text_edit_project">Edit Project</string>
 </resources>

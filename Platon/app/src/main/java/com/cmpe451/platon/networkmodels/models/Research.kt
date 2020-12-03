@@ -8,7 +8,6 @@ import androidx.room.Relation
 
 data class Research(
     val id: Int,
-    val uid:Int,
     val title: String,
     val description: String,
     val year: Int

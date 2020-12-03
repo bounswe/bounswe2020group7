@@ -2,6 +2,7 @@ package com.cmpe451.platon.util
 
 import com.cmpe451.platon.networkmodels.models.Followers
 import com.cmpe451.platon.networkmodels.models.Following
+import com.cmpe451.platon.networkmodels.models.Researches
 import com.cmpe451.platon.networkmodels.models.User
 import com.google.gson.JsonObject
 import retrofit2.Call
@@ -47,7 +48,7 @@ interface Webservice {
 
     @GET("api/profile/research_information")
     fun getResearches(@Query("user_id") userId: Int,
-                      @Header("auth_token") auth_token: String ) : Call<JsonObject>?
+                      @Header("auth_token") auth_token: String ) : Call<Researches>?
 
     @FormUrlEncoded
     @PUT("api/auth_system/user")
@@ -61,6 +62,12 @@ interface Webservice {
                      @Field("researchgate_name") researchgate_name:String?,
                      @Header("auth_token") auth_token :String
     ) : Call<JsonObject>?
+    @FormUrlEncoded
+    @POST("api/profile/research_information")
+    fun addResearchProject(@Field("research_title") research_title:String,
+                           @Field("description") description:String?,
+                           @Field("year") year:Int,
+                           @Header("auth_token") auth_token :String) : Call<JsonObject>
 
 
 }

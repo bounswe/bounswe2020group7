@@ -14,7 +14,7 @@ data class User (
         val google_scholar_name: String?,
         val rate:Double=-1.0,
         val profile_photo:String?,
-        val isPrivate:Boolean
+        val is_private:Boolean
 )
 
 data class OtherUser(
@@ -27,5 +27,5 @@ data class OtherUser(
         val google_scholar_name: String?,
         val rate:Double?,
         val profile_photo:String?,
-        val isPrivate:Boolean
+        val is_private:Boolean
 )
