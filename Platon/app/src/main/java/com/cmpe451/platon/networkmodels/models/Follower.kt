@@ -5,24 +5,19 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 
-data class Followings(
-        val followings: List<OtherUser>
+data class Following(
+        val followings: List<FollowPerson>
 )
 
 data class Followers(
-        val followers: List<OtherUser>
+        val followers: List<FollowPerson>
 )
 
-data class OtherUser(
+data class FollowPerson(
         val id: Int,
         val e_mail: String?,
         val name: String,
         val surname: String,
-        val job: String?,
-        val researchgate_name:String?,
-        val google_scholar_name: String?,
         val rate:Double?,
-        val profile_photo:String?,
-        val isPrivate:Boolean=false
-
+        val is_private:Boolean=false
 )

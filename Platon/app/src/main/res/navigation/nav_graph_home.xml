@@ -22,9 +22,6 @@
         <action
             android:id="@+id/action_profilePageFragment_to_followFragment"
             app:destination="@id/followFragment" />
-        <action
-            android:id="@+id/action_profilePageFragment_to_followerFragment"
-            app:destination="@id/followerFragment" />
     </fragment>
     <fragment
         android:id="@+id/editProfileFragment"
@@ -33,11 +30,14 @@
     </fragment>
     <fragment
         android:id="@+id/followFragment"
-        android:name="com.cmpe451.platon.page.fragment.follow.view.FollowFragment"
+        android:name="com.cmpe451.platon.page.fragment.follow.FollowFragment"
         android:label="Following">
         <action
             android:id="@+id/action_followFragment_to_otherProfileFragment"
             app:destination="@id/otherProfileFragment" />
+        <argument
+            android:name="follow"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/otherProfileFragment"
@@ -46,13 +46,5 @@
         <action
             android:id="@+id/action_otherProfileFragment_to_followFragment2"
             app:destination="@id/followFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/followerFragment"
-        android:name="com.cmpe451.platon.page.fragment.follow.view.FollowerFragment"
-        android:label="Followers">
-        <action
-            android:id="@+id/action_followerFragment_to_otherProfileFragment"
-            app:destination="@id/otherProfileFragment" />
     </fragment>
 </navigation>

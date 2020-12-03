@@ -1,5 +1,7 @@
 package com.cmpe451.platon.util
 
+import com.cmpe451.platon.networkmodels.models.Followers
+import com.cmpe451.platon.networkmodels.models.Following
 import com.cmpe451.platon.networkmodels.models.User
 import com.google.gson.JsonObject
 import retrofit2.Call
@@ -10,11 +12,11 @@ interface Webservice {
 
     @GET("api/follow/followers")
     fun getFollowers(@Query("following_id") followingId: Int,
-                     @Header("auth_token") auth_token: String ) : Call<JsonObject>?
+                     @Header("auth_token") auth_token: String ) : Call<Followers>?
 
     @GET("api/follow/followings")
     fun getFollowing(@Query("follower_id") followingId: Int,
-                     @Header("auth_token") auth_token: String ) : Call<JsonObject>?
+                     @Header("auth_token") auth_token: String ) : Call<Following>?
 
     @FormUrlEncoded
     @POST("api/auth_system/login")

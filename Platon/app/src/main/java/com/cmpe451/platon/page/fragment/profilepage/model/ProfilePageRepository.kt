@@ -15,20 +15,10 @@ import retrofit2.Response
 
 class ProfilePageRepository() {
 
-    val getResearches: MutableLiveData<List<Research>> = MutableLiveData(null)
-    val getUser:MutableLiveData<User> = MutableLiveData(null)
+    val getResearches: MutableLiveData<List<Research>> = MutableLiveData<List<Research>>(null)
+    val getUser:MutableLiveData<User> = MutableLiveData<User>(null)
 
 
-    fun fetchFollowers(context: Context?) : ArrayList<OtherUser>{
-        return arrayListOf(
-                OtherUser(1 ,"email1","Oyku", "Yilmaz", "CMPE",null, null, 3.0, null),
-            OtherUser(2, "email21","Burak", "Omur","CMPE" ,null, null,2.0,null),
-            OtherUser(3,"email3","Ertugrul", "Bulbul","CMPE", null, null,1.0,null)
-        )
-    }
-    fun fetchProfilePageDetails(context: Context?) : ArrayList<MutableMap<String,String>>{
-        return getUserDetails(User(4,"gmailorkan","Orkan", "Akisu", "cmpe", "Cmpejdfhkjdsfdkjhjfhsdjfhsjdfbjsdbfsdkjbfdksdf", null, 2.0, null))
-    }
     private fun getUserDetails(user:User) : ArrayList<MutableMap<String,String>>{
         return arrayListOf(mutableMapOf("title" to "Biography", "info" to user.job))
     }

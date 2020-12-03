@@ -6,16 +6,17 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
+import com.cmpe451.platon.networkmodels.models.FollowPerson
 import com.cmpe451.platon.networkmodels.models.OtherUser
 
-class FollowerFollowingRecyclerViewAdapter(private val dataSet: ArrayList<OtherUser>, val clickCallback:(Int) ->Unit) : RecyclerView.Adapter<FollowerFollowingRecyclerViewAdapter.ViewHolder>() {
+class FollowerFollowingRecyclerViewAdapter(private val dataSet: ArrayList<FollowPerson>, val clickCallback:(Int) ->Unit) : RecyclerView.Adapter<FollowerFollowingRecyclerViewAdapter.ViewHolder>() {
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         val view: View = v
 
         init {
             // Define click listener for the ViewHolder's View.
         }
-        fun bind(model:OtherUser, view:View, clickCallback:(Int)->Unit){
+        fun bind(model:FollowPerson, view:View, clickCallback:(Int)->Unit){
 
             val nameText :TextView = view.findViewById(R.id.text_profile_page_info_title)
             nameText.text = model.name + " " + model.surname
@@ -29,7 +30,7 @@ class FollowerFollowingRecyclerViewAdapter(private val dataSet: ArrayList<OtherU
             .inflate(R.layout.fragment_follower_following_item, parent, false)
         return ViewHolder(view)
     }
-    fun submitList(list:ArrayList<OtherUser>){
+    fun submitList(list:ArrayList<FollowPerson>){
         this.dataSet.clear()
         this.dataSet.addAll(list)
         notifyDataSetChanged()

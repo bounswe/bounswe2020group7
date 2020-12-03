@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.cmpe451.platon.R
 import com.cmpe451.platon.databinding.FragmentEditProfileBinding
@@ -38,7 +39,7 @@ class EditProfileFragment : Fragment() {
     }
     private fun setListeners() {
 
-        mEditProfileViewModel.getResponseCode.observe(viewLifecycleOwner, { t ->
+        mEditProfileViewModel.getResponseCode.observe(viewLifecycleOwner) { t ->
             when(t){
                 200->{
                     Toast.makeText(activity, "Account information has been successfully updated!", Toast.LENGTH_SHORT).show()
@@ -54,7 +55,7 @@ class EditProfileFragment : Fragment() {
                 else ->
                     Toast.makeText(activity, "Some error occurred!", Toast.LENGTH_SHORT).show()
             }
-        })
+        }
 
 
         binding.buttonEdit.setOnClickListener {
