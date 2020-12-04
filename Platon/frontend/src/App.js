@@ -58,8 +58,8 @@ class App extends Component {
         render ={ () => !this.state.isAuthenticated ?
               <Landing/>
               : <HomePage/>}/>
-      <Route path='/:profileId(\d+)' exact component={ProfilePage}/>
-      <Route path='/:profileId(\d+)/edit' exact component={EditProfile}/>
+      <Route path='/:profileId(\d+)' exact component={!this.state.isAuthenticated ? Landing : ProfilePage}/>
+      <Route path='/:profileId(\d+)/edit' exact component={!this.state.isAuthenticated ? Landing : EditProfile}/>
 
 
       <Route path='/login' exact component={() => <Login isAuthenticated={this.state.isAuthenticated} handlerSuccessfulLogin={this.handlerSuccessfulLogin} />}/>
