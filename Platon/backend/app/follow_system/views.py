@@ -200,17 +200,9 @@ class FollowRequestAPI(Resource):
                     logged_in_user = User.query.filter(User.id == user_id).first()
                     text = "{} started to following you".format(logged_in_user.name + " " + logged_in_user.surname)
                     NotificationManager.add_notification(form.following_id.data,[logged_in_user.id],text)
-                    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    # Add notification to all user that follows the logged in user
-                    following_users = Follow.query.filter(Follow.following_id == user_id).all()
-                    for user in following_users:
-                        text = "{} started to following {}".format(logged_in_user.name + " " + logged_in_user.surname
-                                                                        ,following_user.name + " " + following_user.surname)
-                        NotificationManager.add_notification(user.follower_id,[user_id],text)
                 except:
                     return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
-                # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             try:
                 db.session.add(follow_record)  # Creating a new database entry.
                 db.session.commit()
@@ -221,7 +213,6 @@ class FollowRequestAPI(Resource):
 
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
-
 
     @api.doc(responses={200: 'Follow Request is replied successfully',
                         400: 'Input Format Error',
@@ -263,15 +254,12 @@ class FollowRequestAPI(Resource):
                 except:
                     return make_response(jsonify({'error': 'Database Connection Error'}), 500)
                 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                # Add notification to all user that follows the logged in user
+                # Add notification to follower that his/her follow request is accepted.
                 try:
                     follower_user = User.query.filter(User.id == follow_request.follower_id).first()
                     following_user = User.query.filter(User.id == follow_request.following_id).first()
-                    following_users = Follow.query.filter(Follow.following_id == follower_user.id).all()
-                    for user in following_users:
-                        text = "{} started to following {}".format(follower_user.name + " " + follower_user.surname
-                                                                    ,following_user.name + " " + following_user.surname)
-                        NotificationManager.add_notification(user.follower_id,[user_id],text)
+                    text = "{} accepted your follow request".format(following_user.name + " " + following_user.surname)
+                    NotificationManager.add_notification(follower_user.id, [following_user.id], text)
                 except:
                     return make_response(jsonify({'error': 'Database Connection Error'}), 500)
                 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

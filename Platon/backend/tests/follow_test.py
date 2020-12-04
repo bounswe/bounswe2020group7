@@ -16,9 +16,6 @@ class FollowTest(BaseTest):
 
     def setUp(self):
 
-        db.drop_all()  # precaution.
-        db.create_all()
-
         jobs = [
             Jobs("academician"),
             Jobs("PhD student")
