@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,13 +22,14 @@ import com.cmpe451.platon.databinding.UserProjectsCellBinding
 import com.cmpe451.platon.page.activity.HomeActivity
 import com.cmpe451.platon.page.fragment.home.HomeViewModel
 import com.cmpe451.platon.page.fragment.profilepage.ProfilePageFragmentDirections
+import com.cmpe451.platon.page.fragment.researchInfo.ResearchInfoViewModel
 import com.cmpe451.platon.util.Definitions
 
 class ProfilePageFragment : Fragment(), UserProjectsRecyclerViewAdapter.UserProjectButtonClickListener {
 
     private lateinit var binding: FragmentProfilePageBinding
     private val mProfilePageViewModel: ProfilePageViewModel by activityViewModels()
-    private val mHomeViewModel: HomeViewModel by activityViewModels()
+    private val mResearchInfoViewModel: ResearchInfoViewModel by viewModels()
 
     private lateinit var userProjectsRecyclerView: RecyclerView
     private lateinit var userProjectsAdapter: UserProjectsRecyclerViewAdapter
@@ -157,5 +159,12 @@ class ProfilePageFragment : Fragment(), UserProjectsRecyclerViewAdapter.UserProj
 
         binding.descTrendProjectTv.refreshDrawableState()
         Definitions().vibrate(50, activity as BaseActivity)
+    }
+
+    override fun onUserProjectEditClicked(position: Int) {
+        if(mProfilePageViewModel.getResearches.value?.get(position) != null){
+            mResearchInfoViewModel.setCurrentResearch(mProfilePageViewModel.getResearches.value?.get(position)!!)
+        }
+        findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToEditResearchInfoFragment())
     }
 }

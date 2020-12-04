@@ -120,8 +120,8 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="-637" />
-                            <option name="y" value="190" />
+                            <option name="x" value="-941" />
+                            <option name="y" value="519" />
                           </Point>
                         </option>
                       </LayoutPositions>
@@ -134,6 +134,18 @@
                           <Point>
                             <option name="x" value="-422" />
                             <option name="y" value="-591" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
+                  <entry key="editResearchInfoFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="-513" />
+                            <option name="y" value="476" />
                           </Point>
                         </option>
                       </LayoutPositions>
@@ -213,6 +225,11 @@
                         </option>
                         <option name="myPositions">
                           <map>
+                            <entry key="action_profilePageFragment_to_addResearchInfoFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
                             <entry key="action_profilePageFragment_to_editProfileFragment">
                               <value>
                                 <LayoutPositions />

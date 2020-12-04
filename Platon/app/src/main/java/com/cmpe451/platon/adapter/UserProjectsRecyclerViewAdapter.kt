@@ -4,7 +4,10 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.RelativeLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.cmpe451.platon.R
 import com.cmpe451.platon.databinding.UserProjectsCellBinding
 import com.cmpe451.platon.networkmodels.models.Research
 import com.cmpe451.platon.networkmodels.models.Researches
@@ -20,15 +23,20 @@ class UserProjectsRecyclerViewAdapter(private val data: ArrayList<Research>, pri
     class UserProjectsViewHolder(private val view: View, var binding: UserProjectsCellBinding) : RecyclerView.ViewHolder(view){
 
         fun bindData(binding: UserProjectsCellBinding, position: Int,buttonClickListener: UserProjectButtonClickListener) {
-
-            view.setOnClickListener{
+            val expandRl :RelativeLayout = view.findViewById(R.id.expand_rl)
+            val editImg : ImageView = view.findViewById(R.id.edit_iv)
+            expandRl.setOnClickListener{
                 buttonClickListener.onUserProjectButtonClicked(binding,position)
+            }
+            editImg.setOnClickListener{
+                buttonClickListener.onUserProjectEditClicked(position)
             }
         }
     }
 
     interface UserProjectButtonClickListener{
         fun onUserProjectButtonClicked(binding: UserProjectsCellBinding, position: Int)
+        fun onUserProjectEditClicked(position: Int)
     }
 
     // Create new views (invoked by the layout manager)
@@ -48,7 +56,7 @@ class UserProjectsRecyclerViewAdapter(private val data: ArrayList<Research>, pri
         holder.binding.descTrendProjectTv.text = data[position].description
         holder.binding.titleTrendProjectTv.text = data[position].title
         //holder.binding.titleTrendProjectTv.setCompoundDrawables(drawable, null, null, null)
-        holder.binding.whyTrendProjectTv.text = "PROJECT"
+        holder.binding.projectYearTv.text = data[position].year.toString()
 
         holder.bindData(holder.binding, position, userProjectsButtonClickListener)
     }

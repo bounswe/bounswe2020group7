@@ -9,7 +9,8 @@ import retrofit2.Response
 
 class ResearchInfoRepository() {
 
-    var responseCode : MutableLiveData<Int> = MutableLiveData()
+    var responseCodeAdd : MutableLiveData<String> = MutableLiveData()
+    var responseCodeEdit : MutableLiveData<String> = MutableLiveData()
 
     fun addResearch(title:String,description:String?,
                  year:Int,authToken: String){
@@ -20,7 +21,23 @@ class ResearchInfoRepository() {
 
         call.enqueue(object : Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                responseCode.value = response.code()
+                responseCodeAdd.value = response.message()
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+
+            }
+
+        })
+    }
+
+    fun editResearch(projectId:Int, title: String, description: String?, year: Int, authToken: String) {
+        val service = RetrofitClient.getService()
+        val call = service.editResearchProject(projectId, title, description, year, authToken)!!
+
+        call.enqueue(object : Callback<JsonObject> {
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                responseCodeEdit.value = response.message()
             }
 
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
