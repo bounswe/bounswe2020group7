@@ -58,7 +58,7 @@ class GetFollowingsAPI(Resource):
         '''
             Returns a list of dictionaries with id, name, surname, e_mail, rate and is_private informations.
         '''
-        form = GetFollowingsForm(request.args)
+        form = GetFollowingsForm(request.form)
         if form.validate():
             try:
                 followSearch = Follow.query.filter(Follow.follower_id == form.follower_id.data).all()
@@ -95,7 +95,7 @@ class GetFollowersAPI(Resource):
         '''
             Returns a list of dictionaries with id, name, surname, e_mail, rate and is_private informations.
         '''
-        form = GetFollowersForm(request.args)
+        form = GetFollowersForm(request.form)
         if form.validate():
             try:
                 followSearch = Follow.query.filter(Follow.following_id == form.following_id.data).all()
@@ -128,12 +128,12 @@ class FollowRequestAPI(Resource):
     @api.response(200, 'Follow Requests List is successfully returned', follow_requests_model)
     @api.expect(get_follow_requests_parser)
     @login_required
-    @follow_required(param_loc='args',requested_user_id_key='following_id')
+    @follow_required(param_loc='form', requested_user_id_key='following_id')
     def get(user_id, self):
         '''
             Returns a list of dictionaries that contains id, name, surname, e_mail, rate and is_private.
         '''
-        form = GetFollowRequestsForm(request.args)
+        form = GetFollowRequestsForm(request.form)
         if form.validate():
 
             # user_id should be equal to form.following_id.data
