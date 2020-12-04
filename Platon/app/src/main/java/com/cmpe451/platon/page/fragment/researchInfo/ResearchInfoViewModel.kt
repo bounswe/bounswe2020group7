@@ -10,8 +10,17 @@ import com.cmpe451.platon.page.fragment.editprofile.EditProfileRepository
 class ResearchInfoViewModel: ViewModel() {
 
     var currentResearch: MutableLiveData<Research> = MutableLiveData()
+
     private val repository = ResearchInfoRepository()
-    val getResponseCode = repository.responseCodeAdd
+
+    var getResponseCode:MutableLiveData<String>
+
+    init
+    {
+        getResponseCode = repository.responseCodeAdd
+    }
+
+
     fun addResearchInfo(title:String,description:String?,
                         year:Int,authToken: String){
         repository.addResearch(title, description, year, authToken)

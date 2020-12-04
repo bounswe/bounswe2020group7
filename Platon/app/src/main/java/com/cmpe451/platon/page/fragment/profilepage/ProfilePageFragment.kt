@@ -9,6 +9,8 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,6 +21,7 @@ import com.cmpe451.platon.adapter.UserProjectsRecyclerViewAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentProfilePageBinding
 import com.cmpe451.platon.databinding.UserProjectsCellBinding
+import com.cmpe451.platon.networkmodels.models.Research
 import com.cmpe451.platon.page.activity.HomeActivity
 import com.cmpe451.platon.page.fragment.home.HomeViewModel
 import com.cmpe451.platon.page.fragment.profilepage.ProfilePageFragmentDirections
@@ -29,7 +32,7 @@ class ProfilePageFragment : Fragment(), UserProjectsRecyclerViewAdapter.UserProj
 
     private lateinit var binding: FragmentProfilePageBinding
     private val mProfilePageViewModel: ProfilePageViewModel by activityViewModels()
-    private val mResearchInfoViewModel: ResearchInfoViewModel by viewModels()
+    private val mResearchInfoViewModel: ResearchInfoViewModel by activityViewModels()
 
     private lateinit var userProjectsRecyclerView: RecyclerView
     private lateinit var userProjectsAdapter: UserProjectsRecyclerViewAdapter
@@ -67,7 +70,7 @@ class ProfilePageFragment : Fragment(), UserProjectsRecyclerViewAdapter.UserProj
 
         }
 
-        mProfilePageViewModel.getUser.observe(viewLifecycleOwner) { t ->
+        mProfilePageViewModel.getUser.observe(viewLifecycleOwner, Observer { t ->
             if(t != null){
                 val x = ArrayList<Map<String, String>>()
                 x.add(mapOf(Pair("title", "E-mail"), Pair("info", t.e_mail)))
@@ -78,14 +81,16 @@ class ProfilePageFragment : Fragment(), UserProjectsRecyclerViewAdapter.UserProj
                 binding.textNameSurname.text = t.name + " " + t.surname
 
             }
-        }
+        })
 
-        mProfilePageViewModel.getResearches.observe(viewLifecycleOwner
-        ) { t->
+        mProfilePageViewModel.getResearches.observe(viewLifecycleOwner, Observer { t ->
             if(t != null && t.isNotEmpty()) {
                 userProjectsAdapter.submitElements(t)
             }
-        }
+        })
+
+
+
 
         setListeners()
     }

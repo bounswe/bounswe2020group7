@@ -16,7 +16,7 @@ import com.cmpe451.platon.page.fragment.profilepage.ProfilePageViewModel
 
 class EditResearchInfoFragment : Fragment() {
     private lateinit var binding: FragmentResearchInfoEditBinding
-    private val mReseachInfoViewModel: ResearchInfoViewModel by viewModels()
+    private val mReseachInfoViewModel: ResearchInfoViewModel by activityViewModels()
     private val mProfilePageViewModel: ProfilePageViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -48,15 +48,15 @@ class EditResearchInfoFragment : Fragment() {
         binding.buttonEdit.setOnClickListener {
             // check if the title and year is empty
             if(binding.projectNameTv.text.isNullOrEmpty() && binding.projectYearTv.text.isNullOrEmpty()){
-                Toast.makeText(activity as HomeActivity, "Title and Year cannot be left empty", Toast.LENGTH_LONG)
+                Toast.makeText(activity as HomeActivity, "Title and Year cannot be left empty", Toast.LENGTH_LONG).show()
             }
             else {
                 when {
                     binding.projectNameTv.text.isNullOrEmpty() -> {
-                        Toast.makeText(activity, "Title cannot be left empty", Toast.LENGTH_LONG)
+                        Toast.makeText(activity, "Title cannot be left empty", Toast.LENGTH_LONG).show()
                     }
                     binding.projectYearTv.text.isNullOrEmpty() -> {
-                        Toast.makeText(activity , "Year cannot be left empty", Toast.LENGTH_LONG)
+                        Toast.makeText(activity , "Year cannot be left empty", Toast.LENGTH_LONG).show()
                     }
                     else -> {
                         var description:String? = null
@@ -69,6 +69,8 @@ class EditResearchInfoFragment : Fragment() {
                                     binding.projectYearTv.text.toString().toInt(),
                                     (activity as HomeActivity).token!!
                             )
+                            Toast.makeText(activity , "Success", Toast.LENGTH_LONG).show()
+                            findNavController().navigateUp()
                         }
 
                     }
