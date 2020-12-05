@@ -14,6 +14,7 @@ const followings = (id) => {
             if (response) {
                 console.log(response);
 
+
             }
             return response;
         })

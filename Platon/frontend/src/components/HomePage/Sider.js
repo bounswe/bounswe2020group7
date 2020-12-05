@@ -6,6 +6,7 @@ import {Link} from 'react-router-dom'
 import requestService from "../../services/requestService";
 import jwt_decode from "jwt-decode";
 
+
 const { SubMenu } = Menu;
 
 class Sider extends React.Component {
@@ -14,6 +15,7 @@ class Sider extends React.Component {
         this.state = {
             notifications:null,
             profileId: null,
+
 
         }
     }
@@ -27,6 +29,7 @@ class Sider extends React.Component {
         this.setState({
             profileId: decoded.id
         })
+
 
         requestService.getNotifications().then((response) => {
             this.setState({
@@ -58,6 +61,7 @@ class Sider extends React.Component {
                 >
                 </SubMenu>
                 <Link to ={`/${this.state.profileId}`}>
+
 
                 <SubMenu key="sub2" icon={<AppstoreOutlined />}  title=" Profile">
 

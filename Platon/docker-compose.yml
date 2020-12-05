@@ -1,0 +1,74 @@
+# Composefile for database and backend services combined
+
+version: "3.3"
+
+services:
+  db:
+    image: mysql:5.7
+    restart: on-failure
+    environment:
+      # IMPORTANT NOTE:
+      # Whenever you change the value of any of these variables below,
+      # please also update the value of the same variable in "backend" service as well.
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=platondb
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+    networks:
+      default:
+        aliases:
+        # IMPORTANT NOTE:
+        # Whenever you change the alias below,
+        # update the value of MYSQL_HOST environment variable of "backend" service as well.
+          - db
+    ports:
+      # IMPORTANT NOTE:
+      # Whenever you change the "CONTAINER_PORT" part of the "HOST_PORT:CONTAINER_PORT" pair below,
+      # update the value of MYSQL_PORT environment variable of "backend" service as well.
+      - "3306:3306"
+    volumes:
+      - /var/lib/mysql
+  
+  backend:
+    build: 
+      context: .
+      dockerfile: ./backend/Dockerfile
+    depends_on:
+      - db
+    restart: on-failure
+    environment:
+      # IMPORTANT NOTE:
+      # Whenever you change the value of any of the same variables in "db" service,
+      # update the value of the same variable below as well.
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=platondb
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+      # IMPORTANT NOTE:
+      # Whenever you change the name of "db" service,
+      # update the value of the variable below as well.
+      - MYSQL_HOST=db
+      # IMPORTANT NOTE:
+      # Whenever you change the "CONTAINER_PORT" part of "HOST_PORT:CONTAINER_PORT" pair of "db" service,
+      # update the value of the variable below as well.
+      - MYSQL_PORT=3306
+    networks:
+      default:
+        aliases:
+          - backend
+    ports:
+      - "5000:5000"
+
+  frontend:
+    build: 
+      context: .
+      dockerfile: ./frontend/Dockerfile
+    depends_on:
+      - backend
+    restart: on-failure
+    networks:
+      default:
+        aliases:
+          - frontend
+    ports:
+      - "80:3000"
