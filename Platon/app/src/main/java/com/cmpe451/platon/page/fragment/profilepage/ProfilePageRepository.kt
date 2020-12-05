@@ -56,7 +56,7 @@ class ProfilePageRepository() {
             override fun onResponse(
                 call: Call<Researches>, response: Response<Researches>
             ) {
-                var rs = response.body()
+                val rs = response.body()
                 getResearches.value = rs?.research_info
             }
 

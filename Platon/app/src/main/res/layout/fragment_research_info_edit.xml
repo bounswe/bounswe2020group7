@@ -55,7 +55,7 @@
 
 
         <EditText
-            android:id="@+id/editTextNumber"
+            android:id="@+id/project_year_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -75,6 +75,14 @@
             android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:backgroundTint="@color/secondary_purple"
             android:text="@string/text_edit_project"
+            android:textColor="@color/primary_light" />
+        <Button
+            android:id="@+id/button_delete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:backgroundTint="@color/secondary_orange"
+            android:text="@string/text_delete_project"
             android:textColor="@color/primary_light" />
 
     </LinearLayout>

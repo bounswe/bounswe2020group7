@@ -68,6 +68,12 @@ interface Webservice {
                            @Field("description") description:String?,
                            @Field("year") year:Int,
                            @Header("auth_token") auth_token :String) : Call<JsonObject>
-
+    @FormUrlEncoded
+    @PUT("api/profile/research_information")
+    fun editResearchProject(@Field("research_id") research_id:Int,
+                            @Field("research_title") research_title:String,
+                            @Field("description") description:String?,
+                            @Field("year") year:Int,
+                            @Header("auth_token") auth_token :String) : Call<JsonObject>
 
 }

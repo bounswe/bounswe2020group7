@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_profilePageFragment_to_addResearchInfoFragment"
             app:destination="@id/addResearchInfoFragment" />
+        <action
+            android:id="@+id/action_profilePageFragment_to_editResearchInfoFragment"
+            app:destination="@id/editResearchInfoFragment" />
     </fragment>
     <fragment
         android:id="@+id/editProfileFragment"
@@ -54,4 +57,8 @@
         android:id="@+id/addResearchInfoFragment"
         android:name="com.cmpe451.platon.page.fragment.researchInfo.AddResearchInfoFragment"
         android:label="AddResearchInfoFragment" />
+    <fragment
+        android:id="@+id/editResearchInfoFragment"
+        android:name="com.cmpe451.platon.page.fragment.researchInfo.EditResearchInfoFragment"
+        android:label="EditResearchInfoFragment" />
 </navigation>

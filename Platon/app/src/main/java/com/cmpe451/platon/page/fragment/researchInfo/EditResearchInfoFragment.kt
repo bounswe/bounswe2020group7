@@ -10,19 +10,18 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
-import com.cmpe451.platon.databinding.FragmentResearchInfoAddBinding
+import com.cmpe451.platon.databinding.FragmentResearchInfoEditBinding
 import com.cmpe451.platon.page.activity.HomeActivity
-import com.cmpe451.platon.page.fragment.editprofile.EditProfileViewModel
 import com.cmpe451.platon.page.fragment.profilepage.ProfilePageViewModel
 
-class AddResearchInfoFragment : Fragment() {
-    private lateinit var binding: FragmentResearchInfoAddBinding
-    private val mReseachInfoViewModel: ResearchInfoViewModel by viewModels()
+class EditResearchInfoFragment : Fragment() {
+    private lateinit var binding: FragmentResearchInfoEditBinding
+    private val mReseachInfoViewModel: ResearchInfoViewModel by activityViewModels()
     private val mProfilePageViewModel: ProfilePageViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = FragmentResearchInfoAddBinding.inflate(inflater)
+        binding = FragmentResearchInfoEditBinding.inflate(inflater)
         setHasOptionsMenu(true)
         return binding.root
     }
@@ -34,45 +33,46 @@ class AddResearchInfoFragment : Fragment() {
     }
 
     private fun setObserver() {
-        mReseachInfoViewModel.getResponseCode.observe(viewLifecycleOwner) { t ->
-            when(t){
-                "Valid Response"->{
-                    Toast.makeText(activity, "Research Information is added!", Toast.LENGTH_SHORT).show()
-                    mProfilePageViewModel.fetchResearch((activity as HomeActivity).token,
-                        mProfilePageViewModel.getUser.value?.id
-                    )
-                    findNavController().navigateUp()
+        mReseachInfoViewModel.currentResearch.observe(viewLifecycleOwner) { t ->
+            if(t != null){
+                binding.projectNameTv.setText(t.title)
+                binding.projectYearTv.setText(t.year.toString())
+                if(!t.description.isNullOrEmpty()){
+                    binding.projectDescriptionTv.setText(t.description)
                 }
-
-                else ->
-                    Toast.makeText(activity, t, Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     private fun setListeners() {
-        binding.buttonProjectAdd.setOnClickListener {
-                // check if the title and year is empty
+        binding.buttonEdit.setOnClickListener {
+            // check if the title and year is empty
             if(binding.projectNameTv.text.isNullOrEmpty() && binding.projectYearTv.text.isNullOrEmpty()){
-                Toast.makeText(activity as HomeActivity, "Title and Year cannot be left empty", Toast.LENGTH_LONG)
+                Toast.makeText(activity as HomeActivity, "Title and Year cannot be left empty", Toast.LENGTH_LONG).show()
             }
             else {
                 when {
                     binding.projectNameTv.text.isNullOrEmpty() -> {
-                        Toast.makeText(activity, "Title cannot be left empty", Toast.LENGTH_LONG)
+                        Toast.makeText(activity, "Title cannot be left empty", Toast.LENGTH_LONG).show()
                     }
                     binding.projectYearTv.text.isNullOrEmpty() -> {
-                        Toast.makeText(activity , "Year cannot be left empty", Toast.LENGTH_LONG)
+                        Toast.makeText(activity , "Year cannot be left empty", Toast.LENGTH_LONG).show()
                     }
                     else -> {
                         var description:String? = null
                         if(!binding.projectDescriptionTv.text.isNullOrEmpty()){
                             description = binding.projectDescriptionTv.text.toString()
                         }
-                        mReseachInfoViewModel.addResearchInfo(binding.projectNameTv.text.toString(), description,
-                            binding.projectYearTv.text.toString().toInt(),
-                            (activity as HomeActivity).token!!
-                        )
+                        if(mReseachInfoViewModel.currentResearch.value != null){
+                            mReseachInfoViewModel.editResearchInfo(mReseachInfoViewModel.currentResearch.value?.id!!,
+                                    binding.projectNameTv.text.toString(), description,
+                                    binding.projectYearTv.text.toString().toInt(),
+                                    (activity as HomeActivity).token!!
+                            )
+                            Toast.makeText(activity , "Success", Toast.LENGTH_LONG).show()
+                            findNavController().navigateUp()
+                        }
+
                     }
                 }
             }

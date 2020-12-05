@@ -81,4 +81,5 @@
     <string name="text_add_project">Add Project</string>
     <string name="project_year_str">Year</string>
     <string name="text_edit_project">Edit Project</string>
+    <string name="text_delete_project">Delete Project</string>
 </resources>
