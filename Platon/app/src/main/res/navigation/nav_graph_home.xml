@@ -32,12 +32,11 @@
     <fragment
         android:id="@+id/editProfileFragment"
         android:name="com.cmpe451.platon.page.fragment.editprofile.EditProfileFragment"
-        android:label="Edit" >
-    </fragment>
+        android:label="Update"></fragment>
     <fragment
         android:id="@+id/followFragment"
         android:name="com.cmpe451.platon.page.fragment.follow.FollowFragment"
-        android:label="Following">
+        android:label="Details">
         <action
             android:id="@+id/action_followFragment_to_otherProfileFragment"
             app:destination="@id/otherProfileFragment" />
@@ -56,9 +55,9 @@
     <fragment
         android:id="@+id/addResearchInfoFragment"
         android:name="com.cmpe451.platon.page.fragment.researchInfo.AddResearchInfoFragment"
-        android:label="AddResearchInfoFragment" />
+        android:label="Add" />
     <fragment
         android:id="@+id/editResearchInfoFragment"
         android:name="com.cmpe451.platon.page.fragment.researchInfo.EditResearchInfoFragment"
-        android:label="EditResearchInfoFragment" />
+        android:label="Update" />
 </navigation>

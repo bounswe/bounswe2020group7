@@ -2,14 +2,17 @@ package com.cmpe451.platon.page.fragment.researchInfo
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
+import com.cmpe451.platon.R
 import com.cmpe451.platon.databinding.FragmentResearchInfoEditBinding
 import com.cmpe451.platon.page.activity.HomeActivity
 import com.cmpe451.platon.page.fragment.profilepage.ProfilePageViewModel
@@ -77,5 +80,20 @@ class EditResearchInfoFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+
+        // clear search bar, and make it icon
+        val search = (menu.findItem(R.id.search_btn)?.actionView as SearchView)
+        search.setQuery("", false)
+        search.isIconified = true
+
+        menu.findItem(R.id.registerFragment)?.isVisible = false
+        menu.findItem(R.id.loginFragment)?.isVisible = false
+        menu.findItem(R.id.search_btn)?.isVisible = false
+        menu.findItem(R.id.logout_menu_btn)?.isVisible = false
+        menu.findItem(R.id.notification_btn)?.isVisible = false
     }
 }

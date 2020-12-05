@@ -24,7 +24,7 @@ import java.util.*
 class Definitions {
 
     companion object {
-        val API_URL="http://18.198.208.63:5000/"
+        val API_URL="http://3.127.150.96:5000/"
         val API_PORT ="5000"
         val FORGOT_PASS_ADDRESS = ""
         val LOGIN_ADDRESS = ""

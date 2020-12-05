@@ -16,7 +16,7 @@ import java.util.*
 
 class RegisterRepository(){
 
-    var registerResponse:MutableLiveData<String> = MutableLiveData()
+    var registerResponse:MutableLiveData<Pair<Int, String>> = MutableLiveData()
 
 
     fun postRegister(firstName:String, lastName:String, mail:String, job:String, pass:String){
@@ -25,19 +25,15 @@ class RegisterRepository(){
         val call = service.makeRegister(mail, pass, firstName, lastName, job)!!
         call.enqueue(object : Callback<JsonObject> {
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                when (response.isSuccessful) {
-                    true -> registerResponse.value = "success"
-                    false -> if (response.errorBody() != null) {
-                        registerResponse.value =
-                            JSONObject(response.errorBody()!!.string()).get("error").toString()
-                    } else {
-                        registerResponse . value = "Unknown error!"
-                    }
+                when {
+                    response.isSuccessful  -> registerResponse.value = Pair(response.code(), "success")
+                    response.errorBody() != null -> registerResponse.value = Pair(response.code(),JSONObject(response.errorBody()!!.string()).get("error").toString())
+                     else ->registerResponse.value =  Pair(response.code(),"Unknown error!")
                 }
             }
 
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                registerResponse.value = "Unknown error!"
+                registerResponse.value = Pair(-1,"Unknown error!")
             }
 
         })

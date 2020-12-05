@@ -11,8 +11,8 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class FollowRepository() {
-    val followers: MutableLiveData<Followers> = MutableLiveData<Followers>(null)
-    val following: MutableLiveData<Following> = MutableLiveData<Following>(null)
+    val followers: MutableLiveData<Followers> = MutableLiveData()
+    val following: MutableLiveData<Following> = MutableLiveData()
 
     fun getFollowers(followingId: Int, authToken: String){
         val service = RetrofitClient.getService()

@@ -7,13 +7,11 @@ import androidx.lifecycle.ViewModel
 
 class LoginViewModel: ViewModel() {
 
-    var getToken:LiveData<String>
-    var getResponseCode:LiveData<String>
+    var getResponseCode:LiveData<Pair<Int, String>>
 
     private var repository: LoginRepository = LoginRepository()
 
     init {
-        getToken = repository.token
         getResponseCode = repository.loginResponse
     }
 

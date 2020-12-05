@@ -15,9 +15,7 @@ import retrofit2.Response
 
 class LoginRepository() {
 
-    var token: MutableLiveData<String> = MutableLiveData()
-    var loginResponse: MutableLiveData<String> = MutableLiveData()
-
+    var loginResponse: MutableLiveData<Pair<Int, String>> = MutableLiveData()
 
     fun tryToLogin( mailStr: String, passStr: String) {
 
@@ -26,20 +24,16 @@ class LoginRepository() {
 
         call.enqueue(object : Callback<JsonObject>{
             override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                when (response.isSuccessful) {
-                    true -> {
-                        token.value = JSONObject(response.body().toString()).get("token").toString()
-                    }
-                    false -> if (response.errorBody() != null) {
-                        loginResponse.value = JSONObject(response.errorBody()!!.string()).get("error").toString()
-                    } else {
-                        loginResponse.value = "Unknown error!"
-                    }
+                when {
+                    response.isSuccessful ->  loginResponse.value = Pair(response.code(), JSONObject(response.body().toString()).get("token").toString())
+                    (response.errorBody() != null) -> loginResponse.value = Pair(response.code(),JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> loginResponse.value = Pair(response.code(),"Unknown error!")
+
                 }
             }
 
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                loginResponse.value = "Unknown error!"
+                loginResponse.value = Pair(-1,"Unknown error!")
             }
         })
     }

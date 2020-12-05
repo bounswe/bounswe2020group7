@@ -1,4 +1,4 @@
-package com.cmpe451.platon.page.fragment.preLogin.view
+package com.cmpe451.platon.page.fragment.landing
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -16,25 +16,24 @@ import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.TrendingProjectsAdapter
 import com.cmpe451.platon.adapter.UpcomingEventsAdapter
 import com.cmpe451.platon.core.BaseActivity
-import com.cmpe451.platon.databinding.FragmentPreLoginBinding
+import com.cmpe451.platon.databinding.FragmentLandingBinding
 import com.cmpe451.platon.databinding.TrendProjectCellBinding
 import com.cmpe451.platon.databinding.UpcomingEventCellBinding
-import com.cmpe451.platon.page.fragment.preLogin.model.PreLoginRepository
 import com.cmpe451.platon.util.Definitions
 
-class PreLoginFragment : Fragment(),TrendingProjectsAdapter.TrendingProjectButtonClickListener, UpcomingEventsAdapter.UpcomingButtonClickListener  {
+class LandingFragment : Fragment(),TrendingProjectsAdapter.TrendingProjectButtonClickListener, UpcomingEventsAdapter.UpcomingButtonClickListener  {
 
     private lateinit var trendingProjectsRecyclerView: RecyclerView
     private lateinit var upcomingEventsRecyclerView: RecyclerView
 
     private lateinit var sharedPreferences: SharedPreferences
 
-    lateinit var binding: FragmentPreLoginBinding
+    lateinit var binding: FragmentLandingBinding
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = FragmentPreLoginBinding.inflate(layoutInflater)
+        binding = FragmentLandingBinding.inflate(layoutInflater)
         setHasOptionsMenu(true)
         sharedPreferences = activity?.getSharedPreferences("token_file", Context.MODE_PRIVATE)!!
         doAutoLogin()
@@ -45,7 +44,7 @@ class PreLoginFragment : Fragment(),TrendingProjectsAdapter.TrendingProjectButto
         val mail = sharedPreferences.getString("mail", null)
         val pass = sharedPreferences.getString("pass", null)
         if(mail != null && pass != null){
-            findNavController().navigate(PreLoginFragmentDirections.actionPreLoginFragmentToLoginFragment())
+            findNavController().navigate(LandingFragmentDirections.actionLandingFragmentToLoginFragment())
         }
     }
 
@@ -58,9 +57,9 @@ class PreLoginFragment : Fragment(),TrendingProjectsAdapter.TrendingProjectButto
 
 
     private fun initViews(root: View) {
-        val myTrendingProject :ArrayList<Definitions.TrendingProject>? = PreLoginRepository().fetchTrendingProjects()
+        val myTrendingProject :ArrayList<Definitions.TrendingProject>? = LandingRepository().fetchTrendingProjects()
 
-        val myUpcomingEvents :ArrayList<Definitions.UpcomingEvent>? = PreLoginRepository().fetchUpcomingEvents()
+        val myUpcomingEvents :ArrayList<Definitions.UpcomingEvent>? = LandingRepository().fetchUpcomingEvents()
 
         if (myTrendingProject != null){
             trendingProjectsRecyclerView = binding.preLoginTrendingProjectsRecyclerView

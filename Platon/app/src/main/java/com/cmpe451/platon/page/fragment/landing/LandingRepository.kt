@@ -1,13 +1,9 @@
-package com.cmpe451.platon.page.fragment.preLogin.model
+package com.cmpe451.platon.page.fragment.landing
 
-import android.content.Context
-import android.content.SharedPreferences
-import androidx.core.app.ActivityCompat
-import com.cmpe451.platon.R
 import com.cmpe451.platon.util.Definitions.TrendingProject
 import com.cmpe451.platon.util.Definitions.UpcomingEvent
 
-class PreLoginRepository(){
+class LandingRepository(){
 
 
     fun fetchUpcomingEvents():ArrayList<UpcomingEvent> {

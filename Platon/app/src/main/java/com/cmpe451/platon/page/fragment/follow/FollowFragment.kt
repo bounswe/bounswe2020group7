@@ -2,16 +2,19 @@ package com.cmpe451.platon.page.fragment.follow
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.FollowerFollowingRecyclerViewAdapter
 import com.cmpe451.platon.databinding.FragmentFollowersFollowingListBinding
 import com.cmpe451.platon.networkmodels.models.FollowPerson
@@ -32,6 +35,7 @@ class FollowFragment:Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         binding = FragmentFollowersFollowingListBinding.inflate(inflater)
+        setHasOptionsMenu(true)
         following = ArrayList()
         return binding.root
     }
@@ -40,24 +44,46 @@ class FollowFragment:Fragment() {
         setAdapter()
         token = (activity as HomeActivity).token.toString()
         userId = mProfilePageViewModel.getUser.value?.id
-        if(args.follow == "follower"){
-            mFollowViewModel.followers.observe(viewLifecycleOwner){
-                if(it != null && it.followers.isNotEmpty()){
-                    adapter.submitList(it.followers as ArrayList<FollowPerson>)
-                }
-            }
-            mFollowViewModel.fetchFollowers(userId, token)
-        }
-        else {
-            mFollowViewModel.following.observe(viewLifecycleOwner){
-                if(it != null && it.followings.isNotEmpty()) {
-                    adapter.submitList(it.followings as ArrayList<FollowPerson>)
-                }
-            }
-            mFollowViewModel.fetchFollowing(userId, token)
-        }
+
+        setObservers()
+
+        if(args.follow == "follower") mFollowViewModel.fetchFollowers(userId, token)
+        else mFollowViewModel.fetchFollowing(userId, token)
+
 
     }
+
+    private fun setObservers(){
+        mFollowViewModel.following.observe(viewLifecycleOwner, { t->
+            if(t.followings.isNotEmpty()) {
+                adapter.submitList(t.followings as ArrayList<FollowPerson>)
+            }
+        })
+
+        mFollowViewModel.followers.observe(viewLifecycleOwner, { i->
+            if(i.followers.isNotEmpty()){
+                adapter.submitList(i.followers as ArrayList<FollowPerson>)
+            }
+        })
+
+
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+
+        // clear search bar, and make it icon
+        val search = (menu.findItem(R.id.search_btn)?.actionView as SearchView)
+        search.setQuery("", false)
+        search.isIconified = true
+
+        menu.findItem(R.id.registerFragment)?.isVisible = false
+        menu.findItem(R.id.loginFragment)?.isVisible = false
+        menu.findItem(R.id.search_btn)?.isVisible = false
+        menu.findItem(R.id.logout_menu_btn)?.isVisible = false
+        menu.findItem(R.id.notification_btn)?.isVisible = false
+    }
+
     private fun setAdapter(){
         rvFollowers = binding.rvFollow
         adapter = FollowerFollowingRecyclerViewAdapter(ArrayList()) { userId:Int->

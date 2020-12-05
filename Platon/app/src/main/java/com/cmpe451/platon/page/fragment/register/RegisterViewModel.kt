@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel
 class RegisterViewModel: ViewModel() {
 
 
-    var getRegisterResponse: MutableLiveData<String>
+    var getRegisterResponse: MutableLiveData<Pair<Int, String>>
     private var repository: RegisterRepository = RegisterRepository()
 
     init {

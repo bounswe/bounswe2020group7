@@ -1,6 +1,7 @@
 package com.cmpe451.platon.page.fragment.follow
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.cmpe451.platon.networkmodels.models.Followers
 import com.cmpe451.platon.networkmodels.models.Following
@@ -8,8 +9,8 @@ import com.cmpe451.platon.networkmodels.models.Following
 class FollowViewModel: ViewModel() {
 
 
-    var followers: LiveData<Followers>
-    var following : LiveData<Following>
+    var followers: MutableLiveData<Followers>
+    var following : MutableLiveData<Following>
     private var repository: FollowRepository =
         FollowRepository()
 

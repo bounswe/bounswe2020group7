@@ -81,7 +81,6 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
         super.onPrepareOptionsMenu(menu)
         menu.findItem(R.id.registerFragment).isVisible = false
         menu.findItem(R.id.loginFragment).isVisible = false
-        menu.findItem(R.id.logout_menu_btn).isVisible = true
     }
 
     override fun onTrendingProjectButtonClicked(binding: TrendProjectCellBinding, position: Int) {

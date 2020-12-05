@@ -40,13 +40,10 @@ class EditProfileViewModel:ViewModel() {
         if(!profilePhotoTv.text.isNullOrEmpty()){
             profilePhoto  = profilePhotoTv.text.toString()
         }
-        var isPrivate:Boolean? = null
-        if(!profilePhotoTv.text.isNullOrEmpty()){
-            isPrivate  = isPrivateUser
-        }
+
 
         if(token != null) {
-            repository.editUser(name, surname, job, isPrivate, profilePhoto, google_scholar_name, researchgate_name, token)
+            repository.editUser(name, surname, job, isPrivateUser, profilePhoto, google_scholar_name, researchgate_name, token)
         }}
 
 }

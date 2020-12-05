@@ -107,6 +107,7 @@ class RegisterFragment : Fragment() {
             val pass2Str = binding.pw2Tv.text.toString().trim()
             val jobStr = binding.jobTv.text.toString().trim()
             if (!mRegisterViewModel.onRegisterButtonClicked(firstNameStr, lastNameStr, mailStr, jobStr, pass1Str, pass2Str)) dialog.show()
+            else Toast.makeText(activity, "Something is wrong", Toast.LENGTH_SHORT).show()
         }
 
         binding.alreadHaveBtn.setOnClickListener {
@@ -132,14 +133,14 @@ class RegisterFragment : Fragment() {
     private fun setObservers(){
         mRegisterViewModel.getRegisterResponse.observe(viewLifecycleOwner, { t->
             if(t!= null){
-                dialog.dismiss()
-                if(t.contains("success", ignoreCase = true)){
+                if(t.first == 201){
                     findNavController().navigateUp()
                     Toast.makeText(activity, "Successfully registered!", Toast.LENGTH_SHORT).show()
                 }else{
-                    Toast.makeText(activity, t, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, t.second, Toast.LENGTH_SHORT).show()
                 }
             }
+            dialog.dismiss()
         })
     }
 

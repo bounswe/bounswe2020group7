@@ -98,6 +98,7 @@ class LoginFragment : Fragment() {
             val email = binding.emailEt.text.toString().trim()
             val pass = binding.passEt.text.toString().trim()
             if (!mLoginViewModel.tryToLogin(email, pass)) dialog.show()
+            else Toast.makeText(activity, "Something is wrong", Toast.LENGTH_SHORT).show()
         }
 
         binding.dontHaveAccBtn.setOnClickListener {
@@ -114,27 +115,27 @@ class LoginFragment : Fragment() {
     }
 
     private fun setObservers(){
-        mLoginViewModel.getToken.observe(viewLifecycleOwner, { t->
-            if(t!= null && t.isNotEmpty()){
-                sharedPreferences.edit().putString("token", t).apply()
+        mLoginViewModel.getResponseCode.observe(viewLifecycleOwner, {t->
+            if(t!=null){
+                if (t.first == 200) {
+                    val token = t.second
+                    sharedPreferences.edit().putString("token", token).apply()
 
-                if(binding.rememberChk.isChecked){
-                    sharedPreferences.edit().putString("mail", binding.emailEt.text.toString().trim()).apply()
-                    sharedPreferences.edit().putString("pass", binding.passEt.text.toString().trim()).apply()
+                    if(binding.rememberChk.isChecked){
+                        sharedPreferences.edit().putString("mail", binding.emailEt.text.toString().trim()).apply()
+                        sharedPreferences.edit().putString("pass", binding.passEt.text.toString().trim()).apply()
+                    }
+                    activity?.finish()
+                    activity?.startActivity(Intent(activity, HomeActivity::class.java).putExtra("token", token))
                 }
-
-                activity?.finish()
-                activity?.startActivity(Intent(activity, HomeActivity::class.java).putExtra("token", t))
+                else {
+                    Toast.makeText(activity, t.second, Toast.LENGTH_LONG).show()
+                    sharedPreferences.edit().remove("mail").apply()
+                    sharedPreferences.edit().remove("pass").apply()
+                    sharedPreferences.edit().remove("token").apply()
+                }
             }
             dialog.dismiss()
-        })
-
-        mLoginViewModel.getResponseCode.observe(viewLifecycleOwner, {t->
-            if(t!=null) Toast.makeText(activity, t, Toast.LENGTH_LONG).show()
-            dialog.dismiss()
-            sharedPreferences.edit().remove("mail").apply()
-            sharedPreferences.edit().remove("pass").apply()
-            sharedPreferences.edit().remove("token").apply()
         })
     }
 
