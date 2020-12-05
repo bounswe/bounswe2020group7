@@ -4,9 +4,9 @@ from flask import current_app as app
 
 from app import api, db
 from app.follow_system.forms import GetFollowingsForm, GetFollowersForm, GetFollowRequestsForm, \
-    SendFollowRequestsForm, ReplyFollowRequestsForm
+    SendFollowRequestsForm, ReplyFollowRequestsForm, UnfollowForm
 from app.follow_system.forms import get_followings_parser, get_followers_parser, get_follow_requests_parser, send_follow_requests_parser, \
-    reply_follow_requests_parser
+    reply_follow_requests_parser, unfollow_parser
 from app.follow_system.models import Follow, FollowRequests
 from app.auth_system.models import User
 from app.auth_system.views import login_required
@@ -80,6 +80,39 @@ class GetFollowingsAPI(Resource):
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
 
+    @api.doc(responses={200: 'User is unfollowed successfully',
+                        400: 'Input Format Error',
+                        404: 'No follow information found with given authentication token and following_id',
+                        500: 'Database Connection Error'})
+    @api.expect(unfollow_parser)
+    @login_required
+    def delete(user_id, self):
+        '''
+            Takes the following_id and authentication token as inputs and deletes corresponding Follow entry.
+        '''
+        form = UnfollowForm(request.form)
+        if form.validate():
+
+            # Check if the given Follow instance exists.
+            try:
+                followSearch = Follow.query.filter(Follow.following_id == form.following_id.data, Follow.follower_id == user_id).all()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+            if len(followSearch) == 0:
+                return make_response(jsonify({'error': 'No follow information found with given authentication token and following_id'}), 404)
+
+            follow_instance = followSearch[0]
+            try:
+                db.session.delete(follow_instance)
+                db.session.commit()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Problem'}), 500)
+
+            return make_response(jsonify({'msg': 'User is unfollowed successfully'}), 200)
+
+        else:
+            return make_response(jsonify({'error': 'Input Format Error'}), 400)
 
 @follow_system_ns.route("/followers")
 class GetFollowersAPI(Resource):
@@ -128,7 +161,6 @@ class FollowRequestAPI(Resource):
     @api.response(200, 'Follow Requests List is successfully returned', follow_requests_model)
     @api.expect(get_follow_requests_parser)
     @login_required
-    @follow_required(param_loc='form', requested_user_id_key='following_id')
     def get(user_id, self):
         '''
             Returns a list of dictionaries that contains id, name, surname, e_mail, rate and is_private.
