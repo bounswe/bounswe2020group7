@@ -43,14 +43,21 @@
         <argument
             android:name="follow"
             app:argType="string" />
+        <argument
+            android:name="userId"
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
     <fragment
         android:id="@+id/otherProfileFragment"
-        android:name="com.cmpe451.platon.page.fragment.otherprofile.view.OtherProfileFragment"
+        android:name="com.cmpe451.platon.page.fragment.otherprofile.OtherProfileFragment"
         android:label="Profile">
         <action
             android:id="@+id/action_otherProfileFragment_to_followFragment2"
             app:destination="@id/followFragment" />
+        <argument
+            android:name="userId"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/addResearchInfoFragment"

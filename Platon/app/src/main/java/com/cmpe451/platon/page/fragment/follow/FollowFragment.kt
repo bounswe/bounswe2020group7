@@ -10,6 +10,8 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,7 +32,7 @@ class FollowFragment:Fragment() {
     private lateinit var token:String
     private val mFollowViewModel: FollowViewModel by viewModels()
     private val mProfilePageViewModel: ProfilePageViewModel by activityViewModels()
-    val args: FollowFragmentArgs by navArgs()
+    private val args: FollowFragmentArgs by navArgs()
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         binding = FragmentFollowersFollowingListBinding.inflate(inflater)
@@ -46,24 +48,32 @@ class FollowFragment:Fragment() {
 
         setObservers()
 
-        if(args.follow == "follower") mFollowViewModel.fetchFollowers(userId, token)
-        else mFollowViewModel.fetchFollowing(userId, token)
+        if(args.userId == 0){
+            if(args.follow == "follower") mFollowViewModel.fetchFollowers(userId, token)
+            else mFollowViewModel.fetchFollowing(userId, token)
+        }
+        else  {
+            userId = args.userId
+            if(args.follow == "follower") mFollowViewModel.fetchFollowers(userId, token)
+            else mFollowViewModel.fetchFollowing(userId, token)
+        }
+
 
 
     }
 
     private fun setObservers(){
-        mFollowViewModel.following.observe(viewLifecycleOwner, { t->
+        mFollowViewModel.following.observe(viewLifecycleOwner) { t->
             if(t.followings.isNotEmpty()) {
                 adapter.submitList(t.followings as ArrayList<FollowPerson>)
             }
-        })
+        }
 
-        mFollowViewModel.followers.observe(viewLifecycleOwner, { i->
+        mFollowViewModel.followers.observe(viewLifecycleOwner) { i->
             if(i.followers.isNotEmpty()){
                 adapter.submitList(i.followers as ArrayList<FollowPerson>)
             }
-        })
+        }
 
 
     }
@@ -86,8 +96,9 @@ class FollowFragment:Fragment() {
     private fun setAdapter(){
         rvFollowers = binding.rvFollow
         adapter = FollowerFollowingAdapter(ArrayList()) { userId:Int->
-            Toast.makeText(activity, userId, Toast.LENGTH_LONG)
+//            Toast.makeText(activity, userId, Toast.LENGTH_LONG)
 //            (activity as HomeActivity).navController.navigate(FollowersFollowingFragmentDirections.actionFollowersFollowingFragmentToProfilePagePrivateFragment(id))
+            findNavController().navigate(FollowFragmentDirections.actionFollowFragmentToOtherProfileFragment(userId))
         }
         rvFollowers.adapter = adapter
         rvFollowers.layoutManager = LinearLayoutManager(this.activity)

@@ -82,4 +82,5 @@
     <string name="project_year_str">Year</string>
     <string name="text_edit_project">Edit Project</string>
     <string name="text_delete_project">Delete Project</string>
+    <string name="private_page_warning_str">To see the details, please send a follow request.</string>
 </resources>
