@@ -1,2 +1,3 @@
 deliverables/
 non_project/
+*__pycache__*

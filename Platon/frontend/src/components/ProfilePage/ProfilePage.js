@@ -27,6 +27,7 @@ import config from "../../utils/config";
 import axios from 'axios'
 import Spinner from '../Spinner/Spinner'
 
+
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -82,6 +83,7 @@ class ProfilePage extends React.Component {
       renderTrigger: false,
       isLoading: true,
 
+
     };
   }
   componentDidMount() {
@@ -90,6 +92,7 @@ class ProfilePage extends React.Component {
     const profileId = this.props.match.params.profileId
     Promise.all([
     requestService.followings(profileId).then((response) => {
+
 
       this.setState({
         followings: response.data.followings,
@@ -103,6 +106,7 @@ class ProfilePage extends React.Component {
       })
     }),
     requestService.followers(profileId).then((response) => {
+
 
       this.setState({
         followers: response.data.followers,
@@ -121,6 +125,7 @@ class ProfilePage extends React.Component {
       });
     }),
   ]).then(() => this.setState({isLoading: false}));
+
 
   }
   handlerFollow = (index, following_id) =>{
@@ -187,6 +192,7 @@ class ProfilePage extends React.Component {
         { this.state.isLoading ? <div className="ProfilePageSpinner"><Spinner/></div> :
         <div>
 
+
         <Container className="ProfilePageContainer">
           <h2 className="GeneralLargeFont">My Profile</h2>
           <hr className="ProfilePageLine" />
@@ -196,6 +202,7 @@ class ProfilePage extends React.Component {
               <img
                 className="ProfilePhoto"
                 src={this.state.user.profile_photo ? this.state.user.profile_photo : "https://picsum.photos/500/500"}
+
                 alt="UserImage"
               />
             </Col>
@@ -221,6 +228,7 @@ class ProfilePage extends React.Component {
                 </Col>
               </Row>
               <Link to = {`/${this.props.match.params.profileId}/edit`}>
+
 
               <Button
                 className="ProfileFollowButton"
@@ -320,6 +328,7 @@ class ProfilePage extends React.Component {
                   <ListItemSecondaryAction>
 
                       <Button  id={"FollowButtonInFollowings" + index} key={index}>Unfollow</Button>
+
 
                       <Button style={{backgroundColor: "#F44336"}}>Report</Button>
 
