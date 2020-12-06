@@ -20,6 +20,7 @@ import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentProfilePageBinding
 import com.cmpe451.platon.databinding.UserProjectsCellBinding
 import com.cmpe451.platon.page.activity.HomeActivity
+import com.cmpe451.platon.page.fragment.follow.FollowViewModel
 import com.cmpe451.platon.page.fragment.researchInfo.ResearchInfoViewModel
 import com.cmpe451.platon.util.Definitions
 
@@ -45,57 +46,15 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //initializePresenter()
-        initializeAdapter()
-
-
-        if(mProfilePageViewModel.getUser.value != null){
-            val x = ArrayList<Map<String, String>>()
-            x.add(mapOf(Pair("title", "E-mail"), Pair("info", mProfilePageViewModel.getUser.value!!.e_mail)))
-            x.add(mapOf(Pair("title", "Job"), Pair("info", mProfilePageViewModel.getUser.value!!.job)))
-            x.add(mapOf(Pair("title", "Rating"), Pair("info", mProfilePageViewModel.getUser.value!!.rate.toString())))
-            informationsAdapter.submitList(x)
-
-            binding.textNameSurname.text = mProfilePageViewModel.getUser.value!!.name + " " + mProfilePageViewModel.getUser.value!!.surname
-            mProfilePageViewModel.fetchResearch((activity as HomeActivity).token,
-                mProfilePageViewModel.getUser.value?.id
-            )
-
-        }
-
-        mProfilePageViewModel.getUser.observe(viewLifecycleOwner, Observer { t ->
-            if(t != null){
-                val x = ArrayList<Map<String, String>>()
-                x.add(mapOf(Pair("title", "E-mail"), Pair("info", t.e_mail)))
-                x.add(mapOf(Pair("title", "Job"), Pair("info", t.job)))
-                x.add(mapOf(Pair("title", "Rating"), Pair("info", t.rate.toString())))
-                informationsAdapter.submitList(x)
-
-                binding.textNameSurname.text = t.name + " " + t.surname
-
-                Glide.with(this).load(t.profile_photo).into(binding.profilePhoto);
-
-            }
-        })
-
-        mProfilePageViewModel.getResearches.observe(viewLifecycleOwner, Observer { t ->
-            if(t != null && t.isNotEmpty()) {
-                userProjectsAdapter.submitElements(t)
-            }
-        })
-
-
+        initializeAdapters()
         setListeners()
     }
 
-
-    private fun initializeAdapter() {
+    private fun initializeAdapters() {
         userProjectsRecyclerView = binding.rvProfilePageProjects
         userProjectsAdapter = UserProjectsAdapter(ArrayList(), requireContext(), this)
         userProjectsRecyclerView.adapter = userProjectsAdapter
         userProjectsRecyclerView.layoutManager = LinearLayoutManager(this.activity)
-
-
 
         informationsRecyclerView = binding.rvProfilePageInfo
         informationsAdapter = ProfilePageAdapter(ArrayList())
@@ -103,22 +62,44 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
         informationsRecyclerView.layoutManager = LinearLayoutManager(context,LinearLayoutManager.VERTICAL, false)
     }
 
-    private fun setListeners() {
 
+    private fun setListeners() {
+        setButtonListeners()
+        setObservers()
+    }
+
+    private fun setObservers() {
+        mProfilePageViewModel.getUser.observe(viewLifecycleOwner, { t->
+            if(t != null){
+                informationsAdapter.submitList(mProfilePageViewModel.getPersonalInformation())
+                val naming = t.name + " " + t.surname
+                binding.textNameSurname.text = naming
+
+                mProfilePageViewModel.fetchResearch((activity as HomeActivity).token, t.id)
+
+                Glide.with(this)
+                    .load(t.profile_photo)
+                    .placeholder(R.drawable.ic_o_logo)
+                    .into(binding.profilePhoto)
+            }
+        })
+
+        mProfilePageViewModel.getResearches.observe(viewLifecycleOwner, { t ->
+            if(t != null && t.isNotEmpty()) {
+                userProjectsAdapter.submitElements(t)
+            }
+        })
+
+    }
+
+
+    private fun setButtonListeners() {
         binding.buttonFollowers.setOnClickListener {
-           findNavController().navigate(
-               ProfilePageFragmentDirections.actionProfilePageFragmentToFollowFragment(
-                   "follower"
-               )
-           )
+            findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToFollowFragment("follower"))
         }
 
         binding.buttonFollowing.setOnClickListener {
-            findNavController().navigate(
-                ProfilePageFragmentDirections.actionProfilePageFragmentToFollowFragment(
-                    "following"
-                )
-            )
+            findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToFollowFragment("following"))
         }
 
         binding.buttonEditProfile.setOnClickListener {
@@ -128,8 +109,6 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
             findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToAddResearchInfoFragment())
         }
 
-
-        //password.addTextChangedListener(textWatcher)
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {

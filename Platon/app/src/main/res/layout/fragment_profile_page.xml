@@ -72,7 +72,7 @@
                 app:layout_constraintStart_toEndOf="@id/profile_photo"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toTopOf="@id/button_following"
-                android:layout_margin="@dimen/profile_margin_half"
+                android:layout_margin="@dimen/profile_page_margin"
                 android:orientation="horizontal"
                 android:layout_weight="1"
 

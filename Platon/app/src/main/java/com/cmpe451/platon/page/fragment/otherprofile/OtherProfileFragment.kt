@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -77,7 +76,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
     }
 
     private fun setObservers() {
-        mOtherProfileViewModel.currentUser.observe(viewLifecycleOwner){
+        mOtherProfileViewModel.currentUser.observe(viewLifecycleOwner,{
             if(it != null){
                 binding.textNameSurname.text = it.name!! + " " + it.surname!!
                 Glide.with(this).load(it.profile_photo).into(binding.profilePhoto);
@@ -85,7 +84,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                 setView(mOtherProfileViewModel.isFollowing.value!!, mOtherProfileViewModel.isUserPrivate.value!!)
                 setListeners(mOtherProfileViewModel.isFollowing.value!!, mOtherProfileViewModel.isUserPrivate.value!!)
             }
-        }
+        })
         mOtherProfileViewModel.isFollowing.observe(viewLifecycleOwner){
             if(it != null){
                 setView(it, mOtherProfileViewModel.isUserPrivate.value!!)

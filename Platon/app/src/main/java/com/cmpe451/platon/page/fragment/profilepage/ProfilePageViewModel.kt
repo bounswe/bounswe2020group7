@@ -11,8 +11,8 @@ class ProfilePageViewModel: ViewModel() {
 
     var getUser:LiveData<User>
     val getResearches: LiveData<List<Research>>
-    private var repository: ProfilePageRepository =
-        ProfilePageRepository()
+
+    private var repository: ProfilePageRepository = ProfilePageRepository()
 
     init {
         getUser = repository.getUser
@@ -30,6 +30,15 @@ class ProfilePageViewModel: ViewModel() {
         if(token != null && userId != null){
             repository.getResearches(userId, token)
         }
+    }
+
+    fun getPersonalInformation():ArrayList<Map<String, String>> {
+        val x = ArrayList<Map<String, String>>()
+        x.add(mapOf(Pair("title", "E-mail"), Pair("info", getUser.value!!.e_mail)))
+        x.add(mapOf(Pair("title", "Job"), Pair("info", getUser.value!!.job)))
+        x.add(mapOf(Pair("title", "Rating"), Pair("info", getUser.value!!.rate.toString())))
+
+        return x
     }
 
 
