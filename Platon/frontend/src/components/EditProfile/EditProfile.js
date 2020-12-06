@@ -277,7 +277,6 @@ class EditProfile extends Component {
                     </Button>
                 </Col>
             </Row>
-
         </Container> }
 
         {this.state.fieldEmptyError && (

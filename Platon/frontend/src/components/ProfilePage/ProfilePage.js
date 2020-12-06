@@ -152,7 +152,6 @@ class ProfilePage extends React.Component {
         },
       })
       .then((response) => {
-        console.log(response)
         if (response.status === 200) {
 
           let temp_followings_id_arr = [following_id, ...this.state.followings_id_arr]
@@ -177,7 +176,6 @@ class ProfilePage extends React.Component {
   };
 
   render() {
-    console.log(this.state.user);
     const { classes } = this.props;
     return (
       <div className="ProfilePageLanding">
@@ -188,7 +186,7 @@ class ProfilePage extends React.Component {
         <div>
 
         <Container className="ProfilePageContainer">
-          <h2 className="GeneralLargeFont">My Profile</h2>
+          <h2 className="GeneralLargeFont">Profile</h2>
           <hr className="ProfilePageLine" />
 
           <Row>
@@ -252,12 +250,19 @@ class ProfilePage extends React.Component {
                 onChange={this.handleChange}
                 aria-label="simple tabs example"
               >
-                <Tab label="My Projects" {...a11yProps(0)} />
-                <Tab label="Followers" {...a11yProps(1)} />
-                <Tab label="Following" {...a11yProps(2)} />
+                <Tab label="Workspaces" {...a11yProps(0)} />
+                <Tab label="Researchs" {...a11yProps(1)} />
+                <Tab label="Followers" {...a11yProps(2)} />
+                <Tab label="Following" {...a11yProps(3)} />
               </Tabs>
             </AppBar>
             <TabPanel value={this.state.value} index={0}>
+              <Row>
+              <Col>
+              </Col>
+              </Row>
+            </TabPanel>
+            <TabPanel value={this.state.value} index={1}>
               <Row>
 
                 {this.state.researchs.map((value, index) => {
@@ -265,16 +270,24 @@ class ProfilePage extends React.Component {
                 <Col>
                 <Card className="ProfileProjectsCard">
                   <Card.Body>
-                    <Card.Title>{value.title}</Card.Title>
-                    <Card.Text>Year: {value.year}</Card.Text>
+                  <Card.Title  style={{color: colors.primaryDark}}>Title</Card.Title>
+                    <Card.Text style={{color: colors.primaryLight}}>{value.title}</Card.Text>
+                    <Card.Title style={{color: colors.primaryDark}}>Description</Card.Title>
+
+                    <Card.Text style={{color: colors.primaryLight}}>{value.description === "" ? "No description is provided." : value.description}</Card.Text>
+                    <Card.Title style={{color: colors.primaryDark}}>Year</Card.Title>
+
+                    <Card.Text style={{color: colors.primary}}>{value.year}</Card.Text>
                   </Card.Body>
+                  <Button style={{backgroundColor: colors.quaternary}}>Edit</Button>
+                  <Button style={{backgroundColor: colors.quinary}}>Delete</Button>
                 </Card>
               </Col>)
                 })}
 
               </Row>
             </TabPanel>
-            <TabPanel value={this.state.value} index={1}>
+            <TabPanel value={this.state.value} index={2}>
             <List>
 
               {this.state.followers.map((value, index) => {
@@ -301,7 +314,7 @@ class ProfilePage extends React.Component {
             )})}
             </List>
             </TabPanel>
-            <TabPanel value={this.state.value} index={2}>
+            <TabPanel value={this.state.value} index={3}>
             <List>
               {this.state.followings.map((value, index) => {
                 return(
