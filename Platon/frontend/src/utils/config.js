@@ -1,5 +1,5 @@
 const config = {
-    BASE_URL: "http://backend:5000"
+    BASE_URL: ""
 }
 
 export default config;
