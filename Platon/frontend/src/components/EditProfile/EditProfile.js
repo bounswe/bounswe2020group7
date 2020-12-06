@@ -5,6 +5,7 @@ import colors from "../../utils/colors";
 import { Container, Col, Row, Button } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { TextField, withStyles, Switch, FormControlLabel } from '@material-ui/core';
+
 import axios from 'axios';
 import MuiAlert from "@material-ui/lab/Alert";
 import jwt_decode from "jwt-decode";
@@ -13,6 +14,7 @@ import Snackbar from "@material-ui/core/Snackbar";
 import { Link } from "react-router-dom";
 import requestService from "../../services/requestService";
 import Spinner from '../Spinner/Spinner'
+
 
 const StyledTextField = withStyles({
     root: {
@@ -66,6 +68,7 @@ class EditProfile extends Component {
       profileId: null,
       isLoading: true,
 
+
      }
   }
 
@@ -75,6 +78,7 @@ class EditProfile extends Component {
     this.setState({
       profileId: decoded.id
     })
+
 
     requestService.getUser(decoded.id).then((response) => {
       this.setState({
@@ -93,7 +97,6 @@ class EditProfile extends Component {
         isLoading: false
       })
     });
-
 
 
   }
@@ -158,6 +161,7 @@ class EditProfile extends Component {
       dbcheck=true
     }
 
+
     if(!dbcheck){
       return
     }
@@ -196,6 +200,7 @@ class EditProfile extends Component {
         <Row className="mb-3 justify-content-center">
                 <Col sm={6}>
                     <a href={`/${this.state.profileId}`}>
+
 
                         Back to profile
                     </a>
@@ -272,12 +277,14 @@ class EditProfile extends Component {
 
             <Row className="mb-3 justify-content-center">
                 <Col sm={6}>
+
                     <Button className="ProfileUpdateButton" variant="primary" size="lg" block onClick={this.handleSubmit}>
                         Update
                     </Button>
                 </Col>
             </Row>
         </Container> }
+
 
         {this.state.fieldEmptyError && (
               <Snackbar

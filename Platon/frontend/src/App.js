@@ -6,6 +6,7 @@ import HomePage from './components/HomePage/HomePage'
 
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
 
+
 import ForgotPassword from './components/ForgotPassword/ForgotPassword'
 import ResetPassword from './components/ResetPassword/ResetPassword'
 import Login from './components/Login/Login'
@@ -16,6 +17,7 @@ import Activation from './components/Activation/Activation'
 import { setAuthorizationToken } from './helpers/setAuthorizationToken';
 
 import NotFound from './components/NotFound/NotFound';
+
 
 class App extends Component {
   constructor(props) {
@@ -48,6 +50,7 @@ class App extends Component {
     return (
       <Router>
 
+
 <Switch>
 
 
@@ -58,6 +61,7 @@ class App extends Component {
         render ={ () => !this.state.isAuthenticated ?
               <Landing/>
               : <HomePage/>}/>
+
       <Route path='/:profileId(\d+)' exact component={!this.state.isAuthenticated ? Landing : ProfilePage}/>
       <Route path='/:profileId(\d+)/edit' exact component={!this.state.isAuthenticated ? Landing : EditProfile}/>
 
@@ -66,12 +70,14 @@ class App extends Component {
       <Route path='/register' exact  component={Register}/>
       <Route path='/forgotpassword' exact component={ForgotPassword}/>
       <Route path='/resetpassword'  component={ResetPassword}/>
+
       {/*<Route path="*"><NotFound isAuthenticated={this.state.isAuthenticated} /></Route>*/}
       {/*<Route path='*' component={() => <NotFound isAuthenticated={this.state.isAuthenticated} />} />*/}
 
 
       </div>
       </Switch>
+
 
     </Router>
      );
