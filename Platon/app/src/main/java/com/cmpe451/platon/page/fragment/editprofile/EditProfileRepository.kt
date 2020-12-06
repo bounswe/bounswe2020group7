@@ -1,22 +1,17 @@
 package com.cmpe451.platon.page.fragment.editprofile
 
-import android.content.SharedPreferences
-import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
-import com.cmpe451.platon.util.RetrofitClient
-import com.cmpe451.platon.util.Webservice
+import com.cmpe451.platon.network.Resource
+import com.cmpe451.platon.network.RetrofitClient
 import com.google.gson.JsonObject
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observer
-import io.reactivex.rxjava3.schedulers.Schedulers
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.*
 
 class EditProfileRepository() {
 
-    var responseCode : MutableLiveData<Int> = MutableLiveData()
+    var editProfileResourceResponse : MutableLiveData<Resource<JsonObject>> = MutableLiveData(Resource.Loading(JsonObject()))
 
     fun editUser(name:String?,surname:String?,
                  job:String?, isPrivate:Boolean?,
@@ -26,15 +21,19 @@ class EditProfileRepository() {
 
 
         val service = RetrofitClient.getService()
-        val call = service.editUserInfo(name, surname, job, true, isPrivate, profilePhoto, google_scholar_name, researchgate_name, authToken)!!
+        val call = service.editUserInfo(name, surname, job, true, isPrivate, profilePhoto, google_scholar_name, researchgate_name, authToken)
 
-        call.enqueue(object :Callback<JsonObject>{
-            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                responseCode.value = response.code()
+        call.enqueue(object :Callback<JsonObject?> {
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when{
+                    response.isSuccessful && response.body() != null -> editProfileResourceResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> editProfileResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> editProfileResourceResponse.value = Resource.Error("Unknown Error")
+                }
             }
 
-            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                call.clone().enqueue(this)
             }
 
         })

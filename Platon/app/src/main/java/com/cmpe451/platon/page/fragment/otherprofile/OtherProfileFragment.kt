@@ -24,6 +24,7 @@ import com.cmpe451.platon.adapter.UserProjectsAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentProfilePageOthersPrivateBinding
 import com.cmpe451.platon.databinding.UserProjectsCellBinding
+import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.page.activity.HomeActivity
 import com.cmpe451.platon.page.fragment.profilepage.ProfilePageFragmentDirections
 import com.cmpe451.platon.page.fragment.profilepage.ProfilePageViewModel
@@ -76,29 +77,40 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
     }
 
     private fun setObservers() {
-        mOtherProfileViewModel.currentUser.observe(viewLifecycleOwner,{
-            if(it != null){
-                binding.textNameSurname.text = it.name!! + " " + it.surname!!
-                Glide.with(this).load(it.profile_photo).into(binding.profilePhoto);
-                mOtherProfileViewModel.setUserInfo()
-                setView(mOtherProfileViewModel.isFollowing.value!!, mOtherProfileViewModel.isUserPrivate.value!!)
-                setListeners(mOtherProfileViewModel.isFollowing.value!!, mOtherProfileViewModel.isUserPrivate.value!!)
+        mOtherProfileViewModel.getUserResource.observe(viewLifecycleOwner,{ i->
+            when(i.javaClass){
+                Resource.Success::class.java -> {
+                    val user = i.data!!
+                    binding.textNameSurname.text = user.name + " " + user.surname
+                    Glide.with(this).load(user.profile_photo).into(binding.profilePhoto);
+                    mOtherProfileViewModel.setUserInfo()
+                    setView(mOtherProfileViewModel.isFollowing.value!!, mOtherProfileViewModel.isUserPrivate.value!!)
+                    setListeners(mOtherProfileViewModel.isFollowing.value!!, mOtherProfileViewModel.isUserPrivate.value!!)
+                }
+                Resource.Error::class.java->Toast.makeText(activity, i.message, Toast.LENGTH_SHORT).show()
             }
         })
+
         mOtherProfileViewModel.isFollowing.observe(viewLifecycleOwner){
             if(it != null){
                 setView(it, mOtherProfileViewModel.isUserPrivate.value!!)
                 setListeners(it, mOtherProfileViewModel.isUserPrivate.value!!)
             }
         }
-        mOtherProfileViewModel.currentResarch.observe(viewLifecycleOwner, Observer { t ->
-            if(t != null && t.isNotEmpty()) {
-                userProjectsAdapter.submitElements(t)
+
+        mOtherProfileViewModel.getResearchesResource.observe(viewLifecycleOwner, Observer { i ->
+            when(i.javaClass){
+                Resource.Success::class.java -> {
+                    val researches = i.data!!.research_info
+                    userProjectsAdapter.submitElements(researches)
+                }
+                Resource.Error::class.java->Toast.makeText(activity, i.message, Toast.LENGTH_SHORT).show()
             }
         })
-        mOtherProfileViewModel.followResponse.observe(viewLifecycleOwner, Observer{
-            if(it != null){
-                if(it.first == 200){
+
+        mOtherProfileViewModel.getFollowResourceResponse.observe(viewLifecycleOwner, {i->
+            when(i.javaClass){
+                Resource.Success::class.java -> {
                     if(mOtherProfileViewModel.isUserPrivate.value!!){
                         mOtherProfileViewModel.setIsFollowing(USERSTATUS.REQUESTED)
                     }
@@ -106,26 +118,26 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                         mOtherProfileViewModel.setIsFollowing(USERSTATUS.FOLLOWING)
                     }
                 }
-                else {
-                    Toast.makeText(activity, it.second, Toast.LENGTH_LONG).show()
-                }
+                Resource.Error::class.java->Toast.makeText(activity, i.message, Toast.LENGTH_SHORT).show()
             }
         })
     }
 
     private fun setView(status:USERSTATUS, isUserPrivate:Boolean) {
+        val user = mOtherProfileViewModel.getUserResource.value!!.data
+
         if(status == USERSTATUS.FOLLOWING){
             binding.buttonFollow.text = "FOLLOWING"
             binding.buttonFollow.setBackgroundColor(ContextCompat.getColor(this.requireContext(), R.color.primary_dark_lighter2))
             binding.projectInfoLl.visibility = View.VISIBLE
             binding.privatePageWarningTv.visibility = View.GONE
             val x = ArrayList<Map<String, String>>()
-            x.add(mapOf(Pair("title", "E-mail"), Pair("info", mOtherProfileViewModel.currentUser.value!!.e_mail!!)))
-            x.add(mapOf(Pair("title", "Job"), Pair("info", mOtherProfileViewModel.currentUser.value!!.job!!)))
-            x.add(mapOf(Pair("title", "Rating"), Pair("info", mOtherProfileViewModel.currentUser.value!!.rate.toString())))
+            x.add(mapOf(Pair("title", "E-mail"), Pair("info", user?.e_mail!!)))
+            x.add(mapOf(Pair("title", "Job"), Pair("info",  user.job!!)))
+            x.add(mapOf(Pair("title", "Rating"), Pair("info", user.rate.toString())))
             informationsAdapter.submitList(x)
             mOtherProfileViewModel.fetchResearch((activity as HomeActivity).token!!,
-                mOtherProfileViewModel.currentUser.value?.id!!
+                    user.id
             )
         }
         if(status == USERSTATUS.REQUESTED){
@@ -146,12 +158,12 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                 binding.projectInfoLl.visibility = View.VISIBLE
                 binding.privatePageWarningTv.visibility = View.GONE
                 val x = ArrayList<Map<String, String>>()
-                x.add(mapOf(Pair("title", "E-mail"), Pair("info", mOtherProfileViewModel.currentUser.value!!.e_mail!!)))
-                x.add(mapOf(Pair("title", "Job"), Pair("info", mOtherProfileViewModel.currentUser.value!!.job!!)))
-                x.add(mapOf(Pair("title", "Rating"), Pair("info", mOtherProfileViewModel.currentUser.value!!.rate.toString())))
+                x.add(mapOf(Pair("title", "E-mail"), Pair("info", user?.e_mail!!)))
+                x.add(mapOf(Pair("title", "Job"), Pair("info", user.job!!)))
+                x.add(mapOf(Pair("title", "Rating"), Pair("info", user.rate.toString())))
                 informationsAdapter.submitList(x)
                 mOtherProfileViewModel.fetchResearch((activity as HomeActivity).token!!,
-                    mOtherProfileViewModel.currentUser.value?.id!!
+                        user.id
                 )
             }
 
@@ -159,11 +171,13 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
     }
 
     private fun setListeners(status:USERSTATUS, isUserPrivate:Boolean){
+        val user = mOtherProfileViewModel.getUserResource.value!!.data
+
         if(status == USERSTATUS.FOLLOWING){
             binding.buttonFollowers.setOnClickListener {
                 findNavController().navigate(
                     OtherProfileFragmentDirections.actionOtherProfileFragmentToFollowFragment2(
-                        "follower", mOtherProfileViewModel.currentUser.value?.id!!
+                        "follower", user?.id!!
                     )
                 )
             }
@@ -171,7 +185,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
             binding.buttonFollowing.setOnClickListener {
                 findNavController().navigate(
                     OtherProfileFragmentDirections.actionOtherProfileFragmentToFollowFragment2(
-                        "following", mOtherProfileViewModel.currentUser.value?.id!!
+                        "following", user?.id!!
                     )
                 )
             }
@@ -194,7 +208,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
         }
         if(status == USERSTATUS.NOT_FOLLOWING){
             binding.buttonFollow.setOnClickListener {
-                mOtherProfileViewModel.follow(mProfilePageViewModel.getUser.value?.id!!, mOtherProfileViewModel.currentUser.value?.id!!, (activity as HomeActivity).token!!)
+                mOtherProfileViewModel.follow(mProfilePageViewModel.getUserResourceResponse.value?.data?.id!!, user?.id!!, (activity as HomeActivity).token!!)
             }
             if(isUserPrivate){
                 binding.buttonFollowers.setOnClickListener {
@@ -210,7 +224,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                 binding.buttonFollowers.setOnClickListener {
                     findNavController().navigate(
                         OtherProfileFragmentDirections.actionOtherProfileFragmentToFollowFragment2(
-                            "follower", mOtherProfileViewModel.currentUser.value?.id!!
+                            "follower", user?.id!!
                         )
                     )
                 }
@@ -218,7 +232,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                 binding.buttonFollowing.setOnClickListener {
                     findNavController().navigate(
                         OtherProfileFragmentDirections.actionOtherProfileFragmentToFollowFragment2(
-                            "following", mOtherProfileViewModel.currentUser.value?.id!!
+                            "following",user?.id!!
                         )
                     )
                 }

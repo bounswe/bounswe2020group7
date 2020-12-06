@@ -114,9 +114,9 @@
 
         <Switch
             android:id="@+id/private_switch"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Private Profile"
+            android:text="@string/private_profile_str"
             android:textColor="@color/primary_light"
             tools:ignore="UseSwitchCompatOrMaterialXml"
 

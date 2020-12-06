@@ -1,25 +1,25 @@
 package com.cmpe451.platon.page.fragment.researchInfo
 
-import android.widget.TextView
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.cmpe451.platon.networkmodels.models.Research
-import com.cmpe451.platon.page.fragment.editprofile.EditProfileRepository
+import com.cmpe451.platon.network.Resource
+import com.cmpe451.platon.network.models.Research
+import com.google.gson.JsonObject
 
 class ResearchInfoViewModel: ViewModel() {
 
-    var currentResearch: MutableLiveData<Research> = MutableLiveData()
+
 
     private val repository = ResearchInfoRepository()
 
-    var getResponseCode:MutableLiveData<String>
-    var getResponseDeleteResearch: MutableLiveData<Pair<Int, String>>
-
+    var getAddResearchResourceResponse:MutableLiveData<Resource<JsonObject>>
+    var getDeleteResearchResourceResponse: MutableLiveData<Resource<JsonObject>>
+    var getEditResearchResourceResponse:MutableLiveData<Resource<JsonObject>>
     init
     {
-        getResponseCode = repository.responseCodeAdd
-        getResponseDeleteResearch = repository.responseDeleteResearch
+        getEditResearchResourceResponse = repository.editResearchResourceResponse
+        getAddResearchResourceResponse = repository.addResearchResourceResponse
+        getDeleteResearchResourceResponse = repository.deleteResearchResourceResponse
     }
 
 
@@ -27,9 +27,7 @@ class ResearchInfoViewModel: ViewModel() {
                         year:Int,authToken: String){
         repository.addResearch(title, description, year, authToken)
     }
-    fun setCurrentResearch(research:Research){
-        this.currentResearch.value = research
-    }
+
 
     fun editResearchInfo(projectId:Int,title: String, description: String?, year: Int, token: String) {
         repository.editResearch(projectId,title, description, year, token)

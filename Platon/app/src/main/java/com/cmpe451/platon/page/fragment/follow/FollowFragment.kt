@@ -17,8 +17,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.FollowerFollowingAdapter
 import com.cmpe451.platon.databinding.FragmentFollowersFollowingListBinding
-import com.cmpe451.platon.networkmodels.models.FollowPerson
-import com.cmpe451.platon.networkmodels.models.OtherUser
+import com.cmpe451.platon.network.Resource
+import com.cmpe451.platon.network.models.FollowPerson
+import com.cmpe451.platon.network.models.OtherUser
 import com.cmpe451.platon.page.activity.HomeActivity
 import com.cmpe451.platon.page.fragment.profilepage.ProfilePageViewModel
 
@@ -45,7 +46,7 @@ class FollowFragment:Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setAdapter()
         token = (activity as HomeActivity).token.toString()
-        userId = mProfilePageViewModel.getUser.value?.id
+        userId = mProfilePageViewModel.getUserResourceResponse.value?.data?.id
 
         setObservers()
 
@@ -61,15 +62,17 @@ class FollowFragment:Fragment() {
     }
 
     private fun setObservers(){
-        mFollowViewModel.following.observe(viewLifecycleOwner, { t->
-            if(t.followings.isNotEmpty()) {
-                adapter.submitList(t.followings as ArrayList<FollowPerson>)
+        mFollowViewModel.getFollowingResource.observe(viewLifecycleOwner, { t->
+            when(t.javaClass){
+                Resource.Success::class.java -> adapter.submitList(t.data?.followings as ArrayList<FollowPerson>)
+                Resource.Error::class.java -> Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
             }
         })
 
-        mFollowViewModel.followers.observe(viewLifecycleOwner, { i->
-            if(i.followers.isNotEmpty()){
-                adapter.submitList(i.followers as ArrayList<FollowPerson>)
+        mFollowViewModel.getFollowersResource.observe(viewLifecycleOwner, { t->
+            when(t.javaClass){
+                Resource.Success::class.java -> adapter.submitList(t.data?.followers as ArrayList<FollowPerson>)
+                Resource.Error::class.java -> Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
             }
         })
 
@@ -97,7 +100,7 @@ class FollowFragment:Fragment() {
         adapter = FollowerFollowingAdapter(ArrayList()) { userId:Int->
 //            Toast.makeText(activity, userId, Toast.LENGTH_LONG)
 //            (activity as HomeActivity).navController.navigate(FollowersFollowingFragmentDirections.actionFollowersFollowingFragmentToProfilePagePrivateFragment(id))
-            if(userId == mProfilePageViewModel.getUser.value?.id!!){
+            if(userId == mProfilePageViewModel.getUserResourceResponse.value?.data?.id!!){
                 findNavController().navigate(FollowFragmentDirections.actionFollowFragmentToProfilePageFragment())
             }
             else {

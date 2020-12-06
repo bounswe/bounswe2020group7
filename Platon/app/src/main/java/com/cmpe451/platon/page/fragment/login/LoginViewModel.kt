@@ -3,16 +3,19 @@ package com.cmpe451.platon.page.fragment.login
 import android.util.Patterns
 import android.widget.EditText
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.cmpe451.platon.network.Resource
+import com.google.gson.JsonObject
 
 class LoginViewModel: ViewModel() {
 
-    var getResponseCode:LiveData<Pair<Int, String>>
+    var getLoginResourceResponse: MutableLiveData<Resource<JsonObject>>
 
     private var repository: LoginRepository = LoginRepository()
 
     init {
-        getResponseCode = repository.loginResponse
+        getLoginResourceResponse = repository.loginResourceResponse
     }
 
     fun tryToLogin(email: String, pass: String):Boolean {

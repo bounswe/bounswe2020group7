@@ -13,6 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.cmpe451.platon.R
 import com.cmpe451.platon.databinding.FragmentResearchInfoAddBinding
+import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.page.activity.HomeActivity
 import com.cmpe451.platon.page.fragment.editprofile.EditProfileViewModel
 import com.cmpe451.platon.page.fragment.profilepage.ProfilePageViewModel
@@ -36,18 +37,16 @@ class AddResearchInfoFragment : Fragment() {
     }
 
     private fun setObserver() {
-        mReseachInfoViewModel.getResponseCode.observe(viewLifecycleOwner, { t ->
-            when(t){
-                "Valid Response"->{
+        mReseachInfoViewModel.getAddResearchResourceResponse.observe(viewLifecycleOwner, { t ->
+            when(t.javaClass){
+                Resource.Success::class.java ->{
                     Toast.makeText(activity, "Research Information is added!", Toast.LENGTH_SHORT).show()
                     mProfilePageViewModel.fetchResearch((activity as HomeActivity).token,
-                        mProfilePageViewModel.getUser.value?.id
+                            mProfilePageViewModel.getUserResourceResponse.value?.data?.id
                     )
                     findNavController().navigateUp()
                 }
-
-                else ->
-                    Toast.makeText(activity, t, Toast.LENGTH_SHORT).show()
+                Resource.Error::class.java ->Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
             }
         })
     }

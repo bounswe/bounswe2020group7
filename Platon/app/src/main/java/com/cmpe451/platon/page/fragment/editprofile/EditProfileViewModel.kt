@@ -7,7 +7,7 @@ class EditProfileViewModel:ViewModel() {
 
     private val repository = EditProfileRepository()
 
-    val getResponseCode = repository.responseCode
+    val getEditProfileResourceResponse = repository.editProfileResourceResponse
 
     fun editProfile(firstnameTv:TextView, lastnameTv:TextView,
                             jobTv:TextView, isPrivateUser:Boolean,

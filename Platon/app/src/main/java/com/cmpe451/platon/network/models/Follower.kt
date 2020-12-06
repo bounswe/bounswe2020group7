@@ -1,9 +1,4 @@
-package com.cmpe451.platon.networkmodels.models
-
-import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.Relation
+package com.cmpe451.platon.network.models
 
 data class Following(
         val followings: List<FollowPerson>

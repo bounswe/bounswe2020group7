@@ -1,15 +1,6 @@
 package com.cmpe451.platon.page.fragment.home
 
-import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import com.cmpe451.platon.networkmodels.models.User
 import com.cmpe451.platon.util.Definitions
-import com.cmpe451.platon.util.RetrofitClient
-import com.google.gson.Gson
-import com.google.gson.JsonObject
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 
 class HomeRepository{

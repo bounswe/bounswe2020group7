@@ -26,6 +26,7 @@ import androidx.navigation.fragment.findNavController
 import com.cmpe451.platon.R
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentLoginBinding
+import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.page.activity.HomeActivity
 import com.cmpe451.platon.util.Definitions
 
@@ -115,10 +116,10 @@ class LoginFragment : Fragment() {
     }
 
     private fun setObservers(){
-        mLoginViewModel.getResponseCode.observe(viewLifecycleOwner, {t->
-            if(t!=null){
-                if (t.first == 200) {
-                    val token = t.second
+        mLoginViewModel.getLoginResourceResponse.observe(viewLifecycleOwner, {t->
+            when(t.javaClass){
+                Resource.Success::class.java -> {
+                    val token = t.data!!.get("token").asString
                     sharedPreferences.edit().putString("token", token).apply()
 
                     if(binding.rememberChk.isChecked){
@@ -128,13 +129,14 @@ class LoginFragment : Fragment() {
                     activity?.finish()
                     activity?.startActivity(Intent(activity, HomeActivity::class.java).putExtra("token", token))
                 }
-                else {
-                    Toast.makeText(activity, t.second, Toast.LENGTH_LONG).show()
+                Resource.Error::class.java ->{
+                    Toast.makeText(activity, t.message, Toast.LENGTH_LONG).show()
                     sharedPreferences.edit().remove("mail").apply()
                     sharedPreferences.edit().remove("pass").apply()
                     sharedPreferences.edit().remove("token").apply()
                 }
             }
+
             dialog.dismiss()
         })
     }

@@ -18,6 +18,7 @@ import androidx.navigation.fragment.findNavController
 import com.cmpe451.platon.R
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentRegisterBinding
+import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.util.Definitions
 
 class RegisterFragment : Fragment() {
@@ -131,14 +132,13 @@ class RegisterFragment : Fragment() {
     }
 
     private fun setObservers(){
-        mRegisterViewModel.getRegisterResponse.observe(viewLifecycleOwner, { t->
-            if(t!= null){
-                if(t.first == 201){
+        mRegisterViewModel.getRegisterResourceResponse.observe(viewLifecycleOwner, { t->
+            when(t.javaClass){
+                Resource.Success::class.java->{
                     findNavController().navigateUp()
                     Toast.makeText(activity, "Successfully registered!", Toast.LENGTH_SHORT).show()
-                }else{
-                    Toast.makeText(activity, t.second, Toast.LENGTH_SHORT).show()
                 }
+                Resource.Error::class.java -> Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
             }
             dialog.dismiss()
         })

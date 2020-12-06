@@ -1,8 +1,8 @@
 package com.cmpe451.platon.page.fragment.researchInfo
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.cmpe451.platon.util.RetrofitClient
+import com.cmpe451.platon.network.Resource
+import com.cmpe451.platon.network.RetrofitClient
 import com.google.gson.JsonObject
 import org.json.JSONObject
 import retrofit2.Call
@@ -11,9 +11,9 @@ import retrofit2.Response
 
 class ResearchInfoRepository() {
 
-    var responseCodeAdd : MutableLiveData<String> = MutableLiveData()
-    var responseCodeEdit : MutableLiveData<String> = MutableLiveData()
-    var responseDeleteResearch: MutableLiveData<Pair<Int, String>> = MutableLiveData()
+    var addResearchResourceResponse : MutableLiveData<Resource<JsonObject>> = MutableLiveData(Resource.Loading())
+    var editResearchResourceResponse : MutableLiveData<Resource<JsonObject>> = MutableLiveData(Resource.Loading())
+    var deleteResearchResourceResponse: MutableLiveData<Resource<JsonObject>> = MutableLiveData(Resource.Loading())
 
 
     fun addResearch(title:String,description:String?,
@@ -22,13 +22,17 @@ class ResearchInfoRepository() {
         val service = RetrofitClient.getService()
         val call = service.addResearchProject(title, description, year, authToken)
 
-        call.enqueue(object : Callback<JsonObject> {
-            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                responseCodeAdd.value = response.message()
+        call.enqueue(object : Callback<JsonObject?> {
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when{
+                    response.isSuccessful -> addResearchResourceResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> addResearchResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> addResearchResourceResponse.value = Resource.Error("Unknown error!")
+                }
             }
 
-            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                    call.clone().enqueue(this)
             }
 
         })
@@ -38,13 +42,17 @@ class ResearchInfoRepository() {
         val service = RetrofitClient.getService()
         val call = service.editResearchProject(projectId, title, description, year, authToken)
 
-        call.enqueue(object : Callback<JsonObject> {
-            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                responseCodeEdit.value = response.message()
+        call.enqueue(object : Callback<JsonObject?> {
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when{
+                    response.isSuccessful -> editResearchResourceResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> editResearchResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> editResearchResourceResponse.value = Resource.Error("Unknown error!")
+                }
             }
 
-            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                call.clone().enqueue(this)
             }
 
         })
@@ -56,18 +64,17 @@ class ResearchInfoRepository() {
 
         val call = service.deleteResearchProject(researchId, authToken)
 
-        call.enqueue(object : Callback<JsonObject>{
-            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+        call.enqueue(object : Callback<JsonObject?>{
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
                 when{
-                    response.isSuccessful -> responseDeleteResearch.value = Pair(response.code(), "success")
-                    response.errorBody() != null -> responseDeleteResearch.value = Pair(response.code(),
-                            JSONObject(response.errorBody()!!.string()).get("error").toString())
-                    else -> responseDeleteResearch.value = Pair(response.code(), "Unknown Error!")
+                    response.isSuccessful -> deleteResearchResourceResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> deleteResearchResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> deleteResearchResourceResponse.value = Resource.Error("Unknown error!")
                 }
             }
 
-            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                responseDeleteResearch.value = Pair(-1, "Unknown Error!")
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                call.clone().enqueue(this)
             }
 
         })

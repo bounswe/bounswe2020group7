@@ -6,18 +6,19 @@ import com.cmpe451.platon.util.Definitions
 
 class OtherProfileViewModel : ViewModel() {
     private var repository: OtherProfileRepository = OtherProfileRepository()
-    var currentUser = repository.currentUser
-    var currentResarch = repository.currentResearch
+    var getUserResource = repository.userResource
+    var getResearchesResource = repository.researchesResource
+    var getFollowResourceResponse = repository.followResourceResponse
+
     var isUserPrivate = MutableLiveData<Boolean>()
     var isFollowing = MutableLiveData<Definitions.USERSTATUS>()
-    var followResponse = repository.followResponse
 
     fun getUser(userId:Int, token:String) {
         repository.getUser(userId, token)
-
     }
+
     fun setUserInfo(){
-        isUserPrivate.value = currentUser.value?.is_private
+        isUserPrivate.value = getUserResource.value?.data?.is_private
         isFollowing.value = Definitions.USERSTATUS.NOT_FOLLOWING
     }
 

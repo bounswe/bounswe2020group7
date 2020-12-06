@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
@@ -19,7 +18,6 @@ import com.cmpe451.platon.databinding.ActivityStreamCellBinding
 import com.cmpe451.platon.databinding.FragmentHomeBinding
 import com.cmpe451.platon.databinding.TrendProjectCellBinding
 import com.cmpe451.platon.databinding.UpcomingEventCellBinding
-import com.cmpe451.platon.networkmodels.models.User
 import com.cmpe451.platon.util.Definitions
 
 class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonClickListener, UpcomingEventsAdapter.UpcomingButtonClickListener, ActivityStreamAdapter.ActivityStreamButtonClickListener {

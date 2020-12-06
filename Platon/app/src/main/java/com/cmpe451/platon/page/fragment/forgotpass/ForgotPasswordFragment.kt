@@ -19,6 +19,7 @@ import androidx.navigation.fragment.findNavController
 import com.cmpe451.platon.R
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentForgotPasswordBinding
+import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.util.Definitions
 
 /**
@@ -53,27 +54,30 @@ class ForgotPasswordFragment : Fragment() {
 
     private fun setObservers(){
 
-        mForgotPasswordViewModel.getSendResetMailResponse.observe(viewLifecycleOwner, { i->
-            if(i!= null){
-                Toast.makeText(activity, i.second, Toast.LENGTH_SHORT).show()
-            }
-            if (i.first == 200) {
-                binding.newPass2Et.visibility = View.VISIBLE
-                binding.newPass1Et.visibility = View.VISIBLE
-                binding.emailEt.visibility = View.GONE
-                binding.tokenEt.visibility = View.VISIBLE
-                binding.forgotPassBtn.visibility = View.GONE
-                binding.resetPassBtn.visibility = View.VISIBLE
-            }
+        mForgotPasswordViewModel.getSendResetMailResourceResponse.observe(viewLifecycleOwner, { i->
+            when(i.javaClass){
+                Resource.Success::class.java -> {
+                    Toast.makeText(activity, "Keycode sent to mail!", Toast.LENGTH_SHORT).show()
+                    binding.newPass2Et.visibility = View.VISIBLE
+                    binding.newPass1Et.visibility = View.VISIBLE
+                    binding.emailEt.visibility = View.GONE
+                    binding.tokenEt.visibility = View.VISIBLE
+                    binding.forgotPassBtn.visibility = View.GONE
+                    binding.resetPassBtn.visibility = View.VISIBLE
+                    }
+                Resource.Error::class.java -> Toast.makeText(activity, i.message, Toast.LENGTH_SHORT).show()
+                }
+
             dialog.dismiss()
         })
 
-        mForgotPasswordViewModel.getResetResponse.observe(viewLifecycleOwner, { i->
-            if(i!= null){
-                Toast.makeText(activity, i.second, Toast.LENGTH_SHORT).show()
-            }
-            if (i.first == 200) {
-                findNavController().navigateUp()
+        mForgotPasswordViewModel.getResetResourceResponse.observe(viewLifecycleOwner, { i->
+            when(i.javaClass){
+                Resource.Success::class.java -> {
+                    Toast.makeText(activity, "Successfully reset!", Toast.LENGTH_SHORT).show()
+                    findNavController().navigateUp()
+                }
+                Resource.Error::class.java -> Toast.makeText(activity, i.message, Toast.LENGTH_SHORT).show()
             }
             dialog.dismiss()
         })

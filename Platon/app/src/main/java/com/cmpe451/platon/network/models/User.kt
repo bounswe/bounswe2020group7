@@ -1,7 +1,4 @@
-package com.cmpe451.platon.networkmodels.models
-
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+package com.cmpe451.platon.network.models
 
 
 data class User (

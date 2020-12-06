@@ -9,7 +9,7 @@ import android.widget.RelativeLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
 import com.cmpe451.platon.databinding.UserProjectsCellBinding
-import com.cmpe451.platon.networkmodels.models.Research
+import com.cmpe451.platon.network.models.Research
 
 class OtherUserProjectsAdapter(private val data: ArrayList<Research>, private val context: Context, private val userProjectsButtonClickListener: OtherUserProjectButtonClickListener) :
 

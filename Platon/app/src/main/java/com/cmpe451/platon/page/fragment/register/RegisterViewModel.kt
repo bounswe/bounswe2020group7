@@ -6,15 +6,17 @@ import android.widget.CheckBox
 import android.widget.EditText
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.cmpe451.platon.network.Resource
+import com.google.gson.JsonObject
 
 class RegisterViewModel: ViewModel() {
 
 
-    var getRegisterResponse: MutableLiveData<Pair<Int, String>>
+    var getRegisterResourceResponse: MutableLiveData<Resource<JsonObject>>
     private var repository: RegisterRepository = RegisterRepository()
 
     init {
-        getRegisterResponse = repository.registerResponse
+        getRegisterResourceResponse = repository.registerResourceResponse
     }
 
 

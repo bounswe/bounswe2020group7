@@ -83,4 +83,5 @@
     <string name="text_edit_project">Edit Project</string>
     <string name="text_delete_project">Delete Project</string>
     <string name="private_page_warning_str">To see the details, please send a follow request.</string>
+    <string name="private_profile_str">Private Profile</string>
 </resources>
