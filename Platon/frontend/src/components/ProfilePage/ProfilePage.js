@@ -26,6 +26,7 @@ import colors from "../../utils/colors";
 import config from "../../utils/config";
 import axios from 'axios'
 import Spinner from '../Spinner/Spinner'
+import EditResearchDialog from './EditResearchDialog/EditResearchDialog'
 
 
 function TabPanel(props) {
@@ -128,6 +129,34 @@ class ProfilePage extends React.Component {
 
 
   }
+
+
+
+  handleDeleteResearchInformation = (id) => {
+    console.log("id", id)
+    const token = localStorage.getItem("jwtToken");
+    const decoded = jwt_decode(token);
+    let formData = new FormData();
+    const url = config.BASE_URL
+
+    formData.append("research_id", id);
+    axios.delete(url + "/api/profile/research_information", {
+      headers: {
+        'auth_token': token, //the token is a variable which holds the token
+      },
+      data: formData,
+    })
+    .then((response) => {
+      if (response.status === 200) {
+        document.location.reload()
+      }
+
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }
+
   handlerFollow = (index, following_id) =>{
     /*
     let prevState = this.state.selectedFollowButton
@@ -151,13 +180,13 @@ class ProfilePage extends React.Component {
     const url = config.BASE_URL
 
     if(followButtonState==="Follow"){
-    axios.post(url + "/api/follow/follow_requests", formData, {
+    axios.post(url + "/api/follow/follow_requests", {
         headers: {
           'auth_token': token, //the token is a variable which holds the token
         },
+        formData,
       })
       .then((response) => {
-        console.log(response)
         if (response.status === 200) {
 
           let temp_followings_id_arr = [following_id, ...this.state.followings_id_arr]
@@ -182,7 +211,6 @@ class ProfilePage extends React.Component {
   };
 
   render() {
-    console.log(this.state.user);
     const { classes } = this.props;
     return (
       <div className="ProfilePageLanding">
@@ -194,7 +222,7 @@ class ProfilePage extends React.Component {
 
 
         <Container className="ProfilePageContainer">
-          <h2 className="GeneralLargeFont">My Profile</h2>
+          <h2 className="GeneralLargeFont">Profile</h2>
           <hr className="ProfilePageLine" />
 
           <Row>
@@ -260,12 +288,19 @@ class ProfilePage extends React.Component {
                 onChange={this.handleChange}
                 aria-label="simple tabs example"
               >
-                <Tab label="My Projects" {...a11yProps(0)} />
-                <Tab label="Followers" {...a11yProps(1)} />
-                <Tab label="Following" {...a11yProps(2)} />
+                <Tab label="Workspaces" {...a11yProps(0)} />
+                <Tab label="Researchs" {...a11yProps(1)} />
+                <Tab label="Followers" {...a11yProps(2)} />
+                <Tab label="Following" {...a11yProps(3)} />
               </Tabs>
             </AppBar>
             <TabPanel value={this.state.value} index={0}>
+              <Row>
+              <Col>
+              </Col>
+              </Row>
+            </TabPanel>
+            <TabPanel value={this.state.value} index={1}>
               <Row>
 
                 {this.state.researchs.map((value, index) => {
@@ -273,16 +308,25 @@ class ProfilePage extends React.Component {
                 <Col>
                 <Card className="ProfileProjectsCard">
                   <Card.Body>
-                    <Card.Title>{value.title}</Card.Title>
-                    <Card.Text>Year: {value.year}</Card.Text>
+                  <Card.Title  style={{color: colors.primaryDark}}>Title</Card.Title>
+                    <Card.Text style={{color: colors.primaryLight}}>{value.title}</Card.Text>
+                    <Card.Title style={{color: colors.primaryDark}}>Description</Card.Title>
+
+                    <Card.Text style={{color: colors.primaryLight}}>{value.description === "" ? "No description is provided." : value.description}</Card.Text>
+                    <Card.Title style={{color: colors.primaryDark}}>Year</Card.Title>
+
+                    <Card.Text style={{color: colors.primary}}>{value.year}</Card.Text>
                   </Card.Body>
+                  <EditResearchDialog type="EDIT" dialogTitle="Edit Research"  id={value.id} title={value.title} description={value.description} year={value.year}/>
+                  <Button onClick = {() => this.handleDeleteResearchInformation(value.id)} style={{backgroundColor: colors.quinary}}>Delete</Button>
                 </Card>
               </Col>)
                 })}
 
               </Row>
+              <EditResearchDialog type="NEW" dialogTitle="Add New Research" id={""} title={""} description={""} year={""}/>
             </TabPanel>
-            <TabPanel value={this.state.value} index={1}>
+            <TabPanel value={this.state.value} index={2}>
             <List>
 
               {this.state.followers.map((value, index) => {
@@ -309,7 +353,7 @@ class ProfilePage extends React.Component {
             )})}
             </List>
             </TabPanel>
-            <TabPanel value={this.state.value} index={2}>
+            <TabPanel value={this.state.value} index={3}>
             <List>
               {this.state.followings.map((value, index) => {
                 return(

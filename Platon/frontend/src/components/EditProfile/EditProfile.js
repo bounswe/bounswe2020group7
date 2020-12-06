@@ -199,11 +199,11 @@ class EditProfile extends Component {
         <Container className = "ProfilePageContainer">
         <Row className="mb-3 justify-content-center">
                 <Col sm={6}>
-                    <Link to={`/${this.state.profileId}`}>
+                    <a href={`/${this.state.profileId}`}>
 
 
                         Back to profile
-                    </Link>
+                    </a>
                 </Col>
             </Row>
             <Row className="mb-3 justify-content-center">
@@ -266,7 +266,7 @@ class EditProfile extends Component {
                 control={
                 <Switch
                   checked={this.state.is_private}
-                  onChange={this.handleSwitch} 
+                  onChange={this.handleSwitch}
                   name="checkedA"
                   inputProps={{ 'aria-label': 'secondary checkbox' }}
                 />}
@@ -283,7 +283,6 @@ class EditProfile extends Component {
                     </Button>
                 </Col>
             </Row>
-
         </Container> }
 
 
