@@ -26,6 +26,7 @@ import colors from "../../utils/colors";
 import config from "../../utils/config";
 import axios from 'axios'
 import Spinner from '../Spinner/Spinner'
+import EditResearchDialog from './EditResearchDialog/EditResearchDialog'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -123,6 +124,34 @@ class ProfilePage extends React.Component {
   ]).then(() => this.setState({isLoading: false}));
 
   }
+
+
+
+  handleDeleteResearchInformation = (id) => {
+    console.log("id", id)
+    const token = localStorage.getItem("jwtToken");
+    const decoded = jwt_decode(token);
+    let formData = new FormData();
+    const url = config.BASE_URL
+
+    formData.append("research_id", id);
+    axios.delete(url + "/api/profile/research_information", {
+      headers: {
+        'auth_token': token, //the token is a variable which holds the token
+      },
+      data: formData,
+    })
+    .then((response) => {
+      if (response.status === 200) {
+        document.location.reload()
+      }
+
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }
+
   handlerFollow = (index, following_id) =>{
     /*
     let prevState = this.state.selectedFollowButton
@@ -146,10 +175,11 @@ class ProfilePage extends React.Component {
     const url = config.BASE_URL
 
     if(followButtonState==="Follow"){
-    axios.post(url + "/api/follow/follow_requests", formData, {
+    axios.post(url + "/api/follow/follow_requests", {
         headers: {
           'auth_token': token, //the token is a variable which holds the token
         },
+        formData,
       })
       .then((response) => {
         if (response.status === 200) {
@@ -279,13 +309,14 @@ class ProfilePage extends React.Component {
 
                     <Card.Text style={{color: colors.primary}}>{value.year}</Card.Text>
                   </Card.Body>
-                  <Button style={{backgroundColor: colors.quaternary}}>Edit</Button>
-                  <Button style={{backgroundColor: colors.quinary}}>Delete</Button>
+                  <EditResearchDialog type="EDIT" dialogTitle="Edit Research"  id={value.id} title={value.title} description={value.description} year={value.year}/>
+                  <Button onClick = {() => this.handleDeleteResearchInformation(value.id)} style={{backgroundColor: colors.quinary}}>Delete</Button>
                 </Card>
               </Col>)
                 })}
 
               </Row>
+              <EditResearchDialog type="NEW" dialogTitle="Add New Research" id={""} title={""} description={""} year={""}/>
             </TabPanel>
             <TabPanel value={this.state.value} index={2}>
             <List>
