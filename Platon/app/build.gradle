@@ -67,6 +67,10 @@ dependencies {
     implementation 'androidx.navigation:navigation-testing:2.3.1'
     implementation 'androidx.navigation:navigation-compose:1.0.0-alpha02'
 
+    // for images
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    kapt 'com.github.bumptech.glide:compiler:4.11.0'
+
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'io.reactivex.rxjava3:rxkotlin:3.0.1'

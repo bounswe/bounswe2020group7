@@ -12,6 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.ProfilePageAdapter
 import com.cmpe451.platon.adapter.UserProjectsAdapter
@@ -32,8 +33,6 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     private lateinit var userProjectsAdapter: UserProjectsAdapter
     private lateinit var informationsRecyclerView: RecyclerView
     private lateinit var informationsAdapter: ProfilePageAdapter
-
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -74,6 +73,8 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
 
                 binding.textNameSurname.text = t.name + " " + t.surname
 
+                Glide.with(this).load(t.profile_photo).into(binding.profilePhoto);
+
             }
         })
 
@@ -82,8 +83,6 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                 userProjectsAdapter.submitElements(t)
             }
         })
-
-
 
 
         setListeners()
