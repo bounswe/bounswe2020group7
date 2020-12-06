@@ -81,4 +81,10 @@ interface Webservice {
     @GET("api/auth_system/user")
     fun getOtherUserInfo(@Query("user_id") user_id:Int,
                          @Header("auth_token") auth_token :String     ): Call<OtherUser>?
+
+    @FormUrlEncoded
+    @POST("api/follow/follow_requests")
+    fun follow(@Field("follower_id") follower_id:Int,
+               @Field("following_id") following_id:Int,
+               @Header("auth_token") auth_token :String) : Call<JsonObject>
 }

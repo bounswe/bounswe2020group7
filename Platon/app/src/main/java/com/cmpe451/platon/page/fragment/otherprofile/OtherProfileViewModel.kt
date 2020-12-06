@@ -10,6 +10,7 @@ class OtherProfileViewModel : ViewModel() {
     var currentResarch = repository.currentResearch
     var isUserPrivate = MutableLiveData<Boolean>()
     var isFollowing = MutableLiveData<Definitions.USERSTATUS>()
+    var followResponse = repository.followResponse
 
     fun getUser(userId:Int, token:String) {
         repository.getUser(userId, token)
@@ -25,6 +26,9 @@ class OtherProfileViewModel : ViewModel() {
     }
     fun setIsFollowing(status:Definitions.USERSTATUS){
         isFollowing.value = status
+    }
+    fun follow(follower_id:Int, following_id: Int, auth_token:String){
+        repository.follow(follower_id,following_id, auth_token)
     }
 
 

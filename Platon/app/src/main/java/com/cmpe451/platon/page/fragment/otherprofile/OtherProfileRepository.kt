@@ -7,6 +7,8 @@ import com.cmpe451.platon.networkmodels.models.Research
 import com.cmpe451.platon.networkmodels.models.Researches
 import com.cmpe451.platon.networkmodels.models.User
 import com.cmpe451.platon.util.RetrofitClient
+import com.google.gson.JsonObject
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -15,6 +17,7 @@ import retrofit2.Response
 class OtherProfileRepository() {
     val currentUser: MutableLiveData<OtherUser> = MutableLiveData()
     val currentResearch:MutableLiveData<List<Research>> = MutableLiveData<List<Research>>(null)
+    var followResponse:MutableLiveData<Pair<Int, String>> = MutableLiveData()
     fun getUser(userId:Int, token:String) {
         val service = RetrofitClient.getService()
         val call = service.getOtherUserInfo(userId, token)!!
@@ -51,6 +54,30 @@ class OtherProfileRepository() {
             }
 
             override fun onFailure(call: Call<Researches>, t: Throwable) {
+            }
+
+        })
+    }
+
+    fun follow(followerId: Int, followingId: Int, authToken: String) {
+        val service = RetrofitClient.getService()
+
+        val call = service.follow(followerId, followingId, authToken)!!
+
+        call.enqueue(object: Callback<JsonObject>{
+            override fun onResponse(
+                call: Call<JsonObject>, response: Response<JsonObject>
+            ) {
+                when {
+                    response.isSuccessful ->  followResponse.value = Pair(response.code(), "Successful")
+                    (response.errorBody() != null) -> followResponse.value = Pair(response.code(),
+                        JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> followResponse.value = Pair(response.code(),"Unknown error!")
+
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
             }
 
         })

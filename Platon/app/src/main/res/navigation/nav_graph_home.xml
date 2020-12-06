@@ -47,6 +47,9 @@
             android:name="userId"
             app:argType="integer"
             android:defaultValue="0" />
+        <action
+            android:id="@+id/action_followFragment_to_profilePageFragment"
+            app:destination="@id/profilePageFragment" />
     </fragment>
     <fragment
         android:id="@+id/otherProfileFragment"

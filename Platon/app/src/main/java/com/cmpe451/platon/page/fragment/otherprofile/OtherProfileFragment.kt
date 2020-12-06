@@ -97,6 +97,21 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                 userProjectsAdapter.submitElements(t)
             }
         })
+        mOtherProfileViewModel.followResponse.observe(viewLifecycleOwner, Observer{
+            if(it != null){
+                if(it.first == 200){
+                    if(mOtherProfileViewModel.isUserPrivate.value!!){
+                        mOtherProfileViewModel.setIsFollowing(USERSTATUS.REQUESTED)
+                    }
+                    else {
+                        mOtherProfileViewModel.setIsFollowing(USERSTATUS.FOLLOWING)
+                    }
+                }
+                else {
+                    Toast.makeText(activity, it.second, Toast.LENGTH_LONG).show()
+                }
+            }
+        })
     }
 
     private fun setView(status:USERSTATUS, isUserPrivate:Boolean) {
@@ -126,6 +141,11 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
             if(isUserPrivate){
                 binding.projectInfoLl.visibility = View.GONE
                 binding.privatePageWarningTv.visibility = View.VISIBLE
+
+            }
+            else {
+                binding.projectInfoLl.visibility = View.VISIBLE
+                binding.privatePageWarningTv.visibility = View.GONE
                 val x = ArrayList<Map<String, String>>()
                 x.add(mapOf(Pair("title", "E-mail"), Pair("info", mOtherProfileViewModel.currentUser.value!!.e_mail!!)))
                 x.add(mapOf(Pair("title", "Job"), Pair("info", mOtherProfileViewModel.currentUser.value!!.job!!)))
@@ -135,10 +155,6 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                     mOtherProfileViewModel.currentUser.value?.id!!
                 )
             }
-            else {
-                binding.projectInfoLl.visibility = View.VISIBLE
-                binding.privatePageWarningTv.visibility = View.GONE
-            }
 
         }
     }
@@ -147,7 +163,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
         if(status == USERSTATUS.FOLLOWING){
             binding.buttonFollowers.setOnClickListener {
                 findNavController().navigate(
-                    ProfilePageFragmentDirections.actionProfilePageFragmentToFollowFragment(
+                    OtherProfileFragmentDirections.actionOtherProfileFragmentToFollowFragment2(
                         "follower", mOtherProfileViewModel.currentUser.value?.id!!
                     )
                 )
@@ -155,7 +171,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
 
             binding.buttonFollowing.setOnClickListener {
                 findNavController().navigate(
-                    ProfilePageFragmentDirections.actionProfilePageFragmentToFollowFragment(
+                    OtherProfileFragmentDirections.actionOtherProfileFragmentToFollowFragment2(
                         "following", mOtherProfileViewModel.currentUser.value?.id!!
                     )
                 )
@@ -178,6 +194,9 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
             }
         }
         if(status == USERSTATUS.NOT_FOLLOWING){
+            binding.buttonFollow.setOnClickListener {
+                mOtherProfileViewModel.follow(mProfilePageViewModel.getUser.value?.id!!, mOtherProfileViewModel.currentUser.value?.id!!, (activity as HomeActivity).token!!)
+            }
             if(isUserPrivate){
                 binding.buttonFollowers.setOnClickListener {
                     Toast.makeText(activity, "To see the followers, please send a follow request", Toast.LENGTH_LONG).show()
@@ -186,14 +205,12 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                 binding.buttonFollowing.setOnClickListener {
                     Toast.makeText(activity, "To see the following, please send a follow request", Toast.LENGTH_LONG).show()
                 }
-                binding.buttonFollow.setOnClickListener {
-                    mOtherProfileViewModel.setIsFollowing(USERSTATUS.REQUESTED)
-                }
+
             }
             else {
                 binding.buttonFollowers.setOnClickListener {
                     findNavController().navigate(
-                        ProfilePageFragmentDirections.actionProfilePageFragmentToFollowFragment(
+                        OtherProfileFragmentDirections.actionOtherProfileFragmentToFollowFragment2(
                             "follower", mOtherProfileViewModel.currentUser.value?.id!!
                         )
                     )
@@ -201,13 +218,10 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
 
                 binding.buttonFollowing.setOnClickListener {
                     findNavController().navigate(
-                        ProfilePageFragmentDirections.actionProfilePageFragmentToFollowFragment(
+                        OtherProfileFragmentDirections.actionOtherProfileFragmentToFollowFragment2(
                             "following", mOtherProfileViewModel.currentUser.value?.id!!
                         )
                     )
-                }
-                binding.buttonFollow.setOnClickListener {
-                    mOtherProfileViewModel.setIsFollowing(USERSTATUS.FOLLOWING)
                 }
             }
 

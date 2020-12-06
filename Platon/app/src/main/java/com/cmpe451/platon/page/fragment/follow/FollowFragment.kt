@@ -48,14 +48,14 @@ class FollowFragment:Fragment() {
 
         setObservers()
 
-        if(args.userId == 0){
+        if(args.userId == 0 || args.userId == userId){
             if(args.follow == "follower") mFollowViewModel.fetchFollowers(userId, token)
             else mFollowViewModel.fetchFollowing(userId, token)
         }
         else  {
-            userId = args.userId
-            if(args.follow == "follower") mFollowViewModel.fetchFollowers(userId, token)
-            else mFollowViewModel.fetchFollowing(userId, token)
+
+            if(args.follow == "follower") mFollowViewModel.fetchFollowers(args.userId, token)
+            else mFollowViewModel.fetchFollowing(args.userId, token)
         }
 
 
@@ -95,10 +95,17 @@ class FollowFragment:Fragment() {
 
     private fun setAdapter(){
         rvFollowers = binding.rvFollow
+
         adapter = FollowerFollowingAdapter(ArrayList()) { userId:Int->
 //            Toast.makeText(activity, userId, Toast.LENGTH_LONG)
 //            (activity as HomeActivity).navController.navigate(FollowersFollowingFragmentDirections.actionFollowersFollowingFragmentToProfilePagePrivateFragment(id))
-            findNavController().navigate(FollowFragmentDirections.actionFollowFragmentToOtherProfileFragment(userId))
+            if(userId == mProfilePageViewModel.getUser.value?.id!!){
+                findNavController().navigate(FollowFragmentDirections.actionFollowFragmentToProfilePageFragment())
+            }
+            else {
+                findNavController().navigate(FollowFragmentDirections.actionFollowFragmentToOtherProfileFragment(userId))
+            }
+
         }
         rvFollowers.adapter = adapter
         rvFollowers.layoutManager = LinearLayoutManager(this.activity)
