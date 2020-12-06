@@ -14,10 +14,12 @@ class ResearchInfoViewModel: ViewModel() {
     private val repository = ResearchInfoRepository()
 
     var getResponseCode:MutableLiveData<String>
+    var getResponseDeleteResearch: MutableLiveData<Pair<Int, String>>
 
     init
     {
         getResponseCode = repository.responseCodeAdd
+        getResponseDeleteResearch = repository.responseDeleteResearch
     }
 
 
@@ -27,11 +29,14 @@ class ResearchInfoViewModel: ViewModel() {
     }
     fun setCurrentResearch(research:Research){
         this.currentResearch.value = research
-        var o =5
     }
 
     fun editResearchInfo(projectId:Int,title: String, description: String?, year: Int, token: String) {
         repository.editResearch(projectId,title, description, year, token)
+    }
+
+    fun deleteResearchInfo(projectId:Int, token: String){
+        repository.deleteResearch(projectId, token)
     }
 
 

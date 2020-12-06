@@ -10,12 +10,11 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
-import com.cmpe451.platon.adapter.FollowerFollowingRecyclerViewAdapter
+import com.cmpe451.platon.adapter.FollowerFollowingAdapter
 import com.cmpe451.platon.databinding.FragmentFollowersFollowingListBinding
 import com.cmpe451.platon.networkmodels.models.FollowPerson
 import com.cmpe451.platon.networkmodels.models.OtherUser
@@ -25,7 +24,7 @@ import com.cmpe451.platon.page.fragment.profilepage.ProfilePageViewModel
 class FollowFragment:Fragment() {
     private lateinit var binding: FragmentFollowersFollowingListBinding
     private lateinit var following: ArrayList<OtherUser>
-    private lateinit var adapter: FollowerFollowingRecyclerViewAdapter
+    private lateinit var adapter: FollowerFollowingAdapter
     private lateinit var rvFollowers: RecyclerView
     private var userId:Int? = null
     private lateinit var token:String
@@ -86,7 +85,7 @@ class FollowFragment:Fragment() {
 
     private fun setAdapter(){
         rvFollowers = binding.rvFollow
-        adapter = FollowerFollowingRecyclerViewAdapter(ArrayList()) { userId:Int->
+        adapter = FollowerFollowingAdapter(ArrayList()) { userId:Int->
             Toast.makeText(activity, userId, Toast.LENGTH_LONG)
 //            (activity as HomeActivity).navController.navigate(FollowersFollowingFragmentDirections.actionFollowersFollowingFragmentToProfilePagePrivateFragment(id))
         }

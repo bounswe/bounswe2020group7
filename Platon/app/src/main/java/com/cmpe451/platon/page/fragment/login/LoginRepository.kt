@@ -33,7 +33,8 @@ class LoginRepository() {
             }
 
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                loginResponse.value = Pair(-1,"Unknown error!")
+                call.clone().enqueue(this)
+                //loginResponse.value = Pair(-1,"Unknown error!")
             }
         })
     }

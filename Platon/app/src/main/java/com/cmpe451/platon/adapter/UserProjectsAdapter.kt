@@ -10,11 +10,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
 import com.cmpe451.platon.databinding.UserProjectsCellBinding
 import com.cmpe451.platon.networkmodels.models.Research
-import com.cmpe451.platon.networkmodels.models.Researches
 
-class UserProjectsRecyclerViewAdapter(private val data: ArrayList<Research>, private val context: Context, private val userProjectsButtonClickListener: UserProjectButtonClickListener) :
+class UserProjectsAdapter(private val data: ArrayList<Research>, private val context: Context, private val userProjectsButtonClickListener: UserProjectButtonClickListener) :
 
-        RecyclerView.Adapter<UserProjectsRecyclerViewAdapter.UserProjectsViewHolder>() {
+        RecyclerView.Adapter<UserProjectsAdapter.UserProjectsViewHolder>() {
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and

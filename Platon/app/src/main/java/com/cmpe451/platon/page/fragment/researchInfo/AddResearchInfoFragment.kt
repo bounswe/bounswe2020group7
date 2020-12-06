@@ -10,7 +10,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.cmpe451.platon.R
 import com.cmpe451.platon.databinding.FragmentResearchInfoAddBinding
@@ -37,7 +36,7 @@ class AddResearchInfoFragment : Fragment() {
     }
 
     private fun setObserver() {
-        mReseachInfoViewModel.getResponseCode.observe(viewLifecycleOwner) { t ->
+        mReseachInfoViewModel.getResponseCode.observe(viewLifecycleOwner, { t ->
             when(t){
                 "Valid Response"->{
                     Toast.makeText(activity, "Research Information is added!", Toast.LENGTH_SHORT).show()
@@ -50,7 +49,7 @@ class AddResearchInfoFragment : Fragment() {
                 else ->
                     Toast.makeText(activity, t, Toast.LENGTH_SHORT).show()
             }
-        }
+        })
     }
 
     private fun setListeners() {

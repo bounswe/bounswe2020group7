@@ -1,5 +1,6 @@
 package com.cmpe451.platon.page.fragment.researchInfo
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -10,17 +11,21 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.cmpe451.platon.R
+import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentResearchInfoEditBinding
 import com.cmpe451.platon.page.activity.HomeActivity
 import com.cmpe451.platon.page.fragment.profilepage.ProfilePageViewModel
+import com.cmpe451.platon.util.Definitions
 
 class EditResearchInfoFragment : Fragment() {
     private lateinit var binding: FragmentResearchInfoEditBinding
     private val mReseachInfoViewModel: ResearchInfoViewModel by activityViewModels()
     private val mProfilePageViewModel: ProfilePageViewModel by activityViewModels()
+
+    private lateinit var dialog:AlertDialog
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -43,11 +48,30 @@ class EditResearchInfoFragment : Fragment() {
                 if(!t.description.isNullOrEmpty()){
                     binding.projectDescriptionTv.setText(t.description)
                 }
+                dialog.dismiss()
             }
         }
+
+        mReseachInfoViewModel.getResponseDeleteResearch.observe(viewLifecycleOwner, { t->
+            if (t!= null){
+                when (t.first) {
+                    200 -> {
+                        findNavController().navigateUp()
+                        Toast.makeText(activity, "Successfully deleted!", Toast.LENGTH_SHORT).show()
+                    }
+                    else -> Toast.makeText(activity, t.second, Toast.LENGTH_SHORT).show()
+                }
+
+            }
+            dialog.dismiss()
+        })
+
     }
 
     private fun setListeners() {
+        dialog = Definitions().createProgressBar(activity as BaseActivity)
+
+
         binding.buttonEdit.setOnClickListener {
             // check if the title and year is empty
             if(binding.projectNameTv.text.isNullOrEmpty() && binding.projectYearTv.text.isNullOrEmpty()){
@@ -72,12 +96,19 @@ class EditResearchInfoFragment : Fragment() {
                                     binding.projectYearTv.text.toString().toInt(),
                                     (activity as HomeActivity).token!!
                             )
-                            Toast.makeText(activity , "Success", Toast.LENGTH_LONG).show()
-                            findNavController().navigateUp()
+                            dialog.show()
                         }
 
                     }
                 }
+            }
+        }
+
+        binding.buttonDelete.setOnClickListener{
+            if(mReseachInfoViewModel.currentResearch.value != null){
+                mReseachInfoViewModel.deleteResearchInfo(mReseachInfoViewModel.currentResearch.value?.id!!,
+                        (activity as HomeActivity).token!!)
+                dialog.show()
             }
         }
     }

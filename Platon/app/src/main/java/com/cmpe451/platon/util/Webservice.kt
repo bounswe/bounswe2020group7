@@ -5,6 +5,7 @@ import com.cmpe451.platon.networkmodels.models.Following
 import com.cmpe451.platon.networkmodels.models.Researches
 import com.cmpe451.platon.networkmodels.models.User
 import com.google.gson.JsonObject
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -75,5 +76,8 @@ interface Webservice {
                             @Field("description") description:String?,
                             @Field("year") year:Int,
                             @Header("auth_token") auth_token :String) : Call<JsonObject>
-
+    @FormUrlEncoded
+    @HTTP(method = "DELETE" , path = "api/profile/research_information", hasBody = true)
+    fun deleteResearchProject(@Field("research_id") research_id:Int,
+                              @Header("auth_token") auth_token :String) : Call<JsonObject>
 }

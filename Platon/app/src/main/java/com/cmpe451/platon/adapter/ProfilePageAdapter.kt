@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
 
-class ProfilePageRecyclerViewAdapter(private var dataSet: ArrayList<Map<String, String>>) : RecyclerView.Adapter<ProfilePageRecyclerViewAdapter.ViewHolder>()  {
+class ProfilePageAdapter(private var dataSet: ArrayList<Map<String, String>>) : RecyclerView.Adapter<ProfilePageAdapter.ViewHolder>()  {
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         val view: View = v
 

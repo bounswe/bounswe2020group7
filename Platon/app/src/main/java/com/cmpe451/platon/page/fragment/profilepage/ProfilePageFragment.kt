@@ -8,36 +8,30 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
-import com.cmpe451.platon.adapter.ProfilePageRecyclerViewAdapter
-import com.cmpe451.platon.adapter.UserProjectsRecyclerViewAdapter
+import com.cmpe451.platon.adapter.ProfilePageAdapter
+import com.cmpe451.platon.adapter.UserProjectsAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentProfilePageBinding
 import com.cmpe451.platon.databinding.UserProjectsCellBinding
-import com.cmpe451.platon.networkmodels.models.Research
 import com.cmpe451.platon.page.activity.HomeActivity
-import com.cmpe451.platon.page.fragment.home.HomeViewModel
-import com.cmpe451.platon.page.fragment.profilepage.ProfilePageFragmentDirections
 import com.cmpe451.platon.page.fragment.researchInfo.ResearchInfoViewModel
 import com.cmpe451.platon.util.Definitions
 
-class ProfilePageFragment : Fragment(), UserProjectsRecyclerViewAdapter.UserProjectButtonClickListener {
+class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonClickListener {
 
     private lateinit var binding: FragmentProfilePageBinding
     private val mProfilePageViewModel: ProfilePageViewModel by activityViewModels()
     private val mResearchInfoViewModel: ResearchInfoViewModel by activityViewModels()
 
     private lateinit var userProjectsRecyclerView: RecyclerView
-    private lateinit var userProjectsAdapter: UserProjectsRecyclerViewAdapter
+    private lateinit var userProjectsAdapter: UserProjectsAdapter
     private lateinit var informationsRecyclerView: RecyclerView
-    private lateinit var informationsAdapter: ProfilePageRecyclerViewAdapter
+    private lateinit var informationsAdapter: ProfilePageAdapter
 
 
 
@@ -98,14 +92,14 @@ class ProfilePageFragment : Fragment(), UserProjectsRecyclerViewAdapter.UserProj
 
     private fun initializeAdapter() {
         userProjectsRecyclerView = binding.rvProfilePageProjects
-        userProjectsAdapter = UserProjectsRecyclerViewAdapter(ArrayList(), requireContext(), this)
+        userProjectsAdapter = UserProjectsAdapter(ArrayList(), requireContext(), this)
         userProjectsRecyclerView.adapter = userProjectsAdapter
         userProjectsRecyclerView.layoutManager = LinearLayoutManager(this.activity)
 
 
 
         informationsRecyclerView = binding.rvProfilePageInfo
-        informationsAdapter = ProfilePageRecyclerViewAdapter(ArrayList())
+        informationsAdapter = ProfilePageAdapter(ArrayList())
         informationsRecyclerView.adapter = informationsAdapter
         informationsRecyclerView.layoutManager = LinearLayoutManager(context,LinearLayoutManager.VERTICAL, false)
     }

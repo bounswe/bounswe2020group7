@@ -7,9 +7,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
 import com.cmpe451.platon.networkmodels.models.FollowPerson
-import com.cmpe451.platon.networkmodels.models.OtherUser
 
-class FollowerFollowingRecyclerViewAdapter(private val dataSet: ArrayList<FollowPerson>, val clickCallback:(Int) ->Unit) : RecyclerView.Adapter<FollowerFollowingRecyclerViewAdapter.ViewHolder>() {
+class FollowerFollowingAdapter(private val dataSet: ArrayList<FollowPerson>, val clickCallback:(Int) ->Unit) : RecyclerView.Adapter<FollowerFollowingAdapter.ViewHolder>() {
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         val view: View = v
 
