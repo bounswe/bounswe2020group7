@@ -1,9 +1,6 @@
 package com.cmpe451.platon.util
 
-import com.cmpe451.platon.networkmodels.models.Followers
-import com.cmpe451.platon.networkmodels.models.Following
-import com.cmpe451.platon.networkmodels.models.Researches
-import com.cmpe451.platon.networkmodels.models.User
+import com.cmpe451.platon.networkmodels.models.*
 import com.google.gson.JsonObject
 import org.json.JSONObject
 import retrofit2.Call
@@ -80,4 +77,14 @@ interface Webservice {
     @HTTP(method = "DELETE" , path = "api/profile/research_information", hasBody = true)
     fun deleteResearchProject(@Field("research_id") research_id:Int,
                               @Header("auth_token") auth_token :String) : Call<JsonObject>
+
+    @GET("api/auth_system/user")
+    fun getOtherUserInfo(@Query("user_id") user_id:Int,
+                         @Header("auth_token") auth_token :String     ): Call<OtherUser>?
+
+    @FormUrlEncoded
+    @POST("api/follow/follow_requests")
+    fun follow(@Field("follower_id") follower_id:Int,
+               @Field("following_id") following_id:Int,
+               @Header("auth_token") auth_token :String) : Call<JsonObject>
 }

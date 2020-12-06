@@ -13,7 +13,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/name_block"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="150dp"
             android:layout_weight="1">
 
             <ImageView
@@ -167,38 +167,39 @@
                     android:visibility="gone"
                     app:srcCompat="@android:drawable/btn_star_big_off" />
             </LinearLayout>
-            <Button
-                android:id="@+id/button_edit_profile"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:background="@color/secondary_purple"
-                android:text="@string/text_edit_profile"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/button_following"
-                android:layout_marginStart="@dimen/profile_page_margin"
-                android:layout_marginEnd="@dimen/profile_page_margin"
-                android:layout_marginTop="@dimen/profile_margin_half"
-                android:layout_marginBottom="@dimen/profile_margin_half"
-                />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-        <TextView
-            android:id="@+id/info_title"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-            android:fontFamily="@font/dm_sans_bold"
-            android:padding="@dimen/x_small"
-            android:paddingHorizontal="@dimen/title_logo_padding"
-            android:shadowColor="@color/primary_dark"
-            android:shadowDx="1"
-            android:shadowDy="1"
-            android:layout_marginTop="@dimen/medium"
-            android:shadowRadius="2"
-            android:text="@string/your_info"
-            android:textColor="@color/secondary_green"
-            android:textSize="@dimen/project_title_text_size"
-            />
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/profile_margin_half">
+
+            <TextView
+                android:id="@+id/info_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:fontFamily="@font/dm_sans_bold"
+                android:padding="@dimen/x_small"
+                android:paddingHorizontal="@dimen/title_logo_padding"
+                android:shadowColor="@color/primary_dark"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2"
+                android:text="@string/your_info"
+                android:textColor="@color/secondary_green"
+                android:textSize="@dimen/project_title_text_size"
+                />
+            <ImageView
+                android:id="@+id/button_edit_profile"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/baseline_create_white_24dp"
+                />
+        </LinearLayout>
+
 
 
         <androidx.recyclerview.widget.RecyclerView
@@ -255,3 +256,16 @@
 
 
 </ScrollView>
+<!--<Button-->
+<!--android:id="@+id/button_edit_profile"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="0dp"-->
+<!--android:background="@color/secondary_purple"-->
+<!--android:text="@string/text_edit_profile"-->
+<!--app:layout_constraintBottom_toBottomOf="parent"-->
+<!--app:layout_constraintTop_toBottomOf="@id/button_following"-->
+<!--android:layout_marginStart="@dimen/profile_page_margin"-->
+<!--android:layout_marginEnd="@dimen/profile_page_margin"-->
+<!--android:layout_marginTop="@dimen/profile_margin_half"-->
+<!--android:layout_marginBottom="@dimen/profile_margin_half"-->
+<!--    />-->

@@ -56,6 +56,9 @@ class Definitions {
         }
     }
 
+    enum class USERSTATUS {
+        FOLLOWING, NOT_FOLLOWING, REQUESTED
+    }
     /**
      * Activities are serialized according to this.
      * @param notification_message Title of the activity
