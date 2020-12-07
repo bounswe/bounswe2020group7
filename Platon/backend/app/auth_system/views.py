@@ -14,6 +14,7 @@ from app.auth_system.forms import DeleteUserForm, delete_user_parser
 from app.auth_system.models import User
 from app.profile_management.models import Jobs
 from app.follow_system.models import Follow, FollowRequests
+from app.follow_system.helpers import follow_required
 from app.auth_system.helpers import generate_token,send_email,login_required, hashed
 from app.profile_management.helpers import ResearchInfoFetch
 
@@ -164,6 +165,7 @@ class UserAPI(Resource):
                 500: "The server is not connected to the database."
             })
     @login_required
+    @follow_required(param_loc = 'args', requested_user_id_key='user_id')
     def get(requester_id, self):
         '''
         Returns the profile information of the requested user.
