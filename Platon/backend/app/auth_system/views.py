@@ -466,7 +466,7 @@ class UserSkillAPI(Resource):
                 if new_skill is None:
                     new_skill = Skills(name=skill_name)
                     db.session.add(new_skill)
-                    db.session.commit
+                    db.session.commit()
                 new_userskill = UserSkills(user_id=logged_in_user.id,
                                            skill_id = new_skill.id)
                 db.session.add(new_userskill)
