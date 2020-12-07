@@ -62,7 +62,7 @@ class LoginAPI(Resource):
                 return make_response(jsonify({'error' : 'Wrong e-mail or password'}),401)
             if not user.is_valid:
                 return make_response(jsonify({'error' : 'Please activate your account'}),401)
-            return make_response(jsonify({'token':generate_token(user.id,app.config['SESSION_DURATION'])}),200)
+            return make_response(jsonify({ 'user_id': user.id, 'token':generate_token(user.id,app.config['SESSION_DURATION'])}),200)
         else:
             return make_response(jsonify({'error' : 'Write your e-mail and password'}),400)
 
