@@ -25,7 +25,7 @@
             android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Search among:"
+            android:text="@string/search_among_str"
             android:textColor="@color/primary_light" />
 
         <RadioButton
@@ -43,8 +43,41 @@
             android:textColor="@color/primary_light" />
     </RadioGroup>
 
+    <RadioGroup
+        android:id="@+id/notification_rg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary_dark_darker"
+        android:checkedButton="@id/general_ntf_rb"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/medium"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/see_ntf_tw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/see_notifications_for_str"
+            android:textColor="@color/primary_light" />
+
+        <RadioButton
+            android:id="@+id/general_ntf_rb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/general_str"
+            android:textColor="@color/primary_light" />
+
+        <RadioButton
+            android:id="@+id/personal_ntf_rb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/personal_str"
+            android:textColor="@color/primary_light" />
+    </RadioGroup>
+
+
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/search_element_recycler_view"
+        android:id="@+id/toolbar_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/primary_dark_darker">

@@ -30,7 +30,7 @@ class HomeActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickList
     lateinit var toolbar: Toolbar
     lateinit var navController: NavController
     val myDataset = ArrayList<String>()
-    private lateinit var searchRecyclerView: RecyclerView
+    private lateinit var toolbarRecyclerView: RecyclerView
     var token:String? = null
     lateinit var binding : ActivityHomeBinding
 
@@ -64,11 +64,9 @@ class HomeActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickList
     }
 
     private fun initViews() {
-        searchRecyclerView = binding.searchElementRecyclerView
-        searchRecyclerView.adapter = SearchElementsAdapter(myDataset,this, this)
-        searchRecyclerView.layoutManager = LinearLayoutManager(this)
-        (searchRecyclerView.adapter as SearchElementsAdapter).notifyDataSetChanged()
-
+        toolbarRecyclerView = binding.toolbarRecyclerview
+        toolbarRecyclerView.adapter = SearchElementsAdapter(myDataset,this, this)
+        toolbarRecyclerView.layoutManager = LinearLayoutManager(this)
 
         if (token != null){
             mProfilePageViewModel.fetchUser(token!!)
@@ -96,15 +94,15 @@ class HomeActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickList
 
             override fun onQueryTextSubmit(query: String?): Boolean {
                 myDataset.add(0, query.toString())
-                searchRecyclerView.adapter?.notifyItemInserted(0)
-                return Log.println(Log.ERROR, "SEARCH:",(query + searchRecyclerView.adapter?.itemCount.toString()+ myDataset.toString()).trim())*0 == 0
+                toolbarRecyclerView.adapter?.notifyItemInserted(0)
+                return Log.println(Log.ERROR, "SEARCH:",(query + toolbarRecyclerView.adapter?.itemCount.toString()+ myDataset.toString()).trim())*0 == 0
             }
         })
 
         search.setOnCloseListener {
             binding.searchAmongRb.visibility = View.GONE
             myDataset.clear()
-            searchRecyclerView.adapter?.notifyDataSetChanged()
+            toolbarRecyclerView.adapter?.notifyDataSetChanged()
             search.onActionViewCollapsed()
             true
         }
@@ -114,10 +112,20 @@ class HomeActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickList
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
-        if (item.itemId == R.id.logout_menu_btn){
-            onLogOutButtonClicked()
+        when(item.itemId){
+            R.id.logout_menu_btn -> onLogOutButtonClicked()
+            R.id.notification_btn -> onSeeNotificationsClicked()
         }
+
         return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
+    }
+
+    private fun onSeeNotificationsClicked() {
+        when(binding.notificationRg.visibility){
+            View.VISIBLE ->binding.notificationRg.visibility = View.GONE
+            View.GONE ->binding.notificationRg.visibility = View.VISIBLE
+        }
+
     }
 
     private fun onLogOutButtonClicked(){

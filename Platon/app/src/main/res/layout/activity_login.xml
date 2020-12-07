@@ -28,7 +28,7 @@
             android:textColor="@color/primary_light"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Search among:" />
+            android:text="@string/search_among_str" />
 
         <RadioButton
             android:id="@+id/workspace_rb"
@@ -46,7 +46,7 @@
     </RadioGroup>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/search_element_recycler_view"
+        android:id="@+id/toolbar_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/primary_dark_darker">
@@ -59,6 +59,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:defaultNavHost="true"
-                app:layout_constraintTop_toBottomOf="@+id/search_element_recycler_view"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar_recyclerview"
                 app:navGraph="@navigation/nav_graph" />
 </LinearLayout>
