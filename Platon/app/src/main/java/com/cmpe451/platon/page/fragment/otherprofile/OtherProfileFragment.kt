@@ -91,7 +91,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
             }
         })
 
-        mOtherProfileViewModel.isFollowing.observe(viewLifecycleOwner){
+        mOtherProfileViewModel.isFollowing.observe(viewLifecycleOwner){it->
             if(it != null){
                 setView(it, mOtherProfileViewModel.isUserPrivate.value!!)
                 setListeners(it, mOtherProfileViewModel.isUserPrivate.value!!)

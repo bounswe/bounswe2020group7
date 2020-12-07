@@ -11,6 +11,9 @@
         <action
             android:id="@+id/action_homeFragment_to_profilePageFragment"
             app:destination="@id/profilePageFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_otherProfileFragment"
+            app:destination="@id/otherProfileFragment" />
     </fragment>
     <fragment
         android:id="@+id/profilePageFragment"

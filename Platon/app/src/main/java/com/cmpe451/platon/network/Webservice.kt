@@ -96,4 +96,11 @@ interface Webservice {
     @GET("api/follow/follow_requests")
     fun getFollowRequests(@Query("following_id") id:Int, @Header("auth_token") auth_token :String) : Call<FollowRequests?>
 
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "api/follow/follow_requests",hasBody = true)
+    fun answerFollowRequests(@Field("follower_id") follower_id:Int,
+                             @Field("following_id") following_id:Int,
+                             @Field("state") state:Int,
+                             @Header("auth_token") auth_token :String) : Call<JsonObject?>
+
 }

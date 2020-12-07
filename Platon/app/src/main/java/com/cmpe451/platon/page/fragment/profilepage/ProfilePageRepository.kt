@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.RetrofitClient
 import com.cmpe451.platon.network.models.*
+import com.google.gson.JsonObject
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -13,6 +14,7 @@ class ProfilePageRepository() {
 
     val researchesResourceResponse: MutableLiveData<Resource<Researches>> = MutableLiveData(Resource.Loading())
     val userResourceResponse:MutableLiveData<Resource<User>> = MutableLiveData(Resource.Loading())
+    val acceptRequestResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData(Resource.Loading())
 
     val userFollowRequestsResourceResponse:MutableLiveData<Resource<FollowRequests>> = MutableLiveData(Resource.Loading())
     val userNotificationsResourceResponse:MutableLiveData<Resource<List<Notification>>> = MutableLiveData(Resource.Loading())
@@ -92,6 +94,46 @@ class ProfilePageRepository() {
             }
 
             override fun onFailure(call: Call<Researches?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+
+    fun acceptFollowRequest(followerId: Int, followingId: Int, token: String) {
+        val service = RetrofitClient.getService()
+        val call = service.answerFollowRequests(followerId, followingId,1, token)
+
+        call.enqueue(object: Callback<JsonObject?>{
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when {
+                    response.isSuccessful && response.body() != null -> acceptRequestResourceResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> acceptRequestResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> acceptRequestResourceResponse.value = Resource.Error("Unknown error!")
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+
+    fun deleteFollowRequest(followerId: Int, followingId: Int, token: String) {
+        val service = RetrofitClient.getService()
+        val call = service.answerFollowRequests(followerId, followingId,2, token)
+
+        call.enqueue(object: Callback<JsonObject?>{
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when {
+                    response.isSuccessful && response.body() != null -> acceptRequestResourceResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> acceptRequestResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> acceptRequestResourceResponse.value = Resource.Error("Unknown error!")
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
                 call.clone().enqueue(this)
             }
 

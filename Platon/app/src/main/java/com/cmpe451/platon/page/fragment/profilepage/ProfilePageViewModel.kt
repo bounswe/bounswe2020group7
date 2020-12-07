@@ -17,7 +17,11 @@ class ProfilePageViewModel: ViewModel() {
     val getUserFollowRequestsResourceResponse:MutableLiveData<Resource<FollowRequests>>
     val getUserNotificationsResourceResponse:MutableLiveData<Resource<List<Notification>>>
 
+
+
     private var repository: ProfilePageRepository = ProfilePageRepository()
+    var acceptRequestResourceResponse = repository.acceptRequestResourceResponse
+
 
     init {
         getUserResourceResponse = repository.userResourceResponse
@@ -59,6 +63,14 @@ class ProfilePageViewModel: ViewModel() {
         x.add(mapOf(Pair("title", "Rating"), Pair("info", getUserResourceResponse.value!!.data!!.rate.toString())))
 
         return x
+    }
+
+    fun acceptFollowRequest(followerId: Int, followingId:Int, token:String) {
+        repository.acceptFollowRequest(followerId, followingId,token)
+    }
+
+    fun deleteFollowRequest(followerId: Int, followingId:Int, token:String) {
+        repository.deleteFollowRequest(followerId, followingId,token)
     }
 
 
