@@ -1,12 +1,12 @@
 from flask import make_response, jsonify, request
-from flask_restplus import Resource, Namespace
+from flask_restplus import Resource, Namespace, fields
 from flask import current_app as app
 
 from app import api, db
 from app.follow_system.forms import GetFollowingsForm, GetFollowersForm, GetFollowRequestsForm, \
-    SendFollowRequestsForm, ReplyFollowRequestsForm
+    SendFollowRequestsForm, ReplyFollowRequestsForm, UnfollowForm
 from app.follow_system.forms import get_followings_parser, get_followers_parser, get_follow_requests_parser, send_follow_requests_parser, \
-    reply_follow_requests_parser
+    reply_follow_requests_parser, unfollow_parser
 from app.follow_system.models import Follow, FollowRequests
 from app.auth_system.models import User
 from app.auth_system.views import login_required
@@ -17,21 +17,48 @@ follow_system_ns = Namespace("Follow System",
                              description="Follow System Endpoints",
                              path="/follow")
 
+user_data_model = api.model('User Data', {
+        'id': fields.Integer,
+        'name': fields.String,
+        'surname': fields.String,
+        'e_mail': fields.String,
+        'rate': fields.Float,
+        'is_private': fields.Boolean
+    })
+
+followers_model = api.model('Followers', {
+    'followers': fields.List(
+        fields.Nested(user_data_model)
+    )
+})
+
+followings_model = api.model('Followings', {
+    'followings': fields.List(
+        fields.Nested(user_data_model)
+    )
+})
+
+follow_requests_model = api.model('Follow Requests', {
+    'follow request senders': fields.List(
+        fields.Nested(user_data_model)
+    )
+})
+
 @follow_system_ns.route("/followings")
 class GetFollowingsAPI(Resource):
 
-    @api.doc(responses={200: 'Followings List is successfully returned',
-                        404: 'Followings List is empty',
+    @api.doc(responses={404: 'Followings List is empty',
                         400: 'Input Format Error',
                         500: 'Database Connection Error'})
+    @api.response(200, 'Followings List is successfully returned', followings_model)
     @api.expect(get_followings_parser)
     @login_required
-    @follow_required(param_loc='args',requested_user_id_key='follower_id')
+    @follow_required(param_loc='form',requested_user_id_key='follower_id')
     def get(user_id, self):
         '''
             Returns a list of dictionaries with id, name, surname, e_mail, rate and is_private informations.
         '''
-        form = GetFollowingsForm(request.args)
+        form = GetFollowingsForm(request.form)
         if form.validate():
             try:
                 followSearch = Follow.query.filter(Follow.follower_id == form.follower_id.data).all()
@@ -53,22 +80,55 @@ class GetFollowingsAPI(Resource):
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
 
+    @api.doc(responses={200: 'User is unfollowed successfully',
+                        400: 'Input Format Error',
+                        404: 'No follow information found with given authentication token and following_id',
+                        500: 'Database Connection Error'})
+    @api.expect(unfollow_parser)
+    @login_required
+    def delete(user_id, self):
+        '''
+            Takes the following_id and authentication token as inputs and deletes corresponding Follow entry.
+        '''
+        form = UnfollowForm(request.form)
+        if form.validate():
+
+            # Check if the given Follow instance exists.
+            try:
+                followSearch = Follow.query.filter(Follow.following_id == form.following_id.data, Follow.follower_id == user_id).all()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+            if len(followSearch) == 0:
+                return make_response(jsonify({'error': 'No follow information found with given authentication token and following_id'}), 404)
+
+            follow_instance = followSearch[0]
+            try:
+                db.session.delete(follow_instance)
+                db.session.commit()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Problem'}), 500)
+
+            return make_response(jsonify({'msg': 'User is unfollowed successfully'}), 200)
+
+        else:
+            return make_response(jsonify({'error': 'Input Format Error'}), 400)
 
 @follow_system_ns.route("/followers")
 class GetFollowersAPI(Resource):
 
-    @api.doc(responses={200: 'Followers List is successfully returned',
-                        404: 'Followers List is empty',
+    @api.doc(responses={404: 'Followers List is empty',
                         400: 'Input Format Error',
                         500: ' Database Connection Error'})
+    @api.response(200, 'Followers List is successfully returned', followers_model)
     @api.expect(get_followers_parser)
     @login_required
-    @follow_required(param_loc='args',requested_user_id_key='following_id')
+    @follow_required(param_loc='form',requested_user_id_key='following_id')
     def get(user_id, self):
         '''
             Returns a list of dictionaries with id, name, surname, e_mail, rate and is_private informations.
         '''
-        form = GetFollowersForm(request.args)
+        form = GetFollowersForm(request.form)
         if form.validate():
             try:
                 followSearch = Follow.query.filter(Follow.following_id == form.following_id.data).all()
@@ -94,19 +154,18 @@ class GetFollowersAPI(Resource):
 @follow_system_ns.route("/follow_requests")
 class FollowRequestAPI(Resource):
 
-    @api.doc(responses={200: 'Follow Requests List is successfully returned',
-                        404: 'Follow Requests List is empty',
+    @api.doc(responses={404: 'Follow Requests List is empty',
                         400: 'Input Format Error',
                         401: 'Current user is unauthorized to see the Follow Requests',
                         500: 'Database Connection Error'})
+    @api.response(200, 'Follow Requests List is successfully returned', follow_requests_model)
     @api.expect(get_follow_requests_parser)
     @login_required
-    @follow_required(param_loc='args',requested_user_id_key='following_id')
     def get(user_id, self):
         '''
             Returns a list of dictionaries that contains id, name, surname, e_mail, rate and is_private.
         '''
-        form = GetFollowRequestsForm(request.args)
+        form = GetFollowRequestsForm(request.form)
         if form.validate():
 
             # user_id should be equal to form.following_id.data
@@ -173,17 +232,9 @@ class FollowRequestAPI(Resource):
                     logged_in_user = User.query.filter(User.id == user_id).first()
                     text = "{} started to following you".format(logged_in_user.name + " " + logged_in_user.surname)
                     NotificationManager.add_notification(form.following_id.data,[logged_in_user.id],text)
-                    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    # Add notification to all user that follows the logged in user
-                    following_users = Follow.query.filter(Follow.following_id == user_id).all()
-                    for user in following_users:
-                        text = "{} started to following {}".format(logged_in_user.name + " " + logged_in_user.surname
-                                                                        ,following_user.name + " " + following_user.surname)
-                        NotificationManager.add_notification(user.follower_id,[user_id],text)
                 except:
                     return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
-                # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             try:
                 db.session.add(follow_record)  # Creating a new database entry.
                 db.session.commit()
@@ -194,7 +245,6 @@ class FollowRequestAPI(Resource):
 
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
-
 
     @api.doc(responses={200: 'Follow Request is replied successfully',
                         400: 'Input Format Error',
@@ -236,15 +286,12 @@ class FollowRequestAPI(Resource):
                 except:
                     return make_response(jsonify({'error': 'Database Connection Error'}), 500)
                 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                # Add notification to all user that follows the logged in user
+                # Add notification to follower that his/her follow request is accepted.
                 try:
                     follower_user = User.query.filter(User.id == follow_request.follower_id).first()
                     following_user = User.query.filter(User.id == follow_request.following_id).first()
-                    following_users = Follow.query.filter(Follow.following_id == follower_user.id).all()
-                    for user in following_users:
-                        text = "{} started to following {}".format(follower_user.name + " " + follower_user.surname
-                                                                    ,following_user.name + " " + following_user.surname)
-                        NotificationManager.add_notification(user.follower_id,[user_id],text)
+                    text = "{} accepted your follow request".format(following_user.name + " " + following_user.surname)
+                    NotificationManager.add_notification(follower_user.id, [following_user.id], text)
                 except:
                     return make_response(jsonify({'error': 'Database Connection Error'}), 500)
                 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

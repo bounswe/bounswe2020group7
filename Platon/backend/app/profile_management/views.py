@@ -1,6 +1,5 @@
 from flask import make_response,jsonify,request
-from flask_restplus import Resource,Namespace
-
+from flask_restplus import Resource,Namespace, fields
 from app.auth_system.helpers import login_required
 from app.auth_system.models import User
 from app.follow_system.helpers import follow_required
@@ -17,12 +16,46 @@ profile_management_ns = Namespace("Profile Management",
                                   description="Profile Management Endpoints",
                                   path = "/profile")
 
+research_info_model = api.model('Research Info', {
+    'id': fields.Integer,
+    'title': fields.String,
+    'description': fields.String,
+    'year': fields.Integer
+})
+
+research_list_model = api.model('Research List', {
+    'research_info': fields.List(
+        fields.Nested(research_info_model)
+    )
+})
+
+related_users_model = api.model('Related Users', {
+    'user_id': fields.Integer
+})
+
+notification_model = api.model('Notification', {
+    'id': fields.Integer,
+    'text': fields.String,
+    'link': fields.String,
+    'timestamp': fields.DateTime,
+    'related_users': fields.List(
+        fields.String
+    )
+})
+
+notification_list_model = api.model('Notification List', {
+    'notification_list': fields.List(
+        fields.Nested(notification_model)
+    )
+})
+
 @profile_management_ns.route("/research_information")
 class ResearchInformationAPI(Resource):
     """
         Research Information Functionality is implemented in this class
     """
-    @api.doc(responses={200:'Valid Response',400:'Wrong Input Format',401:'Authantication Problem', 403 : 'Private Account Problem',500:'Database Connection Problem'})
+    @api.doc(responses={400:'Wrong Input Format',401:'Authantication Problem', 403 : 'Private Account Problem',500:'Database Connection Problem'})
+    @api.response(200, 'Valid Response', research_list_model)
     @api.expect(research_info_get_parser)
     @login_required
     @follow_required(param_loc = 'args', requested_user_id_key='user_id')
@@ -110,7 +143,8 @@ class ResearchInformationAPI(Resource):
 @profile_management_ns.route("/notifications")
 class NotificationAPI(Resource):
     
-    @api.doc(responses={200:'Valid Response',401:'Authantication Problem',500:'Database Connection Problem'})
+    @api.doc(responses={401:'Authantication Problem',500:'Database Connection Problem'})
+    @api.response(200,'Valid Response', notification_list_model)
     @api.expect(notification_get_parser)
     @login_required
     def get(user_id,self):
@@ -215,7 +249,6 @@ class FrontPage(Resource):
         ]
 
         return make_response(jsonify(activities),200)
-
 
 def register_resources(api):
     schedule_regularly()

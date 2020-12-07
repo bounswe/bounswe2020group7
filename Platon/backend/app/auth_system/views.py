@@ -1,5 +1,5 @@
 from flask import make_response,jsonify,request
-from flask_restplus import Resource,Namespace
+from flask_restplus import Resource,Namespace, fields
 from flask import current_app as app
 from flask_mail import Message 
 
@@ -22,6 +22,22 @@ import datetime
 auth_system_ns = Namespace("Authentication System",
                             description="Authentication System Endpoints",
                             path = "/auth_system")
+
+success_msg_model = api.model('Success Message', {
+    "mgs": fields.String
+})
+
+account_information_model = api.model('User Data', {
+    "id": fields.Integer,
+    "name": fields.String,
+    "surname": fields.String,
+    "rate": fields.Float,
+    "profile_photo": fields.String,
+    "e_mail": fields.String,
+    "google_scholar_name": fields.String,
+    "researchgate_name": fields.String,
+    "job": fields.String
+})
 
 @auth_system_ns.route("/login")
 class LoginAPI(Resource):
@@ -55,7 +71,8 @@ class ResetPasswordAPI(Resource):
     """
         Login Functionality is implemented in this class
     """
-    @api.doc(responses={200 : 'Valid e-mail', 404 : 'E-mail not found',400 : 'Input Format Error' ,401 : 'Account Problems' ,500 : ' Database Connection/E-mail Server Error'})
+    @api.doc(responses={404 : 'E-mail not found',400 : 'Input Format Error' ,401 : 'Account Problems' ,500 : ' Database Connection/E-mail Server Error'})
+    @api.response(200, 'Valid e-mail', success_msg_model)
     @api.expect(reset_password_get_parser)
     def get(self):
         """
@@ -113,10 +130,10 @@ class GetSelfAPI(Resource):
     # GET request (for the logged-in user to get their own user information)
     @api.expect(get_self_parser)
     @api.doc(responses={
-                200: "User has been found.",
                 404: "The user is not found.",
                 500: "The server is not connected to the database."
             })
+    @api.response(200, "User has been found.", account_information_model)
     @login_required
     def get(user_id, self):
         # Tries to connect to the database.
@@ -156,11 +173,11 @@ class UserAPI(Resource):
     # GET request
     @api.expect(get_user_parser)
     @api.doc(responses={
-                200: "User has been found.",
                 400: "Missing data fields or invalid data.",
                 404: "The user is not found.",
                 500: "The server is not connected to the database."
             })
+    @api.response(200, "User has been found.", account_information_model)
     def get(self):
         # Parses the form data.
         form = GetUserForm(request.args)
@@ -401,7 +418,6 @@ class UserAPI(Resource):
                     return make_response(jsonify({"error" : "The user is not found."}), 404)
         else:
             return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
-
 
 def register_resources(api):
     api.add_namespace(auth_system_ns)

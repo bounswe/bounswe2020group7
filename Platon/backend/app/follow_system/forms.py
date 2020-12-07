@@ -64,3 +64,14 @@ reply_follow_requests_parser.add_argument('state', required=True, type=int,
                                            help="State is 1 if the reply is accept, state is 2 if the reply is reject.",
                                            location='form')
 reply_follow_requests_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
+
+
+class UnfollowForm(Form):
+    following_id = IntegerField('following_id', validators=[validators.DataRequired()])
+
+
+unfollow_parser = reqparse.RequestParser()
+unfollow_parser.add_argument('following_id', required=True, type=int,
+                                  help="ID of the unfollowed user",
+                                  location='args')
+unfollow_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
