@@ -13,6 +13,7 @@ from app.auth_system.forms import UpdateUserForm, update_user_parser
 from app.auth_system.forms import DeleteUserForm, delete_user_parser
 from app.auth_system.models import User
 from app.profile_management.models import Jobs
+from app.follow_system.models import Follow, FollowRequests
 from app.auth_system.helpers import generate_token,send_email,login_required, hashed
 from app.profile_management.helpers import ResearchInfoFetch
 
@@ -118,11 +119,11 @@ class GetSelfAPI(Resource):
                 500: "The server is not connected to the database."
             })
     @login_required
-    def get(user_id, self):
+    def get(requester_id, self):
         # Tries to connect to the database.
         # If it fails, an error is raised.
         try:
-            logged_in_user = User.query.filter_by(id=user_id).first()
+            logged_in_user = User.query.filter_by(id=requester_id).first()
             user_job = Jobs.query.filter(Jobs.id == logged_in_user.job_id).first()
         except:
             return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
@@ -161,7 +162,12 @@ class UserAPI(Resource):
                 404: "The user is not found.",
                 500: "The server is not connected to the database."
             })
-    def get(self):
+    @login_required
+    def get(requester_id, self):
+        '''
+        Returns the profile information of the requested user.
+        '''
+
         # Parses the form data.
         form = GetUserForm(request.args)
         
@@ -181,14 +187,22 @@ class UserAPI(Resource):
                 # If yes, user information is returned.
                 # If not, an error is raised.
                 if existing_user is not None:
-                    # DO NOT FORGET TO WRITE CODE FOR PRIVATE ACCOUNTS
+                    # Checks whether the requester user follows the requested user or not.
+                    if Follow.query.filter_by(follower_id=requester_id, following_id=form.user_id.data).first() is not None:
+                        following_status = 1 # Represents that the requester user follows the requested user.
+                    elif FollowRequests.query.filter_by(follower_id=requester_id, following_id=form.user_id.data).first() is not None:
+                        following_status = 0 # Represents that the requester user has already sent a follow request to the requested user.
+                    else:
+                        following_status = -1 # Represents that the requester user does not follow the requested user and has not yet sent a request to follow them.
+                    
                     account_information = { 
                                         "id": existing_user.id,
                                         "name": existing_user.name,
                                         "surname": existing_user.surname,
+                                        "e_mail": existing_user.e_mail,
+                                        "following_status": following_status
                                         "rate": existing_user.rate,
                                         "profile_photo": existing_user.profile_photo,
-                                        "e_mail": existing_user.e_mail,
                                         "google_scholar_name": existing_user.google_scholar_name,
                                         "researchgate_name": existing_user.researchgate_name,
                                         "job": user_job.name
@@ -294,7 +308,7 @@ class UserAPI(Resource):
                 500: "The server is not connected to the database."
             })
     @login_required
-    def put(user_id, self):
+    def put(requester_id, self):
         # Parses the form data.
         form = UpdateUserForm(request.form)
         
@@ -305,7 +319,7 @@ class UserAPI(Resource):
             # Tries to connect to the database.
             # If it fails, an error is raised.
             try:
-                existing_user = User.query.filter_by(id=user_id)
+                existing_user = User.query.filter_by(id=requester_id)
             except:
                 return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
             else:
@@ -363,7 +377,7 @@ class UserAPI(Resource):
                 500: "The server is not connected to the database."
             })
     @login_required
-    def delete(user_id, self):
+    def delete(requester_id, self):
         # Parses the form data.
         form = DeleteUserForm(request.form)
         
@@ -374,7 +388,7 @@ class UserAPI(Resource):
             # Tries to connect to the database.
             # If it fails, an error is raised.
             try:
-                existing_user = User.query.filter_by(id=user_id).first()
+                existing_user = User.query.filter_by(id=requester_id).first()
             except:
                 return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
             else:
