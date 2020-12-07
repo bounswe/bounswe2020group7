@@ -1,10 +1,12 @@
 package com.cmpe451.platon.page.fragment.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +20,10 @@ import com.cmpe451.platon.databinding.ActivityStreamCellBinding
 import com.cmpe451.platon.databinding.FragmentHomeBinding
 import com.cmpe451.platon.databinding.TrendProjectCellBinding
 import com.cmpe451.platon.databinding.UpcomingEventCellBinding
+import com.cmpe451.platon.network.Resource
+import com.cmpe451.platon.network.models.ActivityStream
+import com.cmpe451.platon.network.models.ActivityStreamElement
+import com.cmpe451.platon.page.activity.HomeActivity
 import com.cmpe451.platon.util.Definitions
 
 class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonClickListener, UpcomingEventsAdapter.UpcomingButtonClickListener, ActivityStreamAdapter.ActivityStreamButtonClickListener {
@@ -45,6 +51,8 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
         super.onViewCreated(view, savedInstanceState)
         initViews()
         setListeners()
+
+        mHomeViewModel.getActivities((activity as HomeActivity).token!!)
     }
 
 
@@ -52,7 +60,7 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
     private fun initViews() {
         val myTrendingProject: ArrayList<Definitions.TrendingProject> = mHomeViewModel.getTrendingProjects()
         val myUpcomingEvents: ArrayList<Definitions.UpcomingEvent> = mHomeViewModel.getUpcomingEvents()
-        val myActivities: ArrayList<Definitions.ActivityStream> = mHomeViewModel.getActivities()
+        val myActivities: ArrayList<ActivityStreamElement> = arrayListOf()
 
         trendingProjectsRecyclerView = binding.homeTrendingProjectsRecyclerView
         trendingProjectsRecyclerView.adapter = TrendingProjectsAdapter(myTrendingProject, requireContext(), this)
@@ -70,6 +78,16 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
 
 
     private fun setListeners() {
+
+        mHomeViewModel.getActivityStreamResourceResponse.observe(viewLifecycleOwner, { t->
+            when(t.javaClass){
+                Resource.Success::class.java -> {
+                    Toast.makeText(activity, "Loaded", Toast.LENGTH_SHORT).show()
+                    (activityStreamRecyclerView.adapter as ActivityStreamAdapter).submitElements(t.data as ArrayList<ActivityStreamElement>)
+                }
+                Resource.Error::class.java ->Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+            }
+        })
 
 
     }

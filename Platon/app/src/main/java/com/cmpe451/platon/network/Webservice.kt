@@ -19,7 +19,7 @@ interface Webservice {
     @FormUrlEncoded
     @POST("api/auth_system/login")
     fun makeLogin(@Field("e_mail") email: String,
-                  @Field("password") password: String) : Call<JsonObject?>
+                  @Field("password") password: String) : Call<Auth?>
 
 
     @FormUrlEncoded
@@ -78,11 +78,16 @@ interface Webservice {
 
     @GET("api/auth_system/user")
     fun getOtherUserInfo(@Query("user_id") user_id:Int,
-                         @Header("auth_token") auth_token :String     ): Call<OtherUser?>
+                         @Header("auth_token") auth_token :String): Call<OtherUser?>
 
     @FormUrlEncoded
     @POST("api/follow/follow_requests")
     fun follow(@Field("follower_id") follower_id:Int,
                @Field("following_id") following_id:Int,
                @Header("auth_token") auth_token :String) : Call<JsonObject?>
+
+
+    @GET("api/profile/front_page")
+    fun getActivityStream(@Header("auth_token") auth_token :String) : Call<List<ActivityStreamElement>?>
+
 }

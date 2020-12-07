@@ -5,10 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.cmpe451.platon.databinding.ActivityStreamCellBinding
+import com.cmpe451.platon.network.models.ActivityStreamElement
 import com.cmpe451.platon.util.Definitions
 
-class ActivityStreamAdapter(private val data: ArrayList<Definitions.ActivityStream>, private val context: Context, private val activityStreamButtonClickListener: ActivityStreamButtonClickListener) :
+class ActivityStreamAdapter(private val data: ArrayList<ActivityStreamElement>, private val context: Context, private val activityStreamButtonClickListener: ActivityStreamButtonClickListener) :
 
     RecyclerView.Adapter<ActivityStreamAdapter.ActivityStreamViewHolder>() {
 
@@ -43,11 +45,8 @@ class ActivityStreamAdapter(private val data: ArrayList<Definitions.ActivityStre
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
-        val drawable = data[position].img
-        drawable?.setBounds(0,0,drawable.intrinsicWidth,drawable.intrinsicHeight)
-        //holder.binding.imgActivityStreamCell = data[position].img
-        holder.binding.titleActivityStreamCell.text = data[position].notification_message
-
+        holder.binding.titleActivityStreamCell.text = data[position].message
+        Glide.with(context).load(data[position].image).into(holder.binding.activityImg)
         holder.bindData(holder.binding, position, activityStreamButtonClickListener)
     }
 
@@ -55,7 +54,7 @@ class ActivityStreamAdapter(private val data: ArrayList<Definitions.ActivityStre
     /**
      * Adds element to given position
      */
-    fun addElement(position: Int, element: Definitions.ActivityStream){
+    fun addElement(position: Int, element: ActivityStreamElement){
         data.add(position, element)
         this.notifyItemInserted(position)
     }
@@ -70,7 +69,7 @@ class ActivityStreamAdapter(private val data: ArrayList<Definitions.ActivityStre
     /**
      * Updates element at given position
      */
-    fun updateElement(position: Int, element: Definitions.ActivityStream){
+    fun updateElement(position: Int, element: ActivityStreamElement){
         data[position] = element
         this.notifyItemChanged(position)
     }
@@ -79,6 +78,12 @@ class ActivityStreamAdapter(private val data: ArrayList<Definitions.ActivityStre
      */
     fun clearElements(){
         data.clear()
+        this.notifyDataSetChanged()
+    }
+
+    fun submitElements(newList:ArrayList<ActivityStreamElement>){
+        data.clear()
+        data.addAll(newList)
         this.notifyDataSetChanged()
     }
 

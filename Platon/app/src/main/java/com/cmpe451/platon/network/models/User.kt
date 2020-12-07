@@ -26,3 +26,8 @@ data class OtherUser(
         val profile_photo:String?,
         val is_private:Boolean
 )
+
+data class Auth(
+        val token: String,
+        val user_id:Int?
+)

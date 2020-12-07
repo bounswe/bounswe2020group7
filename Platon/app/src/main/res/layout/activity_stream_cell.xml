@@ -14,6 +14,15 @@ android:layout_height = "wrap_content">
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <ImageView
+        android:id="@+id/activity_img"
+        android:layout_marginStart="@dimen/x_small"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_width="@dimen/xxxxx_large"
+        android:background="@color/white"
+        android:layout_height="@dimen/xxxxx_large" />
+
     <TextView
         android:background="@drawable/view_back_darker"
         android:padding="@dimen/xx_large"
@@ -21,6 +30,7 @@ android:layout_height = "wrap_content">
         android:layout_width="match_parent"
         android:layout_margin="@dimen/x_small"
         android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/activity_img"
         android:layout_centerInParent="true"
         android:maxLines="3"
         android:text="@string/project_title_str"
