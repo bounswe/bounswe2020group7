@@ -137,7 +137,7 @@ class GetSelfAPI(Resource):
             # If yes, user information is returned.
             # If not, an error is raised.
             if logged_in_user is not None:
-                account_information = { 
+                account_information = {
                                         "id": logged_in_user.id,
                                         "name": logged_in_user.name,
                                         "surname": logged_in_user.surname,
@@ -423,15 +423,14 @@ class UserSkillAPI(Resource):
                    500: 'Database Connection'})
     @api.expect(get_userskill_parser)
     @login_required
-    def get(user_id, self):
+    def get(self):
         '''
             Returns a list of user's skills with id and name
         '''
         form = GetUserSkillsForm(request.args)
         if form.validate():
             try:
-                logged_in_user = User.query.filter_by(id=user_id).first()
-                user_skills = UserSkills.query.filter(UserSkills.user_id == logged_in_user.id).all()
+                user_skills = UserSkills.query.filter(UserSkills.user_id == form.user_id.data).all()
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
@@ -440,7 +439,7 @@ class UserSkillAPI(Resource):
 
             skills = []
             for skill in user_skills:
-                skills.append(UserSkills.query.filter(UserSkills.skill_id == skill.id).first())
+                skills.append(Skills.query.filter(Skills.id == skill.skill_id).first())
 
             return make_response(jsonify({'skills': [
                 {'id': skill.id, 'name': skill.name} for skill in skills]}), 200)
@@ -453,26 +452,26 @@ class UserSkillAPI(Resource):
                    500: 'Database Connection'})
     @api.expect(post_userskill_parser)
     @login_required
-    def post(user_id, self):
+    def post(user_id):
         '''
             Adds a new skill to user's skills with name
         '''
         form = PostUserSkillsForm(request.form)
         if form.validate():
             try:
-                logged_in_user = User.query.filter_by(id=user_id).first()
                 skill_name = form.skill.data.title()
-                new_skill = Skills.query.filter_by(name=skill_name).first()
+                new_skill = Skills.query.filter(Skills.name == skill_name).first()
                 if new_skill is None:
                     new_skill = Skills(name=skill_name)
                     db.session.add(new_skill)
                     db.session.commit()
-                new_userskill = UserSkills(user_id=logged_in_user.id,
-                                           skill_id = new_skill.id)
+                new_userskill = UserSkills(user_id=user_id,
+                                           skill_id=new_skill.id)
                 db.session.add(new_userskill)
                 db.session.commit()
             except:
                 return make_response(jsonify({"error": "The server is not connected to the database."}), 500)
+
             return make_response(jsonify({'msg': 'Skill is successfully added'}), 200)
         else:
             return make_response(jsonify({"error": "Missing data fields or invalid data."}), 400)
@@ -482,19 +481,18 @@ class UserSkillAPI(Resource):
                    500: 'Database Connection', 404: 'Skill or UserSkill is not Found'})
     @api.expect(delete_userskill_parser)
     @login_required
-    def delete(user_id,self):
+    def delete(user_id):
         '''
             Deletes the skill from user's skills with name
         '''
         form = DeleteUserSkillsForm(request.form)
         if form.validate():
             try:
-                logged_in_user = User.query.filter_by(id=user_id).first()
                 skill_name = form.skill.data.title()
                 skill = Skills.query.filter_by(name=skill_name).first()
                 if skill is None:
                     return make_response(jsonify({'error': 'Skill is not found'}), 404)
-                userskill= UserSkills.query.filter_by(skill_id=skill.id).first()
+                userskill = UserSkills.query.filter_by(skill_id=skill.id).first()
                 if userskill is None:
                     return make_response(jsonify({'error': 'User Skill is not found'}), 404)
                 else:

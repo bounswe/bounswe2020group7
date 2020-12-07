@@ -96,17 +96,13 @@ get_userskill_parser.add_argument("user_id", required=True, type=int, help="ID o
 get_userskill_parser.add_argument("auth_token", required=True, type=str, help="Authentication token", location="headers")
 
 class PostUserSkillsForm(Form):
-	user_id = IntegerField("User ID", validators=[validators.DataRequired()])
 	skill = StringField("Skill Name", validators=[validators.DataRequired()])
 post_userskill_parser = reqparse.RequestParser()
-post_userskill_parser.add_argument("user_id", required=True, type=int, help="ID of the requested user.", location="args")
-post_userskill_parser.add_argument("skill", required=True, type=int, help="Skill name", location="form")
+post_userskill_parser.add_argument("skill", required=True, type=str, help="Skill name", location="form")
 post_userskill_parser.add_argument("auth_token", required=True, type=str, help="Authentication token", location="headers")
 
 class DeleteUserSkillsForm(Form):
-	user_id = IntegerField("User ID", validators=[validators.DataRequired()])
 	skill = StringField("Skill Name", validators=[validators.DataRequired()])
 delete_userskill_parser = reqparse.RequestParser()
-delete_userskill_parser.add_argument("user_id", required=True, type=int, help="ID of the requested user.", location="args")
-delete_userskill_parser.add_argument("skill", required=True, type=int, help="Skill name", location="form")
+delete_userskill_parser.add_argument("skill", required=True, type=str, help="Skill name", location="form")
 delete_userskill_parser.add_argument("auth_token", required=True, type=str, help="Authentication token", location="headers")
