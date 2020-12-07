@@ -21,6 +21,9 @@ class Jobs(db.Model):
     id = db.Column(db.Integer,primary_key=True,autoincrement=True)
     name = db.Column(db.String(50),nullable=False,unique=True)
 
+    def __init__(self, name):
+        self.name = name
+
 class Affiliate(db.Model):
     __tablename__ = 'affiliates'
     id = db.Column(db.Integer,primary_key=True,autoincrement=True)

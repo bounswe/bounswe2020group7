@@ -1,5 +1,5 @@
 from flask import make_response,jsonify,request
-from flask_restplus import Resource,Namespace
+from flask_restplus import Resource,Namespace, fields
 from flask import current_app as app
 from flask_mail import Message 
 
@@ -15,9 +15,9 @@ from app.auth_system.forms import GetUserSkillsForm, get_userskill_parser
 from app.auth_system.forms import PostUserSkillsForm, post_userskill_parser
 from app.auth_system.forms import DeleteUserSkillsForm, delete_userskill_parser
 from app.auth_system.models import User
-from app.profile_management.models import Jobs
-from app.profile_management.models import Skills
-from app.profile_management.models import UserSkills
+from app.profile_management.models import Jobs, Skills, UserSkills
+from app.follow_system.models import Follow, FollowRequests
+from app.follow_system.helpers import follow_required
 from app.auth_system.helpers import generate_token,send_email,login_required, hashed
 from app.profile_management.helpers import ResearchInfoFetch
 from app.follow_system.helpers import follow_required
@@ -28,6 +28,22 @@ import datetime
 auth_system_ns = Namespace("Authentication System",
                             description="Authentication System Endpoints",
                             path = "/auth_system")
+
+success_msg_model = api.model('Success Message', {
+    "mgs": fields.String
+})
+
+account_information_model = api.model('User Data', {
+    "id": fields.Integer,
+    "name": fields.String,
+    "surname": fields.String,
+    "rate": fields.Float,
+    "profile_photo": fields.String,
+    "e_mail": fields.String,
+    "google_scholar_name": fields.String,
+    "researchgate_name": fields.String,
+    "job": fields.String
+})
 
 @auth_system_ns.route("/login")
 class LoginAPI(Resource):
@@ -52,7 +68,7 @@ class LoginAPI(Resource):
                 return make_response(jsonify({'error' : 'Wrong e-mail or password'}),401)
             if not user.is_valid:
                 return make_response(jsonify({'error' : 'Please activate your account'}),401)
-            return make_response(jsonify({'token':generate_token(user.id,app.config['SESSION_DURATION'])}),200)
+            return make_response(jsonify({ 'user_id': user.id, 'token':generate_token(user.id,app.config['SESSION_DURATION'])}),200)
         else:
             return make_response(jsonify({'error' : 'Write your e-mail and password'}),400)
 
@@ -61,7 +77,8 @@ class ResetPasswordAPI(Resource):
     """
         Login Functionality is implemented in this class
     """
-    @api.doc(responses={200 : 'Valid e-mail', 404 : 'E-mail not found',400 : 'Input Format Error' ,401 : 'Account Problems' ,500 : ' Database Connection/E-mail Server Error'})
+    @api.doc(responses={404 : 'E-mail not found',400 : 'Input Format Error' ,401 : 'Account Problems' ,500 : ' Database Connection/E-mail Server Error'})
+    @api.response(200, 'Valid e-mail', success_msg_model)
     @api.expect(reset_password_get_parser)
     def get(self):
         """
@@ -119,18 +136,17 @@ class GetSelfAPI(Resource):
     # GET request (for the logged-in user to get their own user information)
     @api.expect(get_self_parser)
     @api.doc(responses={
-                200: "User has been found.",
                 404: "The user is not found.",
                 500: "The server is not connected to the database."
             })
+    @api.response(200, "User has been found.", account_information_model)
     @login_required
-    def get(user_id, self):
+    def get(requester_id, self):
         # Tries to connect to the database.
         # If it fails, an error is raised.
         try:
-            logged_in_user = User.query.filter_by(id=user_id).first()
-            user_position = Jobs.query.filter(Jobs.id == logged_in_user.position_id).first()
-
+            logged_in_user = User.query.filter_by(id=requester_id).first()
+            user_job = Jobs.query.filter(Jobs.id == logged_in_user.job_id).first()
         except:
             return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
         else:
@@ -142,6 +158,7 @@ class GetSelfAPI(Resource):
                                         "id": logged_in_user.id,
                                         "name": logged_in_user.name,
                                         "surname": logged_in_user.surname,
+                                        "is_private": logged_in_user.is_private,
                                         "rate": logged_in_user.rate,
                                         "profile_photo": logged_in_user.profile_photo,
                                         "e_mail": logged_in_user.e_mail,
@@ -164,12 +181,17 @@ class UserAPI(Resource):
     # GET request
     @api.expect(get_user_parser)
     @api.doc(responses={
-                200: "User has been found.",
                 400: "Missing data fields or invalid data.",
                 404: "The user is not found.",
                 500: "The server is not connected to the database."
             })
-    def get(self):
+    @api.response(200, "User has been found.", account_information_model)
+    @login_required
+    @follow_required(param_loc = 'args', requested_user_id_key='user_id')
+    def get(requester_id, self):
+        '''
+        Returns the profile information of the requested user.
+        '''
         # Parses the form data.
         form = GetUserForm(request.args)
         
@@ -189,14 +211,25 @@ class UserAPI(Resource):
                 # If yes, user information is returned.
                 # If not, an error is raised.
                 if existing_user is not None:
-                    # DO NOT FORGET TO WRITE CODE FOR PRIVATE ACCOUNTS
+                    # Checks whether the requester user follows the requested user or not.
+                    if Follow.query.filter_by(follower_id=requester_id, following_id=form.user_id.data).first() is not None:
+                        following_status = 1 # Represents that the requester user follows the requested user.
+                    elif FollowRequests.query.filter_by(follower_id=requester_id, following_id=form.user_id.data).first() is not None:
+                        following_status = 0 # Represents that the requester user has already sent a follow request to the requested user and it is pending.
+                    else:
+                        following_status = -1 # Represents that the requester user does not follow the requested user and has not yet sent a request to follow them.
+                    
+                    user_job = Jobs.query.filter(Jobs.id == existing_user.job_id).first()
+
                     account_information = { 
                                         "id": existing_user.id,
                                         "name": existing_user.name,
                                         "surname": existing_user.surname,
+                                        "e_mail": existing_user.e_mail,
+                                        "is_private": existing_user.is_private,
+                                        "following_status": following_status,
                                         "rate": existing_user.rate,
                                         "profile_photo": existing_user.profile_photo,
-                                        "e_mail": existing_user.e_mail,
                                         "google_scholar_name": existing_user.google_scholar_name,
                                         "researchgate_name": existing_user.researchgate_name,
                                         "position": user_position.name,
@@ -299,12 +332,13 @@ class UserAPI(Resource):
     @api.expect(update_user_parser)
     @api.doc(responses={
                 200: "Account information has been successfully updated.",
+                202: "Server has received the request but there was no information to be updated.",
                 400: "Missing data fields or invalid data.",
                 404: "The user is not found.",
                 500: "The server is not connected to the database."
             })
     @login_required
-    def put(user_id, self):
+    def put(requester_id, self):
         # Parses the form data.
         form = UpdateUserForm(request.form)
         
@@ -312,53 +346,63 @@ class UserAPI(Resource):
         # If yes, starts processing the data.
         # If not, an error is raised.
         if form.validate():
-            # Tries to connect to the database.
-            # If it fails, an error is raised.
-            try:
-                existing_user = User.query.filter_by(id=user_id)
-            except:
-                return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+            # Checks whether there is any field data sent.
+            # If not, returns the message accordingly.
+            # If yes, starts acting upon the request.
+            if not any(form.data.values()):
+                return make_response(jsonify({"message" : "Server has received the request but there was no information to be updated."}), 202)
             else:
-                # Checks whether there is an existing user in the database with the given user ID.
-                # If yes, starts processing the data.
-                # If not, an error is raised.
-                if existing_user is not None:
-                    # Tries to update account information of the user.
-                    # If it fails, an error is raised.
-                    try:
-                        # Checks whether the inputted job already exists in the database,
-                        # If not, adds the job to the database.
-                        # If yes, gets the ID of the job and writes it to the new user's "job_id" field.
-                        position_name = form.position.data.title()
-                        new_user_position = Jobs.query.filter_by(name=position_name).first()
-                        if new_user_position is None:
-                            new_user_position = Jobs(name=position_name)
-                            db.session.add(new_user_position)
-                            db.session.commit()
-
-
-                        # Replaces the "job" in the form data with its ID.
-                        form.data["position"] = new_user_position.id
-                        new_attributes = {}
-                        for key, value in form.data.items():
-                            if value:
-                                new_attributes[key] = value
-                        existing_user.update(new_attributes)
-                        db.session.commit()
-                    except:
-                        return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
-                
-                    # Tries to update the research information of the newly updated user.
-                    # If it fails, it does not raise an error.
-                    # -as research information is scheduled to be fetched everyday.-
-                    try:
-                        ResearchInfoFetch.update_research_info(existing_user.first().id)
-                    except:
-                        pass  
-                   
-                    return make_response(jsonify({"message" : "Account information has been successfully updated."}), 200)
+                # Tries to connect to the database.
+                # If it fails, an error is raised.
+                try:
+                    existing_user = User.query.filter_by(id=requester_id)
+                except:
+                    return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
                 else:
-                    return make_response(jsonify({"error" : "The user is not found."}), 404)
+                    # Checks whether there is an existing user in the database with the given user ID.
+                    # If yes, starts processing the data.
+                    # If not, an error is raised.
+                    if existing_user is not None:
+                        # Tries to update account information of the user.
+                        # If it fails, an error is raised.
+                        try:
+                            # Gets the inputted parameters from the form data.
+                            new_attributes = {}
+                            for key, value in form.data.items():
+                                if value:
+                                    new_attributes[key] = value
+
+                            # Checks whether the form data contains "job" data.
+                            if new_attributes.get("job", None):
+                                # Checks whether the inputted job already exists in the database,
+                                # If not, adds the job to the database.
+                                # If yes, gets the ID of the job and writes it to the new user's "job_id" field.
+                                job_name = new_attributes["job"].title()
+                                new_user_job = Jobs.query.filter_by(name=job_name).first()
+                                if new_user_job is None:
+                                    new_user_job = Jobs(name=job_name)
+                                    db.session.add(new_user_job)
+                                    db.session.commit()
+                                # Replaces the "job" in the form data with its ID.
+                                del new_attributes["job"]
+                                new_attributes["job_id"] = new_user_job.id
+                            # Updates the attributes of the user in the database.
+                            existing_user.update(new_attributes)
+                            db.session.commit()
+                        except Exception as e:
+                            return make_response(jsonify({"error" : str(e)}), 500)
+                        
+                        # Tries to update the research information of the newly updated user.
+                        # If it fails, it does not raise an error.
+                        # -as research information is scheduled to be fetched everyday.-
+                        try:
+                            ResearchInfoFetch.update_research_info(existing_user.first().id)
+                        except:
+                            pass
+                           
+                        return make_response(jsonify({"message" : "Account information has been successfully updated."}), 200)
+                    else:
+                        return make_response(jsonify({"error" : "The user is not found."}), 404)
         else:
             return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
 
@@ -373,7 +417,7 @@ class UserAPI(Resource):
                 500: "The server is not connected to the database."
             })
     @login_required
-    def delete(user_id, self):
+    def delete(requester_id, self):
         # Parses the form data.
         form = DeleteUserForm(request.form)
         
@@ -384,7 +428,7 @@ class UserAPI(Resource):
             # Tries to connect to the database.
             # If it fails, an error is raised.
             try:
-                existing_user = User.query.filter_by(id=user_id).first()
+                existing_user = User.query.filter_by(id=requester_id).first()
             except:
                 return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
             else:
