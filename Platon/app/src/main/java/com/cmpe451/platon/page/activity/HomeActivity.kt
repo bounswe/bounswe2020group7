@@ -34,6 +34,8 @@ class HomeActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickList
     var token:String? = null
     lateinit var binding : ActivityHomeBinding
 
+    lateinit var search:SearchView
+
     private val mProfilePageViewModel: ProfilePageViewModel by viewModels()
 
 
@@ -79,12 +81,26 @@ class HomeActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickList
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.actionbar, menu)
 
-        val search = (menu?.findItem(R.id.search_btn)?.actionView as SearchView)
+
+        search = (menu?.findItem(R.id.search_btn)?.actionView as SearchView)
+
+        initSearch(search)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    private fun initSearch(search: SearchView) {
+
         val searchBar = search.findViewById<LinearLayout>(R.id.search_bar)
         searchBar.layoutTransition = LayoutTransition()
 
         search.setOnSearchClickListener{
-            binding.searchAmongRb.visibility = View.VISIBLE
+            when(binding.searchAmongRb.visibility){
+                View.VISIBLE ->  binding.searchAmongRb.visibility = View.GONE
+                View.GONE -> {
+                    binding.searchAmongRb.visibility = View.VISIBLE
+                    binding.notificationRg.visibility = View.GONE
+                }
+            }
         }
 
         search.setOnQueryTextListener( object: SearchView.OnQueryTextListener{
@@ -106,8 +122,6 @@ class HomeActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickList
             search.onActionViewCollapsed()
             true
         }
-
-        return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -123,7 +137,10 @@ class HomeActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickList
     private fun onSeeNotificationsClicked() {
         when(binding.notificationRg.visibility){
             View.VISIBLE ->binding.notificationRg.visibility = View.GONE
-            View.GONE ->binding.notificationRg.visibility = View.VISIBLE
+            View.GONE ->{
+                binding.notificationRg.visibility = View.VISIBLE
+                search.isIconified = true
+            }
         }
 
     }
