@@ -39,6 +39,9 @@ class Skills(db.Model):
     id = db.Column(db.Integer,primary_key=True,autoincrement=True)
     name = db.Column(db.String(50),nullable=False,unique=True)
 
+    def __init__(self, name):
+        self.name = name
+
 class UserSkills(db.Model):
     __tablename__ = 'user_skills'
     user_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"),primary_key=True)
