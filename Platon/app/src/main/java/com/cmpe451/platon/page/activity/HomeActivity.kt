@@ -49,7 +49,14 @@ class HomeActivity : BaseActivity(),
 
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener {
-        item -> item.onNavDestinationSelected(navController)
+        prepareFragmentSwitch()
+        it.onNavDestinationSelected(navController)
+    }
+
+    private fun prepareFragmentSwitch() {
+        binding.notificationRg.visibility = View.GONE
+        binding.searchAmongRb.visibility = View.GONE
+        (toolbarRecyclerView.adapter as ToolbarElementsAdapter).clearElements()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -98,8 +105,6 @@ class HomeActivity : BaseActivity(),
                     mProfilePageViewModel.getFollowRequests(mProfilePageViewModel.getUserResourceResponse.value?.data!!.id, token!!)
                 }
             }
-
-
         }
 
         mProfilePageViewModel.getUserNotificationsResourceResponse.observe(this, { t->
@@ -140,6 +145,9 @@ class HomeActivity : BaseActivity(),
         toolbarRecyclerView.layoutManager = LinearLayoutManager(this)
 
         search.setOnSearchClickListener{
+            toolbarRecyclerView.adapter = SearchElementsAdapter(arrayListOf(),this, this)
+            toolbarRecyclerView.layoutManager = LinearLayoutManager(this)
+
             when(binding.searchAmongRb.visibility){
                 View.VISIBLE -> {
                     binding.searchAmongRb.visibility = View.GONE
@@ -162,15 +170,13 @@ class HomeActivity : BaseActivity(),
                 return true
             }
         })
-    /*
-        search.setOnCloseListener {
-            binding.searchAmongRb.visibility = View.GONE
-            (toolbarRecyclerView.adapter as SearchElementsAdapter).clearElements()
-            search.onActionViewCollapsed()
-            true
-        }
 
-     */
+            search.setOnCloseListener {
+                binding.searchAmongRb.visibility = View.GONE
+                (toolbarRecyclerView.adapter as ToolbarElementsAdapter).clearElements()
+                search.onActionViewCollapsed()
+                true
+            }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -179,7 +185,6 @@ class HomeActivity : BaseActivity(),
             R.id.logout_menu_btn -> onLogOutButtonClicked()
             R.id.notification_btn -> onSeeNotificationsClicked()
         }
-
         return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
     }
 
