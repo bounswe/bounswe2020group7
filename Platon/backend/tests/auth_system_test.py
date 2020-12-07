@@ -12,7 +12,6 @@ class LoginTest(BaseTest):
         Unit Tests of the login module
     """
     def setUp(self):
-        super().setUp()
         # Add artificia users to test login feature
         users = [
             User("umut@deneme.com",True,"b73ec5e4625ffcb6d0d70826f33be7a75d45b37046e26c4b60d9111266d70e32",3.5,"Umut","Özdemir",False,None,None,None),
@@ -49,7 +48,7 @@ class LoginTest(BaseTest):
         self.assertEqual(json.loads(actual_response.data)['error'],expected_response['error'],'Incorrect Error Message')
     
 
-class ReserPasswordTest(BaseTest):
+class ResetPasswordTest(BaseTest):
     """
         Unit Tests of the reset password module
     """

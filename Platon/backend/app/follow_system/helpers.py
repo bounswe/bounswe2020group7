@@ -31,14 +31,14 @@ def follow_required(param_loc,requested_user_id_key):
             if int(requested_user_id) == user_id:
                 return func(*args,**kwargs)
             try:
-                requested_user = User.query.filter((User.id == requested_user_id)&(User.is_valid == True)).first()
+                requested_user = User.query.filter((User.id == int(requested_user_id))&(User.is_valid == True)).first()
             except:
                 return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
             if requested_user is None:
                 return make_response(jsonify({'error': 'Requested user can not be found'}),404)
-            if not requested_user.is_private:
+            if requested_user.is_private:
                 try:
-                    follow = Follow.query.filter((Follow.follower_id == user_id)&(Follow.following_id == requested_user.id)).first()
+                    follow = Follow.query.filter((Follow.follower_id == user_id)&(Follow.following_id == int(requested_user.id))).first()
                 except:
                     return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
                 if follow is None:

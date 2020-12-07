@@ -2,6 +2,7 @@ from flask_testing import TestCase
 from app import create_app, db
 import unittest
 import datetime
+import sqlalchemy
 
 class TestConfig:
 
@@ -15,8 +16,13 @@ class TestConfig:
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))  
 
     # Define the database - we are working with
-    DATABASE_URL = "write-db-url-here"
-    SQLALCHEMY_DATABASE_URI = 'mysql://' + DATABASE_URL + '/platon_db_test'
+    mysql_user = "root"
+    mysql_password = "rootpassword"
+    mysql_host = "18.198.208.63"
+    mysql_port = "3306"
+    mysql_database = "platondb_test"
+
+    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://{}:{}@{}:{}/{}".format(mysql_user, mysql_password, mysql_host, mysql_port, mysql_database)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Application threads. A common general assumption is
@@ -52,6 +58,8 @@ class BaseTest(TestCase):
         return create_app(TestConfig)
     
     def setUp(self):
+        db.session.remove()
+        db.drop_all()
         db.create_all()
     
     def tearDown(self):

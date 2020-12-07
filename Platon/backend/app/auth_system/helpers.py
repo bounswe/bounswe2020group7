@@ -32,17 +32,20 @@ def login_required(func):
                 return make_response(jsonify({'error' : 'Expired Token'}),401)
         except:
             return make_response(jsonify({'error' : 'Wrong Token Format'}),401)
-        new_token = generate_token(auth_info['id'],app.config['SESSION_DURATION'])
         response = func(auth_info['id'],*args,**kws)
+        new_token = generate_token(auth_info['id'],app.config['SESSION_DURATION'])
         response.headers["auth_token"] = new_token
         return response
         
     return auth_check
 
-def send_email(recepient_email,subject,message_body,message_link):
-    msg = Message(subject=subject,body=message_body + '\n' + message_link,recipients = [recepient_email])
+def send_email(recipient_email,subject,message_body,message_link):
+    msg = Message(subject=subject,body=message_body + '\n' + message_link,recipients = [recipient_email])
     try:
         mail.send(msg)
         return True
     except:
         return False
+
+def hashed(password):
+    return sha256(password.encode('utf-8')).hexdigest()

@@ -4,11 +4,18 @@ DEBUG = True
 
 # Define the application directory
 import os
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))  
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
+FRONTEND_HOSTNAME = "http://ec2-18-198-208-63.eu-central-1.compute.amazonaws.com"
 
 # Define the database - we are working with
-DATABASE_URL = "write-db-url-here"
-SQLALCHEMY_DATABASE_URI = 'mysql://' + DATABASE_URL + '/platon_db'
+mysql_user = os.getenv('MYSQL_USER')
+mysql_password = os.getenv('MYSQL_PASSWORD')
+mysql_host = os.getenv('MYSQL_HOST')
+mysql_port = os.getenv('MYSQL_PORT')
+mysql_database = os.getenv('MYSQL_DATABASE')
+
+SQLALCHEMY_DATABASE_URI = "mysql+pymysql://{}:{}@{}:{}/{}".format(mysql_user, mysql_password, mysql_host, mysql_port, mysql_database)
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # Application threads. A common general assumption is
@@ -19,9 +26,9 @@ THREADS_PER_PAGE = 2
 
 JWT_SESSION_KEY = "secret" 
 JWT_ALGORITHM = 'HS256'
-SESSION_DURATION = datetime.timedelta(minutes=10)
+SESSION_DURATION = datetime.timedelta(minutes=24*365*60)
 
-LINK_DURATION = datetime.timedelta(minutes=5)
+LINK_DURATION = datetime.timedelta(minutes=20)
 
 MAIL_SERVER = 'smtp.gmail.com'
 MAIL_PORT = 465

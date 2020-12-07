@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_restplus import Api
 from flask_mail import Mail
+from flask_cors import CORS
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -24,7 +25,8 @@ def create_app(config_class='config'):
     db.init_app(app)
     migrate.init_app(app,db)
     mail.init_app(app)
-    
+    CORS(app)
+
     from app import models
 
     @app.errorhandler(404)

@@ -46,3 +46,25 @@ class UserSkills(db.Model):
     __tablename__ = 'user_skills'
     user_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"),primary_key=True)
     skill_id = db.Column(db.Integer,db.ForeignKey('skills.id',ondelete="CASCADE"),primary_key=True)
+
+class Notification(db.Model):
+    __tablename__ = 'notifications'
+    id = db.Column(db.Integer,primary_key=True,autoincrement=True)
+    owner_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"),primary_key=True)
+    text = db.Column(db.String(500),nullable=False)
+    link = db.Column(db.String(200),nullable=True)
+    timestamp = db.Column(db.DateTime,default=db.func.now(),nullable=False)
+
+    def __init__(self,owner_id,text,link):
+        self.owner_id = owner_id
+        self.text = text
+        self.link = link
+
+class NotificationRelatedUser(db.Model):
+    __tablename__ = 'notification_related_users'
+    notification_id = db.Column(db.Integer,db.ForeignKey('notifications.id',ondelete="CASCADE"),primary_key=True)
+    related_user_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"),primary_key=True)
+
+    def __init__(self,notification_id,related_user_id):
+        self.notification_id = notification_id
+        self.related_user_id = related_user_id

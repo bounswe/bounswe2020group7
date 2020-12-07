@@ -22,9 +22,9 @@ research_info_post_parser.add_argument('auth_token',required=True, type=str,help
 
 class ResearchInfoUpdateForm(Form):
     research_id = IntegerField("research_id",validators=[validators.DataRequired()])
-    research_title = StringField("research_title",default='')
-    description = StringField("description",default='')
-    year = IntegerField("year",default=-1)
+    research_title = StringField("research_title")
+    description = StringField("description")
+    year = IntegerField("year")
 
 research_info_update_parser = reqparse.RequestParser()
 research_info_update_parser.add_argument('research_id',required=True,type=int,help='Research ID of the Research',location='form')
@@ -86,3 +86,17 @@ class SkillsDeleteForm(Form):
 skills_delete_parser = reqparse.RequestParser()
 skills_delete_parser.add_argument('id',required=True,type=int,help='Skill ID',location='form')
 skills_delete_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
+
+notification_get_parser = reqparse.RequestParser()
+notification_get_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
+
+class NotificationDeleteForm(Form):
+    notification_id = IntegerField('notification_id',validators=[validators.DataRequired()])
+
+notification_delete_parser = reqparse.RequestParser()
+notification_delete_parser.add_argument('notification_id',required=True,type=int,help='ID of the Notification that will be deleted',location='form')
+notification_delete_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
+
+front_page_parser = reqparse.RequestParser()
+front_page_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
+
