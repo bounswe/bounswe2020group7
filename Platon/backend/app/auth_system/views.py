@@ -179,7 +179,6 @@ class UserAPI(Resource):
             # If it fails, an error is raised.
             try:
                 existing_user = User.query.filter_by(id=form.user_id.data).first()
-                user_job = Jobs.query.filter(Jobs.id == existing_user.job_id).first()
             except:
                 return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
             else:
@@ -191,16 +190,18 @@ class UserAPI(Resource):
                     if Follow.query.filter_by(follower_id=requester_id, following_id=form.user_id.data).first() is not None:
                         following_status = 1 # Represents that the requester user follows the requested user.
                     elif FollowRequests.query.filter_by(follower_id=requester_id, following_id=form.user_id.data).first() is not None:
-                        following_status = 0 # Represents that the requester user has already sent a follow request to the requested user.
+                        following_status = 0 # Represents that the requester user has already sent a follow request to the requested user and it is pending.
                     else:
                         following_status = -1 # Represents that the requester user does not follow the requested user and has not yet sent a request to follow them.
                     
+                    user_job = Jobs.query.filter(Jobs.id == existing_user.job_id).first()
+
                     account_information = { 
                                         "id": existing_user.id,
                                         "name": existing_user.name,
                                         "surname": existing_user.surname,
                                         "e_mail": existing_user.e_mail,
-                                        "following_status": following_status
+                                        "following_status": following_status,
                                         "rate": existing_user.rate,
                                         "profile_photo": existing_user.profile_photo,
                                         "google_scholar_name": existing_user.google_scholar_name,
