@@ -11,8 +11,13 @@ from app.auth_system.forms import GetUserForm, get_user_parser, get_self_parser
 from app.auth_system.forms import CreateUserForm, create_user_parser
 from app.auth_system.forms import UpdateUserForm, update_user_parser
 from app.auth_system.forms import DeleteUserForm, delete_user_parser
+from app.auth_system.forms import GetUserSkillsForm, get_userskill_parser
+from app.auth_system.forms import PostUserSkillsForm, post_userskill_parser
+from app.auth_system.forms import DeleteUserSkillsForm, delete_userskill_parser
 from app.auth_system.models import User
 from app.profile_management.models import Jobs
+from app.profile_management.models import Skills
+from app.profile_management.models import UserSkills
 from app.auth_system.helpers import generate_token,send_email,login_required, hashed
 from app.profile_management.helpers import ResearchInfoFetch
 
@@ -123,7 +128,8 @@ class GetSelfAPI(Resource):
         # If it fails, an error is raised.
         try:
             logged_in_user = User.query.filter_by(id=user_id).first()
-            user_job = Jobs.query.filter(Jobs.id == logged_in_user.job_id).first()
+            user_position = Jobs.query.filter(Jobs.id == logged_in_user.position_id).first()
+
         except:
             return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
         else:
@@ -140,7 +146,8 @@ class GetSelfAPI(Resource):
                                         "e_mail": logged_in_user.e_mail,
                                         "google_scholar_name": logged_in_user.google_scholar_name,
                                         "researchgate_name": logged_in_user.researchgate_name,
-                                        "job": user_job.name
+                                        "position": user_position.name,
+                                        "institution": logged_in_user.institution
                                         }
                 return make_response(jsonify(account_information), 200)
             else:
@@ -173,7 +180,7 @@ class UserAPI(Resource):
             # If it fails, an error is raised.
             try:
                 existing_user = User.query.filter_by(id=form.user_id.data).first()
-                user_job = Jobs.query.filter(Jobs.id == existing_user.job_id).first()
+                user_position = Jobs.query.filter(Jobs.id == existing_user.position_id).first()
             except:
                 return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
             else:
@@ -191,7 +198,8 @@ class UserAPI(Resource):
                                         "e_mail": existing_user.e_mail,
                                         "google_scholar_name": existing_user.google_scholar_name,
                                         "researchgate_name": existing_user.researchgate_name,
-                                        "job": user_job.name
+                                        "position": user_position.name,
+                                        "institution": existing_user.institution
                                         }
                     return make_response(jsonify(account_information), 200)
                 else:
@@ -233,11 +241,11 @@ class UserAPI(Resource):
                         # Checks whether the inputted job already exists in the database,
                         # If not, adds the job to the database.
                         # If yes, gets the ID of the job and writes it to the new user's "job_id" field.
-                        job_name = form.job.data.title()
-                        new_user_job = Jobs.query.filter_by(name=job_name).first()
-                        if new_user_job is None:
-                            new_user_job = Jobs(name=job_name)
-                            db.session.add(new_user_job)
+                        position_name = form.position.data.title()
+                        new_user_position = Jobs.query.filter_by(name=position_name).first()
+                        if new_user_position is None:
+                            new_user_position = Jobs(name=position_name)
+                            db.session.add(new_user_position)
                             db.session.commit()
 
                         new_user = User(is_valid=False,
@@ -250,7 +258,8 @@ class UserAPI(Resource):
                                         profile_photo=form.profile_photo.data,
                                         google_scholar_name=form.google_scholar_name.data,
                                         researchgate_name=form.researchgate_name.data,
-                                        job_id=new_user_job.id
+                                        position_id=new_user_position.id,
+                                        institution=form.institution.data
                                         )
                         db.session.add(new_user)
                         db.session.commit()
@@ -319,16 +328,16 @@ class UserAPI(Resource):
                         # Checks whether the inputted job already exists in the database,
                         # If not, adds the job to the database.
                         # If yes, gets the ID of the job and writes it to the new user's "job_id" field.
-                        job_name = form.job.data.title()
-                        new_user_job = Jobs.query.filter_by(name=job_name).first()
-                        if new_user_job is None:
-                            new_user_job = Jobs(name=job_name)
-                            db.session.add(new_user_job)
+                        position_name = form.position.data.title()
+                        new_user_position = Jobs.query.filter_by(name=position_name).first()
+                        if new_user_position is None:
+                            new_user_position = Jobs(name=position_name)
+                            db.session.add(new_user_position)
                             db.session.commit()
 
 
                         # Replaces the "job" in the form data with its ID.
-                        form.data["job"] = new_user_job.id
+                        form.data["position"] = new_user_position.id
                         new_attributes = {}
                         for key, value in form.data.items():
                             if value:
@@ -401,6 +410,101 @@ class UserAPI(Resource):
                     return make_response(jsonify({"error" : "The user is not found."}), 404)
         else:
             return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
+
+@auth_system_ns.route("/skills")
+class UserSkillAPI(Resource):
+    '''
+        This class is a RESTful API for "UserSkill" model.
+        You can find the endpoints for creating, reading, updating and deleting a user below.
+    '''
+
+    @api.doc(
+        responses={200: 'Skills are Successfully Returned', 404: 'Skills are empty', 400: 'Input Format Error',
+                   500: 'Database Connection'})
+    @api.expect(get_userskill_parser)
+    @login_required
+    def get(user_id, self):
+        '''
+            Returns a list of user's skills with id and name
+        '''
+        form = GetUserSkillsForm(request.args)
+        if form.validate():
+            try:
+                logged_in_user = User.query.filter_by(id=user_id).first()
+                user_skills = UserSkills.query.filter(UserSkills.user_id == logged_in_user.id).all()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+            if user_skills is []:
+                return make_response(jsonify({'error': 'Skills not found'}), 404)
+
+            skills = []
+            for skill in user_skills:
+                skills.append(UserSkills.query.filter(UserSkills.skill_id == skill.id).first())
+
+            return make_response(jsonify({'skills': [
+                {'id': skill.id, 'name': skill.name} for skill in skills]}), 200)
+
+        else:
+            return make_response(jsonify({'error': 'Input Format Error'}), 400)
+
+    @api.doc(
+        responses={200: 'Skill is Successfully Added', 400: 'Input Format Error',
+                   500: 'Database Connection'})
+    @api.expect(post_userskill_parser)
+    @login_required
+    def post(user_id, self):
+        '''
+            Adds a new skill to user's skills with name
+        '''
+        form = PostUserSkillsForm(request.form)
+        if form.validate():
+            try:
+                logged_in_user = User.query.filter_by(id=user_id).first()
+                skill_name = form.skill.data.title()
+                new_skill = Skills.query.filter_by(name=skill_name).first()
+                if new_skill is None:
+                    new_skill = Skills(name=skill_name)
+                    db.session.add(new_skill)
+                    db.session.commit
+                new_userskill = UserSkills(user_id=logged_in_user.id,
+                                           skill_id = new_skill.id)
+                db.session.add(new_userskill)
+                db.session.commit()
+            except:
+                return make_response(jsonify({"error": "The server is not connected to the database."}), 500)
+            return make_response(jsonify({'msg': 'Skill is successfully added'}), 200)
+        else:
+            return make_response(jsonify({"error": "Missing data fields or invalid data."}), 400)
+
+    @api.doc(
+        responses={200: 'Skill is Successfully Deleted', 400: 'Input Format Error',
+                   500: 'Database Connection', 404: 'Skill or UserSkill is not Found'})
+    @api.expect(delete_userskill_parser)
+    @login_required
+    def delete(user_id,self):
+        '''
+            Deletes the skill from user's skills with name
+        '''
+        form = DeleteUserSkillsForm(request.form)
+        if form.validate():
+            try:
+                logged_in_user = User.query.filter_by(id=user_id).first()
+                skill_name = form.skill.data.title()
+                skill = Skills.query.filter_by(name=skill_name).first()
+                if skill is None:
+                    return make_response(jsonify({'error': 'Skill is not found'}), 404)
+                userskill= UserSkills.query.filter_by(skill_id=skill.id).first()
+                if userskill is None:
+                    return make_response(jsonify({'error': 'User Skill is not found'}), 404)
+                else:
+                    db.session.delete(userskill)
+                    db.session.commit()
+            except:
+                return make_response(jsonify({"error": "The server is not connected to the database."}), 500)
+            return make_response(jsonify({'msg': 'Skill is successfully deleted'}), 200)
+        else:
+            return make_response(jsonify({"error": "Missing data fields or invalid data."}), 400)
 
 
 def register_resources(api):
