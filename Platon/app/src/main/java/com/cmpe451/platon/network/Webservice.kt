@@ -90,4 +90,10 @@ interface Webservice {
     @GET("api/profile/front_page")
     fun getActivityStream(@Header("auth_token") auth_token :String) : Call<List<ActivityStreamElement>?>
 
+    @GET("api/profile/notifications")
+    fun getNotifications(@Header("auth_token") auth_token :String) : Call<List<Notification>?>
+
+    @GET("api/follow/follow_requests")
+    fun getFollowRequests(@Query("following_id") id:Int, @Header("auth_token") auth_token :String) : Call<FollowRequests?>
+
 }

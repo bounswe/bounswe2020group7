@@ -19,17 +19,26 @@ import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
+import com.cmpe451.platon.adapter.FollowRequestElementsAdapter
+import com.cmpe451.platon.adapter.NotificationElementsAdapter
 import com.cmpe451.platon.adapter.SearchElementsAdapter
+import com.cmpe451.platon.adapter.ToolbarElementsAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.cmpe451.platon.databinding.ActivityHomeBinding
+import com.cmpe451.platon.network.Resource
+import com.cmpe451.platon.network.models.FollowRequest
+import com.cmpe451.platon.network.models.Notification
 import com.cmpe451.platon.page.fragment.profilepage.ProfilePageViewModel
 
-class HomeActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickListener {
+class HomeActivity : BaseActivity(),
+        SearchElementsAdapter.SearchButtonClickListener,
+        FollowRequestElementsAdapter.FollowRequestButtonClickListener,
+        NotificationElementsAdapter.NotificationButtonClickListener {
 
     lateinit var toolbar: Toolbar
     lateinit var navController: NavController
-    val myDataset = ArrayList<String>()
+
     private lateinit var toolbarRecyclerView: RecyclerView
     var token:String? = null
     lateinit var binding : ActivityHomeBinding
@@ -67,8 +76,6 @@ class HomeActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickList
 
     private fun initViews() {
         toolbarRecyclerView = binding.toolbarRecyclerview
-        toolbarRecyclerView.adapter = SearchElementsAdapter(myDataset,this, this)
-        toolbarRecyclerView.layoutManager = LinearLayoutManager(this)
 
         if (token != null){
             mProfilePageViewModel.fetchUser(token!!)
@@ -76,12 +83,48 @@ class HomeActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickList
             finish()
         }
 
+        initListeners()
+
+    }
+
+    private fun initListeners() {
+
+        binding.notificationRg.setOnCheckedChangeListener { t, id->
+            when(id){
+                R.id.general_ntf_rb ->{
+                    mProfilePageViewModel.getNotifications(token!!)
+                }
+                R.id.personal_ntf_rb ->{
+                    mProfilePageViewModel.getFollowRequests(mProfilePageViewModel.getUserResourceResponse.value?.data!!.id, token!!)
+                }
+            }
+
+
+        }
+
+        mProfilePageViewModel.getUserNotificationsResourceResponse.observe(this, { t->
+            when(t.javaClass){
+                Resource.Success::class.java ->{
+                    toolbarRecyclerView.adapter = NotificationElementsAdapter(t.data as ArrayList<Notification>,this, this)
+                    toolbarRecyclerView.layoutManager = LinearLayoutManager(this)
+                }
+                Resource.Error::class.java -> Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
+            }
+        })
+
+        mProfilePageViewModel.getUserFollowRequestsResourceResponse.observe(this, { t->
+            when(t.javaClass){
+                Resource.Success::class.java ->{
+                    toolbarRecyclerView.adapter = FollowRequestElementsAdapter(t.data!!.follow_requests as ArrayList<FollowRequest>,this, this)
+                    toolbarRecyclerView.layoutManager = LinearLayoutManager(this)
+                }
+                Resource.Error::class.java -> Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.actionbar, menu)
-
-
         search = (menu?.findItem(R.id.search_btn)?.actionView as SearchView)
 
         initSearch(search)
@@ -93,9 +136,15 @@ class HomeActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickList
         val searchBar = search.findViewById<LinearLayout>(R.id.search_bar)
         searchBar.layoutTransition = LayoutTransition()
 
+        toolbarRecyclerView.adapter = SearchElementsAdapter(arrayListOf(),this, this)
+        toolbarRecyclerView.layoutManager = LinearLayoutManager(this)
+
         search.setOnSearchClickListener{
             when(binding.searchAmongRb.visibility){
-                View.VISIBLE ->  binding.searchAmongRb.visibility = View.GONE
+                View.VISIBLE -> {
+                    binding.searchAmongRb.visibility = View.GONE
+                    (toolbarRecyclerView.adapter as SearchElementsAdapter).clearElements()
+                }
                 View.GONE -> {
                     binding.searchAmongRb.visibility = View.VISIBLE
                     binding.notificationRg.visibility = View.GONE
@@ -109,19 +158,19 @@ class HomeActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickList
             }
 
             override fun onQueryTextSubmit(query: String?): Boolean {
-                myDataset.add(0, query.toString())
-                toolbarRecyclerView.adapter?.notifyItemInserted(0)
-                return Log.println(Log.ERROR, "SEARCH:",(query + toolbarRecyclerView.adapter?.itemCount.toString()+ myDataset.toString()).trim())*0 == 0
+                (toolbarRecyclerView.adapter as SearchElementsAdapter).addElement(0, query.toString())
+                return true
             }
         })
-
+    /*
         search.setOnCloseListener {
             binding.searchAmongRb.visibility = View.GONE
-            myDataset.clear()
-            toolbarRecyclerView.adapter?.notifyDataSetChanged()
+            (toolbarRecyclerView.adapter as SearchElementsAdapter).clearElements()
             search.onActionViewCollapsed()
             true
         }
+
+     */
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -136,13 +185,23 @@ class HomeActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickList
 
     private fun onSeeNotificationsClicked() {
         when(binding.notificationRg.visibility){
-            View.VISIBLE ->binding.notificationRg.visibility = View.GONE
+            View.VISIBLE ->{
+                binding.notificationRg.visibility = View.GONE
+                (toolbarRecyclerView.adapter as ToolbarElementsAdapter).clearElements()
+            }
             View.GONE ->{
+                when(binding.notificationRg.checkedRadioButtonId){
+                    R.id.general_ntf_rb ->{
+                        mProfilePageViewModel.getNotifications(token!!)
+                    }
+                    R.id.personal_ntf_rb ->{
+                        mProfilePageViewModel.getFollowRequests(mProfilePageViewModel.getUserResourceResponse.value?.data!!.id, token!!)
+                    }
+                }
                 binding.notificationRg.visibility = View.VISIBLE
                 search.isIconified = true
             }
         }
-
     }
 
     private fun onLogOutButtonClicked(){
@@ -161,7 +220,12 @@ class HomeActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickList
     }
 
     override fun onSearchButtonClicked(buttonName: String) {
-        TODO("Not yet implemented")
+    }
+
+    override fun onFollowRequestButtonClicked(request: FollowRequest, position: Int) {
+    }
+
+    override fun onNotificationButtonClicked(ntf: Notification, position: Int) {
     }
 
 

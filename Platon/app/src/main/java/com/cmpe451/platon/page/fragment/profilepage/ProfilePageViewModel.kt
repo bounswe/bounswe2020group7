@@ -4,9 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.cmpe451.platon.network.Resource
-import com.cmpe451.platon.network.models.Research
-import com.cmpe451.platon.network.models.Researches
-import com.cmpe451.platon.network.models.User
+import com.cmpe451.platon.network.models.*
 
 class ProfilePageViewModel: ViewModel() {
 
@@ -16,12 +14,26 @@ class ProfilePageViewModel: ViewModel() {
     var getUserResourceResponse:LiveData<Resource<User>>
     val getResearchesResourceResponse: LiveData<Resource<Researches>>
 
+    val getUserFollowRequestsResourceResponse:MutableLiveData<Resource<FollowRequests>>
+    val getUserNotificationsResourceResponse:MutableLiveData<Resource<List<Notification>>>
+
     private var repository: ProfilePageRepository = ProfilePageRepository()
 
     init {
         getUserResourceResponse = repository.userResourceResponse
         getResearchesResourceResponse = repository.researchesResourceResponse
+        getUserFollowRequestsResourceResponse = repository.userFollowRequestsResourceResponse
+        getUserNotificationsResourceResponse = repository.userNotificationsResourceResponse
     }
+
+    fun getNotifications(token:String){
+        repository.getNotifications(token)
+    }
+
+    fun getFollowRequests(id:Int, token:String){
+        repository.getFollowRequests(id, token)
+    }
+
 
     fun setCurrentResearch(research:Research){
         this.currentResearch.value = research
