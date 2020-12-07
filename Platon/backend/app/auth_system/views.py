@@ -203,7 +203,7 @@ class UserAPI(Resource):
             # If it fails, an error is raised.
             try:
                 existing_user = User.query.filter_by(id=form.user_id.data).first()
-                user_position = Jobs.query.filter(Jobs.id == existing_user.position_id).first()
+                user_position = Jobs.query.filter(Jobs.id == existing_user.job_id).first()
             except:
                 return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
             else:
@@ -292,7 +292,7 @@ class UserAPI(Resource):
                                         profile_photo=form.profile_photo.data,
                                         google_scholar_name=form.google_scholar_name.data,
                                         researchgate_name=form.researchgate_name.data,
-                                        position_id=new_user_position.id,
+                                        job_id=new_user_position.id,
                                         institution=form.institution.data
                                         )
                         db.session.add(new_user)

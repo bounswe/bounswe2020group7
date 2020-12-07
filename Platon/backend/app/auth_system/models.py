@@ -14,7 +14,7 @@ class User(db.Model):
     profile_photo = db.Column(db.String(50))
     google_scholar_name = db.Column(db.String(256))
     researchgate_name = db.Column(db.String(256))
-    position_id = db.Column(db.Integer,db.ForeignKey('jobs.id',ondelete="CASCADE"))
+    job_id = db.Column(db.Integer,db.ForeignKey('jobs.id',ondelete="CASCADE"))
     institution = db.Column(db.String(100))
 
     def __init__(self,e_mail,is_valid,password_hashed,rate,name,surname,is_private,profile_photo,google_scholar_name,researchgate_name,positon_id,institution,skill_id):
