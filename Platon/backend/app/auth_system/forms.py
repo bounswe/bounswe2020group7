@@ -43,19 +43,21 @@ class CreateUserForm(Form):
 	password = StringField("Password", validators=[validators.DataRequired()])
 	name = StringField("Name", validators=[validators.DataRequired()])
 	surname = StringField("Surname", validators=[validators.DataRequired()])
-	job = StringField("Job", validators=[validators.DataRequired()])
+	position = StringField("Position", validators=[validators.DataRequired()])
 	profile_photo = StringField("Profile Photo", validators=[validators.optional()])
 	google_scholar_name = StringField("Google Scholar Name", validators=[validators.optional()])
 	researchgate_name = StringField("ResearchGate Name", validators=[validators.optional()])
+	institution = StringField("Institution", validators=[validators.optional()])
 create_user_parser = reqparse.RequestParser()
 create_user_parser.add_argument("e_mail", required=True, type=str, help="E-mail address of the new user", location="form")
 create_user_parser.add_argument("password", required=True, type=str, help="Password of the new user", location="form")
 create_user_parser.add_argument("name", required=True, type=str, help="Name of the new user", location="form")
 create_user_parser.add_argument("surname", required=True, type=str, help="Surname of the new user", location="form")
-create_user_parser.add_argument("job", required=True, type=str, help="Job of the new user", location="form")
+create_user_parser.add_argument("position", required=True, type=str, help="Position of the new user", location="form")
 create_user_parser.add_argument("profile_photo", required=False, type=str, help="URL of the profile picture of the user", location="form")
 create_user_parser.add_argument("google_scholar_name", required=False, type=str, help="URL of the Google Scholar page of the user", location="form")
 create_user_parser.add_argument("researchgate_name", required=False, type=str, help="URL of the ResearchGate page of the user", location="form")
+create_user_parser.add_argument("institution", required=False, type=str, help="Institution of the user", location="form")
 
 
 class UpdateUserForm(Form):
@@ -68,6 +70,7 @@ class UpdateUserForm(Form):
 	profile_photo = StringField("Profile Photo", validators=[validators.optional()])
 	google_scholar_name = StringField("Google Scholar Name", validators=[validators.optional()])
 	researchgate_name = StringField("ResearchGate Name", validators=[validators.optional()])
+	institution = StringField("Institution", validators=[validators.optional()])
 update_user_parser = reqparse.RequestParser()
 update_user_parser.add_argument("name", required=False, type=str, help="Name of the user", location="form")
 update_user_parser.add_argument("surname", required=False, type=str, help="Surname of the user", location="form")
@@ -78,6 +81,7 @@ update_user_parser.add_argument("is_private", required=False, type=inputs.boolea
 update_user_parser.add_argument("profile_photo", required=False, type=str, help="URL of the profile picture of the user", location="form")
 update_user_parser.add_argument("google_scholar_name", required=False, type=str, help="URL of the Google Scholar page of the user", location="form")
 update_user_parser.add_argument("researchgate_name", required=False, type=str, help="URL of the ResearchGate page of the user", location="form")
+create_user_parser.add_argument("institution", required=False, type=str, help="Institution of the user", location="form")
 update_user_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
 
 
@@ -86,3 +90,21 @@ class DeleteUserForm(Form):
 delete_user_parser = reqparse.RequestParser()
 delete_user_parser.add_argument("password", required=True, type=str, help="Password of the user", location="form")
 delete_user_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
+
+class GetUserSkillsForm(Form):
+	user_id = IntegerField("User ID", validators=[validators.DataRequired()])
+get_userskill_parser = reqparse.RequestParser()
+get_userskill_parser.add_argument("user_id", required=True, type=int, help="ID of the requested user.", location="args")
+get_userskill_parser.add_argument("auth_token", required=True, type=str, help="Authentication token", location="headers")
+
+class PostUserSkillsForm(Form):
+	skill = StringField("Skill Name", validators=[validators.DataRequired()])
+post_userskill_parser = reqparse.RequestParser()
+post_userskill_parser.add_argument("skill", required=True, type=str, help="Skill name", location="form")
+post_userskill_parser.add_argument("auth_token", required=True, type=str, help="Authentication token", location="headers")
+
+class DeleteUserSkillsForm(Form):
+	skill = StringField("Skill Name", validators=[validators.DataRequired()])
+delete_userskill_parser = reqparse.RequestParser()
+delete_userskill_parser.add_argument("skill", required=True, type=str, help="Skill name", location="form")
+delete_userskill_parser.add_argument("auth_token", required=True, type=str, help="Authentication token", location="headers")
