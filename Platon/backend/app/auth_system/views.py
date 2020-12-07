@@ -20,6 +20,7 @@ from app.profile_management.models import Skills
 from app.profile_management.models import UserSkills
 from app.auth_system.helpers import generate_token,send_email,login_required, hashed
 from app.profile_management.helpers import ResearchInfoFetch
+from app.follow_system.helpers import follow_required
 
 from hashlib import sha256
 import datetime
@@ -423,7 +424,8 @@ class UserSkillAPI(Resource):
                    500: 'Database Connection'})
     @api.expect(get_userskill_parser)
     @login_required
-    def get(self):
+    @follow_required(param_loc = 'args', requested_user_id_key='user_id')
+    def get(user_id,self):
         '''
             Returns a list of user's skills with id and name
         '''
