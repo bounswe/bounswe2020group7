@@ -61,6 +61,7 @@ create_user_parser.add_argument("researchgate_name", required=False, type=str, h
 class UpdateUserForm(Form):
 	name = StringField("Name", validators=[validators.optional()])
 	surname = StringField("Surname", validators=[validators.optional()])
+	e_mail = StringField("E-mail", validators=[validators.optional()])
 	job = StringField("Job", validators=[validators.optional()])
 	is_valid = BooleanField("Activation State", validators=[validators.optional()])
 	is_private = BooleanField("Public/Private State", validators=[validators.optional()])
@@ -70,6 +71,7 @@ class UpdateUserForm(Form):
 update_user_parser = reqparse.RequestParser()
 update_user_parser.add_argument("name", required=False, type=str, help="Name of the user", location="form")
 update_user_parser.add_argument("surname", required=False, type=str, help="Surname of the user", location="form")
+update_user_parser.add_argument("e_mail", required=False, type=str, help="E-mail address of the user", location="form")
 update_user_parser.add_argument("job", required=False, type=str, help="Job of the user", location="form")
 update_user_parser.add_argument("is_valid", required=False, type=inputs.boolean, help="The flag that shows whether the user account is activated or not.", location="form")
 update_user_parser.add_argument("is_private", required=False, type=inputs.boolean, help="The flag that shows whether the user's profile is public or private.", location="form")
