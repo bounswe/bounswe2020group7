@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -115,7 +116,7 @@ class HomeActivity : BaseActivity(),
             }
         }
 
-        mProfilePageViewModel.getUserNotificationsResourceResponse.observe(this, { t->
+        mProfilePageViewModel.getUserNotificationsResourceResponse.observe(this, Observer{ t->
             when(t.javaClass){
                 Resource.Success::class.java ->{
                     toolbarRecyclerView.adapter = NotificationElementsAdapter(t.data as ArrayList<Notification>,this, this)
@@ -130,7 +131,7 @@ class HomeActivity : BaseActivity(),
             }
         })
 
-        mProfilePageViewModel.getUserFollowRequestsResourceResponse.observe(this, { t->
+        mProfilePageViewModel.getUserFollowRequestsResourceResponse.observe(this, Observer{ t->
             when(t.javaClass){
                 Resource.Success::class.java ->{
                     toolbarRecyclerView.adapter = FollowRequestElementsAdapter(t.data!!.follow_requests as ArrayList<FollowRequest>,this, this)
@@ -144,7 +145,7 @@ class HomeActivity : BaseActivity(),
                 }
             }
         })
-        mProfilePageViewModel.acceptRequestResourceResponse.observe(this, {i->
+        mProfilePageViewModel.acceptRequestResourceResponse.observe(this, Observer{i->
             when(i.javaClass){
                 Resource.Success::class.java -> {
                     mProfilePageViewModel.removeHandledRequest()

@@ -70,7 +70,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     }
 
     private fun setObservers() {
-        mProfilePageViewModel.getUserResourceResponse.observe(viewLifecycleOwner, { t->
+        mProfilePageViewModel.getUserResourceResponse.observe(viewLifecycleOwner, Observer{ t->
             when(t.javaClass){
                 Resource.Success::class.java ->{
                     val user = t.data!!
@@ -90,7 +90,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
         })
 
 
-        mProfilePageViewModel.getResearchesResourceResponse.observe(viewLifecycleOwner, { t ->
+        mProfilePageViewModel.getResearchesResourceResponse.observe(viewLifecycleOwner, Observer{ t ->
             when(t.javaClass) {
                 Resource.Success::class.java -> userProjectsAdapter.submitElements(t.data!!.research_info)
                 Resource.Error::class.java -> Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
