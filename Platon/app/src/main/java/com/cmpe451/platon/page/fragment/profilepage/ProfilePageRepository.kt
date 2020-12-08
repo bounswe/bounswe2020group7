@@ -12,16 +12,17 @@ import retrofit2.Response
 
 class ProfilePageRepository() {
 
-    val researchesResourceResponse: MutableLiveData<Resource<Researches>> = MutableLiveData(Resource.Loading())
-    val userResourceResponse:MutableLiveData<Resource<User>> = MutableLiveData(Resource.Loading())
-    val acceptRequestResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData(Resource.Loading())
+    val researchesResourceResponse: MutableLiveData<Resource<Researches>> = MutableLiveData()
+    val userResourceResponse:MutableLiveData<Resource<User>> = MutableLiveData()
+    val acceptRequestResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
 
-    val userFollowRequestsResourceResponse:MutableLiveData<Resource<FollowRequests>> = MutableLiveData(Resource.Loading())
-    val userNotificationsResourceResponse:MutableLiveData<Resource<List<Notification>>> = MutableLiveData(Resource.Loading())
+    val userFollowRequestsResourceResponse:MutableLiveData<Resource<FollowRequests>> = MutableLiveData()
+    val userNotificationsResourceResponse:MutableLiveData<Resource<List<Notification>>> = MutableLiveData()
 
     fun getFollowRequests(id:Int, token:String){
         val service = RetrofitClient.getService()
         val call = service.getFollowRequests(id, token)
+        userFollowRequestsResourceResponse.value = Resource.Loading()
 
         call.enqueue(object :Callback<FollowRequests?>{
             override fun onResponse(call: Call<FollowRequests?>, response: Response<FollowRequests?>) {
@@ -42,7 +43,7 @@ class ProfilePageRepository() {
     fun getNotifications(token: String){
         val service = RetrofitClient.getService()
         val call = service.getNotifications(token)
-
+        userNotificationsResourceResponse.value = Resource.Loading()
         call.enqueue(object :Callback<List<Notification>?>{
             override fun onResponse(call: Call<List<Notification>?>, response: Response<List<Notification>?>) {
                 when{
@@ -63,6 +64,7 @@ class ProfilePageRepository() {
     fun getUser(token:String){
         val service = RetrofitClient.getService()
         val call = service.getUserInfo(token)
+        userResourceResponse.value = Resource.Loading()
         call.enqueue(object :Callback<User?>{
             override fun onResponse(call: Call<User?>, response: Response<User?>) {
                 when{
@@ -83,7 +85,7 @@ class ProfilePageRepository() {
     fun getResearches( userId: Int, authToken: String){
         val service = RetrofitClient.getService()
         val call = service.getResearches(userId, authToken)
-
+        researchesResourceResponse.value = Resource.Loading()
         call.enqueue(object: Callback<Researches?>{
             override fun onResponse(call: Call<Researches?>, response: Response<Researches?>) {
                 when {
@@ -103,7 +105,7 @@ class ProfilePageRepository() {
     fun acceptFollowRequest(followerId: Int, followingId: Int, token: String) {
         val service = RetrofitClient.getService()
         val call = service.answerFollowRequests(followerId, followingId,1, token)
-
+        acceptRequestResourceResponse.value = Resource.Loading()
         call.enqueue(object: Callback<JsonObject?>{
             override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
                 when {
@@ -123,7 +125,7 @@ class ProfilePageRepository() {
     fun deleteFollowRequest(followerId: Int, followingId: Int, token: String) {
         val service = RetrofitClient.getService()
         val call = service.answerFollowRequests(followerId, followingId,2, token)
-
+        acceptRequestResourceResponse.value = Resource.Loading()
         call.enqueue(object: Callback<JsonObject?>{
             override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
                 when {

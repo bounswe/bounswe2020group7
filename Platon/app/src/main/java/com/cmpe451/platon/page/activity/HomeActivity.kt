@@ -120,8 +120,13 @@ class HomeActivity : BaseActivity(),
                 Resource.Success::class.java ->{
                     toolbarRecyclerView.adapter = NotificationElementsAdapter(t.data as ArrayList<Notification>,this, this)
                     toolbarRecyclerView.layoutManager = LinearLayoutManager(this)
+                    dialog.dismiss()
                 }
-                Resource.Error::class.java -> Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Error::class.java -> {
+                    Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
             }
         })
 
@@ -130,19 +135,28 @@ class HomeActivity : BaseActivity(),
                 Resource.Success::class.java ->{
                     toolbarRecyclerView.adapter = FollowRequestElementsAdapter(t.data!!.follow_requests as ArrayList<FollowRequest>,this, this)
                     toolbarRecyclerView.layoutManager = LinearLayoutManager(this)
+                    dialog.dismiss()
                 }
-                Resource.Error::class.java -> Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Error::class.java -> {
+                    Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
             }
         })
         mProfilePageViewModel.acceptRequestResourceResponse.observe(this, {i->
             when(i.javaClass){
                 Resource.Success::class.java -> {
-                    dialog.dismiss()
                     mProfilePageViewModel.removeHandledRequest()
+                    dialog.dismiss()
                 }
-
-                Resource.Error::class.java->Toast.makeText(this, i.message, Toast.LENGTH_SHORT).show()
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Error::class.java-> {
+                    Toast.makeText(this, i.message, Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
             }
+
         })
     }
 
@@ -252,21 +266,18 @@ class HomeActivity : BaseActivity(),
     }
 
     override fun onFollowRequestNameClicked(request: FollowRequest, position: Int) {
-        if(request != null){
-            navController.navigate(HomeFragmentDirections.actionHomeFragmentToOtherProfileFragment(request.id))
-        }
+        navController.navigate(HomeFragmentDirections.actionHomeFragmentToOtherProfileFragment(request.id))
+        prepareFragmentSwitch()
     }
 
     override fun onFollowRequestAcceptClicked(request: FollowRequest, position: Int) {
-        dialog.show()
         if(mProfilePageViewModel.getUserResourceResponse.value!=null && token!=null){
             mProfilePageViewModel.acceptFollowRequest(request.id, mProfilePageViewModel.getUserResourceResponse.value?.data?.id!!, token!!)
         }
-
+        mProfilePageViewModel.setPositionOfHandledRequest(position)
     }
 
     override fun onFollowRequestRejectClicked(request: FollowRequest, position: Int) {
-        dialog.show()
         if(mProfilePageViewModel.getUserResourceResponse.value!=null && token!=null){
             mProfilePageViewModel.deleteFollowRequest(request.id, mProfilePageViewModel.getUserResourceResponse.value?.data?.id!!, token!!)
         }
