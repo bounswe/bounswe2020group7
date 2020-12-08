@@ -19,7 +19,7 @@ class OtherProfileViewModel : ViewModel() {
 
     fun setUserInfo(){
         isUserPrivate.value = getUserResource.value?.data?.is_private
-        isFollowing.value = Definitions.USERSTATUS.NOT_FOLLOWING
+        isFollowing.value = Definitions.USERSTATUS.FOLLOWING
     }
 
     fun fetchResearch(token: String, userId: Int) {

@@ -82,7 +82,10 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                 Resource.Success::class.java -> {
                     val user = i.data!!
                     binding.textNameSurname.text = user.name + " " + user.surname
-                    Glide.with(this).load(user.profile_photo).into(binding.profilePhoto);
+                    Glide.with(this)
+                        .load(user.profile_photo)
+                        .placeholder(R.drawable.ic_o_logo)
+                        .into(binding.profilePhoto);
                     mOtherProfileViewModel.setUserInfo()
                     setView(mOtherProfileViewModel.isFollowing.value!!, mOtherProfileViewModel.isUserPrivate.value!!)
                     setListeners(mOtherProfileViewModel.isFollowing.value!!, mOtherProfileViewModel.isUserPrivate.value!!)

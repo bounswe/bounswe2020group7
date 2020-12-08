@@ -67,7 +67,7 @@ class SearchElementsAdapter(private val data: ArrayList<String>, private val con
      */
     override fun removeElement(position: Int){
         data.removeAt(position)
-        this.notifyItemRemoved(position)
+        this.notifyDataSetChanged()
     }
     /**
      * Updates element at given position

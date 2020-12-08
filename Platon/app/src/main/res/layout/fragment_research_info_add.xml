@@ -59,14 +59,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:ems="10"
-            android:inputType="number"
             android:backgroundTint="@color/secondary_purple"
+            android:ems="10"
             android:hint="@string/project_year_str"
+            android:inputType="number"
+            android:maxLength="4"
             android:textColor="@color/primary_light"
             android:textColorHighlight="@color/primary_light"
             android:textColorHint="@color/secondary_purple"
-            android:textColorLink="@color/secondary_purple"/>
+            android:textColorLink="@color/secondary_purple" />
 
         <Button
             android:id="@+id/button_project_add"

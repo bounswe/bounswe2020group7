@@ -1,5 +1,6 @@
 package com.cmpe451.platon.page.fragment.researchInfo
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.RetrofitClient
@@ -11,13 +12,15 @@ import retrofit2.Response
 
 class ResearchInfoRepository() {
 
-    var addResearchResourceResponse : MutableLiveData<Resource<JsonObject>> = MutableLiveData(Resource.Loading())
-    var editResearchResourceResponse : MutableLiveData<Resource<JsonObject>> = MutableLiveData(Resource.Loading())
-    var deleteResearchResourceResponse: MutableLiveData<Resource<JsonObject>> = MutableLiveData(Resource.Loading())
+    var addResearchResourceResponse : MutableLiveData<Resource<JsonObject>> = MutableLiveData()
+    var editResearchResourceResponse : MutableLiveData<Resource<JsonObject>> = MutableLiveData()
+    var deleteResearchResourceResponse: MutableLiveData<Resource<JsonObject>> = MutableLiveData()
 
 
     fun addResearch(title:String,description:String?,
                  year:Int,authToken: String){
+
+        addResearchResourceResponse.value =Resource.Loading()
 
         val service = RetrofitClient.getService()
         val call = service.addResearchProject(title, description, year, authToken)
@@ -29,10 +32,12 @@ class ResearchInfoRepository() {
                     response.errorBody() != null -> addResearchResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
                     else -> addResearchResourceResponse.value = Resource.Error("Unknown error!")
                 }
+
+                response.errorBody()?.close()
             }
 
             override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
-                    call.clone().enqueue(this)
+                call.clone().enqueue(this)
             }
 
         })
@@ -41,7 +46,7 @@ class ResearchInfoRepository() {
     fun editResearch(projectId:Int, title: String, description: String?, year: Int, authToken: String) {
         val service = RetrofitClient.getService()
         val call = service.editResearchProject(projectId, title, description, year, authToken)
-
+        editResearchResourceResponse.value =Resource.Loading()
         call.enqueue(object : Callback<JsonObject?> {
             override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
                 when{
@@ -63,7 +68,7 @@ class ResearchInfoRepository() {
         val service = RetrofitClient.getService()
 
         val call = service.deleteResearchProject(researchId, authToken)
-
+        deleteResearchResourceResponse.value =Resource.Loading()
         call.enqueue(object : Callback<JsonObject?>{
             override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
                 when{
