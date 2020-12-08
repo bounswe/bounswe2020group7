@@ -238,9 +238,21 @@ class ResearchInfoTests(BaseTest):
     
     def setUp(self):
         # Add artificial users to test login feature
+        jobs = [
+            Jobs("Academician"),
+            Jobs("PhD Student")
+        ]
+
+        for job in jobs:
+            db.session.add(job)
+
+        db.session.commit()
+        # Add artificia users to test login feature
         users = [
-            User("umut@deneme.com",True,"b73ec5e4625ffcb6d0d70826f33be7a75d45b37046e26c4b60d9111266d70e32",3.5,"Umut","Özdemir",False,None,None,None),
-            User("can@deneme.com",False,"cce0c2170d1ae52e099c716165d80119ee36840e3252e57f2b2b4d6bb111d8a5",4.6,"Can","Deneme",True,None,None,None)
+            User("umut@deneme.com", True, "b73ec5e4625ffcb6d0d70826f33be7a75d45b37046e26c4b60d9111266d70e32", 3.5,
+                 "Umut", "Özdemir", False, None, None, None, 1, "boun"),
+            User("can@deneme.com", False, "cce0c2170d1ae52e099c716165d80119ee36840e3252e57f2b2b4d6bb111d8a5", 3.4,
+                 "Can", "Deneme", False, None, None, None, 2, "boun")
         ]
         for user in users:
             db.session.add(user)
@@ -261,22 +273,7 @@ class ResearchInfoTests(BaseTest):
         for follow in follows:
             db.session.add(follow)
         db.session.commit()
-        jobs = [
-            Jobs("Teacher"),
-            Jobs("Student"),
-            Jobs("Assistant")
-        ]
-        for job in jobs:
-            db.session.add(job)
-        db.session.commit()
-        skills = [
-            Skills("Java"),
-            Skills("C"),
-            Skills("Python")
-        ]
-        for skill in skills:
-            db.session.add(skill)
-        db.session.commit()
+
 
     def test_add_research_info_valid(self):
         valid_token = generate_token(1,TestConfig.SESSION_DURATION)
@@ -425,11 +422,26 @@ class ResearchInfoTests(BaseTest):
 class NotificationTests(BaseTest):
 
     def setUp(self):
+        # Add artificial users to test login feature
+        jobs = [
+            Jobs("Academician"),
+            Jobs("PhD Student")
+        ]
+
+        for job in jobs:
+            db.session.add(job)
+
+        db.session.commit()
         # Add artificia users to test login feature
         users = [
-            User("umut@deneme.com",True,"b73ec5e4625ffcb6d0d70826f33be7a75d45b37046e26c4b60d9111266d70e32",3.5,"Umut","Özdemir",False,None,None,None),
-            User("can@deneme.com",False,"cce0c2170d1ae52e099c716165d80119ee36840e3252e57f2b2b4d6bb111d8a5",4.6,"Can","Deneme",True,None,None,None)
+            User("umut@deneme.com", True, "b73ec5e4625ffcb6d0d70826f33be7a75d45b37046e26c4b60d9111266d70e32", 3.5,
+                 "Umut", "Özdemir", False, None, None, None, 1, "boun"),
+            User("can@deneme.com", False, "cce0c2170d1ae52e099c716165d80119ee36840e3252e57f2b2b4d6bb111d8a5", 3.4,
+                 "Can", "Deneme", False, None, None, None, 2, "boun")
         ]
+        for user in users:
+            db.session.add(user)
+        db.session.commit()
         for user in users:
             db.session.add(user)
         db.session.commit()
