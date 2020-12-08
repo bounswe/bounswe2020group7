@@ -29,11 +29,11 @@ class FollowTest(BaseTest):
         # Umut and Can are public users. Alperen is private user.
         users = [
             User("umut@deneme.com", True, "b73ec5e4625ffcb6d0d70826f33be7a75d45b37046e26c4b60d9111266d70e32", 3.5,
-                 "Umut", "Özdemir", False, None, None, None, 1),
-            User("can@deneme.com", True, "cce0c2170d1ae52e099c716165d80119ee36840e3252e57f2b2b4d6bb111d8a5", 4.6,
-                 "Can", "Deneme", False, None, None, None, 1),
-            User("alperen@deneme.com", True, "hashedpassword", 4.6, "Alperen", "Ozprivate", True, None, None, None, 1),
-            User("hilal@deneme.com", True, "hasheddpassword", 4.5, "Hilal", "Private", True, None, None, None, 1)
+                 "Umut", "Özdemir", False, None, None, None, 1, "boun"),
+            User("can@deneme.com", True, "cce0c2170d1ae52e099c716165d80119ee36840e3252e57f2b2b4d6bb111d8a5", 3.4,
+                 "Can", "Deneme", False, None, None, None, 2, "boun"),
+            User("alperen@deneme.com", True, "hashedpassword", 4.6, "Alperen", "Ozprivate", True, None, None, None, 1, "boun"),
+            User("hilal@deneme.com", True, "hasheddpassword", 4.5, "Hilal", "Private", True, None, None, None, 1, "boun")
         ]
         for user in users:
             db.session.add(user)

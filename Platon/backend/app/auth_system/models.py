@@ -14,10 +14,10 @@ class User(db.Model):
     profile_photo = db.Column(db.String(50))
     google_scholar_name = db.Column(db.String(256))
     researchgate_name = db.Column(db.String(256))
-    job_id = db.Column(db.Integer,db.ForeignKey('jobs.id',ondelete="CASCADE"))
+    position_id = db.Column(db.Integer,db.ForeignKey('jobs.id',ondelete="CASCADE"))
     institution = db.Column(db.String(100))
 
-    def __init__(self,e_mail,is_valid,password_hashed,rate,name,surname,is_private,profile_photo,google_scholar_name,researchgate_name,positon_id,institution,skill_id):
+    def __init__(self,e_mail,is_valid,password_hashed,rate,name,surname,is_private,profile_photo,google_scholar_name,researchgate_name, position_id,institution):
         self.e_mail = e_mail
         self.is_valid = is_valid
         self.password_hashed = password_hashed
@@ -28,6 +28,5 @@ class User(db.Model):
         self.profile_photo = profile_photo
         self.google_scholar_name = google_scholar_name
         self.researchgate_name = researchgate_name
-        self.position_id = positon_id
+        self.position_id = position_id
         self.institution = institution
-        self.skill_id = skill_id
