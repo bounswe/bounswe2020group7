@@ -16,9 +16,9 @@ class TestConfig:
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))  
 
     # Define the database - we are working with
-    mysql_user = "root"
-    mysql_password = "rootpassword"
-    mysql_host = "18.198.208.63"
+    mysql_user = "admin"
+    mysql_password = "platon1234"
+    mysql_host = "platondbms.cchkgthejclc.eu-central-1.rds.amazonaws.com"
     mysql_port = "3306"
     mysql_database = "platondb_test"
 

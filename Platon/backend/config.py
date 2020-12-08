@@ -1,19 +1,35 @@
 import datetime
-# Statement for enabling the development environment
-DEBUG = True
+# In the production please make False both DEVELOPMENT and DEBUG flags
+DEBUG = False
+DEVELOPMENT = True
 
 # Define the application directory
 import os
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
-FRONTEND_HOSTNAME = "http://ec2-18-198-208-63.eu-central-1.compute.amazonaws.com"
+FRONTEND_HOSTNAME = "http://ec2-3-127-150-96.eu-central-1.compute.amazonaws.com"
 
-# Define the database - we are working with
-mysql_user = os.getenv('MYSQL_USER')
-mysql_password = os.getenv('MYSQL_PASSWORD')
-mysql_host = os.getenv('MYSQL_HOST')
-mysql_port = os.getenv('MYSQL_PORT')
-mysql_database = os.getenv('MYSQL_DATABASE')
+if DEVELOPMENT and DEBUG:
+    # Define the database - we are working with
+    mysql_user = "root"
+    mysql_password = "rootpassword"
+    mysql_host = "3.127.150.96"
+    mysql_port = "3306"
+    mysql_database = "platondb"
+elif DEVELOPMENT:
+    # Define the database - we are working with
+    mysql_user = "admin"
+    mysql_password = "platon1234"
+    mysql_host = "platondbms.cchkgthejclc.eu-central-1.rds.amazonaws.com"
+    mysql_port = "3306"
+    mysql_database = "platondb"
+else:
+    # Define the database - we are working with
+    mysql_user = os.getenv('MYSQL_USER')
+    mysql_password = os.getenv('MYSQL_PASSWORD')
+    mysql_host = os.getenv('MYSQL_HOST')
+    mysql_port = os.getenv('MYSQL_PORT')
+    mysql_database = os.getenv('MYSQL_DATABASE')
 
 SQLALCHEMY_DATABASE_URI = "mysql+pymysql://{}:{}@{}:{}/{}".format(mysql_user, mysql_password, mysql_host, mysql_port, mysql_database)
 SQLALCHEMY_TRACK_MODIFICATIONS = False
