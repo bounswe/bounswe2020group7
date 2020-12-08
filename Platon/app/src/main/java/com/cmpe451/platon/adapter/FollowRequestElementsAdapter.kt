@@ -18,6 +18,7 @@ import com.cmpe451.platon.network.models.Notification
 
 interface ToolbarElementsAdapter{
     fun clearElements()
+    fun removeElement(position: Int)
 }
 
 
@@ -82,7 +83,7 @@ class FollowRequestElementsAdapter(private val data: ArrayList<FollowRequest>, p
     /**
      * Removes element at given position
      */
-    fun removeElement(position: Int){
+    override fun removeElement(position: Int){
         data.removeAt(position)
         this.notifyItemRemoved(position)
     }

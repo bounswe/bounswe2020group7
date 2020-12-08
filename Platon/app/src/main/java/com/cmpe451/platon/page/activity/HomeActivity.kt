@@ -148,7 +148,8 @@ class HomeActivity : BaseActivity(),
         mProfilePageViewModel.acceptRequestResourceResponse.observe(this, Observer{i->
             when(i.javaClass){
                 Resource.Success::class.java -> {
-                    mProfilePageViewModel.removeHandledRequest()
+                    (toolbarRecyclerView.adapter as ToolbarElementsAdapter)
+                            .removeElement(mProfilePageViewModel.positionOfHandlededRequest!!)
                     dialog.dismiss()
                 }
                 Resource.Loading::class.java -> dialog.show()
