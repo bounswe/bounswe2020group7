@@ -2,6 +2,7 @@ package com.cmpe451.platon.page.fragment.researchInfo
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -55,25 +56,35 @@ class EditResearchInfoFragment : Fragment() {
 
         mResearchInfoViewModel.getDeleteResearchResourceResponse.observe(viewLifecycleOwner, { t->
             when(t.javaClass){
+                Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java ->{
+                    Log.i("EEROROROR", "SOME ERROR OCCURRED!")
+                    dialog.dismiss()
                     findNavController().navigateUp()
-                    Toast.makeText(activity, "Successfully deleted!", Toast.LENGTH_SHORT).show()
+
                 }
-                Resource.Error::class.java ->Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+                Resource.Error::class.java ->{
+                    dialog.dismiss()
+                    Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+                }
             }
-            dialog.dismiss()
+
         })
 
 
         mResearchInfoViewModel.getEditResearchResourceResponse.observe(viewLifecycleOwner, {t ->
             when(t.javaClass){
+                Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java ->{
                     findNavController().navigateUp()
-                    Toast.makeText(activity, "Successfully updated!", Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
                 }
-                Resource.Error::class.java ->Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+                Resource.Error::class.java ->{
+                    Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
             }
-            dialog.dismiss()
+
 
         })
 

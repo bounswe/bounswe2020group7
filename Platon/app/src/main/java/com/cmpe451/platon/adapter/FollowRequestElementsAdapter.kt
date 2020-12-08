@@ -4,10 +4,12 @@ package com.cmpe451.platon.adapter
  * @author Burak Ömür
  */
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
@@ -16,6 +18,7 @@ import com.cmpe451.platon.network.models.Notification
 
 interface ToolbarElementsAdapter{
     fun clearElements()
+    fun removeElement(position: Int)
 }
 
 
@@ -23,7 +26,9 @@ class FollowRequestElementsAdapter(private val data: ArrayList<FollowRequest>, p
         RecyclerView.Adapter<FollowRequestElementsAdapter.MyViewHolder>(), ToolbarElementsAdapter {
 
     interface FollowRequestButtonClickListener{
-        fun onFollowRequestButtonClicked(request: FollowRequest, position: Int)
+        fun onFollowRequestNameClicked(request: FollowRequest, position: Int)
+        fun onFollowRequestAcceptClicked(request: FollowRequest, position: Int)
+        fun onFollowRequestRejectClicked(request: FollowRequest, position: Int)
     }
 
     // Provide a reference to the views for each data item
@@ -31,11 +36,18 @@ class FollowRequestElementsAdapter(private val data: ArrayList<FollowRequest>, p
     // you provide access to all the views for a data item in a view holder.
     // Each data item is just a string in this case that is shown in a TextView.
     class MyViewHolder(val myView: View) : RecyclerView.ViewHolder(myView){
-        var myTextView = myView.findViewById(R.id.title_trend_project_tv) as TextView
-
+        var myTextView = myView.findViewById(R.id.name_block) as TextView
+        var acceptButton = myView.findViewById(R.id.accept_icon) as ImageView
+        var rejectButton = myView.findViewById(R.id.reject_icon) as ImageView
         fun bindData(request: FollowRequest, buttonClickListener: FollowRequestButtonClickListener, position: Int) {
-            myView.setOnClickListener{
-                buttonClickListener.onFollowRequestButtonClicked(request, position)
+            myTextView.setOnClickListener{
+                buttonClickListener.onFollowRequestNameClicked(request, position)
+            }
+            acceptButton.setOnClickListener{
+                buttonClickListener.onFollowRequestAcceptClicked(request, position)
+            }
+            rejectButton.setOnClickListener{
+                buttonClickListener.onFollowRequestRejectClicked(request, position)
             }
         }
     }
@@ -45,16 +57,17 @@ class FollowRequestElementsAdapter(private val data: ArrayList<FollowRequest>, p
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         // create a new view
         val textView = MyViewHolder(LayoutInflater.from(parent.context)
-                .inflate(R.layout.search_element_cell, parent, false))
+                .inflate(R.layout.follow_request_cell, parent, false))
         // set the view's size, margins, paddings and layout parameters
         return textView
     }
 
     // Replace the contents of a view (invoked by the layout manager)
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.myTextView.text = data[position].name + " requested from you!"
+        holder.myTextView.text = data[position].name +  " " + data[position].surname
         holder.bindData(data[position], followRequestButtonClickListener, position)
     }
 
@@ -70,9 +83,9 @@ class FollowRequestElementsAdapter(private val data: ArrayList<FollowRequest>, p
     /**
      * Removes element at given position
      */
-    fun removeElement(position: Int){
+    override fun removeElement(position: Int){
         data.removeAt(position)
-        this.notifyItemRemoved(position)
+        this.notifyDataSetChanged()
     }
     /**
      * Updates element at given position

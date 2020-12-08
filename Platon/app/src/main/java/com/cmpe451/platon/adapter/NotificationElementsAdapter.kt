@@ -65,9 +65,9 @@ class NotificationElementsAdapter(private val data: ArrayList<Notification>, pri
     /**
      * Removes element at given position
      */
-    fun removeElement(position: Int){
+    override fun removeElement(position: Int){
         data.removeAt(position)
-        this.notifyItemRemoved(position)
+        this.notifyDataSetChanged()
     }
     /**
      * Updates element at given position

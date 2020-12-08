@@ -11,6 +11,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.cmpe451.platon.R
 import com.cmpe451.platon.core.BaseActivity
@@ -53,16 +54,18 @@ class EditProfileFragment : Fragment() {
             mEditProfileViewModel.editProfile(binding.firstnameTv,
                     binding.lastnameTv, binding.jobTv, binding.privateSwitch.isChecked,
                     binding.ppTv, binding.googleScholarTv, binding.researchGateTv, (activity as HomeActivity).token)
+
             dialog.show()
 
         }
     }
 
     private fun setObservers(){
-        mEditProfileViewModel.getEditProfileResourceResponse.observe(viewLifecycleOwner, { t ->
+        mEditProfileViewModel.getEditProfileResourceResponse.observe(viewLifecycleOwner, Observer { t ->
             when(t.javaClass){
                 Resource.Success::class.java ->{
                     Toast.makeText(activity, "Account information has been successfully updated!", Toast.LENGTH_SHORT).show()
+                    mProfilePageViewModel.fetchUser((activity as HomeActivity).token)
                     findNavController().navigateUp()
                 }
                 Resource.Error::class.java -> Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()

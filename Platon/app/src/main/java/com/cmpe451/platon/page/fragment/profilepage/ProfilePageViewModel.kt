@@ -17,7 +17,11 @@ class ProfilePageViewModel: ViewModel() {
     val getUserFollowRequestsResourceResponse:MutableLiveData<Resource<FollowRequests>>
     val getUserNotificationsResourceResponse:MutableLiveData<Resource<List<Notification>>>
 
+
+
     private var repository: ProfilePageRepository = ProfilePageRepository()
+    var acceptRequestResourceResponse = repository.acceptRequestResourceResponse
+    var positionOfHandlededRequest:Int? = null
 
     init {
         getUserResourceResponse = repository.userResourceResponse
@@ -61,5 +65,20 @@ class ProfilePageViewModel: ViewModel() {
         return x
     }
 
+    fun acceptFollowRequest(followerId: Int, followingId:Int, token:String) {
+        repository.acceptFollowRequest(followerId, followingId,token)
+    }
 
+    fun deleteFollowRequest(followerId: Int, followingId:Int, token:String) {
+        repository.deleteFollowRequest(followerId, followingId,token)
+    }
+
+    fun setPositionOfHandledRequest(pos:Int){
+        positionOfHandlededRequest = pos
+    }
+    fun removeHandledRequest(){
+        if(positionOfHandlededRequest!= null){
+            (getUserFollowRequestsResourceResponse.value?.data?.follow_requests as ArrayList).removeAt(positionOfHandlededRequest!!)
+        }
+    }
 }

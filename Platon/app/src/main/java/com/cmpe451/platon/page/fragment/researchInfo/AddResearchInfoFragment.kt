@@ -1,5 +1,6 @@
 package com.cmpe451.platon.page.fragment.researchInfo
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -12,16 +13,20 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.cmpe451.platon.R
+import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentResearchInfoAddBinding
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.page.activity.HomeActivity
 import com.cmpe451.platon.page.fragment.editprofile.EditProfileViewModel
 import com.cmpe451.platon.page.fragment.profilepage.ProfilePageViewModel
+import com.cmpe451.platon.util.Definitions
 
 class AddResearchInfoFragment : Fragment() {
     private lateinit var binding: FragmentResearchInfoAddBinding
     private val mReseachInfoViewModel: ResearchInfoViewModel by viewModels()
     private val mProfilePageViewModel: ProfilePageViewModel by activityViewModels()
+
+    private lateinit var dialog:AlertDialog
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -39,19 +44,27 @@ class AddResearchInfoFragment : Fragment() {
     private fun setObserver() {
         mReseachInfoViewModel.getAddResearchResourceResponse.observe(viewLifecycleOwner, { t ->
             when(t.javaClass){
+                Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java ->{
                     Toast.makeText(activity, "Research Information is added!", Toast.LENGTH_SHORT).show()
                     mProfilePageViewModel.fetchResearch((activity as HomeActivity).token,
                             mProfilePageViewModel.getUserResourceResponse.value?.data?.id
                     )
+                    dialog.dismiss()
                     findNavController().navigateUp()
                 }
-                Resource.Error::class.java ->Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+                Resource.Error::class.java ->{
+                    Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
             }
         })
     }
 
     private fun setListeners() {
+        dialog = Definitions().createProgressBar(activity as BaseActivity)
+
+
         binding.buttonProjectAdd.setOnClickListener {
                 // check if the title and year is empty
             if(binding.projectNameTv.text.isNullOrEmpty() && binding.projectYearTv.text.isNullOrEmpty()){
