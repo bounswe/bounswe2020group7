@@ -138,7 +138,7 @@ class HomeActivity : BaseActivity(),
             when(i.javaClass){
                 Resource.Success::class.java -> {
                     dialog.dismiss()
-
+                    mProfilePageViewModel.removeHandledRequest()
                 }
 
                 Resource.Error::class.java->Toast.makeText(this, i.message, Toast.LENGTH_SHORT).show()
@@ -257,7 +257,7 @@ class HomeActivity : BaseActivity(),
         }
     }
 
-    override fun onFollowRequestAcceptClicked(request: FollowRequest, acceptBtn:ImageView, rejectBtn: ImageView) {
+    override fun onFollowRequestAcceptClicked(request: FollowRequest, position: Int) {
         dialog.show()
         if(mProfilePageViewModel.getUserResourceResponse.value!=null && token!=null){
             mProfilePageViewModel.acceptFollowRequest(request.id, mProfilePageViewModel.getUserResourceResponse.value?.data?.id!!, token!!)
@@ -270,6 +270,7 @@ class HomeActivity : BaseActivity(),
         if(mProfilePageViewModel.getUserResourceResponse.value!=null && token!=null){
             mProfilePageViewModel.deleteFollowRequest(request.id, mProfilePageViewModel.getUserResourceResponse.value?.data?.id!!, token!!)
         }
+        mProfilePageViewModel.setPositionOfHandledRequest(position)
     }
 
 

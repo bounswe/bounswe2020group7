@@ -21,7 +21,7 @@ class ProfilePageViewModel: ViewModel() {
 
     private var repository: ProfilePageRepository = ProfilePageRepository()
     var acceptRequestResourceResponse = repository.acceptRequestResourceResponse
-
+    var positionOfHandlededRequest:Int? = null
 
     init {
         getUserResourceResponse = repository.userResourceResponse
@@ -73,5 +73,12 @@ class ProfilePageViewModel: ViewModel() {
         repository.deleteFollowRequest(followerId, followingId,token)
     }
 
-
+    fun setPositionOfHandledRequest(pos:Int){
+        positionOfHandlededRequest = pos
+    }
+    fun removeHandledRequest(){
+        if(positionOfHandlededRequest!= null){
+            (getUserFollowRequestsResourceResponse.value?.data?.follow_requests as ArrayList).removeAt(positionOfHandlededRequest!!)
+        }
+    }
 }

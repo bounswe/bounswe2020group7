@@ -26,7 +26,7 @@ class FollowRequestElementsAdapter(private val data: ArrayList<FollowRequest>, p
 
     interface FollowRequestButtonClickListener{
         fun onFollowRequestNameClicked(request: FollowRequest, position: Int)
-        fun onFollowRequestAcceptClicked(request: FollowRequest, acceptBtn:ImageView, rejectBtn:ImageView)
+        fun onFollowRequestAcceptClicked(request: FollowRequest, position: Int)
         fun onFollowRequestRejectClicked(request: FollowRequest, position: Int)
     }
 
@@ -43,7 +43,7 @@ class FollowRequestElementsAdapter(private val data: ArrayList<FollowRequest>, p
                 buttonClickListener.onFollowRequestNameClicked(request, position)
             }
             acceptButton.setOnClickListener{
-                buttonClickListener.onFollowRequestAcceptClicked(request, acceptButton, rejectButton)
+                buttonClickListener.onFollowRequestAcceptClicked(request, position)
             }
             rejectButton.setOnClickListener{
                 buttonClickListener.onFollowRequestRejectClicked(request, position)
