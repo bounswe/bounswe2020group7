@@ -26,6 +26,8 @@ class SearchEngine():
     
     exact_match_score = 1000000
 
+    wrong_stopwords = ["can"]
+
     @staticmethod
     def semantic_related_list(search_tokens,max_num_of_related=8):
         """
@@ -37,7 +39,7 @@ class SearchEngine():
             This functions takes a list of tokens and creates the list of semanticly related words for the list of tokens
 
         """
-        result_list = [(token,searchEngine.exact_match_score) for token in search_tokens]
+        result_list = [(token,SearchEngine.exact_match_score) for token in search_tokens]
         url = "https://api.datamuse.com/words"
         try:
             for token in search_tokens:
@@ -47,7 +49,7 @@ class SearchEngine():
                 result_list += [(related["word"],related["score"]) for related in resp[:max_num_of_related]]
             return result_list
         except:
-            return [(token,searchEngine.exact_match_score) for token in search_tokens]
+            return [(token,SearchEngine.exact_match_score) for token in search_tokens]
 
     @staticmethod
     def get_stopwords():
@@ -71,7 +73,7 @@ class SearchEngine():
             if not isinstance(resp,list):
                 return None
             # Return the set of stopwords and punctuation
-            return set([res["word"].lower() for res in resp])
+            return set([res["word"].lower() for res in resp]) - set(SearchEngine.wrong_stopwords)
         except:
             # If there is an error in the request return a None object
             return None
@@ -83,7 +85,7 @@ class SearchEngine():
         """
         search_query = search_query.lower()
         for punctuation in string.punctuation:
-           search_query = search_query.replace(punctuation," ",search_query)
+           search_query = search_query.replace(punctuation," ")
         return search_query
 
     @staticmethod
