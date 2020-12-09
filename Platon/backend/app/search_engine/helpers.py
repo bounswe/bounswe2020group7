@@ -1,6 +1,14 @@
 import requests
 import string
 import json
+from enum import IntEnum
+
+from app.search_engine.models import SearchHistoryItem
+
+class SearchType(IntEnum):
+    USER = 0
+    WORKSPACE = 1
+    UPCOMING_EVENT = 2
 
 class SearchEngine():
 
@@ -91,3 +99,17 @@ class SearchEngine():
     @staticmethod
     def sort_ids(related_id_score_list):
         return sorted(related_id_score_list, key=lambda tup: tup[1])
+
+    @staticmethod
+    def add_search_history_item(user_id,query,search_type):
+        """
+            Adds new search history item record to the database
+            Returns True if it is added, False if there is any problem
+        """
+        new_search_item = SearchHistoryItem(user_id,query,search_type)
+        try:
+            db.session.add(new_search_item)
+            db.session.commit()
+            return True
+        except:
+            return False

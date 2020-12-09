@@ -3,9 +3,10 @@ from flask_restplus import Resource,Namespace, fields
 from sqlalchemy import func
 
 from app.search_engine.forms import UserSearchForm, user_search_parser
-from app.search_engine.helpers import SearchEngine
+from app.search_engine.helpers import SearchEngine, SearchType
 from app.profile_management.models import Jobs,Skills,UserSkills
 from app.auth_system.models import User
+from app.auth_system.helpers import decode_token
 
 from app import api, db
 import math
@@ -135,6 +136,12 @@ class UserSearchAPI(Resource):
                 number_of_pages = math.ceil(len(sorted_id_list)/per_page)
                 page = form.page.data if form.page.data < number_of_pages else number_of_pages-1
                 sorted_result_list = sorted_result_list[page*per_page:(page+1)*per_page]
+            # Add Search History Item
+            try:
+                auth_token = request.headers.get('auth_token')
+                SearchEngine.add_search_history_item(decode_token(auth_token),query,SearchType.USER)
+            except:
+                pass
             return make_response(jsonify({"number_of_pages": number_of_pages,"result_list": sorted_result_list}))
         return make_response(jsonify({"error": "Missing data fields or invalid data."}), 400)
 
