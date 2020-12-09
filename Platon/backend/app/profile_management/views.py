@@ -18,6 +18,7 @@ from app.profile_management.models import ResearchInformation,Notification,Notif
 from app.profile_management.helpers import schedule_regularly,ResearchType
 
 from app import api, db
+import math
 
 profile_management_ns = Namespace("Profile Management",
                                   description="Profile Management Endpoints",
@@ -82,7 +83,7 @@ class ResearchInformationAPI(Resource):
             number_of_pages = 1
             if form.page.data is not None and form.per_page.data is not None:
                 per_page = form.per_page.data
-                number_of_pages = (len(research_list) / per_page) + 1
+                number_of_pages = math.ceil(len(research_list) / per_page)
                 # Assign the page index to the maximum if it exceeds the max index
                 page = form.page.data if form.page.data < number_of_pages else number_of_pages-1
                 research_list = research_list[page*per_page:(page+1)*per_page]
@@ -353,7 +354,7 @@ class NotificationAPI(Resource):
         form = NotificationGetForm(request.args)
         if form.page.data is not None and form.per_page.data is not None:
             per_page = form.per_page.data
-            number_of_pages = (len(notification_list) / per_page) + 1
+            number_of_pages = math.ceil(len(notification_list) / per_page)
             # Assign the page index to the maximum if it exceeds the max index
             page = form.page.data if form.page.data < number_of_pages else number_of_pages-1
             notification_list = notification_list[page*per_page:(page+1)*per_page]
