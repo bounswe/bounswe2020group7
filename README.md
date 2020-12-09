@@ -4,7 +4,7 @@
 
 This project repository was prepared by the 7th group for CMPE 352/451 course.
 
-To see our first application click [here](http://platonapi-env.eba-uiumcp2a.eu-central-1.elasticbeanstalk.com/).
+To see our first application click [here](http://3.120.98.39:80/).
 
 You can find more information on the [Wiki page](https://github.com/bounswe/bounswe2020group7/wiki) of our repository.
 
