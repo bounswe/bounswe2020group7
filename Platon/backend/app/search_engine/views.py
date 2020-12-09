@@ -26,7 +26,7 @@ search_user_model = api.model('User Data', {
 
 search_user_list_model = api.model('User List(Search)', {
     'number_of_pages': fields.Integer,
-    'notification_list': fields.List(
+    'result_list': fields.List(
         fields.Nested(search_user_model)
     )
 })
@@ -56,10 +56,10 @@ class UserSearchAPI(Resource):
             result_id_score = []
             # Search tokens in Jobs Table
             for token,score in tokens:
-                #try:
-                related_job = Jobs.query.filter(func.lower(Jobs.name) == token).first()
-                #except: 
-                    #return make_response(jsonify({"error": "Database Connection Problem."}), 500)
+                try:
+                    related_job = Jobs.query.filter(func.lower(Jobs.name) == token).first()
+                except: 
+                    return make_response(jsonify({"error": "Database Connection Problem."}), 500)
                 if related_job is not None:
                     try:
                         owner_list = User.query.filter(User.job_id == related_job.id).all()
@@ -80,7 +80,7 @@ class UserSearchAPI(Resource):
                     related_skill = Skills.query.filter(func.lower(Skills.name) == token).first()
                 except: 
                     return make_response(jsonify({"error": "Database Connection Problem."}), 500)
-                if related_job is not None:
+                if related_skill is not None:
                     try:
                         owner_id_list = UserSkills.query.filter(UserSkills.skill_id == related_skill.id).all()
                     except: 
