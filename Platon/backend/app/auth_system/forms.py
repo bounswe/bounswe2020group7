@@ -81,7 +81,7 @@ update_user_parser.add_argument("is_private", required=False, type=inputs.boolea
 update_user_parser.add_argument("profile_photo", required=False, type=str, help="URL of the profile picture of the user", location="form")
 update_user_parser.add_argument("google_scholar_name", required=False, type=str, help="URL of the Google Scholar page of the user", location="form")
 update_user_parser.add_argument("researchgate_name", required=False, type=str, help="URL of the ResearchGate page of the user", location="form")
-create_user_parser.add_argument("institution", required=False, type=str, help="Institution of the user", location="form")
+update_user_parser.add_argument("institution", required=False, type=str, help="Institution of the user", location="form")
 update_user_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
 
 
