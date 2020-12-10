@@ -20,13 +20,13 @@ jobs:
       install:
         - npm cache clean --force
         - npm install
-        - npm run build
+        - CI=false npm run build
     
     - stage: deploy
       if: branch = release AND type != pull_request
       language: python
       addons:
-        ssh_known_hosts: 3.127.150.96
+        ssh_known_hosts: 18.185.75.161
       python:
         - 3.6
       before_script:
@@ -34,7 +34,7 @@ jobs:
         - eval "$(ssh-agent -s)"
         - chmod 600 /tmp/deploy_rsa
         - ssh-add /tmp/deploy_rsa
-      script: ssh deploy-user@3.127.150.96 'bash ~/deploy.sh'
+      script: ssh deploy-user@18.185.75.161 'bash ~/deploy.sh'
       
 notifications:
   email: false

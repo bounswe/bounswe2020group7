@@ -25,6 +25,9 @@ import Avatar from '@material-ui/core/Avatar';
 import colors from "../../utils/colors";
 import config from "../../utils/config";
 import axios from 'axios'
+import Spinner from '../Spinner/Spinner'
+import EditResearchDialog from './EditResearchDialog/EditResearchDialog'
+
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -79,12 +82,19 @@ class ProfilePage extends React.Component {
       value: 0,
       job: "",
       renderTrigger: false,
+      isLoading: true,
+
+
     };
   }
   componentDidMount() {
     const token = localStorage.getItem("jwtToken");
     const decoded = jwt_decode(token);
-    requestService.followings(decoded.id).then((response) => {
+    const profileId = this.props.match.params.profileId
+    Promise.all([
+    requestService.followings(profileId).then((response) => {
+
+
       this.setState({
         followings: response.data.followings,
       });
@@ -95,25 +105,58 @@ class ProfilePage extends React.Component {
       this.setState({
         followings_id_arr: temp_followings_id_arr
       })
-    });
-    requestService.followers(decoded.id).then((response) => {
+    }),
+    requestService.followers(profileId).then((response) => {
+
+
       this.setState({
         followers: response.data.followers,
         selectedFollowButton: Array(response.data.followers.length).fill("Follow"),
       });
 
-    });
-    requestService.getUser(decoded.id).then((response) => {
+    }),
+    requestService.getUser(profileId).then((response) => {
       this.setState({
         user: response.data,
       });
-    });
-    requestService.getResearchs(decoded.id).then((response) => {
+    }),
+    requestService.getResearchs(profileId).then((response) => {
       this.setState({
         researchs: response.data.research_info,
       });
+    }),
+  ]).then(() => this.setState({isLoading: false}));
+
+
+  }
+
+
+
+  handleDeleteResearchInformation = (id) => {
+    console.log("id", id)
+    const token = localStorage.getItem("jwtToken");
+    const decoded = jwt_decode(token);
+    let formData = new FormData();
+    const url = config.BASE_URL
+
+    formData.append("research_id", id);
+    axios.delete(url + "/api/profile/research_information", {
+      headers: {
+        'auth_token': token, //the token is a variable which holds the token
+      },
+      data: formData,
+    })
+    .then((response) => {
+      if (response.status === 200) {
+        document.location.reload()
+      }
+
+    })
+    .catch((err) => {
+      console.log(err);
     });
   }
+
   handlerFollow = (index, following_id) =>{
     /*
     let prevState = this.state.selectedFollowButton
@@ -137,13 +180,13 @@ class ProfilePage extends React.Component {
     const url = config.BASE_URL
 
     if(followButtonState==="Follow"){
-    axios.post(url + "/api/follow/follow_requests", formData, {
+    axios.post(url + "/api/follow/follow_requests", {
         headers: {
           'auth_token': token, //the token is a variable which holds the token
         },
+        formData,
       })
       .then((response) => {
-        console.log(response)
         if (response.status === 200) {
 
           let temp_followings_id_arr = [following_id, ...this.state.followings_id_arr]
@@ -168,23 +211,26 @@ class ProfilePage extends React.Component {
   };
 
   render() {
-
     const { classes } = this.props;
     return (
-      <div className="Landing">
+      <div className="ProfilePageLanding">
         <div className="AppBar">
           <NavBar />
         </div>
+        { this.state.isLoading ? <div className="ProfilePageSpinner"><Spinner/></div> :
+        <div>
+
 
         <Container className="ProfilePageContainer">
-          <h2 className="GeneralLargeFont">My Profile</h2>
+          <h2 className="GeneralLargeFont">Profile</h2>
           <hr className="ProfilePageLine" />
 
           <Row>
             <Col sm={2}>
               <img
                 className="ProfilePhoto"
-                src={"https://image.flaticon.com/icons/svg/2317/2317981.svg"}
+                src={this.state.user.profile_photo ? this.state.user.profile_photo : "https://picsum.photos/500/500"}
+
                 alt="UserImage"
               />
             </Col>
@@ -209,7 +255,9 @@ class ProfilePage extends React.Component {
                   </p>
                 </Col>
               </Row>
-              <Link to = 'editProfile'>
+              <Link to = {`/${this.props.match.params.profileId}/edit`}>
+
+
               <Button
                 className="ProfileFollowButton"
                 variant="primary"
@@ -226,6 +274,7 @@ class ProfilePage extends React.Component {
                   readOnly
                   size="large"
                 />
+
               </Row>
             </Col>
           </Row>
@@ -239,12 +288,19 @@ class ProfilePage extends React.Component {
                 onChange={this.handleChange}
                 aria-label="simple tabs example"
               >
-                <Tab label="My Projects" {...a11yProps(0)} />
-                <Tab label="Followers" {...a11yProps(1)} />
-                <Tab label="Following" {...a11yProps(2)} />
+                <Tab label="Workspaces" {...a11yProps(0)} />
+                <Tab label="Researchs" {...a11yProps(1)} />
+                <Tab label="Followers" {...a11yProps(2)} />
+                <Tab label="Following" {...a11yProps(3)} />
               </Tabs>
             </AppBar>
             <TabPanel value={this.state.value} index={0}>
+              <Row>
+              <Col>
+              </Col>
+              </Row>
+            </TabPanel>
+            <TabPanel value={this.state.value} index={1}>
               <Row>
 
                 {this.state.researchs.map((value, index) => {
@@ -252,16 +308,25 @@ class ProfilePage extends React.Component {
                 <Col>
                 <Card className="ProfileProjectsCard">
                   <Card.Body>
-                    <Card.Title>{value.title}</Card.Title>
-                    <Card.Text>Year: {value.year}</Card.Text>
+                  <Card.Title  style={{color: colors.primaryDark}}>Title</Card.Title>
+                    <Card.Text style={{color: colors.primaryLight}}>{value.title}</Card.Text>
+                    <Card.Title style={{color: colors.primaryDark}}>Description</Card.Title>
+
+                    <Card.Text style={{color: colors.primaryLight}}>{value.description === "" ? "No description is provided." : value.description}</Card.Text>
+                    <Card.Title style={{color: colors.primaryDark}}>Year</Card.Title>
+
+                    <Card.Text style={{color: colors.primary}}>{value.year}</Card.Text>
                   </Card.Body>
+                  <EditResearchDialog type="EDIT" dialogTitle="Edit Research"  id={value.id} title={value.title} description={value.description} year={value.year}/>
+                  <Button onClick = {() => this.handleDeleteResearchInformation(value.id)} style={{backgroundColor: colors.quinary}}>Delete</Button>
                 </Card>
               </Col>)
                 })}
 
               </Row>
+              <EditResearchDialog type="NEW" dialogTitle="Add New Research" id={""} title={""} description={""} year={""}/>
             </TabPanel>
-            <TabPanel value={this.state.value} index={1}>
+            <TabPanel value={this.state.value} index={2}>
             <List>
 
               {this.state.followers.map((value, index) => {
@@ -288,7 +353,7 @@ class ProfilePage extends React.Component {
             )})}
             </List>
             </TabPanel>
-            <TabPanel value={this.state.value} index={2}>
+            <TabPanel value={this.state.value} index={3}>
             <List>
               {this.state.followings.map((value, index) => {
                 return(
@@ -306,7 +371,9 @@ class ProfilePage extends React.Component {
                   {
                   <ListItemSecondaryAction>
 
-                      <Button  id={"FollowButtonInFollowings" + index} key={index}>Follow</Button>
+                      <Button  id={"FollowButtonInFollowings" + index} key={index}>Unfollow</Button>
+
+
                       <Button style={{backgroundColor: "#F44336"}}>Report</Button>
 
                   </ListItemSecondaryAction>}
@@ -316,6 +383,9 @@ class ProfilePage extends React.Component {
             </TabPanel>
           </div>
         </Container>
+        </div>
+  }
+
       </div>
     );
   }

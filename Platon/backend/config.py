@@ -1,19 +1,19 @@
 import datetime
 # In the production please make False both DEVELOPMENT and DEBUG flags
 DEBUG = False
-DEVELOPMENT = True
+DEVELOPMENT = False
 
 # Define the application directory
 import os
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
-FRONTEND_HOSTNAME = "http://ec2-3-127-150-96.eu-central-1.compute.amazonaws.com"
+FRONTEND_HOSTNAME = "http://ec2-3-120-98-39.eu-central-1.compute.amazonaws.com/"
 
 if DEVELOPMENT and DEBUG:
     # Define the database - we are working with
     mysql_user = "root"
     mysql_password = "rootpassword"
-    mysql_host = "3.127.150.96"
+    mysql_host = "18.185.75.161"
     mysql_port = "3306"
     mysql_database = "platondb"
 elif DEVELOPMENT:
@@ -30,6 +30,7 @@ else:
     mysql_host = os.getenv('MYSQL_HOST')
     mysql_port = os.getenv('MYSQL_PORT')
     mysql_database = os.getenv('MYSQL_DATABASE')
+
 
 SQLALCHEMY_DATABASE_URI = "mysql+pymysql://{}:{}@{}:{}/{}".format(mysql_user, mysql_password, mysql_host, mysql_port, mysql_database)
 SQLALCHEMY_TRACK_MODIFICATIONS = False

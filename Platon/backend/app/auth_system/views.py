@@ -164,7 +164,7 @@ class GetSelfAPI(Resource):
                                         "e_mail": logged_in_user.e_mail,
                                         "google_scholar_name": logged_in_user.google_scholar_name,
                                         "researchgate_name": logged_in_user.researchgate_name,
-                                        "position": user_position.name,
+                                        "job": user_job.name,
                                         "institution": logged_in_user.institution
                                         }
                 return make_response(jsonify(account_information), 200)
@@ -203,7 +203,7 @@ class UserAPI(Resource):
             # If it fails, an error is raised.
             try:
                 existing_user = User.query.filter_by(id=form.user_id.data).first()
-                user_position = Jobs.query.filter(Jobs.id == existing_user.job_id).first()
+                user_job = Jobs.query.filter(Jobs.id == existing_user.job_id).first()
             except:
                 return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
             else:
@@ -232,7 +232,7 @@ class UserAPI(Resource):
                                         "profile_photo": existing_user.profile_photo,
                                         "google_scholar_name": existing_user.google_scholar_name,
                                         "researchgate_name": existing_user.researchgate_name,
-                                        "position": user_position.name,
+                                        "job": user_job.name,
                                         "institution": existing_user.institution
                                         }
                     return make_response(jsonify(account_information), 200)
@@ -275,11 +275,11 @@ class UserAPI(Resource):
                         # Checks whether the inputted job already exists in the database,
                         # If not, adds the job to the database.
                         # If yes, gets the ID of the job and writes it to the new user's "job_id" field.
-                        position_name = form.position.data.title()
-                        new_user_position = Jobs.query.filter_by(name=position_name).first()
-                        if new_user_position is None:
-                            new_user_position = Jobs(name=position_name)
-                            db.session.add(new_user_position)
+                        job_name = form.job.data.title()
+                        new_user_job = Jobs.query.filter_by(name=job_name).first()
+                        if new_user_job is None:
+                            new_user_job = Jobs(name=job_name)
+                            db.session.add(new_user_job)
                             db.session.commit()
 
                         new_user = User(is_valid=False,
@@ -292,7 +292,7 @@ class UserAPI(Resource):
                                         profile_photo=form.profile_photo.data,
                                         google_scholar_name=form.google_scholar_name.data,
                                         researchgate_name=form.researchgate_name.data,
-                                        job_id=new_user_position.id,
+                                        job_id=new_user_job.id,
                                         institution=form.institution.data
                                         )
                         db.session.add(new_user)
@@ -346,63 +346,61 @@ class UserAPI(Resource):
         # If yes, starts processing the data.
         # If not, an error is raised.
         if form.validate():
-            # Checks whether there is any field data sent.
-            # If not, returns the message accordingly.
-            # If yes, starts acting upon the request.
-            if not any(form.data.values()):
-                return make_response(jsonify({"message" : "Server has received the request but there was no information to be updated."}), 202)
+            # Tries to connect to the database.
+            # If it fails, an error is raised.
+            try:
+                existing_user = User.query.filter_by(id=requester_id)
+            except:
+                return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
             else:
-                # Tries to connect to the database.
-                # If it fails, an error is raised.
-                try:
-                    existing_user = User.query.filter_by(id=requester_id)
-                except:
-                    return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
-                else:
-                    # Checks whether there is an existing user in the database with the given user ID.
-                    # If yes, starts processing the data.
-                    # If not, an error is raised.
-                    if existing_user is not None:
-                        # Tries to update account information of the user.
-                        # If it fails, an error is raised.
-                        try:
-                            # Gets the inputted parameters from the form data.
-                            new_attributes = {}
-                            for key, value in form.data.items():
-                                if value:
-                                    new_attributes[key] = value
+                # Checks whether there is an existing user in the database with the given user ID.
+                # If yes, starts processing the data.
+                # If not, an error is raised.
+                if existing_user is not None:
+                    # Tries to update account information of the user.
+                    # If it fails, an error is raised.
+                    try:
+                        # Gets the inputted parameters from the form data.
+                        new_attributes = {}
+                        for key, value in form.data.items():
+                            if value or (value == 0):
+                                new_attributes[key] = value
 
-                            # Checks whether the form data contains "job" data.
-                            if new_attributes.get("job", None):
-                                # Checks whether the inputted job already exists in the database,
-                                # If not, adds the job to the database.
-                                # If yes, gets the ID of the job and writes it to the new user's "job_id" field.
-                                job_name = new_attributes["job"].title()
-                                new_user_job = Jobs.query.filter_by(name=job_name).first()
-                                if new_user_job is None:
-                                    new_user_job = Jobs(name=job_name)
-                                    db.session.add(new_user_job)
-                                    db.session.commit()
-                                # Replaces the "job" in the form data with its ID.
-                                del new_attributes["job"]
-                                new_attributes["job_id"] = new_user_job.id
+                        # Checks whether the form data contains "job" data.
+                        if new_attributes.get("job", None):
+                            # Checks whether the inputted job already exists in the database,
+                            # If not, adds the job to the database.
+                            # If yes, gets the ID of the job and writes it to the new user's "job_id" field.
+                            job_name = new_attributes["job"].title()
+                            new_user_job = Jobs.query.filter_by(name=job_name).first()
+                            if new_user_job is None:
+                                new_user_job = Jobs(name=job_name)
+                                db.session.add(new_user_job)
+                                db.session.commit()
+                            # Replaces the "job" in the form data with its ID.
+                            new_attributes["job_id"] = new_user_job.id
+                            del new_attributes["job"]
+
+                        if new_attributes:
                             # Updates the attributes of the user in the database.
                             existing_user.update(new_attributes)
                             db.session.commit()
-                        except Exception as e:
-                            return make_response(jsonify({"error" : str(e)}), 500)
-                        
-                        # Tries to update the research information of the newly updated user.
-                        # If it fails, it does not raise an error.
-                        # -as research information is scheduled to be fetched everyday.-
-                        try:
-                            ResearchInfoFetch.update_research_info(existing_user.first().id)
-                        except:
-                            pass
-                           
-                        return make_response(jsonify({"message" : "Account information has been successfully updated."}), 200)
-                    else:
-                        return make_response(jsonify({"error" : "The user is not found."}), 404)
+                        else:
+                            return make_response(jsonify({"message" : "Server has received the request but there was no information to be updated."}), 202)    
+                    except:
+                        return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+                    
+                    # Tries to update the research information of the newly updated user.
+                    # If it fails, it does not raise an error.
+                    # -as research information is scheduled to be fetched everyday.-
+                    try:
+                        ResearchInfoFetch.update_research_info(existing_user.first().id)
+                    except:
+                        pass
+                       
+                    return make_response(jsonify({"message" : "Account information has been successfully updated."}), 200)
+                else:
+                    return make_response(jsonify({"error" : "The user is not found."}), 404)
         else:
             return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
 

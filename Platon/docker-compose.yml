@@ -59,16 +59,16 @@ services:
     ports:
       - "5000:5000"
 
-  frontend:
-    build: 
-      context: .
-      dockerfile: ./frontend/Dockerfile
-    depends_on:
-      - backend
-    restart: on-failure
-    networks:
-      default:
-        aliases:
-          - frontend
-    ports:
-      - "80:3000"
+  # frontend:
+  #   build: 
+  #     context: .
+  #     dockerfile: ./frontend/Dockerfile
+  #   #depends_on:
+  #   #  - backend
+  #   restart: on-failure
+  #   networks:
+  #     default:
+  #       aliases:
+  #         - frontend
+  #   ports:
+  #     - "80:3000"
