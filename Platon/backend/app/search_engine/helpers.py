@@ -27,7 +27,7 @@ class SearchEngine():
         Semantic score of an exact match in search operation
     
     num_of_semantically_related: int
-        Number of words that search engine uses in semantice search for each token
+        Number of words that search engine uses in semantic search for each token
 
     sorting_criteria_list: list
         a list of sorting criteria that can be used in the search functionality
@@ -43,7 +43,7 @@ class SearchEngine():
             where 'search_tokens': List of tokens that are given in a search string
             where 'max_num_of_related': Number of words that will be chosen for a token
 
-            returns a list of tuples which contails (word,semantic relation point)
+            returns a list of tuples which contains (word,semantic relation point)
 
             This functions takes a list of tokens and creates the list of semanticly related words for the list of tokens
 
@@ -52,7 +52,7 @@ class SearchEngine():
         url = "https://api.datamuse.com/words"
         try:
             for token in search_tokens:
-                querystring = {"ml":token}
+                querystring = {"ml":token, "max": max_num_of_related}
                 response = requests.request("GET", url, params=querystring)
                 resp = json.loads(response.text)
                 result_list += [(related["word"],related["score"]) for related in resp[:max_num_of_related]]
@@ -85,7 +85,7 @@ class SearchEngine():
             return set([res["word"].lower() for res in resp]) - set(SearchEngine.wrong_stopwords)
         except:
             # If there is an error in the request return a None object
-            return None
+            return []
     
     @staticmethod
     def remove_punctuation(search_query):
