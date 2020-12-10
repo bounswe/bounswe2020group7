@@ -1,5 +1,6 @@
 package com.cmpe451.platon.page.fragment.otherprofile
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -39,6 +40,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
     private lateinit var details: ArrayList<MutableMap<String,String>>
     private var userId :Int? = null
     private val args: OtherProfileFragmentArgs by navArgs()
+    private lateinit var dialog:AlertDialog
 
     private val mProfilePageViewModel: ProfilePageViewModel by activityViewModels()
     private val mOtherProfileViewModel: OtherProfileViewModel by viewModels()
@@ -74,12 +76,15 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
         informationsAdapter = ProfilePageAdapter(ArrayList())
         informationsRecyclerView.adapter = informationsAdapter
         informationsRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+
+        dialog = Definitions().createProgressBar(requireContext())
     }
 
     private fun setObservers() {
         mOtherProfileViewModel.getUserResource.observe(viewLifecycleOwner,Observer{ i->
             when(i.javaClass){
                 Resource.Success::class.java -> {
+                    dialog.dismiss()
                     val user = i.data!!
                     binding.textNameSurname.text = user.name + " " + user.surname
                     Glide.with(this)
@@ -90,7 +95,11 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                     setView(mOtherProfileViewModel.isFollowing.value!!, mOtherProfileViewModel.isUserPrivate.value!!)
                     setListeners(mOtherProfileViewModel.isFollowing.value!!, mOtherProfileViewModel.isUserPrivate.value!!)
                 }
-                Resource.Error::class.java->Toast.makeText(activity, i.message, Toast.LENGTH_SHORT).show()
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Error::class.java-> {
+                    dialog.dismiss()
+                    Toast.makeText(activity, i.message, Toast.LENGTH_SHORT).show()
+                }
             }
         })
 
@@ -106,8 +115,13 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                 Resource.Success::class.java -> {
                     val researches = i.data!!.research_info
                     userProjectsAdapter.submitElements(researches)
+                    dialog.dismiss()
                 }
-                Resource.Error::class.java->Toast.makeText(activity, i.message, Toast.LENGTH_SHORT).show()
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Error::class.java->{
+                    Toast.makeText(activity, i.message, Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
             }
         })
 
@@ -120,8 +134,26 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                     else {
                         mOtherProfileViewModel.setIsFollowing(USERSTATUS.FOLLOWING)
                     }
+                    dialog.dismiss()
                 }
-                Resource.Error::class.java->Toast.makeText(activity, i.message, Toast.LENGTH_SHORT).show()
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Error::class.java->{
+                    Toast.makeText(activity, i.message, Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
+            }
+        })
+        mOtherProfileViewModel.getUnfollowResourceResponse.observe(viewLifecycleOwner, Observer {
+            when(it.javaClass){
+                Resource.Success::class.java -> {
+                    mOtherProfileViewModel.setIsFollowing(USERSTATUS.NOT_FOLLOWING)
+                    dialog.dismiss()
+                }
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Error::class.java->{
+                    Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
             }
         })
     }
@@ -193,7 +225,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                 )
             }
             binding.buttonFollow.setOnClickListener {
-                mOtherProfileViewModel.setIsFollowing(USERSTATUS.NOT_FOLLOWING)
+                mOtherProfileViewModel.unfollow(mOtherProfileViewModel.getUserResource.value!!.data?.id!!, (activity as HomeActivity).token!!)
             }
 
         }

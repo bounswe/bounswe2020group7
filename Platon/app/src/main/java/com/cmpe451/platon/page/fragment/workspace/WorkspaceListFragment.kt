@@ -14,6 +14,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.WorkspaceListAdapter
+import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentWorkspaceListBinding
 import com.cmpe451.platon.databinding.WorkspaceCellBinding
 import com.cmpe451.platon.network.Resource
@@ -79,7 +80,14 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
     }
 
     override fun onWorkspaceListButtonClicked(binding: WorkspaceCellBinding, position: Int) {
-        TODO("Not yet implemented")
+        if (binding.descWorkspaceTv.visibility == View.GONE){
+            binding.descWorkspaceTv.visibility = View.VISIBLE
+        }else{
+            binding.descWorkspaceTv.visibility = View.GONE
+        }
+
+        binding.descWorkspaceTv.refreshDrawableState()
+        Definitions().vibrate(50, activity as BaseActivity)
     }
 
     override fun onWorkspaceListEditClicked(position: Int) {

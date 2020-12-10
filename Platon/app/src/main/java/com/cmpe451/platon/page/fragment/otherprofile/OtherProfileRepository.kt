@@ -16,13 +16,15 @@ import retrofit2.Response
 
 class OtherProfileRepository() {
 
-    val userResource: MutableLiveData<Resource<OtherUser>> = MutableLiveData(Resource.Loading())
-    val researchesResource:MutableLiveData<Resource<Researches>> = MutableLiveData(Resource.Loading())
-    var followResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData(Resource.Loading())
+    val userResource: MutableLiveData<Resource<OtherUser>> = MutableLiveData()
+    val researchesResource:MutableLiveData<Resource<Researches>> = MutableLiveData()
+    var followResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
+    var unFollowResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
 
     fun getUser(userId:Int, token:String) {
         val service = RetrofitClient.getService()
         val call = service.getOtherUserInfo(userId, token)
+        userResource.value = Resource.Loading()
         call.enqueue(object : Callback<OtherUser?> {
             override fun onResponse(call: Call<OtherUser?>, response: Response<OtherUser?>) {
                 when{
@@ -40,6 +42,7 @@ class OtherProfileRepository() {
     }
 
     fun getResearch(token: String, userId: Int) {
+        researchesResource.value = Resource.Loading()
         val service = RetrofitClient.getService()
         val call = service.getResearches(userId, token)
 
@@ -59,6 +62,7 @@ class OtherProfileRepository() {
     }
 
     fun follow(followerId: Int, followingId: Int, authToken: String) {
+        followResourceResponse.value = Resource.Loading()
         val service = RetrofitClient.getService()
         val call = service.follow(followerId, followingId, authToken)
 
@@ -68,6 +72,27 @@ class OtherProfileRepository() {
                     response.isSuccessful && response.body() != null -> followResourceResponse.value = Resource.Success(response.body()!!)
                     response.errorBody() != null -> followResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
                     else -> followResourceResponse.value = Resource.Error("Unknown error!")
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+
+    fun unfollow(followingId: Int, token: String) {
+        val service = RetrofitClient.getService()
+        val call = service.unfollow(followingId, token)
+        unFollowResourceResponse.value = Resource.Loading()
+
+        call.enqueue(object: Callback<JsonObject?>{
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when {
+                    response.isSuccessful && response.body() != null -> unFollowResourceResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> unFollowResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> unFollowResourceResponse.value = Resource.Error("Unknown error!")
                 }
             }
 

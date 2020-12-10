@@ -103,4 +103,9 @@ interface Webservice {
                              @Field("state") state:Int,
                              @Header("auth_token") auth_token :String) : Call<JsonObject?>
 
+
+    @HTTP(method = "DELETE", path = "api/follow/following",hasBody = true)
+    fun unfollow(@Query("following_id") follower_id:Int,
+                 @Header("auth_token") auth_token :String) : Call<JsonObject?>
+
 }

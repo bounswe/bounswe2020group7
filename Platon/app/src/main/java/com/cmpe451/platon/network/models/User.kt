@@ -23,6 +23,8 @@ data class OtherUser(
         val researchgate_name:String?,
         val google_scholar_name: String?,
         val rate:Double?,
+        val following_status:Int,
+        val institution:String,
         val profile_photo:String?,
         val is_private:Boolean
 )
