@@ -83,7 +83,7 @@ const useStyles = makeStyles((theme) => ({
 
 function handleLogout(){
   authService.logout();
-  window.location.reload();
+  document.location.href="/";
 }
 
 export default function NavBar() {

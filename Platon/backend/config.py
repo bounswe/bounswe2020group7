@@ -1,7 +1,7 @@
 import datetime
 # In the production please make False both DEVELOPMENT and DEBUG flags
-DEBUG = True
-DEVELOPMENT = True
+DEBUG = False
+DEVELOPMENT = False
 
 # Define the application directory
 import os
@@ -30,6 +30,7 @@ else:
     mysql_host = os.getenv('MYSQL_HOST')
     mysql_port = os.getenv('MYSQL_PORT')
     mysql_database = os.getenv('MYSQL_DATABASE')
+
 
 SQLALCHEMY_DATABASE_URI = "mysql+pymysql://{}:{}@{}:{}/{}".format(mysql_user, mysql_password, mysql_host, mysql_port, mysql_database)
 SQLALCHEMY_TRACK_MODIFICATIONS = False

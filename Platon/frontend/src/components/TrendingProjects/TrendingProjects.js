@@ -17,7 +17,8 @@ const TrendingProjects = () => {
           console.error("Error:", error);
         });
     },
-  [trendingProjectsList ]
+  []
+
   );
   return (
     <div>
