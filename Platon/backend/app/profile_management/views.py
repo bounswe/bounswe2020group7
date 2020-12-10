@@ -166,7 +166,7 @@ class ResearchInformationAPI(Resource):
 
             jobsList = []
             for job in jobs:
-                jobsList.append(job.name)
+                jobsList.append({"name": job.name, "id": job.id})
 
             return make_response(jsonify(jobsList), 200)
 
