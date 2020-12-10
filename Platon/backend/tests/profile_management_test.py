@@ -442,9 +442,7 @@ class NotificationTests(BaseTest):
         for user in users:
             db.session.add(user)
         db.session.commit()
-        for user in users:
-            db.session.add(user)
-        db.session.commit()
+
         notifications = [
             Notification(1,"Can created a new workspace",None),
             Notification(2,"Umut deletes a workspace","/workspace/1")
