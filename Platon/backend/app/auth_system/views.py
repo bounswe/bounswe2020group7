@@ -363,7 +363,7 @@ class UserAPI(Resource):
                         # Gets the inputted parameters from the form data.
                         new_attributes = {}
                         for key, value in form.data.items():
-                            if value is not (None and ""):
+                            if value or (value is 0):
                                 new_attributes[key] = value
 
                         # Checks whether the form data contains "job" data.
@@ -379,12 +379,12 @@ class UserAPI(Resource):
                                 db.session.commit()
                             # Replaces the "job" in the form data with its ID.
                             new_attributes["job_id"] = new_user_job.id
-                        del new_attributes["job"]
+                            del new_attributes["job"]
 
                         # Updates the attributes of the user in the database.
                         existing_user.update(new_attributes)
                         db.session.commit()
-                    except:
+                    except Exception as e:
                         return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
                     
                     # Tries to update the research information of the newly updated user.
