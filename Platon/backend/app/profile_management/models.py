@@ -39,8 +39,7 @@ class Skills(db.Model):
     id = db.Column(db.Integer,primary_key=True,autoincrement=True)
     name = db.Column(db.String(50),nullable=False,unique=True)
 
-    def __init__(self, id, name):
-        self.id = id
+    def __init__(self, name):
         self.name = name
 
 class UserSkills(db.Model):

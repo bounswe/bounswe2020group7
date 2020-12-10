@@ -37,11 +37,13 @@ def create_app(config_class='config'):
     from app.auth_system.views import register_resources as auth_module
     from app.follow_system.views import register_resources as follow_module
     from app.profile_management.views import register_resources as profile_module
+    from app.search_engine.views import register_resources as search_engine
 
     # Register blueprint(s)
     auth_module(api)
     follow_module(api)
     profile_module(api)
+    search_engine(api)
 
     with app.app_context():
         # This will create the database file using SQLAlchemy

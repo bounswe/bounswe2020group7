@@ -31,7 +31,6 @@ else:
     mysql_port = os.getenv('MYSQL_PORT')
     mysql_database = os.getenv('MYSQL_DATABASE')
 
-
 SQLALCHEMY_DATABASE_URI = "mysql+pymysql://{}:{}@{}:{}/{}".format(mysql_user, mysql_password, mysql_host, mysql_port, mysql_database)
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
