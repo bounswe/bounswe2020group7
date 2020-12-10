@@ -4,9 +4,13 @@ from flask_restplus import reqparse
 
 class ResearchInfoGetForm(Form):
     user_id = IntegerField("user_id",validators=[validators.DataRequired()])
+    page = IntegerField("page")
+    per_page = IntegerField("per_page")
 
 research_info_get_parser = reqparse.RequestParser()
 research_info_get_parser.add_argument('user_id',required=True,type=int,help="User id of requested user",location='args')
+research_info_get_parser.add_argument('page',type=int,help="Page index that you want(Starts from 0)",location='args')
+research_info_get_parser.add_argument('per_page',type=int,help="Number of items in a page",location='args')
 research_info_get_parser.add_argument('auth_token',required=True, type=str,help="Token that sent via email as a URL link",location='headers')
 
 class ResearchInfoPostForm(Form):
@@ -87,7 +91,13 @@ skills_delete_parser = reqparse.RequestParser()
 skills_delete_parser.add_argument('id',required=True,type=int,help='Skill ID',location='form')
 skills_delete_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
 
+class NotificationGetForm(Form):
+    page = IntegerField("page")
+    per_page = IntegerField("per_page")
+
 notification_get_parser = reqparse.RequestParser()
+notification_get_parser.add_argument('page',type=int,help="Page index that you want(Starts from 0)",location='args')
+notification_get_parser.add_argument('per_page',type=int,help="Number of items in a page",location='args')
 notification_get_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
 
 class NotificationDeleteForm(Form):
