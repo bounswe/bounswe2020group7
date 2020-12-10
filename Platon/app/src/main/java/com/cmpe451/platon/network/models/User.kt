@@ -7,6 +7,7 @@ data class User (
         val name: String,
         val surname: String,
         val job: String,
+        val institution: String?,
         val researchgate_name:String?,
         val google_scholar_name: String?,
         val rate:Double=-1.0,
