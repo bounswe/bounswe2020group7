@@ -10,6 +10,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -62,14 +63,14 @@ class FollowFragment:Fragment() {
     }
 
     private fun setObservers(){
-        mFollowViewModel.getFollowingResource.observe(viewLifecycleOwner, { t->
+        mFollowViewModel.getFollowingResource.observe(viewLifecycleOwner, Observer{ t->
             when(t.javaClass){
                 Resource.Success::class.java -> adapter.submitList(t.data?.followings as ArrayList<FollowPerson>)
                 Resource.Error::class.java -> Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
             }
         })
 
-        mFollowViewModel.getFollowersResource.observe(viewLifecycleOwner, { t->
+        mFollowViewModel.getFollowersResource.observe(viewLifecycleOwner, Observer{ t->
             when(t.javaClass){
                 Resource.Success::class.java -> adapter.submitList(t.data?.followers as ArrayList<FollowPerson>)
                 Resource.Error::class.java -> Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()

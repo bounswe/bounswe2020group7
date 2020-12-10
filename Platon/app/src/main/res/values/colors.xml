@@ -18,6 +18,7 @@
     <color name="secondary_green_transparent">#AAb0db06</color>
     <color name="secondary_orange_transparent">#AAff8b33</color>
     <color name="secondary_purple_transparent">#AA8f9dd3</color>
+    <color name="secondary_blue_transparent">#AAb5d8cc</color>
 
     <color name="primary_light">#e0dfd5</color>
     <color name="secondary_purple">#8f9dd3</color>

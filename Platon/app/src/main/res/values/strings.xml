@@ -88,4 +88,6 @@
     <string name="personal_str">Personal</string>
     <string name="see_notifications_for_str">See notifications for:</string>
     <string name="search_among_str">Search among:</string>
+    <string name="workspace_state_str">State</string>
+    <string name="workspace_title_str">Workspace Title</string>
 </resources>

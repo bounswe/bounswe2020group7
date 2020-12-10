@@ -77,7 +77,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
     }
 
     private fun setObservers() {
-        mOtherProfileViewModel.getUserResource.observe(viewLifecycleOwner,{ i->
+        mOtherProfileViewModel.getUserResource.observe(viewLifecycleOwner,Observer{ i->
             when(i.javaClass){
                 Resource.Success::class.java -> {
                     val user = i.data!!
@@ -94,12 +94,12 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
             }
         })
 
-        mOtherProfileViewModel.isFollowing.observe(viewLifecycleOwner){it->
+        mOtherProfileViewModel.isFollowing.observe(viewLifecycleOwner, Observer{it->
             if(it != null){
                 setView(it, mOtherProfileViewModel.isUserPrivate.value!!)
                 setListeners(it, mOtherProfileViewModel.isUserPrivate.value!!)
             }
-        }
+        })
 
         mOtherProfileViewModel.getResearchesResource.observe(viewLifecycleOwner, Observer { i ->
             when(i.javaClass){
@@ -111,7 +111,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
             }
         })
 
-        mOtherProfileViewModel.getFollowResourceResponse.observe(viewLifecycleOwner, {i->
+        mOtherProfileViewModel.getFollowResourceResponse.observe(viewLifecycleOwner, Observer{i->
             when(i.javaClass){
                 Resource.Success::class.java -> {
                     if(mOtherProfileViewModel.isUserPrivate.value!!){

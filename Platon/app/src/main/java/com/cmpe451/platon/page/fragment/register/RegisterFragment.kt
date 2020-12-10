@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.cmpe451.platon.R
 import com.cmpe451.platon.core.BaseActivity
@@ -132,7 +133,7 @@ class RegisterFragment : Fragment() {
     }
 
     private fun setObservers(){
-        mRegisterViewModel.getRegisterResourceResponse.observe(viewLifecycleOwner, { t->
+        mRegisterViewModel.getRegisterResourceResponse.observe(viewLifecycleOwner, Observer{ t->
             when(t.javaClass){
                 Resource.Success::class.java->{
                     findNavController().navigateUp()
