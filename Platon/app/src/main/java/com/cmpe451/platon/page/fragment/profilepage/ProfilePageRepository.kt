@@ -17,7 +17,7 @@ class ProfilePageRepository() {
     val acceptRequestResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
 
     val userFollowRequestsResourceResponse:MutableLiveData<Resource<FollowRequests>> = MutableLiveData()
-    val userNotificationsResourceResponse:MutableLiveData<Resource<List<Notification>>> = MutableLiveData()
+    val userNotificationsResourceResponse:MutableLiveData<Resource<Notifications>> = MutableLiveData()
 
     fun getFollowRequests(id:Int, token:String){
         val service = RetrofitClient.getService()
@@ -44,8 +44,8 @@ class ProfilePageRepository() {
         val service = RetrofitClient.getService()
         val call = service.getNotifications(token)
         userNotificationsResourceResponse.value = Resource.Loading()
-        call.enqueue(object :Callback<List<Notification>?>{
-            override fun onResponse(call: Call<List<Notification>?>, response: Response<List<Notification>?>) {
+        call.enqueue(object :Callback<Notifications?>{
+            override fun onResponse(call: Call<Notifications?>, response: Response<Notifications?>) {
                 when{
                     response.isSuccessful && response.body() != null -> userNotificationsResourceResponse.value =  Resource.Success(response.body()!!)
                     response.errorBody() != null -> userNotificationsResourceResponse.value =  Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
@@ -53,7 +53,7 @@ class ProfilePageRepository() {
                 }
             }
 
-            override fun onFailure(call: Call<List<Notification>?>, t: Throwable) {
+            override fun onFailure(call: Call<Notifications?>, t: Throwable) {
                 call.clone().enqueue(this)
             }
         })

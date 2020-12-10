@@ -116,10 +116,10 @@ class HomeActivity : BaseActivity(),
             }
         }
 
-        mProfilePageViewModel.getUserNotificationsResourceResponse.observe(this, Observer{ t->
+        mProfilePageViewModel.getUserNotificationsResourceResponse.observe(this, { t->
             when(t.javaClass){
                 Resource.Success::class.java ->{
-                    toolbarRecyclerView.adapter = NotificationElementsAdapter(t.data as ArrayList<Notification>,this, this)
+                    toolbarRecyclerView.adapter = NotificationElementsAdapter(t.data!!.notification_list as ArrayList<Notification>,this, this)
                     toolbarRecyclerView.layoutManager = LinearLayoutManager(this)
                     dialog.dismiss()
                 }

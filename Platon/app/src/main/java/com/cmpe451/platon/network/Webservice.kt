@@ -34,11 +34,12 @@ interface Webservice {
 
     @FormUrlEncoded
     @POST("api/auth_system/user")
-    fun makeRegister(@Field("e_mail") email: String,
-                     @Field("password") password: String ,
-                     @Field("name") firstName: String,
+    fun makeRegister(@Field("name") firstName: String,
                      @Field("surname") lastName: String,
-                     @Field("job") job: String) : Call<JsonObject?>
+                     @Field("e_mail") email: String,
+                     @Field("password") password: String ,
+                     @Field("job") job: String,
+                     @Field("institution") institution:String?) : Call<JsonObject?>
 
     @GET("api/auth_system/self")
     fun getUserInfo(@Header("auth_token") auth_token: String ) : Call<User?>
@@ -91,7 +92,7 @@ interface Webservice {
     fun getActivityStream(@Header("auth_token") auth_token :String) : Call<List<ActivityStreamElement>?>
 
     @GET("api/profile/notifications")
-    fun getNotifications(@Header("auth_token") auth_token :String) : Call<List<Notification>?>
+    fun getNotifications(@Header("auth_token") auth_token :String) : Call<Notifications?>
 
     @GET("api/follow/follow_requests")
     fun getFollowRequests(@Query("following_id") id:Int, @Header("auth_token") auth_token :String) : Call<FollowRequests?>
@@ -107,5 +108,9 @@ interface Webservice {
     @HTTP(method = "DELETE", path = "api/follow/following",hasBody = true)
     fun unfollow(@Query("following_id") follower_id:Int,
                  @Header("auth_token") auth_token :String) : Call<JsonObject?>
+
+
+    @GET("api/profile/jobs")
+    fun getAllJobs(): Call<List<Job>?>
 
 }

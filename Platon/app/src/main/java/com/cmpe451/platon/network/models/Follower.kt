@@ -24,9 +24,13 @@ data class Notification(
         val related_users:List<Int>,
         val text: String?,
         val timestamp:String?
-
-
 )
+
+data class Notifications(
+        val notification_list:List<Notification>,
+        val number_of_pages:Int
+)
+
 
 data class FollowRequests(
         val follow_requests:List<FollowRequest>

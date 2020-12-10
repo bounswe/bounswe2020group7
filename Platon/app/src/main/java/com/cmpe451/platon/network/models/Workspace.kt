@@ -6,3 +6,8 @@ data class Workspace (
     val description: String,
     val state: String,
 )
+
+data class Job(
+    val id: Int,
+    val name:String
+)
