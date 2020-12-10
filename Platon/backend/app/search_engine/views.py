@@ -2,11 +2,12 @@ from flask import make_response,jsonify,request
 from flask_restplus import Resource,Namespace, fields
 from sqlalchemy import func
 
-from app.search_engine.forms import UserSearchForm, user_search_parser
+from app.search_engine.forms import UserSearchForm, user_search_parser,SearchHistoryForm,search_history_parser
 from app.search_engine.helpers import SearchEngine, SearchType
+from app.search_engine.models import SearchHistoryItem
 from app.profile_management.models import Jobs,Skills,UserSkills
 from app.auth_system.models import User
-from app.auth_system.helpers import decode_token
+from app.auth_system.helpers import decode_token,login_required
 
 from app import api, db
 import math
@@ -29,6 +30,15 @@ search_user_list_model = api.model('User List(Search)', {
     'result_list': fields.List(
         fields.Nested(search_user_model)
     )
+})
+
+search_history_model = api.model('Search History Item',{
+    "query": fields.String,
+    "number_of_use": fields.Integer
+})
+
+search_history_list_model = api.model('Search History',{
+    "search_history": fields.Nested(search_history_model)
 })
 
 @search_engine_ns.route("/user")
@@ -147,6 +157,36 @@ class UserSearchAPI(Resource):
                 pass
             return make_response(jsonify({"number_of_pages": number_of_pages,"result_list": sorted_result_list}))
         return make_response(jsonify({"error": "Missing data fields or invalid data."}), 400)
+
+@search_engine_ns.route("/search_history")
+class SearchHistoryAPI(Resource):
+    
+    @api.doc(responses={401 : 'Account Problems', 400 : 'Input Format Error' ,500 : ' Database Connection Error'})
+    @api.response(200, 'Valid Search History', search_history_list_model)
+    @api.expect(search_history_parser)
+    @login_required
+    def get(user_id,self):
+        form = SearchHistoryForm(request.args)
+        if form.validate():
+            if form.search_type.data > 2 or form.search_type.data < 0:
+                return make_response(jsonify({"error": "Search Type must be 0, 1 or 2"}), 400)
+            try:
+                search_history =  db.engine.execute("SELECT `query` FROM `search_history_item` WHERE `user_id`={} AND `type`={}".format(user_id,form.search_type.data))           
+            except:
+                return make_response(jsonify({"error": "Database Connection Problem."}), 500)
+            search_hist_dict = {}
+            for history_item in search_history:
+                if history_item[0] not in search_hist_dict:
+                    search_hist_dict[history_item[0]] = 1
+                else:
+                    search_hist_dict[history_item[0]] += 1
+            # Sort Search Distioneries according to number of use
+            sorted_result = sorted(search_hist_dict.items(), key=lambda x: x[1], reverse=True)
+            response = [{"query": item[0], "number_of_use":item[1]} for item in sorted_result]
+            return make_response(jsonify({"search_history": response}),200)
+        else:
+            return make_response(jsonify({"error": "Missing data fields or invalid data."}), 400)
+
 
 def register_resources(api):
     api.add_namespace(search_engine_ns) 

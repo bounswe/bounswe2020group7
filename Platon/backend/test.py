@@ -2,7 +2,7 @@ import unittest
 #from tests.auth_system_test import LoginTest,ResetPasswordTest
 #from tests.follow_test import FollowTest
 #from tests.profile_management_test import ResearchInfoTests,NotificationTests
-from tests.search_engine_test import UserSearchTests
+from tests.search_engine_test import SearchHistoryTests, UserSearchTests
 from tests.base_test import TestConfig
 import sqlalchemy
 
