@@ -166,7 +166,7 @@ class ResearchInformationAPI(Resource):
         @api.doc(responses={200: 'Valid Response', 404: 'Empty List', 500: 'Database Connection Problem'})
         def get(self):
             """
-                Returns all job names
+                Returns all job ids and names as a list of dictionaries
             """
             try:
                 jobs = Jobs.query.all()
@@ -177,7 +177,7 @@ class ResearchInformationAPI(Resource):
 
             jobsList = []
             for job in jobs:
-                jobsList.append(job.name)
+                jobsList.append({'id': job.id, 'name': job.name})
 
             return make_response(jsonify(jobsList), 200)
 
