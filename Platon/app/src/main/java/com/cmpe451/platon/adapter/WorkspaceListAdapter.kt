@@ -48,13 +48,8 @@ class WorkspaceListAdapter(private val data: ArrayList<Workspace>, private val c
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(holder: WorkspaceListViewHolder, position: Int) {
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
-        //val drawable = data[position].img
-        //drawable?.setBounds(0,0,drawable.intrinsicWidth,drawable.intrinsicHeight)
         holder.binding.descWorkspaceTv.text = data[position].description
         holder.binding.titleWorkspaceTv.text = data[position].title
-        //holder.binding.titleTrendProjectTv.setCompoundDrawables(drawable, null, null, null)
         holder.binding.workspaceStateTv.text = data[position].state
 
         holder.bindData(holder.binding, position, workspaceListButtonClickListener)
