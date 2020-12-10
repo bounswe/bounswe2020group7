@@ -52,7 +52,9 @@ class UserSearchAPI(Resource):
             tokens = list(set(tokens) - set(stopwords))
             # Get the semantically related list for our tokens
             tokens = SearchEngine.semantic_related_list(tokens)
+            # List of user dictionaries that will be send as a search output
             result_list = []
+            # Score of each user record
             result_id_score = []
             # Search tokens in Jobs Table
             for token,score in tokens:
@@ -86,6 +88,7 @@ class UserSearchAPI(Resource):
                     except: 
                         return make_response(jsonify({"error": "Database Connection Problem."}), 500)
                     for owner_id in owner_id_list:
+                        # Creates the list of currently found ids
                         id_list = [i[0] for i in result_id_score]
                         if owner_id.user_id not in id_list:
                             # Take user information from the DB
