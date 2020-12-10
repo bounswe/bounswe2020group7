@@ -4,6 +4,7 @@ import json
 from enum import IntEnum
 
 from app.search_engine.models import SearchHistoryItem
+from app import db
 
 class SearchType(IntEnum):
     USER = 0

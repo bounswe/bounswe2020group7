@@ -139,7 +139,7 @@ class UserSearchAPI(Resource):
             # Add Search History Item
             try:
                 auth_token = request.headers.get('auth_token')
-                SearchEngine.add_search_history_item(decode_token(auth_token),query,SearchType.USER)
+                SearchEngine.add_search_history_item(decode_token(auth_token),search_query,int(SearchType.USER))
             except:
                 pass
             return make_response(jsonify({"number_of_pages": number_of_pages,"result_list": sorted_result_list}))

@@ -20,7 +20,7 @@ def decode_token(auth_token):
     expire_time = parser.isoparse(auth_info['expire_time'])
     if expire_time < datetime.datetime.now():
         return make_response(jsonify({'error' : 'Expired Token'}),401)
-    return int(auth_token["id"])
+    return int(auth_info["id"])
 
 def login_required(func):
     """
