@@ -7,7 +7,7 @@ DEVELOPMENT = False
 import os
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
-FRONTEND_HOSTNAME = "http://ec2-3-120-98-39.eu-central-1.compute.amazonaws.com/"
+FRONTEND_HOSTNAME = "http://ec2-3-120-98-39.eu-central-1.compute.amazonaws.com"
 
 if DEVELOPMENT and DEBUG:
     # Define the database - we are working with
@@ -30,7 +30,6 @@ else:
     mysql_host = os.getenv('MYSQL_HOST')
     mysql_port = os.getenv('MYSQL_PORT')
     mysql_database = os.getenv('MYSQL_DATABASE')
-
 
 SQLALCHEMY_DATABASE_URI = "mysql+pymysql://{}:{}@{}:{}/{}".format(mysql_user, mysql_password, mysql_host, mysql_port, mysql_database)
 SQLALCHEMY_TRACK_MODIFICATIONS = False
