@@ -68,8 +68,7 @@ class FollowTest(BaseTest):
         # Returns the following list of the user.
         # e.g. if Umut follows Can, Umut's following list should include Can.
         valid_token = generate_token(1, datetime.timedelta(minutes=10))
-        data = {'follower_id': 1}  # 1: umut
-        actual_response = self.client.get('/api/follow/followings', data=data,
+        actual_response = self.client.get('/api/follow/followings', query_string={'follower_id': 1},
                                           headers={'auth_token': valid_token})
 
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
@@ -84,8 +83,7 @@ class FollowTest(BaseTest):
         # Returns the follower list of the user.
         # e.g. Umut and Alperen follows Can. Then Can's follower list should contain their IDs.
         valid_token = generate_token(1, datetime.timedelta(minutes=10))
-        data = {'following_id': 2}  # 2: can
-        actual_response = self.client.get('/api/follow/followers', data=data,
+        actual_response = self.client.get('/api/follow/followers', query_string={'following_id': 2},
                                           headers={'auth_token': valid_token})
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
 
@@ -99,8 +97,7 @@ class FollowTest(BaseTest):
 
         valid_token = generate_token(3, datetime.timedelta(minutes=10))  # token created for Alperen.
 
-        data = {'following_id': 3}  # 3: alperen
-        actual_response = self.client.get('/api/follow/follow_requests', data=data,
+        actual_response = self.client.get('/api/follow/follow_requests', query_string={'following_id': 3},
                                            headers={'auth_token': valid_token})
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
 
@@ -111,12 +108,12 @@ class FollowTest(BaseTest):
 
         # Token will be created for another user. Should return an error.
         another_token = generate_token(1, datetime.timedelta(minutes=10))  # token created for Umut.
-        actual_response = self.client.get('/api/follow/follow_requests', data=data,
+        actual_response = self.client.get('/api/follow/follow_requests', query_string={'following_id': 3},
                                            headers={'auth_token': another_token})
         self.assertEqual(actual_response.status_code, 401, 'Incorrect HTTP Response Code')
 
         # Token will not be created. Login_required should return an error.
-        actual_response = self.client.get('/api/follow/follow_requests', data=data)
+        actual_response = self.client.get('/api/follow/follow_requests', query_string={'following_id': 3})
         self.assertEqual(actual_response.status_code, 401, 'Incorrect HTTP Response Code')
         
     # follower: who sends the follow request
