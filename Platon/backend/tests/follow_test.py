@@ -131,7 +131,7 @@ class FollowTest(BaseTest):
         # Let's see if follow request can be seen by Hilal.
         data = {'following_id': 4}
         hilal_token = generate_token(4, datetime.timedelta(minutes=10))
-        follow_requests_list = self.client.get('/api/follow/follow_requests', data=data,
+        follow_requests_list = self.client.get('/api/follow/follow_requests', query_string=data,
                                                 headers={'auth_token': hilal_token})
         self.assertEqual(follow_requests_list.status_code, 200, 'Incorrect HTTP Response Code')
 
@@ -147,7 +147,7 @@ class FollowTest(BaseTest):
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
 
         follow_list = self.client.get('/api/follow/followers',
-                                      data={'following_id': 1},
+                                      query_string={'following_id': 1},
                                       headers={'auth_token': can_token})
         self.assertEqual(follow_list.status_code, 200, 'Incorrect HTTP Response Code')
         fr_dict = follow_list.json
@@ -209,7 +209,7 @@ class FollowTest(BaseTest):
 
         # check if Umut's followings list contains Can.
         data = {'follower_id': 1}
-        rp = self.client.get('/api/follow/followings', data=data, headers={'auth_token': valid_token})
+        rp = self.client.get('/api/follow/followings', query_string=data, headers={'auth_token': valid_token})
         self.assertEqual(rp.status_code, 200, 'Incorrect HTTP Response Code')
         fl_dict = rp.json
         mylist = [fl['id'] for fl in fl_dict['followings']]
