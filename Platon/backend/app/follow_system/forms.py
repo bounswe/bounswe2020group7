@@ -10,7 +10,7 @@ class GetFollowingsForm(Form):
 get_followings_parser = reqparse.RequestParser()
 get_followings_parser.add_argument('follower_id', required=True, type=int,
                                    help="ID of the follower. Follower is the one who follows someone.",
-                                   location='args')
+                                   location='form')
 get_followings_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
 
 
@@ -20,7 +20,7 @@ class GetFollowersForm(Form):
 get_followers_parser = reqparse.RequestParser()
 get_followers_parser.add_argument('following_id', required=True, type=int,
                                   help="ID of the following user. Following user is the one who is followed by someone.",
-                                  location='args')
+                                  location='form')
 get_followers_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
 
 
@@ -30,7 +30,7 @@ class GetFollowRequestsForm(Form):
 get_follow_requests_parser = reqparse.RequestParser()
 get_follow_requests_parser.add_argument('following_id', required=True, type=int,
                                         help="ID of the following user. Following user is the one who is followed by someone.",
-                                        location='args')
+                                        location='form')
 get_follow_requests_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
 
 class SendFollowRequestsForm(Form):
@@ -73,5 +73,5 @@ class UnfollowForm(Form):
 unfollow_parser = reqparse.RequestParser()
 unfollow_parser.add_argument('following_id', required=True, type=int,
                                   help="ID of the unfollowed user",
-                                  location='args')
+                                  location='form')
 unfollow_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
