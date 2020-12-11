@@ -11,47 +11,6 @@
 
     <include layout="@layout/toolbar" />
 
-    <RadioGroup
-        android:id="@+id/search_among_rb"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/primary_dark_darker"
-        android:checkedButton="@id/workspace_rb"
-        android:orientation="horizontal"
-        android:paddingHorizontal="@dimen/medium"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/search_among_str"
-            android:textColor="@color/primary_light" />
-
-        <RadioButton
-            android:id="@+id/workspace_rb"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/workspaces_str"
-            android:textColor="@color/primary_light" />
-
-        <RadioButton
-            android:id="@+id/user_rb"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/users_str"
-            android:textColor="@color/primary_light" />
-    </RadioGroup>
-
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/toolbar_recyclerview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/primary_dark_darker">
-
-    </androidx.recyclerview.widget.RecyclerView>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">

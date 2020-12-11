@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.cmpe451.platon.page.fragment.home.HomeFragment"
+        android:name="com.cmpe451.platon.page.activity.home.fragment.home.HomeFragment"
         android:label="Home" >
         <action
             android:id="@+id/action_homeFragment_to_profilePageFragment"
@@ -20,7 +20,7 @@
     </fragment>
     <fragment
         android:id="@+id/profilePageFragment"
-        android:name="com.cmpe451.platon.page.fragment.profilepage.ProfilePageFragment"
+        android:name="com.cmpe451.platon.page.activity.home.fragment.profilepage.ProfilePageFragment"
         android:label="Your Profile" >
         <action
             android:id="@+id/action_profilePageFragment_to_editProfileFragment"
@@ -37,11 +37,11 @@
     </fragment>
     <fragment
         android:id="@+id/editProfileFragment"
-        android:name="com.cmpe451.platon.page.fragment.editprofile.EditProfileFragment"
-        android:label="Update"></fragment>
+        android:name="com.cmpe451.platon.page.activity.home.fragment.editprofile.EditProfileFragment"
+        android:label="Update" />
     <fragment
         android:id="@+id/followFragment"
-        android:name="com.cmpe451.platon.page.fragment.follow.FollowFragment"
+        android:name="com.cmpe451.platon.page.activity.home.fragment.follow.FollowFragment"
         android:label="Details">
         <action
             android:id="@+id/action_followFragment_to_otherProfileFragment"
@@ -59,7 +59,7 @@
     </fragment>
     <fragment
         android:id="@+id/otherProfileFragment"
-        android:name="com.cmpe451.platon.page.fragment.otherprofile.OtherProfileFragment"
+        android:name="com.cmpe451.platon.page.activity.home.fragment.otherprofile.OtherProfileFragment"
         android:label="Profile">
         <action
             android:id="@+id/action_otherProfileFragment_to_followFragment2"
@@ -70,14 +70,14 @@
     </fragment>
     <fragment
         android:id="@+id/addResearchInfoFragment"
-        android:name="com.cmpe451.platon.page.fragment.researchInfo.AddResearchInfoFragment"
+        android:name="com.cmpe451.platon.page.activity.home.fragment.researchInfo.AddResearchInfoFragment"
         android:label="Add" />
     <fragment
         android:id="@+id/editResearchInfoFragment"
-        android:name="com.cmpe451.platon.page.fragment.researchInfo.EditResearchInfoFragment"
+        android:name="com.cmpe451.platon.page.activity.home.fragment.researchInfo.EditResearchInfoFragment"
         android:label="Update" />
     <fragment
         android:id="@+id/workspaceListFragment"
-        android:name="com.cmpe451.platon.page.fragment.workspace.WorkspaceListFragment"
+        android:name="com.cmpe451.platon.page.activity.home.fragment.workspace.WorkspaceListFragment"
         android:label="WorkspaceListFragment" />
 </navigation>

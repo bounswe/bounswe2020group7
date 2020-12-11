@@ -2,6 +2,9 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph_workspace"
-    app:startDestination="@id/placeholder">
-    <fragment android:id="@+id/placeholder" />
+    app:startDestination="@id/workspaceFragment">
+    <fragment
+        android:id="@+id/workspaceFragment"
+        android:name="com.cmpe451.platon.page.activity.workspace.fragment.WorkspaceFragment"
+        android:label="Workspace" />
 </navigation>

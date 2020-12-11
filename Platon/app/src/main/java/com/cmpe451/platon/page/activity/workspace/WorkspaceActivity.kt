@@ -7,6 +7,7 @@ import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.onNavDestinationSelected
@@ -28,7 +29,6 @@ class WorkspaceActivity : BaseActivity() {
     var user_id:Int? = null
     var workspace_id:Int? = null
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_Platon)
         super.onCreate(savedInstanceState)
@@ -40,7 +40,6 @@ class WorkspaceActivity : BaseActivity() {
         if (token == null || user_id == null || workspace_id == null){
             finish()
         }
-
         binding = ActivityWorkspaceBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

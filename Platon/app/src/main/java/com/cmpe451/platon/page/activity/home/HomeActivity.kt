@@ -31,9 +31,8 @@ import com.cmpe451.platon.databinding.ActivityHomeBinding
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.FollowRequest
 import com.cmpe451.platon.network.models.Notification
-import com.cmpe451.platon.network.models.User
 import com.cmpe451.platon.page.activity.login.LoginActivity
-import com.cmpe451.platon.page.fragment.home.HomeFragmentDirections
+import com.cmpe451.platon.page.activity.home.fragment.home.HomeFragmentDirections
 import com.cmpe451.platon.util.Definitions
 
 class HomeActivity : BaseActivity(),
