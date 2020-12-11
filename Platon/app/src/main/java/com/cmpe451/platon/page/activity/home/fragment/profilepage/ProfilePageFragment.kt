@@ -1,20 +1,27 @@
 package com.cmpe451.platon.page.activity.home.fragment.profilepage
 
+import android.app.AlertDialog
+import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.Transformations.map
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.cmpe451.platon.R
+import com.cmpe451.platon.adapter.SkillsAdapter
 import com.cmpe451.platon.adapter.UserProjectsAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentProfilePageBinding
@@ -24,7 +31,7 @@ import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.activity.home.HomeActivityViewModel
 import com.cmpe451.platon.util.Definitions
 
-class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonClickListener {
+class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonClickListener, SkillsAdapter.SkillsButtonClickListener {
 
     private lateinit var binding: FragmentProfilePageBinding
     private val mProfilePageViewModel: ProfilePageViewModel by activityViewModels()
@@ -33,6 +40,11 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
 
     private lateinit var userProjectsRecyclerView: RecyclerView
     private lateinit var userProjectsAdapter: UserProjectsAdapter
+
+    private lateinit var skillsRecyclerView: RecyclerView
+    private lateinit var skillsAdapter: SkillsAdapter
+    private lateinit var dialog:AlertDialog
+    private lateinit var addSkillDialog:Dialog
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -53,6 +65,13 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
         userProjectsAdapter = UserProjectsAdapter(ArrayList(), requireContext(), this)
         userProjectsRecyclerView.adapter = userProjectsAdapter
         userProjectsRecyclerView.layoutManager = LinearLayoutManager(this.activity)
+
+        skillsRecyclerView = binding.rvProfilePageSkills
+        skillsAdapter = SkillsAdapter(ArrayList(), requireContext(), this)
+        skillsRecyclerView.adapter = skillsAdapter
+        skillsRecyclerView.layoutManager = GridLayoutManager(this.activity, 3)
+
+        dialog = Definitions().createProgressBar(requireContext())
     }
 
 
@@ -63,7 +82,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     }
 
     private fun setFields(){
-        mActivityViewModel.getUserResourceResponse.observe(viewLifecycleOwner, {t ->
+        mActivityViewModel.getUserResourceResponse.observe(viewLifecycleOwner, Observer{t ->
             when(t.javaClass){
             Resource.Success::class.java ->{
                 val user = t.data!!
@@ -74,6 +93,16 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                 binding.textNameSurname.text = naming
 
                 mProfilePageViewModel.fetchResearch((activity as HomeActivity).token, user.id)
+
+                if(user.rate == -1.0){
+                    binding.ratingBar.visibility = View.GONE
+                    binding.noRatingTv.visibility = View.VISIBLE
+                }
+                else {
+                    binding.ratingBar.visibility = View.VISIBLE
+                    binding.noRatingTv.visibility = View.GONE
+                    binding.ratingBar.rating = user.rate.toFloat()
+                }
 
                 Glide.with(this)
                         .load(user.profile_photo)
@@ -90,6 +119,17 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
             when(t.javaClass) {
                 Resource.Success::class.java -> userProjectsAdapter.submitElements(t.data!!.research_info)
                 Resource.Error::class.java -> Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+            }
+        })
+        mProfilePageViewModel.allSkills.observe(viewLifecycleOwner, Observer{t->
+            when(t.javaClass){
+                Resource.Success::class.java -> {
+//                    addSkillDialog = addSkillDialog(t.data.map{it})
+                }
+                Resource.Error::class.java -> {
+
+                }
+                Resource.Loading::class.java -> dialog.show()
             }
         })
     }
@@ -109,6 +149,9 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
         }
         binding.addProjectIv.setOnClickListener{
             findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToAddResearchInfoFragment())
+        }
+        binding.addProjectIv.setOnClickListener{
+            mProfilePageViewModel.getAllSkills()
         }
 
     }
@@ -145,4 +188,44 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
         mProfilePageViewModel.setCurrentResearch(mProfilePageViewModel.getResearchesResourceResponse.value?.data!!.research_info[position])
         findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToEditResearchInfoFragment())
     }
+
+    override fun deleteSkillButtonClicked(skill:String, position:Int) {
+        TODO("Not yet implemented")
+    }
+
+    fun addSkillDialog(skills:Array<String>): Dialog {
+        return activity?.let {
+            val selectedItems = ArrayList<Int>() // Where we track the selected items
+            val builder = AlertDialog.Builder(it)
+            // Set the dialog title
+            builder.setTitle("Add your skills")
+                // Specify the list array, the items to be selected by default (null for none),
+                // and the listener through which to receive callbacks when items are selected
+                .setMultiChoiceItems(skills, null,
+                    DialogInterface.OnMultiChoiceClickListener { dialog, which, isChecked ->
+                        if (isChecked) {
+                            // If the user checked the item, add it to the selected items
+                            selectedItems.add(which)
+                        } else if (selectedItems.contains(which)) {
+                            // Else, if the item is already in the array, remove it
+                            selectedItems.remove(Integer.valueOf(which))
+                        }
+                    })
+                // Set the action buttons
+                .setPositiveButton("Submit",
+                    DialogInterface.OnClickListener { dialog, id ->
+                        // User clicked OK, so save the selectedItems results somewhere
+                        // or return them to the component that opened the dialog
+
+                    })
+                .setNegativeButton("Cancel",
+                    DialogInterface.OnClickListener { dialog, id ->
+
+                    })
+
+            builder.create()
+        } ?: throw IllegalStateException("Activity cannot be null")
+    }
+
+
 }

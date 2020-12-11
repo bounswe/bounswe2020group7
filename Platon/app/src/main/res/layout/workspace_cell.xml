@@ -67,7 +67,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
 
-            android:src="@drawable/baseline_create_white_24dp"/>
+            android:src="@drawable/baseline_open_in_full_white_24dp"/>
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

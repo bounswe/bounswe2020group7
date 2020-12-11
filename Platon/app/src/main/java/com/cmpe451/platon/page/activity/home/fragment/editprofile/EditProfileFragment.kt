@@ -96,7 +96,7 @@ class EditProfileFragment : Fragment() {
             }
         })
 
-        mRegisterViewModel.getJobListResourceResponse.observe(viewLifecycleOwner, { t ->
+        mRegisterViewModel.getJobListResourceResponse.observe(viewLifecycleOwner, Observer{ t ->
             when (t.javaClass) {
                 Resource.Loading::class.java -> {
                     val x  = ArrayAdapter(requireContext(), R.layout.spinner_item, mutableListOf("Loading..."))

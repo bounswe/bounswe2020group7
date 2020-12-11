@@ -34,3 +34,4 @@ data class Auth(
         val token: String,
         val user_id:Int
 )
+

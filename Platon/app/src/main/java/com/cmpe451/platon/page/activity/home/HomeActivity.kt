@@ -109,7 +109,7 @@ class HomeActivity : BaseActivity(),
             }
         }
 
-        mActivityViewModel.getUserNotificationsResourceResponse.observe(this, { t->
+        mActivityViewModel.getUserNotificationsResourceResponse.observe(this, Observer{ t->
             when(t.javaClass){
                 Resource.Success::class.java ->{
                     toolbarRecyclerView.adapter = NotificationElementsAdapter(t.data!!.notification_list as ArrayList<Notification>,this, this)

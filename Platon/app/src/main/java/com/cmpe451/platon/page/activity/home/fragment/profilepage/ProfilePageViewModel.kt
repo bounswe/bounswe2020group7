@@ -12,11 +12,13 @@ class ProfilePageViewModel: ViewModel() {
     var currentResearch: MutableLiveData<Research> = MutableLiveData()
     val getResearchesResourceResponse: LiveData<Resource<Researches>>
 
+    var allSkills: MutableLiveData<Resource<List<String>>> = MutableLiveData()
+
     private var repository: ProfilePageRepository = ProfilePageRepository()
-    var positionOfHandlededRequest:Int? = null
 
     init {
         getResearchesResourceResponse = repository.researchesResourceResponse
+        allSkills = repository.allSkills
     }
 
     fun setCurrentResearch(research:Research){
@@ -31,9 +33,7 @@ class ProfilePageViewModel: ViewModel() {
     }
 
 
-
-
-    fun setPositionOfHandledRequest(pos:Int){
-        positionOfHandlededRequest = pos
+    fun getAllSkills() {
+        repository.getAllSkills()
     }
 }

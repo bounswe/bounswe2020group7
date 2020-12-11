@@ -93,4 +93,6 @@
     <string name="instution_str">Instution</string>
     <string name="institution_str">Institution</string>
     <string name="enter_your_job_str">Enter your job</string>
+    <string name="no_rate_str">No rating yet</string>
+    <string name="skills">Skills</string>
 </resources>

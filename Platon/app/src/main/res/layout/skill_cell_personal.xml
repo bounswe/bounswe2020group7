@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.cardview.widget.CardView xmlns:android = "http://schemas.android.com/apk/res/android"
+    xmlns:card_view = "http://schemas.android.com/apk/res-auto"
+    card_view:cardCornerRadius = "@dimen/medium"
+    card_view:cardElevation="@dimen/xxx_small"
+    android:layout_marginBottom="@dimen/xx_small"
+    card_view:contentPadding="@dimen/medium"
+    card_view:cardBackgroundColor="@color/secondary_blue_transparent"
+    android:layout_width = "wrap_content"
+    android:layout_height = "wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/firstRelative"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/title_skill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:maxLines="1"
+            android:text="@string/skills"
+            android:textColor="@color/primary_dark"
+            android:textSize="@dimen/project_title_text_size"/>
+        <ImageView
+            android:id="@+id/delete_skill_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/large"
+            android:layout_toEndOf="@id/title_skill"
+
+            android:src="@drawable/baseline_delete_white_24dp"/>
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

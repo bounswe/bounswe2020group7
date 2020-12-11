@@ -114,4 +114,8 @@ interface Webservice {
     @GET("api/profile/jobs")
     fun getAllJobs(): Call<List<Job>?>
 
+
+    @GET("/api/profile/skills")
+    fun getAllSkills(): Call<List<String>?>
+
 }

@@ -33,7 +33,6 @@
                 android:text="Loading"
                 android:textColor="@color/primary_light"
                 android:textSize="20sp"
-                app:layout_constraintBottom_toTopOf="@id/ll_stars"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/profile_photo"
@@ -64,109 +63,36 @@
                 app:layout_constraintStart_toEndOf="@+id/button_following"
                 app:layout_constraintTop_toBottomOf="@id/profile_photo"
                 tools:layout_editor_absoluteY="100dp" />
-            <LinearLayout
-                android:id="@+id/ll_stars"
+            <RatingBar
+                android:id="@+id/ratingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toTopOf="@+id/button_following"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_margin="@dimen/xx_small"
+                app:layout_constraintStart_toEndOf="@+id/profile_photo"
+                android:stepSize="0.1"
+                android:isIndicator="true"
+                android:scaleX=".5"
+                android:scaleY=".5"
+                android:numStars="5"
+                app:layout_constraintTop_toBottomOf="@+id/text_name_surname"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/no_rating_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/text_name_surname"
-                app:layout_constraintStart_toEndOf="@id/profile_photo"
+                android:layout_margin="@dimen/xx_small"
+                android:gravity="center_horizontal"
+                android:text="@string/no_rate_str"
+                android:textColor="@color/primary_light"
+                android:textSize="@dimen/desc_text_size"
+                app:layout_constraintBottom_toTopOf="@+id/button_following"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/button_following"
-                android:layout_margin="@dimen/profile_margin_half"
-                android:orientation="horizontal"
-                android:layout_weight="1"
-
-                >
-
-                <TextView
-                    android:id="@+id/text_rate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:text="No ratings yet"
-                    android:textColor="@color/primary_dark" />
-
-                <ImageView
-                    android:id="@+id/firstStarYellow"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:visibility="gone"
-                    app:srcCompat="@android:drawable/btn_star_big_on" />
-
-                <ImageView
-                    android:id="@+id/secondStarYellow"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:visibility="gone"
-                    app:srcCompat="@android:drawable/btn_star_big_on" />
-
-                <ImageView
-                    android:id="@+id/thirdStarYellow"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:visibility="gone"
-                    app:srcCompat="@android:drawable/btn_star_big_on" />
-
-                <ImageView
-                    android:id="@+id/forthStarYellow"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:visibility="gone"
-                    app:srcCompat="@android:drawable/btn_star_big_on" />
-
-                <ImageView
-                    android:id="@+id/fifthStarYellow"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:visibility="gone"
-                    app:srcCompat="@android:drawable/btn_star_big_on" />
-
-                <ImageView
-                    android:id="@+id/firstGrayStar"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:visibility="gone"
-                    app:srcCompat="@android:drawable/btn_star_big_off" />
-
-                <ImageView
-                    android:id="@+id/secondGrayStar"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:visibility="gone"
-                    app:srcCompat="@android:drawable/btn_star_big_off" />
-
-                <ImageView
-                    android:id="@+id/thirdGrayStar"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:visibility="gone"
-                    app:srcCompat="@android:drawable/btn_star_big_off" />
-
-                <ImageView
-                    android:id="@+id/forthGrayStar"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:visibility="gone"
-                    app:srcCompat="@android:drawable/btn_star_big_off" />
-
-                <ImageView
-                    android:id="@+id/fifthGrayStar"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:visibility="gone"
-                    app:srcCompat="@android:drawable/btn_star_big_off" />
-            </LinearLayout>
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/profile_photo"
+                app:layout_constraintTop_toBottomOf="@+id/text_name_surname"  />
 
             <Button
                 android:id="@+id/button_follow"
