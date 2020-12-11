@@ -10,8 +10,8 @@ class EditProfileViewModel:ViewModel() {
 
     val getEditProfileResourceResponse = repository.editProfileResourceResponse
 
-    fun editProfile(firstnameTv:TextView, lastnameTv:TextView, sp:Spinner,
-                            institutionTv:TextView, isPrivateUser:Boolean,
+    fun editProfile(firstnameTv:TextView, lastnameTv:TextView, job:String,
+                            institution:String, isPrivateUser:Boolean,
                             profilePhotoTv:TextView,
                             googleScholarTv:TextView,
                             researchGateTv:TextView, token:String?){
@@ -23,10 +23,6 @@ class EditProfileViewModel:ViewModel() {
         var surname:String? = null
         if(!lastnameTv.text.isNullOrEmpty()){
             surname  = lastnameTv.text.toString()
-        }
-        var institution:String? = null
-        if(!institutionTv.text.isNullOrEmpty()){
-            institution  = institutionTv.text.toString()
         }
         var google_scholar_name:String? = null
         if(!googleScholarTv.text.isNullOrEmpty()){
@@ -44,7 +40,7 @@ class EditProfileViewModel:ViewModel() {
 
 
         if(token != null) {
-            repository.editUser(name, surname, sp.selectedItem.toString(), institution, isPrivateUser, profilePhoto, google_scholar_name, researchgate_name, token)
+            repository.editUser(name, surname, job, institution, isPrivateUser, profilePhoto, google_scholar_name, researchgate_name, token)
         }}
 
 }

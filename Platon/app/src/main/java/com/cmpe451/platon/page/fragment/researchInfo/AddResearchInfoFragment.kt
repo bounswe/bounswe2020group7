@@ -16,8 +16,7 @@ import com.cmpe451.platon.R
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentResearchInfoAddBinding
 import com.cmpe451.platon.network.Resource
-import com.cmpe451.platon.page.activity.HomeActivity
-import com.cmpe451.platon.page.fragment.editprofile.EditProfileViewModel
+import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.fragment.profilepage.ProfilePageViewModel
 import com.cmpe451.platon.util.Definitions
 
@@ -48,7 +47,7 @@ class AddResearchInfoFragment : Fragment() {
                 Resource.Success::class.java ->{
                     Toast.makeText(activity, "Research Information is added!", Toast.LENGTH_SHORT).show()
                     mProfilePageViewModel.fetchResearch((activity as HomeActivity).token,
-                            mProfilePageViewModel.getUserResourceResponse.value?.data?.id
+                            (activity as HomeActivity).user_id
                     )
                     dialog.dismiss()
                     findNavController().navigateUp()

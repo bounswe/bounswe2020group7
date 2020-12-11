@@ -1,7 +1,6 @@
 package com.cmpe451.platon.page.fragment.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -21,9 +20,8 @@ import com.cmpe451.platon.databinding.FragmentHomeBinding
 import com.cmpe451.platon.databinding.TrendProjectCellBinding
 import com.cmpe451.platon.databinding.UpcomingEventCellBinding
 import com.cmpe451.platon.network.Resource
-import com.cmpe451.platon.network.models.ActivityStream
 import com.cmpe451.platon.network.models.ActivityStreamElement
-import com.cmpe451.platon.page.activity.HomeActivity
+import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.util.Definitions
 
 class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonClickListener, UpcomingEventsAdapter.UpcomingButtonClickListener, ActivityStreamAdapter.ActivityStreamButtonClickListener {

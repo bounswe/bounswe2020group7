@@ -1,4 +1,4 @@
-package com.cmpe451.platon.page.activity
+package com.cmpe451.platon.page.activity.home
 
 import android.animation.LayoutTransition
 import android.app.AlertDialog
@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -16,7 +15,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.onNavDestinationSelected
@@ -33,9 +31,9 @@ import com.cmpe451.platon.databinding.ActivityHomeBinding
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.FollowRequest
 import com.cmpe451.platon.network.models.Notification
+import com.cmpe451.platon.network.models.User
+import com.cmpe451.platon.page.activity.login.LoginActivity
 import com.cmpe451.platon.page.fragment.home.HomeFragmentDirections
-import com.cmpe451.platon.page.fragment.otherprofile.OtherProfileViewModel
-import com.cmpe451.platon.page.fragment.profilepage.ProfilePageViewModel
 import com.cmpe451.platon.util.Definitions
 
 class HomeActivity : BaseActivity(),
@@ -45,24 +43,22 @@ class HomeActivity : BaseActivity(),
 
     lateinit var toolbar: Toolbar
     lateinit var navController: NavController
-
     private lateinit var toolbarRecyclerView: RecyclerView
-    var token:String? = null
     lateinit var binding : ActivityHomeBinding
-
     lateinit var search:SearchView
     private lateinit var dialog: AlertDialog
+    private val mActivityViewModel: HomeActivityViewModel by viewModels()
 
-    private val mProfilePageViewModel: ProfilePageViewModel by viewModels()
-
-
+    private var handledFollowRequestPosition: Int = -1
+    var token:String? = null
+    var user_id:Int? = null
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener {
-        prepareFragmentSwitch()
+        destroyToolbar()
         it.onNavDestinationSelected(navController)
     }
 
-    private fun prepareFragmentSwitch() {
+    private fun destroyToolbar() {
         binding.notificationRg.visibility = View.GONE
         binding.searchAmongRb.visibility = View.GONE
         (toolbarRecyclerView.adapter as ToolbarElementsAdapter).clearElements()
@@ -72,7 +68,12 @@ class HomeActivity : BaseActivity(),
         setTheme(R.style.Theme_Platon)
         super.onCreate(savedInstanceState)
 
-        token = intent.extras?.get("token").toString()
+        token = intent.extras?.getString("token")
+        user_id = intent.extras?.getInt("user_id")
+
+        if (token == null || user_id == null){
+            finish()
+        }
 
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -91,16 +92,9 @@ class HomeActivity : BaseActivity(),
     }
 
     private fun initViews() {
+        mActivityViewModel.fetchUser(token)
         toolbarRecyclerView = binding.toolbarRecyclerview
-
-        if (token != null){
-            mProfilePageViewModel.fetchUser(token!!)
-        }else{
-            finish()
-        }
-
         initListeners()
-
     }
 
     private fun initListeners() {
@@ -108,15 +102,15 @@ class HomeActivity : BaseActivity(),
         binding.notificationRg.setOnCheckedChangeListener { t, id->
             when(id){
                 R.id.general_ntf_rb ->{
-                    mProfilePageViewModel.getNotifications(token!!)
+                    mActivityViewModel.getNotifications(token!!)
                 }
                 R.id.personal_ntf_rb ->{
-                    mProfilePageViewModel.getFollowRequests(mProfilePageViewModel.getUserResourceResponse.value?.data!!.id, token!!)
+                    mActivityViewModel.getFollowRequests(mActivityViewModel.getUserResourceResponse.value?.data!!.id, token!!)
                 }
             }
         }
 
-        mProfilePageViewModel.getUserNotificationsResourceResponse.observe(this, { t->
+        mActivityViewModel.getUserNotificationsResourceResponse.observe(this, { t->
             when(t.javaClass){
                 Resource.Success::class.java ->{
                     toolbarRecyclerView.adapter = NotificationElementsAdapter(t.data!!.notification_list as ArrayList<Notification>,this, this)
@@ -125,13 +119,14 @@ class HomeActivity : BaseActivity(),
                 }
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Error::class.java -> {
+                    destroyToolbar()
                     Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
                     dialog.dismiss()
                 }
             }
         })
 
-        mProfilePageViewModel.getUserFollowRequestsResourceResponse.observe(this, Observer{ t->
+        mActivityViewModel.getUserFollowRequestsResourceResponse.observe(this, Observer{ t->
             when(t.javaClass){
                 Resource.Success::class.java ->{
                     toolbarRecyclerView.adapter = FollowRequestElementsAdapter(t.data!!.follow_requests as ArrayList<FollowRequest>,this, this)
@@ -140,16 +135,21 @@ class HomeActivity : BaseActivity(),
                 }
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Error::class.java -> {
+                    destroyToolbar()
                     Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
                     dialog.dismiss()
                 }
             }
         })
-        mProfilePageViewModel.acceptRequestResourceResponse.observe(this, Observer{i->
+
+        mActivityViewModel.acceptRequestResourceResponse.observe(this, Observer{i->
             when(i.javaClass){
                 Resource.Success::class.java -> {
-                    (toolbarRecyclerView.adapter as ToolbarElementsAdapter)
-                            .removeElement(mProfilePageViewModel.positionOfHandlededRequest!!)
+                    if (handledFollowRequestPosition != -1){
+                        (toolbarRecyclerView.adapter as ToolbarElementsAdapter)
+                                .removeElement(handledFollowRequestPosition)
+                        handledFollowRequestPosition = -1
+                    }
                     dialog.dismiss()
                 }
                 Resource.Loading::class.java -> dialog.show()
@@ -161,7 +161,6 @@ class HomeActivity : BaseActivity(),
 
         })
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.actionbar, menu)
@@ -207,8 +206,7 @@ class HomeActivity : BaseActivity(),
         })
 
             search.setOnCloseListener {
-                binding.searchAmongRb.visibility = View.GONE
-                (toolbarRecyclerView.adapter as ToolbarElementsAdapter).clearElements()
+                destroyToolbar()
                 search.onActionViewCollapsed()
                 true
             }
@@ -226,35 +224,37 @@ class HomeActivity : BaseActivity(),
     private fun onSeeNotificationsClicked() {
         when(binding.notificationRg.visibility){
             View.VISIBLE ->{
-                binding.notificationRg.visibility = View.GONE
-                (toolbarRecyclerView.adapter as ToolbarElementsAdapter).clearElements()
+                destroyToolbar()
             }
             View.GONE ->{
+                search.isIconified = true
                 when(binding.notificationRg.checkedRadioButtonId){
                     R.id.general_ntf_rb ->{
-                        mProfilePageViewModel.getNotifications(token!!)
+                        mActivityViewModel.getNotifications(token!!)
                     }
                     R.id.personal_ntf_rb ->{
-                        mProfilePageViewModel.getFollowRequests(mProfilePageViewModel.getUserResourceResponse.value?.data!!.id, token!!)
+                        mActivityViewModel.getFollowRequests(mActivityViewModel.getUserResourceResponse.value?.data!!.id, token!!)
                     }
                 }
                 binding.notificationRg.visibility = View.VISIBLE
-                search.isIconified = true
             }
         }
     }
 
     private fun onLogOutButtonClicked(){
+        destroyToolbar()
         val sharedPrefs = getSharedPreferences("token_file", 0)
         sharedPrefs.edit().remove("mail").apply()
         sharedPrefs.edit().remove("pass").apply()
-        sharedPrefs.edit().remove("token").apply()
         finish()
         startActivity(Intent(this, LoginActivity::class.java))
         Toast.makeText(this, "Logout made", Toast.LENGTH_LONG).show()
     }
 
+
+
     override fun onSupportNavigateUp(): Boolean {
+        destroyToolbar()
         navController.navigateUp()
         return super.onSupportNavigateUp()
     }
@@ -269,21 +269,21 @@ class HomeActivity : BaseActivity(),
 
     override fun onFollowRequestNameClicked(request: FollowRequest, position: Int) {
         navController.navigate(HomeFragmentDirections.actionHomeFragmentToOtherProfileFragment(request.id))
-        prepareFragmentSwitch()
+        destroyToolbar()
     }
 
     override fun onFollowRequestAcceptClicked(request: FollowRequest, position: Int) {
-        if(mProfilePageViewModel.getUserResourceResponse.value!=null && token!=null){
-            mProfilePageViewModel.acceptFollowRequest(request.id, mProfilePageViewModel.getUserResourceResponse.value?.data?.id!!, token!!)
+        if(mActivityViewModel.getUserResourceResponse.value!=null && token!=null){
+            mActivityViewModel.acceptFollowRequest(request.id, mActivityViewModel.getUserResourceResponse.value?.data?.id!!, token!!)
         }
-        mProfilePageViewModel.setPositionOfHandledRequest(position)
+        handledFollowRequestPosition = position
     }
 
     override fun onFollowRequestRejectClicked(request: FollowRequest, position: Int) {
-        if(mProfilePageViewModel.getUserResourceResponse.value!=null && token!=null){
-            mProfilePageViewModel.deleteFollowRequest(request.id, mProfilePageViewModel.getUserResourceResponse.value?.data?.id!!, token!!)
+        if(mActivityViewModel.getUserResourceResponse.value!=null && token!=null){
+            mActivityViewModel.deleteFollowRequest(request.id, mActivityViewModel.getUserResourceResponse.value?.data?.id!!, token!!)
         }
-        mProfilePageViewModel.setPositionOfHandledRequest(position)
+        handledFollowRequestPosition = position
     }
 
 

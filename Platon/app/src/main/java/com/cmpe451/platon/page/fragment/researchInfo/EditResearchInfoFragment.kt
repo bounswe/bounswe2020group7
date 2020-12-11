@@ -17,7 +17,7 @@ import com.cmpe451.platon.R
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentResearchInfoEditBinding
 import com.cmpe451.platon.network.Resource
-import com.cmpe451.platon.page.activity.HomeActivity
+import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.fragment.profilepage.ProfilePageViewModel
 import com.cmpe451.platon.util.Definitions
 

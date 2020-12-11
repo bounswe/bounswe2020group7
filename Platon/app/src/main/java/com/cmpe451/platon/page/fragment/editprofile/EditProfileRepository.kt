@@ -11,7 +11,7 @@ import retrofit2.Response
 
 class EditProfileRepository() {
 
-    var editProfileResourceResponse : MutableLiveData<Resource<JsonObject>> = MutableLiveData(Resource.Loading(JsonObject()))
+    var editProfileResourceResponse : MutableLiveData<Resource<JsonObject>> = MutableLiveData()
 
     fun editUser(name:String?,surname:String?,
                  job:String?, institution:String?, isPrivate:Boolean,
@@ -20,6 +20,8 @@ class EditProfileRepository() {
                  researchgate_name:String?,authToken: String){
 
 
+
+        editProfileResourceResponse.value = Resource.Loading()
         val service = RetrofitClient.getService()
         val call = service.editUserInfo(name, surname, job, institution,  if (isPrivate) 1 else 0, profilePhoto, google_scholar_name, researchgate_name, authToken)
 

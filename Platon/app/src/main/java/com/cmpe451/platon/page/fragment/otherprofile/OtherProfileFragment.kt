@@ -10,7 +10,6 @@ import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -20,18 +19,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.OtherUserProjectsAdapter
-import com.cmpe451.platon.adapter.ProfilePageAdapter
-import com.cmpe451.platon.adapter.UserProjectsAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentProfilePageOthersPrivateBinding
 import com.cmpe451.platon.databinding.UserProjectsCellBinding
 import com.cmpe451.platon.network.Resource
-import com.cmpe451.platon.page.activity.HomeActivity
-import com.cmpe451.platon.page.fragment.profilepage.ProfilePageFragmentDirections
-import com.cmpe451.platon.page.fragment.profilepage.ProfilePageViewModel
+import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.util.Definitions
 import com.cmpe451.platon.util.Definitions.USERSTATUS
-import kotlin.properties.Delegates
 
 class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjectButtonClickListener {
 
@@ -42,13 +36,11 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
     private val args: OtherProfileFragmentArgs by navArgs()
     private lateinit var dialog:AlertDialog
 
-    private val mProfilePageViewModel: ProfilePageViewModel by activityViewModels()
     private val mOtherProfileViewModel: OtherProfileViewModel by viewModels()
 
     private lateinit var userProjectsRecyclerView: RecyclerView
     private lateinit var userProjectsAdapter: OtherUserProjectsAdapter
-    private lateinit var informationsRecyclerView: RecyclerView
-    private lateinit var informationsAdapter: ProfilePageAdapter
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         binding = FragmentProfilePageOthersPrivateBinding.inflate(inflater)
@@ -69,13 +61,6 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
         userProjectsAdapter = OtherUserProjectsAdapter(ArrayList(), requireContext(), this)
         userProjectsRecyclerView.adapter = userProjectsAdapter
         userProjectsRecyclerView.layoutManager = LinearLayoutManager(this.activity)
-
-
-
-        informationsRecyclerView = binding.rvProfilePageInfo
-        informationsAdapter = ProfilePageAdapter(ArrayList())
-        informationsRecyclerView.adapter = informationsAdapter
-        informationsRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
         dialog = Definitions().createProgressBar(requireContext())
     }
@@ -166,13 +151,13 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
             binding.buttonFollow.setBackgroundColor(ContextCompat.getColor(this.requireContext(), R.color.primary_dark_lighter2))
             binding.projectInfoLl.visibility = View.VISIBLE
             binding.privatePageWarningTv.visibility = View.GONE
-            val x = ArrayList<Map<String, String>>()
-            x.add(mapOf(Pair("title", "E-mail"), Pair("info", user?.e_mail!!)))
-            x.add(mapOf(Pair("title", "Job"), Pair("info",  user.job!!)))
-            x.add(mapOf(Pair("title", "Rating"), Pair("info", user.rate.toString())))
-            informationsAdapter.submitList(x)
+
+            binding.tvEmail.text = user?.e_mail
+            binding.tvInstitution.text = user?.institution ?: "Institution not specified!"
+            binding.tvJob.text = user?.job
+
             mOtherProfileViewModel.fetchResearch((activity as HomeActivity).token!!,
-                    user.id
+                    user!!.id
             )
         }
         if(status == USERSTATUS.REQUESTED){
@@ -192,13 +177,11 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
             else {
                 binding.projectInfoLl.visibility = View.VISIBLE
                 binding.privatePageWarningTv.visibility = View.GONE
-                val x = ArrayList<Map<String, String>>()
-                x.add(mapOf(Pair("title", "E-mail"), Pair("info", user?.e_mail!!)))
-                x.add(mapOf(Pair("title", "Job"), Pair("info", user.job!!)))
-                x.add(mapOf(Pair("title", "Rating"), Pair("info", user.rate.toString())))
-                informationsAdapter.submitList(x)
+                binding.tvEmail.text = user?.e_mail
+                binding.tvInstitution.text = user?.institution ?: "Institution not specified!"
+                binding.tvJob.text = user?.job
                 mOtherProfileViewModel.fetchResearch((activity as HomeActivity).token!!,
-                        user.id
+                        user!!.id
                 )
             }
 
@@ -243,7 +226,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
         }
         if(status == USERSTATUS.NOT_FOLLOWING){
             binding.buttonFollow.setOnClickListener {
-                mOtherProfileViewModel.follow(mProfilePageViewModel.getUserResourceResponse.value?.data?.id!!, user?.id!!, (activity as HomeActivity).token!!)
+                mOtherProfileViewModel.follow((activity as HomeActivity).user_id!!, user?.id!!, (activity as HomeActivity).token!!)
             }
             if(isUserPrivate){
                 binding.buttonFollowers.setOnClickListener {

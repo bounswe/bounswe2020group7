@@ -15,13 +15,14 @@
         android:roundIcon="@drawable/ic_o_logo_24dp"
         android:supportsRtl="true"
         android:theme="@style/SplashTheme">
-        <activity android:name=".page.activity.HomeActivity" />
-        <activity android:name=".page.activity.LoginActivity">
+        <activity android:name=".page.activity.home.HomeActivity" />
+        <activity android:name=".page.activity.login.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".page.activity.workspace.WorkspaceActivity" />
     </application>
 
 </manifest>

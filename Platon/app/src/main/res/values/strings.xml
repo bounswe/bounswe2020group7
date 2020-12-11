@@ -92,4 +92,5 @@
     <string name="workspace_title_str">Workspace Title</string>
     <string name="instution_str">Instution</string>
     <string name="institution_str">Institution</string>
+    <string name="enter_your_job_str">Enter your job</string>
 </resources>

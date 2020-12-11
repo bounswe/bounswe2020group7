@@ -10,7 +10,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -19,16 +18,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.cmpe451.platon.R
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentLoginBinding
 import com.cmpe451.platon.network.Resource
-import com.cmpe451.platon.page.activity.HomeActivity
+import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.util.Definitions
 
 /**
@@ -116,19 +112,21 @@ class LoginFragment : Fragment() {
     }
 
     private fun setObservers(){
-        mLoginViewModel.getLoginResourceResponse.observe(viewLifecycleOwner, Observer{t->
+        mLoginViewModel.getLoginResourceResponse.observe(viewLifecycleOwner, { t->
             when(t.javaClass){
                 Resource.Loading::class.java -> dialog.show()
 
                 Resource.Success::class.java -> {
                     val token = t.data!!.token
-                    sharedPreferences.edit().putString("token", token).apply()
-
+                    val userId = t.data!!.user_id
                     if(binding.rememberChk.isChecked){
                         sharedPreferences.edit().putString("mail", binding.emailEt.text.toString().trim()).apply()
                         sharedPreferences.edit().putString("pass", binding.passEt.text.toString().trim()).apply()
                     }
-                    activity?.startActivity(Intent(activity, HomeActivity::class.java).putExtra("token", token))
+                    val bnd = Bundle()
+                    bnd.putString("token", token)
+                    bnd.putInt("user_id", userId)
+                    activity?.startActivity(Intent(activity, HomeActivity::class.java).putExtras(bnd))
                     activity?.finish()
                     dialog.dismiss()
                 }

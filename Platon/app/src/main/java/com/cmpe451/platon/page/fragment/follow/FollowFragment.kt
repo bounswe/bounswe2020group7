@@ -21,7 +21,7 @@ import com.cmpe451.platon.databinding.FragmentFollowersFollowingListBinding
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.FollowPerson
 import com.cmpe451.platon.network.models.OtherUser
-import com.cmpe451.platon.page.activity.HomeActivity
+import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.fragment.profilepage.ProfilePageViewModel
 
 class FollowFragment:Fragment() {
@@ -47,7 +47,7 @@ class FollowFragment:Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setAdapter()
         token = (activity as HomeActivity).token.toString()
-        userId = mProfilePageViewModel.getUserResourceResponse.value?.data?.id
+        userId = (activity as HomeActivity).user_id
 
         setObservers()
 
@@ -101,7 +101,7 @@ class FollowFragment:Fragment() {
         adapter = FollowerFollowingAdapter(ArrayList()) { userId:Int->
 //            Toast.makeText(activity, userId, Toast.LENGTH_LONG)
 //            (activity as HomeActivity).navController.navigate(FollowersFollowingFragmentDirections.actionFollowersFollowingFragmentToProfilePagePrivateFragment(id))
-            if(userId == mProfilePageViewModel.getUserResourceResponse.value?.data?.id!!){
+            if(userId == (activity as HomeActivity).user_id){
                 findNavController().navigate(FollowFragmentDirections.actionFollowFragmentToProfilePageFragment())
             }
             else {

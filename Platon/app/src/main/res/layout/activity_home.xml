@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/home_background"
     android:orientation="vertical"
-    tools:context=".page.activity.HomeActivity">
+    tools:context=".page.activity.home.HomeActivity">
 
     <include layout="@layout/toolbar" />
 

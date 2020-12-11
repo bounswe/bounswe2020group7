@@ -15,15 +15,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.cmpe451.platon.R
-import com.cmpe451.platon.adapter.ProfilePageAdapter
 import com.cmpe451.platon.adapter.UserProjectsAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentProfilePageBinding
 import com.cmpe451.platon.databinding.UserProjectsCellBinding
 import com.cmpe451.platon.network.Resource
-import com.cmpe451.platon.page.activity.HomeActivity
-import com.cmpe451.platon.page.fragment.follow.FollowViewModel
-import com.cmpe451.platon.page.fragment.researchInfo.ResearchInfoViewModel
+import com.cmpe451.platon.network.models.User
+import com.cmpe451.platon.page.activity.home.HomeActivity
+import com.cmpe451.platon.page.activity.home.HomeActivityViewModel
 import com.cmpe451.platon.util.Definitions
 
 class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonClickListener {
@@ -31,16 +30,15 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     private lateinit var binding: FragmentProfilePageBinding
     private val mProfilePageViewModel: ProfilePageViewModel by activityViewModels()
 
+    private val mActivityViewModel: HomeActivityViewModel by activityViewModels()
+
     private lateinit var userProjectsRecyclerView: RecyclerView
     private lateinit var userProjectsAdapter: UserProjectsAdapter
-    private lateinit var informationsRecyclerView: RecyclerView
-    private lateinit var informationsAdapter: ProfilePageAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         binding = FragmentProfilePageBinding.inflate(inflater)
-
         setHasOptionsMenu(true)
         return binding.root
     }
@@ -56,47 +54,45 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
         userProjectsAdapter = UserProjectsAdapter(ArrayList(), requireContext(), this)
         userProjectsRecyclerView.adapter = userProjectsAdapter
         userProjectsRecyclerView.layoutManager = LinearLayoutManager(this.activity)
-
-        informationsRecyclerView = binding.rvProfilePageInfo
-        informationsAdapter = ProfilePageAdapter(ArrayList())
-        informationsRecyclerView.adapter = informationsAdapter
-        informationsRecyclerView.layoutManager = LinearLayoutManager(context,LinearLayoutManager.VERTICAL, false)
     }
 
 
     private fun setListeners() {
         setButtonListeners()
         setObservers()
+        setFields()
+    }
+
+    private fun setFields(){
+        mActivityViewModel.getUserResourceResponse.observe(viewLifecycleOwner, {t ->
+            when(t.javaClass){
+            Resource.Success::class.java ->{
+                val user = t.data!!
+                binding.tvEmail.text = user.e_mail
+                binding.tvInstitution.text = if (user.institution != "") user.institution else  "Institution not specified!"
+                binding.tvJob.text = user.job
+                val naming = user.name + " " + user.surname
+                binding.textNameSurname.text = naming
+
+                mProfilePageViewModel.fetchResearch((activity as HomeActivity).token, user.id)
+
+                Glide.with(this)
+                        .load(user.profile_photo)
+                        .placeholder(R.drawable.ic_o_logo)
+                        .into(binding.profilePhoto)
+            }
+            Resource.Error::class.java -> Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+        } })
+
     }
 
     private fun setObservers() {
-        mProfilePageViewModel.getUserResourceResponse.observe(viewLifecycleOwner, Observer{ t->
-            when(t.javaClass){
-                Resource.Success::class.java ->{
-                    val user = t.data!!
-                    informationsAdapter.submitList(mProfilePageViewModel.getPersonalInformation())
-                    val naming = user.name + " " + user.surname
-                    binding.textNameSurname.text = naming
-
-                    mProfilePageViewModel.fetchResearch((activity as HomeActivity).token, user.id)
-
-                    Glide.with(this)
-                            .load(user.profile_photo)
-                            .placeholder(R.drawable.ic_o_logo)
-                            .into(binding.profilePhoto)
-                }
-                Resource.Error::class.java -> Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
-            }
-        })
-
-
         mProfilePageViewModel.getResearchesResourceResponse.observe(viewLifecycleOwner, Observer{ t ->
             when(t.javaClass) {
                 Resource.Success::class.java -> userProjectsAdapter.submitElements(t.data!!.research_info)
                 Resource.Error::class.java -> Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
             }
         })
-
     }
 
 

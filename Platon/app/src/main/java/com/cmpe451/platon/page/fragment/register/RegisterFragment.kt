@@ -8,9 +8,8 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.EditText
-import android.widget.Toast
+import android.widget.*
+import android.widget.AdapterView.OnItemSelectedListener
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -106,7 +105,7 @@ class RegisterFragment : Fragment() {
             val mailStr = binding.etEmail.text.toString().trim()
             val pass1Str = binding.etPw1.text.toString().trim()
             val pass2Str = binding.etPw2.text.toString().trim()
-            val jobStr = binding.spJob.selectedItem.toString().trim()
+            val jobStr = if (binding.etNewJob.text.isEmpty()) binding.spJob.selectedItem.toString().trim() else binding.etNewJob.text.toString().trim()
             val institution = if (binding.etInstitution.text.isEmpty()) null else binding.etInstitution.text.toString().trim()
 
             val flag = firstNameStr.isEmpty() || lastNameStr.isEmpty()
@@ -148,6 +147,20 @@ class RegisterFragment : Fragment() {
             }
             dial.show()
         }
+
+        binding.spJob.onItemSelectedListener = object: OnItemSelectedListener{
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if (binding.spJob.adapter.count-1 == position){
+                    binding.etNewJob.visibility = View.VISIBLE
+                }else{
+                    binding.etNewJob.visibility = View.GONE
+                    binding.etNewJob.text.clear()
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+        }
     }
 
     private fun setObservers(){
@@ -177,6 +190,7 @@ class RegisterFragment : Fragment() {
                 Resource.Success::class.java -> {
                     (binding.spJob.adapter as ArrayAdapter<*>).clear()
                     (binding.spJob.adapter as ArrayAdapter<String>).addAll(t.data!!.map { it.name })
+                    (binding.spJob.adapter as ArrayAdapter<String>).add("Not in list")
                 }
                 Resource.Error::class.java -> {
                     Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()

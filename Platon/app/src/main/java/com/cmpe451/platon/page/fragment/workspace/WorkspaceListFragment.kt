@@ -1,6 +1,7 @@
 package com.cmpe451.platon.page.fragment.workspace
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -18,7 +19,8 @@ import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentWorkspaceListBinding
 import com.cmpe451.platon.databinding.WorkspaceCellBinding
 import com.cmpe451.platon.network.Resource
-import com.cmpe451.platon.page.activity.HomeActivity
+import com.cmpe451.platon.page.activity.home.HomeActivity
+import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.page.fragment.profilepage.ProfilePageViewModel
 import com.cmpe451.platon.util.Definitions
 
@@ -59,9 +61,7 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
         })
     }
     private fun fetchWorkspaces(){
-        if(mProfilePageViewModel.getUserResourceResponse.value?.data?.id != null){
-            mWorkspaceListViewModel.getWorkspaces(mProfilePageViewModel.getUserResourceResponse.value?.data?.id!!, (activity as HomeActivity).token!!)
-        }
+        mWorkspaceListViewModel.getWorkspaces((activity as HomeActivity).user_id!!, (activity as HomeActivity).token!!)
     }
 
 
@@ -72,7 +72,6 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
         val search = (menu.findItem(R.id.search_btn)?.actionView as SearchView)
         search.setQuery("", false)
         search.isIconified = true
-
         menu.findItem(R.id.registerFragment)?.isVisible = false
         menu.findItem(R.id.loginFragment)?.isVisible = false
         menu.findItem(R.id.search_btn)?.isVisible = false
@@ -91,6 +90,10 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
     }
 
     override fun onWorkspaceListEditClicked(position: Int) {
-        TODO("Not yet implemented")
+        val bnd = Bundle()
+        bnd.putInt("user_id", (activity as HomeActivity).user_id!!)
+        bnd.putString("token", (activity as HomeActivity).token!!)
+        bnd.putInt("workspace_id", position)
+        startActivity(Intent(activity, WorkspaceActivity::class.java).putExtras(bnd))
     }
 }

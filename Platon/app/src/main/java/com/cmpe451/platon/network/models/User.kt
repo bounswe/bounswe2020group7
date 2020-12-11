@@ -32,5 +32,5 @@ data class OtherUser(
 
 data class Auth(
         val token: String,
-        val user_id:Int?
+        val user_id:Int
 )
