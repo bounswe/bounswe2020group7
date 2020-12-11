@@ -9,6 +9,7 @@ class OtherProfileViewModel : ViewModel() {
     var getUserResource = repository.userResource
     var getResearchesResource = repository.researchesResource
     var getFollowResourceResponse = repository.followResourceResponse
+    var getUnfollowResourceResponse = repository.unFollowResourceResponse
 
     var isUserPrivate = MutableLiveData<Boolean>()
     var isFollowing = MutableLiveData<Definitions.USERSTATUS>()
@@ -19,7 +20,11 @@ class OtherProfileViewModel : ViewModel() {
 
     fun setUserInfo(){
         isUserPrivate.value = getUserResource.value?.data?.is_private
-        isFollowing.value = Definitions.USERSTATUS.FOLLOWING
+        isFollowing.value = when(getUserResource.value?.data?.following_status){
+            1->Definitions.USERSTATUS.FOLLOWING;
+            0-> Definitions.USERSTATUS.REQUESTED;
+            else-> Definitions.USERSTATUS.NOT_FOLLOWING
+        }
     }
 
     fun fetchResearch(token: String, userId: Int) {
@@ -30,6 +35,10 @@ class OtherProfileViewModel : ViewModel() {
     }
     fun follow(follower_id:Int, following_id: Int, auth_token:String){
         repository.follow(follower_id,following_id, auth_token)
+    }
+
+    fun unfollow(following_id: Int, token: String) {
+        repository.unfollow(following_id, token)
     }
 
 

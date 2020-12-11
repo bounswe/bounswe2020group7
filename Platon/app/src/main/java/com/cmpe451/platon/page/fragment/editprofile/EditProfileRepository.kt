@@ -14,14 +14,14 @@ class EditProfileRepository() {
     var editProfileResourceResponse : MutableLiveData<Resource<JsonObject>> = MutableLiveData(Resource.Loading(JsonObject()))
 
     fun editUser(name:String?,surname:String?,
-                 job:String?, isPrivate:Boolean?,
+                 job:String?, institution:String?, isPrivate:Boolean,
                  profilePhoto:String?,
                  google_scholar_name:String?,
                  researchgate_name:String?,authToken: String){
 
 
         val service = RetrofitClient.getService()
-        val call = service.editUserInfo(name, surname, job, true, isPrivate, profilePhoto, google_scholar_name, researchgate_name, authToken)
+        val call = service.editUserInfo(name, surname, job, institution,  if (isPrivate) 1 else 0, profilePhoto, google_scholar_name, researchgate_name, authToken)
 
         call.enqueue(object :Callback<JsonObject?> {
             override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {

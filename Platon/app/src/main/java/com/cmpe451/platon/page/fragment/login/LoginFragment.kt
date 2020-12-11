@@ -21,6 +21,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.cmpe451.platon.R
@@ -115,7 +116,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun setObservers(){
-        mLoginViewModel.getLoginResourceResponse.observe(viewLifecycleOwner, {t->
+        mLoginViewModel.getLoginResourceResponse.observe(viewLifecycleOwner, Observer{t->
             when(t.javaClass){
                 Resource.Loading::class.java -> dialog.show()
 

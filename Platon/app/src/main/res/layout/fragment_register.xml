@@ -10,7 +10,6 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
         android:layout_gravity="center"
         android:background="@drawable/view_back_darker"
         android:gravity="center"
@@ -22,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/iv_register"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/xxx_large"
@@ -38,7 +37,7 @@
             android:orientation="horizontal">
 
             <EditText
-                android:id="@+id/firstname_tv"
+                android:id="@+id/et_firstName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -52,7 +51,7 @@
                 android:textColorLink="@color/secondary_purple" />
 
             <EditText
-                android:id="@+id/lastname_tv"
+                android:id="@+id/et_lastName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -68,7 +67,7 @@
         </LinearLayout>
 
         <EditText
-            android:id="@+id/mail_tv"
+            android:id="@+id/et_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autofillHints=""
@@ -81,22 +80,44 @@
             android:textColorHint="@color/secondary_purple"
             android:textColorLink="@color/secondary_purple" />
 
+
+        <LinearLayout
+            android:padding="@dimen/xx_small"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/job_str"
+            android:backgroundTint="@color/secondary_purple"
+            android:textSize="@dimen/project_title_text_size"
+            android:textColorHighlight="@color/primary_light"
+            android:textColorHint="@color/secondary_purple"
+            android:textColor="@color/secondary_purple" />
+
+        <Spinner
+            android:id="@+id/sp_job"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dialog" />
+        </LinearLayout>
         <EditText
-            android:id="@+id/job_tv"
+            android:id="@+id/et_institution"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autofillHints=""
             android:backgroundTint="@color/secondary_purple"
             android:ems="17"
-            android:hint="@string/job_str"
-            android:inputType="text|textAutoCorrect"
+            android:hint="@string/institution_str"
+            android:inputType="text"
             android:textColor="@color/primary_light"
             android:textColorHighlight="@color/primary_light"
             android:textColorHint="@color/secondary_purple"
             android:textColorLink="@color/secondary_purple" />
 
         <EditText
-            android:id="@+id/pw1_tv"
+            android:id="@+id/et_pw1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autofillHints=""
@@ -109,11 +130,8 @@
             android:textColorHint="@color/secondary_purple"
             android:textColorLink="@color/secondary_purple" />
 
-
-
-
         <EditText
-            android:id="@+id/pw2_tv"
+            android:id="@+id/et_pw2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autofillHints=""
@@ -127,7 +145,7 @@
             android:textColorLink="@color/secondary_purple" />
 
         <CheckBox
-            android:id="@+id/terms_chk"
+            android:id="@+id/chk_terms"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
@@ -135,7 +153,7 @@
             android:textColor="@color/secondary_purple" />
 
         <Button
-            android:id="@+id/register_btn"
+            android:id="@+id/btn_register"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
@@ -144,7 +162,7 @@
             android:textColor="@color/primary_light" />
 
         <TextView
-            android:id="@+id/alread_have_btn"
+            android:id="@+id/btn_alreadyHave"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/xxxxx_large"

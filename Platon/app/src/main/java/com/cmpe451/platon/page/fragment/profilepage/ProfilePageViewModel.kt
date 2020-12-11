@@ -15,7 +15,7 @@ class ProfilePageViewModel: ViewModel() {
     val getResearchesResourceResponse: LiveData<Resource<Researches>>
 
     val getUserFollowRequestsResourceResponse:MutableLiveData<Resource<FollowRequests>>
-    val getUserNotificationsResourceResponse:MutableLiveData<Resource<List<Notification>>>
+    val getUserNotificationsResourceResponse:MutableLiveData<Resource<Notifications>>
 
 
 

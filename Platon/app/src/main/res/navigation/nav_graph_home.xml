@@ -14,6 +14,9 @@
         <action
             android:id="@+id/action_homeFragment_to_otherProfileFragment"
             app:destination="@id/otherProfileFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_workspaceListFragment2"
+            app:destination="@id/workspaceListFragment" />
     </fragment>
     <fragment
         android:id="@+id/profilePageFragment"
@@ -73,4 +76,8 @@
         android:id="@+id/editResearchInfoFragment"
         android:name="com.cmpe451.platon.page.fragment.researchInfo.EditResearchInfoFragment"
         android:label="Update" />
+    <fragment
+        android:id="@+id/workspaceListFragment"
+        android:name="com.cmpe451.platon.page.fragment.workspace.WorkspaceListFragment"
+        android:label="WorkspaceListFragment" />
 </navigation>
