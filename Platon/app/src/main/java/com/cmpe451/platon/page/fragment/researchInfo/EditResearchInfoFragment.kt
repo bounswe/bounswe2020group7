@@ -2,6 +2,7 @@ package com.cmpe451.platon.page.fragment.researchInfo
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -15,13 +16,14 @@ import androidx.navigation.fragment.findNavController
 import com.cmpe451.platon.R
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentResearchInfoEditBinding
+import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.page.activity.HomeActivity
 import com.cmpe451.platon.page.fragment.profilepage.ProfilePageViewModel
 import com.cmpe451.platon.util.Definitions
 
 class EditResearchInfoFragment : Fragment() {
     private lateinit var binding: FragmentResearchInfoEditBinding
-    private val mReseachInfoViewModel: ResearchInfoViewModel by activityViewModels()
+    private val mResearchInfoViewModel: ResearchInfoViewModel by viewModels()
     private val mProfilePageViewModel: ProfilePageViewModel by activityViewModels()
 
     private lateinit var dialog:AlertDialog
@@ -41,29 +43,49 @@ class EditResearchInfoFragment : Fragment() {
     }
 
     private fun setObserver() {
-        mReseachInfoViewModel.currentResearch.observe(viewLifecycleOwner) { t ->
+        mProfilePageViewModel.currentResearch.observe(viewLifecycleOwner) { t ->
             if(t != null){
                 binding.projectNameTv.setText(t.title)
                 binding.projectYearTv.setText(t.year.toString())
-                if(!t.description.isNullOrEmpty()){
+                if(t.description.isNotEmpty()){
                     binding.projectDescriptionTv.setText(t.description)
                 }
                 dialog.dismiss()
             }
         }
 
-        mReseachInfoViewModel.getResponseDeleteResearch.observe(viewLifecycleOwner, { t->
-            if (t!= null){
-                when (t.first) {
-                    200 -> {
-                        findNavController().navigateUp()
-                        Toast.makeText(activity, "Successfully deleted!", Toast.LENGTH_SHORT).show()
-                    }
-                    else -> Toast.makeText(activity, t.second, Toast.LENGTH_SHORT).show()
-                }
+        mResearchInfoViewModel.getDeleteResearchResourceResponse.observe(viewLifecycleOwner, { t->
+            when(t.javaClass){
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java ->{
+                    Log.i("EEROROROR", "SOME ERROR OCCURRED!")
+                    dialog.dismiss()
+                    findNavController().navigateUp()
 
+                }
+                Resource.Error::class.java ->{
+                    dialog.dismiss()
+                    Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+                }
             }
-            dialog.dismiss()
+
+        })
+
+
+        mResearchInfoViewModel.getEditResearchResourceResponse.observe(viewLifecycleOwner, {t ->
+            when(t.javaClass){
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java ->{
+                    findNavController().navigateUp()
+                    dialog.dismiss()
+                }
+                Resource.Error::class.java ->{
+                    Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
+            }
+
+
         })
 
     }
@@ -90,8 +112,8 @@ class EditResearchInfoFragment : Fragment() {
                         if(!binding.projectDescriptionTv.text.isNullOrEmpty()){
                             description = binding.projectDescriptionTv.text.toString()
                         }
-                        if(mReseachInfoViewModel.currentResearch.value != null){
-                            mReseachInfoViewModel.editResearchInfo(mReseachInfoViewModel.currentResearch.value?.id!!,
+                        if(mProfilePageViewModel.currentResearch.value != null){
+                            mResearchInfoViewModel.editResearchInfo(mProfilePageViewModel.currentResearch.value?.id!!,
                                     binding.projectNameTv.text.toString(), description,
                                     binding.projectYearTv.text.toString().toInt(),
                                     (activity as HomeActivity).token!!
@@ -105,8 +127,8 @@ class EditResearchInfoFragment : Fragment() {
         }
 
         binding.buttonDelete.setOnClickListener{
-            if(mReseachInfoViewModel.currentResearch.value != null){
-                mReseachInfoViewModel.deleteResearchInfo(mReseachInfoViewModel.currentResearch.value?.id!!,
+            if(mProfilePageViewModel.currentResearch.value != null){
+                mResearchInfoViewModel.deleteResearchInfo(mProfilePageViewModel.currentResearch.value?.id!!,
                         (activity as HomeActivity).token!!)
                 dialog.show()
             }

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -19,6 +20,7 @@ import com.cmpe451.platon.adapter.UserProjectsAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentProfilePageBinding
 import com.cmpe451.platon.databinding.UserProjectsCellBinding
+import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.page.activity.HomeActivity
 import com.cmpe451.platon.page.fragment.follow.FollowViewModel
 import com.cmpe451.platon.page.fragment.researchInfo.ResearchInfoViewModel
@@ -28,7 +30,6 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
 
     private lateinit var binding: FragmentProfilePageBinding
     private val mProfilePageViewModel: ProfilePageViewModel by activityViewModels()
-    private val mResearchInfoViewModel: ResearchInfoViewModel by activityViewModels()
 
     private lateinit var userProjectsRecyclerView: RecyclerView
     private lateinit var userProjectsAdapter: UserProjectsAdapter
@@ -69,24 +70,30 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     }
 
     private fun setObservers() {
-        mProfilePageViewModel.getUser.observe(viewLifecycleOwner, { t->
-            if(t != null){
-                informationsAdapter.submitList(mProfilePageViewModel.getPersonalInformation())
-                val naming = t.name + " " + t.surname
-                binding.textNameSurname.text = naming
+        mProfilePageViewModel.getUserResourceResponse.observe(viewLifecycleOwner, Observer{ t->
+            when(t.javaClass){
+                Resource.Success::class.java ->{
+                    val user = t.data!!
+                    informationsAdapter.submitList(mProfilePageViewModel.getPersonalInformation())
+                    val naming = user.name + " " + user.surname
+                    binding.textNameSurname.text = naming
 
-                mProfilePageViewModel.fetchResearch((activity as HomeActivity).token, t.id)
+                    mProfilePageViewModel.fetchResearch((activity as HomeActivity).token, user.id)
 
-                Glide.with(this)
-                    .load(t.profile_photo)
-                    .placeholder(R.drawable.ic_o_logo)
-                    .into(binding.profilePhoto)
+                    Glide.with(this)
+                            .load(user.profile_photo)
+                            .placeholder(R.drawable.ic_o_logo)
+                            .into(binding.profilePhoto)
+                }
+                Resource.Error::class.java -> Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
             }
         })
 
-        mProfilePageViewModel.getResearches.observe(viewLifecycleOwner, { t ->
-            if(t != null && t.isNotEmpty()) {
-                userProjectsAdapter.submitElements(t)
+
+        mProfilePageViewModel.getResearchesResourceResponse.observe(viewLifecycleOwner, Observer{ t ->
+            when(t.javaClass) {
+                Resource.Success::class.java -> userProjectsAdapter.submitElements(t.data!!.research_info)
+                Resource.Error::class.java -> Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
             }
         })
 
@@ -140,9 +147,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     }
 
     override fun onUserProjectEditClicked(position: Int) {
-        if(mProfilePageViewModel.getResearches.value?.get(position) != null){
-            mResearchInfoViewModel.setCurrentResearch(mProfilePageViewModel.getResearches.value?.get(position)!!)
-        }
+        mProfilePageViewModel.setCurrentResearch(mProfilePageViewModel.getResearchesResourceResponse.value?.data!!.research_info[position])
         findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToEditResearchInfoFragment())
     }
 }

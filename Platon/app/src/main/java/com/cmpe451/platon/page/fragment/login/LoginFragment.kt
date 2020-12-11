@@ -21,11 +21,13 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.cmpe451.platon.R
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentLoginBinding
+import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.page.activity.HomeActivity
 import com.cmpe451.platon.util.Definitions
 
@@ -97,8 +99,7 @@ class LoginFragment : Fragment() {
         binding.loginBtn.setOnClickListener {
             val email = binding.emailEt.text.toString().trim()
             val pass = binding.passEt.text.toString().trim()
-            if (!mLoginViewModel.tryToLogin(email, pass)) dialog.show()
-            else Toast.makeText(activity, "Something is wrong", Toast.LENGTH_SHORT).show()
+            mLoginViewModel.tryToLogin(email, pass)
         }
 
         binding.dontHaveAccBtn.setOnClickListener {
@@ -115,27 +116,32 @@ class LoginFragment : Fragment() {
     }
 
     private fun setObservers(){
-        mLoginViewModel.getResponseCode.observe(viewLifecycleOwner, {t->
-            if(t!=null){
-                if (t.first == 200) {
-                    val token = t.second
+        mLoginViewModel.getLoginResourceResponse.observe(viewLifecycleOwner, Observer{t->
+            when(t.javaClass){
+                Resource.Loading::class.java -> dialog.show()
+
+                Resource.Success::class.java -> {
+                    val token = t.data!!.token
                     sharedPreferences.edit().putString("token", token).apply()
 
                     if(binding.rememberChk.isChecked){
                         sharedPreferences.edit().putString("mail", binding.emailEt.text.toString().trim()).apply()
                         sharedPreferences.edit().putString("pass", binding.passEt.text.toString().trim()).apply()
                     }
-                    activity?.finish()
                     activity?.startActivity(Intent(activity, HomeActivity::class.java).putExtra("token", token))
+                    activity?.finish()
+                    dialog.dismiss()
                 }
-                else {
-                    Toast.makeText(activity, t.second, Toast.LENGTH_LONG).show()
+                Resource.Error::class.java ->{
+                    Toast.makeText(activity, t.message, Toast.LENGTH_LONG).show()
                     sharedPreferences.edit().remove("mail").apply()
                     sharedPreferences.edit().remove("pass").apply()
                     sharedPreferences.edit().remove("token").apply()
+                    dialog.dismiss()
                 }
             }
-            dialog.dismiss()
+
+
         })
     }
 

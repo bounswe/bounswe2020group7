@@ -1,5 +1,6 @@
-package com.cmpe451.platon.util
+package com.cmpe451.platon.network
 
+import com.cmpe451.platon.util.Definitions
 import com.google.gson.GsonBuilder
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -8,7 +9,7 @@ abstract class RetrofitClient {
     companion object{
         @Volatile
         private var INSTANCE: Webservice? = null
-        fun getService():Webservice {
+        fun getService(): Webservice {
             val tempInstance = INSTANCE
             if (tempInstance != null){
                 return tempInstance

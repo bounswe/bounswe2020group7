@@ -24,7 +24,7 @@ import java.util.*
 class Definitions {
 
     companion object {
-        val API_URL="http://3.127.150.96:5000/"
+        val API_URL="http://18.185.75.161:5000/"
         val API_PORT ="5000"
         val FORGOT_PASS_ADDRESS = ""
         val LOGIN_ADDRESS = ""
@@ -59,22 +59,6 @@ class Definitions {
     enum class USERSTATUS {
         FOLLOWING, NOT_FOLLOWING, REQUESTED
     }
-    /**
-     * Activities are serialized according to this.
-     * @param notification_message Title of the activity
-     * @param img Drawable of the activity, nullable
-     */
-    class ActivityStream(
-        val img: Drawable?,
-        val notification_message: String
-
-    ) {
-        /**
-         * Reason for trending is chosen by enumerator.
-         */
-
-    }
-
 
     /**
      * Upcoming events are serialized according to this.

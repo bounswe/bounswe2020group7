@@ -1,15 +1,15 @@
 package com.cmpe451.platon.page.fragment.register
 
+import android.R.attr.country
 import android.app.AlertDialog
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
+import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.ArrayAdapter
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -18,7 +18,9 @@ import androidx.navigation.fragment.findNavController
 import com.cmpe451.platon.R
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentRegisterBinding
+import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.util.Definitions
+
 
 class RegisterFragment : Fragment() {
 
@@ -26,7 +28,11 @@ class RegisterFragment : Fragment() {
     private lateinit var dialog: AlertDialog
     private val mRegisterViewModel: RegisterViewModel by viewModels()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         // Inflate the layout for this fragment
         binding = FragmentRegisterBinding.inflate(inflater)
         setHasOptionsMenu(true)
@@ -36,6 +42,7 @@ class RegisterFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setListeners()
+        mRegisterViewModel.getAllJobs()
     }
 
     private fun setListeners() {
@@ -46,50 +53,44 @@ class RegisterFragment : Fragment() {
 
     private fun setFieldListeners(){
         // terms and conditions must be accepted, otherwise show error
-        binding.termsChk.setOnCheckedChangeListener { t, b ->
+        binding.chkTerms.setOnCheckedChangeListener { t, b ->
             when(b){
                 true -> t.error = null
-                false -> t.error  = "Terms and Conditions must be accepted"
+                false -> t.error = "Terms and Conditions must be accepted"
             }
         }
 
-        binding.firstnameTv.setOnFocusChangeListener{ t, b ->
+        binding.etFirstName.setOnFocusChangeListener{ t, b ->
             if(!b){
-                if((t as TextView).text.isNullOrEmpty()) t.error = "Required!"
+                if((t as EditText).text.isNullOrEmpty()) t.error = "Required!"
                 else t.error = null
                  }
         }
 
-        binding.lastnameTv.setOnFocusChangeListener{ t, b ->
+        binding.etLastName.setOnFocusChangeListener{ t, b ->
             if(!b){
-                if((t as TextView).text.isNullOrEmpty()) t.error = "Required!"
+                if((t as EditText).text.isNullOrEmpty()) t.error = "Required!"
                 else t.error = null
             }  }
 
-        binding.mailTv.setOnFocusChangeListener{ t, b ->
+        binding.etEmail.setOnFocusChangeListener{ t, b ->
             if(!b){
-                if((t as TextView).text.isNullOrEmpty()) t.error = "Required!"
+                if((t as EditText).text.isNullOrEmpty()) t.error = "Required!"
+                else if(!Patterns.EMAIL_ADDRESS.matcher(t.text.toString()).matches()) t.error = "Please enter a valid email!"
                 else t.error = null
             }  }
 
-        binding.jobTv.setOnFocusChangeListener{ t, b ->
+        binding.etPw1.setOnFocusChangeListener{ t, b ->
             if(!b){
-                if((t as TextView).text.isNullOrEmpty()) t.error = "Required!"
-                else t.error = null
-            } }
-
-        binding.pw1Tv.setOnFocusChangeListener{ t, b ->
-            if(!b){
-                if((t as TextView).text.isNullOrEmpty()) t.error = "Required!"
+                if((t as EditText).text.isNullOrEmpty()) t.error = "Required!"
                 else t.error = null
             }  }
 
-        binding.pw2Tv.setOnFocusChangeListener { t, b ->
+        binding.etPw2.setOnFocusChangeListener { t, b ->
             if (!b) {
                 when {
-                    (t as TextView).text.isNullOrEmpty() -> t.error = "Required!"
-                    t.text.toString() != binding.pw1Tv.text.toString() -> t.error =
-                        "Passwords must match!"
+                    (t as EditText).text.isNullOrEmpty() -> t.error = "Required!"
+                    t.text.toString() != binding.etPw1.text.toString() -> t.error = "Passwords must match!"
                     else -> t.error = null
                 }
             }
@@ -99,48 +100,90 @@ class RegisterFragment : Fragment() {
     private fun setButtonListeners(){
         dialog = Definitions().createProgressBar(activity as BaseActivity)
 
-        binding.registerBtn.setOnClickListener {
-            val firstNameStr = binding.firstnameTv.text.toString().trim()
-            val lastNameStr = binding.lastnameTv.text.toString().trim()
-            val mailStr = binding.mailTv.text.toString().trim()
-            val pass1Str = binding.pw1Tv.text.toString().trim()
-            val pass2Str = binding.pw2Tv.text.toString().trim()
-            val jobStr = binding.jobTv.text.toString().trim()
-            if (!mRegisterViewModel.onRegisterButtonClicked(firstNameStr, lastNameStr, mailStr, jobStr, pass1Str, pass2Str)) dialog.show()
-            else Toast.makeText(activity, "Something is wrong", Toast.LENGTH_SHORT).show()
+        binding.btnRegister.setOnClickListener {
+            val firstNameStr = binding.etFirstName.text.toString().trim()
+            val lastNameStr = binding.etLastName.text.toString().trim()
+            val mailStr = binding.etEmail.text.toString().trim()
+            val pass1Str = binding.etPw1.text.toString().trim()
+            val pass2Str = binding.etPw2.text.toString().trim()
+            val jobStr = binding.spJob.selectedItem.toString().trim()
+            val institution = if (binding.etInstitution.text.isEmpty()) null else binding.etInstitution.text.toString().trim()
+
+            val flag = firstNameStr.isEmpty() || lastNameStr.isEmpty()
+                    || mailStr.isEmpty() || jobStr.isEmpty()
+                    || pass1Str.isEmpty() || pass2Str.isEmpty() || pass1Str != pass2Str
+                    || !Patterns.EMAIL_ADDRESS.matcher(mailStr).matches()
+
+            if (!flag) mRegisterViewModel.onRegisterButtonClicked(
+                firstNameStr,
+                lastNameStr,
+                mailStr,
+                jobStr,
+                pass1Str,
+                pass2Str,
+                institution
+            )
+            else Toast.makeText(
+                activity,
+                "Please fill the necessary fields properly!",
+                Toast.LENGTH_SHORT
+            ).show()
         }
 
-        binding.alreadHaveBtn.setOnClickListener {
+        binding.btnAlreadyHave.setOnClickListener {
             findNavController().navigate(RegisterFragmentDirections.actionRegisterFragmentToLoginFragment())
         }
 
-        binding.termsChk.isClickable = true
+        binding.chkTerms.isClickable = true
 
-        binding.termsChk.setOnClickListener {
+        binding.chkTerms.setOnClickListener {
             val dial = AlertDialog.Builder(activity as BaseActivity)
             dial.setTitle("Terms and Conditions")
             dial.setMessage(mRegisterViewModel.getTermsAndConditions())
             dial.setPositiveButton("Accept") { _, _ ->
-                binding.termsChk.isChecked = true
+                binding.chkTerms.isChecked = true
             }
             dial.setNegativeButton("Reject") { _, _ ->
-                binding.termsChk.isChecked = false
+                binding.chkTerms.isChecked = false
             }
             dial.show()
         }
     }
 
     private fun setObservers(){
-        mRegisterViewModel.getRegisterResponse.observe(viewLifecycleOwner, { t->
-            if(t!= null){
-                if(t.first == 201){
+        mRegisterViewModel.getRegisterResourceResponse.observe(viewLifecycleOwner, { t ->
+            when (t.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
                     findNavController().navigateUp()
-                    Toast.makeText(activity, "Successfully registered!", Toast.LENGTH_SHORT).show()
-                }else{
-                    Toast.makeText(activity, t.second, Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
                 }
             }
-            dialog.dismiss()
+        })
+
+
+        mRegisterViewModel.getJobListResourceResponse.observe(viewLifecycleOwner, { t ->
+            when (t.javaClass) {
+                Resource.Loading::class.java -> {
+                    val x  = ArrayAdapter(requireContext(), R.layout.spinner_item, mutableListOf("Loading..."))
+                    x.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    binding.spJob.adapter = x
+
+                }
+                Resource.Success::class.java -> {
+                    (binding.spJob.adapter as ArrayAdapter<*>).clear()
+                    (binding.spJob.adapter as ArrayAdapter<String>).addAll(t.data!!.map { it.name })
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+
+
         })
     }
 

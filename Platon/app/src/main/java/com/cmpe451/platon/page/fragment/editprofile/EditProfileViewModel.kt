@@ -1,5 +1,6 @@
 package com.cmpe451.platon.page.fragment.editprofile
 
+import android.widget.Spinner
 import android.widget.TextView
 import androidx.lifecycle.ViewModel
 
@@ -7,10 +8,10 @@ class EditProfileViewModel:ViewModel() {
 
     private val repository = EditProfileRepository()
 
-    val getResponseCode = repository.responseCode
+    val getEditProfileResourceResponse = repository.editProfileResourceResponse
 
-    fun editProfile(firstnameTv:TextView, lastnameTv:TextView,
-                            jobTv:TextView, isPrivateUser:Boolean,
+    fun editProfile(firstnameTv:TextView, lastnameTv:TextView, sp:Spinner,
+                            institutionTv:TextView, isPrivateUser:Boolean,
                             profilePhotoTv:TextView,
                             googleScholarTv:TextView,
                             researchGateTv:TextView, token:String?){
@@ -23,9 +24,9 @@ class EditProfileViewModel:ViewModel() {
         if(!lastnameTv.text.isNullOrEmpty()){
             surname  = lastnameTv.text.toString()
         }
-        var job:String? = null
-        if(!jobTv.text.isNullOrEmpty()){
-            job  = jobTv.text.toString()
+        var institution:String? = null
+        if(!institutionTv.text.isNullOrEmpty()){
+            institution  = institutionTv.text.toString()
         }
         var google_scholar_name:String? = null
         if(!googleScholarTv.text.isNullOrEmpty()){
@@ -43,7 +44,7 @@ class EditProfileViewModel:ViewModel() {
 
 
         if(token != null) {
-            repository.editUser(name, surname, job, isPrivateUser, profilePhoto, google_scholar_name, researchgate_name, token)
+            repository.editUser(name, surname, sp.selectedItem.toString(), institution, isPrivateUser, profilePhoto, google_scholar_name, researchgate_name, token)
         }}
 
 }

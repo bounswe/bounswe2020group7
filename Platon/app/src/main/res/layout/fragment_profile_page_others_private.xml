@@ -30,7 +30,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/profile_page_margin"
-                android:text="Suzan Uskudarli"
+                android:text="Loading"
                 android:textColor="@color/primary_light"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toTopOf="@id/ll_stars"
@@ -196,68 +196,74 @@
             android:text="@string/private_page_warning_str"
             />
 
-       <LinearLayout
-           android:id="@+id/project_info_ll"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:orientation="vertical"
-           android:visibility="gone">
-           <TextView
-               android:id="@+id/projects_title"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:layout_marginHorizontal="10dp"
-               android:layout_marginTop="@dimen/medium"
-               android:fontFamily="@font/dm_sans_bold"
-               android:gravity="center_horizontal"
-               android:padding="@dimen/x_small"
-               android:shadowColor="@color/primary_dark"
-               android:shadowDx="1"
-               android:shadowDy="1"
-               android:shadowRadius="2"
-               android:text="@string/projects"
-               android:textAllCaps="false"
-               android:textColor="@color/secondary_purple"
-               android:textSize="@dimen/project_title_text_size" />
+        <LinearLayout
+            android:id="@+id/project_info_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
 
-           <androidx.recyclerview.widget.RecyclerView
-               android:id="@+id/rv_profile_page_info"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:layout_margin="@dimen/profile_page_margin"
-               app:layout_constraintBottom_toTopOf="@id/projects_title"
-               app:layout_constraintLeft_toLeftOf="parent"
-               app:layout_constraintRight_toRightOf="parent"
-               app:layout_constraintTop_toBottomOf="@id/info_title"
-               app:layout_constraintVertical_bias="0.6" />
-           <TextView
-               android:id="@+id/info_title"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:layout_marginHorizontal="10dp"
-               android:layout_marginTop="@dimen/medium"
-               android:fontFamily="@font/dm_sans_bold"
-               android:padding="@dimen/x_small"
-               android:paddingHorizontal="@dimen/title_logo_padding"
-               android:shadowColor="@color/primary_dark"
-               android:shadowDx="1"
-               android:shadowDy="1"
-               android:shadowRadius="2"
-               android:text="@string/your_info"
-               android:textColor="@color/secondary_green"
-               android:textSize="@dimen/project_title_text_size"
-               />
-           <androidx.recyclerview.widget.RecyclerView
-               android:id="@+id/rv_profile_page_projects"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:layout_margin="@dimen/profile_page_margin"
-               app:layout_constraintBottom_toBottomOf="parent"
-               app:layout_constraintLeft_toLeftOf="parent"
-               app:layout_constraintRight_toRightOf="parent"
-               app:layout_constraintTop_toBottomOf="@id/projects_title"
-               app:layout_constraintVertical_bias="0.6" />
-       </LinearLayout>
+            <TextView
+                android:id="@+id/info_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="@dimen/medium"
+                android:fontFamily="@font/dm_sans_bold"
+                android:padding="@dimen/x_small"
+                android:paddingHorizontal="@dimen/title_logo_padding"
+                android:shadowColor="@color/primary_dark"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2"
+                android:text="@string/your_info"
+                android:textColor="@color/secondary_green"
+                android:textSize="@dimen/project_title_text_size" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_profile_page_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/profile_page_margin"
+                app:layout_constraintBottom_toTopOf="@id/projects_title"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/info_title"
+                app:layout_constraintVertical_bias="0.6">
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+            <TextView
+                android:id="@+id/projects_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="@dimen/xx_small"
+                android:fontFamily="@font/dm_sans_bold"
+                android:gravity="center_horizontal"
+                android:padding="@dimen/x_small"
+                android:shadowColor="@color/primary_dark"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2"
+                android:text="@string/projects"
+                android:textAllCaps="false"
+                android:textColor="@color/secondary_purple"
+                android:textSize="@dimen/project_title_text_size" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_profile_page_projects"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/profile_page_margin"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/projects_title"
+                app:layout_constraintVertical_bias="0.6">
+
+            </androidx.recyclerview.widget.RecyclerView>
+        </LinearLayout>
 
 
     </LinearLayout>

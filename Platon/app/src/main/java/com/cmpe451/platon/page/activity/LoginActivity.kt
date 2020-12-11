@@ -68,7 +68,7 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
      */
     private fun initViews() {
         // search is initialized here
-        searchRecyclerView = binding.searchElementRecyclerView
+        searchRecyclerView = binding.toolbarRecyclerview
         searchRecyclerView.adapter = SearchElementsAdapter(ArrayList(),this, this)
         searchRecyclerView.layoutManager = LinearLayoutManager(this)
         (searchRecyclerView.adapter as SearchElementsAdapter).notifyDataSetChanged()

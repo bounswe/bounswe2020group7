@@ -2,11 +2,13 @@ package com.cmpe451.platon.page.fragment.home
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.cmpe451.platon.networkmodels.models.User
+import com.cmpe451.platon.network.Resource
+import com.cmpe451.platon.network.RetrofitClient
+import com.cmpe451.platon.network.models.ActivityStream
+import com.cmpe451.platon.network.models.ActivityStreamElement
 import com.cmpe451.platon.util.Definitions
-import com.cmpe451.platon.util.RetrofitClient
-import com.google.gson.Gson
 import com.google.gson.JsonObject
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -15,28 +17,29 @@ import retrofit2.Response
 class HomeRepository{
 
 
+    val activityStreamResourceResponse:MutableLiveData<Resource<List<ActivityStreamElement>>> = MutableLiveData()
 
 
-    fun fetchActivityStream():ArrayList<Definitions.ActivityStream> {
-        return arrayListOf(
-            Definitions.ActivityStream(
-                null,
-                "Edison created lightbulb project"
-            ),
-            Definitions.ActivityStream(
-                    null,
-                "Einstein unfollowed Relativity Theory",
+    fun getActivityStream(token:String){
+        val service = RetrofitClient.getService()
+        val call = service.getActivityStream(token)
 
-                ),
-            Definitions.ActivityStream(
-                    null,
-                "Burak Ömür joined artificial intelligent project",
-            ),
-            Definitions.ActivityStream(
-                    null,
-                "Alper Ahmetoğlu registered Platon."
-            )
-        )
+        activityStreamResourceResponse.value = Resource.Loading()
+        call.enqueue(object : Callback<List<ActivityStreamElement>?> {
+            override fun onResponse(call: Call<List<ActivityStreamElement>?>, response: Response<List<ActivityStreamElement>?>) {
+                when{
+                    response.isSuccessful && response.body() != null -> activityStreamResourceResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> activityStreamResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> activityStreamResourceResponse.value = Resource.Error("Unknown Error")
+                }
+            }
+
+            override fun onFailure(call: Call<List<ActivityStreamElement>?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+        })
+
+
     }
 
     fun fetchUpcomingEvents():ArrayList<Definitions.UpcomingEvent> {

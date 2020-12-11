@@ -1,39 +1,60 @@
 package com.cmpe451.platon.page.fragment.register
 
-import android.content.SharedPreferences
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.cmpe451.platon.util.RetrofitClient
+import com.cmpe451.platon.network.Resource
+import com.cmpe451.platon.network.RetrofitClient
+import com.cmpe451.platon.network.models.Job
 import com.google.gson.JsonObject
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observer
-import io.reactivex.rxjava3.schedulers.Schedulers
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.*
 
 class RegisterRepository(){
 
-    var registerResponse:MutableLiveData<Pair<Int, String>> = MutableLiveData()
+    var registerResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
+    var jobListResourceResponse:MutableLiveData<Resource<List<Job>>> = MutableLiveData()
 
-
-    fun postRegister(firstName:String, lastName:String, mail:String, job:String, pass:String){
+    fun postRegister(firstName:String, lastName:String, email:String,  password:String, job:String, institution:String?){
         val service = RetrofitClient.getService()
 
-        val call = service.makeRegister(mail, pass, firstName, lastName, job)!!
-        call.enqueue(object : Callback<JsonObject> {
-            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+        val call = service.makeRegister(firstName, lastName,email, password, job, institution)
+
+        registerResourceResponse.value = Resource.Loading()
+
+        call.enqueue(object : Callback<JsonObject?> {
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
                 when {
-                    response.isSuccessful  -> registerResponse.value = Pair(response.code(), "success")
-                    response.errorBody() != null -> registerResponse.value = Pair(response.code(),JSONObject(response.errorBody()!!.string()).get("error").toString())
-                     else ->registerResponse.value =  Pair(response.code(),"Unknown error!")
+                    response.isSuccessful -> registerResourceResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> registerResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                     else ->registerResourceResponse.value =  Resource.Error("Unknown error")
                 }
             }
 
-            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                registerResponse.value = Pair(-1,"Unknown error!")
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+
+    fun getAllJobs() {
+        val service = RetrofitClient.getService()
+        val call = service.getAllJobs()
+
+        jobListResourceResponse.value = Resource.Loading()
+
+        call.enqueue(object : Callback<List<Job>?> {
+            override fun onResponse(call: Call<List<Job>?>, response: Response<List<Job>?>) {
+                when {
+                    response.isSuccessful -> jobListResourceResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> jobListResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else ->jobListResourceResponse.value =  Resource.Error("Unknown error")
+                }
+            }
+
+            override fun onFailure(call: Call<List<Job>?>, t: Throwable) {
+                call.clone().enqueue(this)
             }
 
         })

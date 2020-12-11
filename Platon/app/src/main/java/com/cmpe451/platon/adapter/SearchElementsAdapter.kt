@@ -15,7 +15,7 @@ import com.cmpe451.platon.R
 
 class SearchElementsAdapter(private val data: ArrayList<String>, private val context: Context, private val searchButtonClickListener: SearchButtonClickListener) :
 
-        RecyclerView.Adapter<SearchElementsAdapter.MyViewHolder>() {
+        RecyclerView.Adapter<SearchElementsAdapter.MyViewHolder>(),ToolbarElementsAdapter {
 
     interface SearchButtonClickListener{
         fun onSearchButtonClicked(buttonName: String)
@@ -65,9 +65,9 @@ class SearchElementsAdapter(private val data: ArrayList<String>, private val con
     /**
      * Removes element at given position
      */
-    fun removeElement(position: Int){
+    override fun removeElement(position: Int){
         data.removeAt(position)
-        this.notifyItemRemoved(position)
+        this.notifyDataSetChanged()
     }
     /**
      * Updates element at given position
@@ -79,7 +79,7 @@ class SearchElementsAdapter(private val data: ArrayList<String>, private val con
     /**
      * Clear all elements
      */
-    fun clearElements(){
+    override fun clearElements(){
         data.clear()
         this.notifyDataSetChanged()
     }

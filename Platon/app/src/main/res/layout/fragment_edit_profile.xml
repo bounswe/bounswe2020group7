@@ -10,7 +10,6 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
         android:layout_gravity="center"
         android:background="@drawable/view_back_darker"
         android:gravity="center"
@@ -58,20 +57,43 @@
                 android:textColorLink="@color/secondary_purple" />
         </LinearLayout>
 
+        <LinearLayout
+            android:padding="@dimen/xx_small"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/job_str"
+                android:backgroundTint="@color/secondary_purple"
+                android:textSize="@dimen/project_title_text_size"
+                android:textColorHighlight="@color/primary_light"
+                android:textColorHint="@color/secondary_purple"
+                android:textColor="@color/secondary_purple" />
 
+            <Spinner
+                android:id="@+id/sp_job"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dialog" />
+        </LinearLayout>
         <EditText
-            android:id="@+id/job_tv"
+            android:id="@+id/institution_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autofillHints=""
             android:backgroundTint="@color/secondary_purple"
             android:ems="15"
-            android:hint="@string/job_str"
+            android:hint="@string/institution_str"
             android:inputType="text|textAutoCorrect"
             android:textColor="@color/primary_light"
             android:textColorHighlight="@color/primary_light"
             android:textColorHint="@color/secondary_purple"
             android:textColorLink="@color/secondary_purple" />
+
+
+
         <EditText
             android:id="@+id/pp_tv"
             android:layout_width="wrap_content"
@@ -114,9 +136,9 @@
 
         <Switch
             android:id="@+id/private_switch"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Private Profile"
+            android:text="@string/private_profile_str"
             android:textColor="@color/primary_light"
             tools:ignore="UseSwitchCompatOrMaterialXml"
 
