@@ -1,9 +1,8 @@
 package com.cmpe451.platon.page.activity.home.fragment.profilepage
 
 import android.app.AlertDialog
-import android.app.Dialog
-import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -16,12 +15,12 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.SkillsAdapter
 import com.cmpe451.platon.adapter.UserProjectsAdapter
 import com.cmpe451.platon.core.BaseActivity
+import com.cmpe451.platon.databinding.AddSkillBinding
 import com.cmpe451.platon.databinding.FragmentProfilePageBinding
 import com.cmpe451.platon.databinding.UserProjectsCellBinding
 import com.cmpe451.platon.network.Resource
@@ -33,16 +32,9 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
 
     private lateinit var binding: FragmentProfilePageBinding
     private val mProfilePageViewModel: ProfilePageViewModel by activityViewModels()
-
     private val mActivityViewModel: HomeActivityViewModel by activityViewModels()
 
-    private lateinit var userProjectsRecyclerView: RecyclerView
-    private lateinit var userProjectsAdapter: UserProjectsAdapter
-
-    private lateinit var skillsRecyclerView: RecyclerView
-    private lateinit var skillsAdapter: SkillsAdapter
     private lateinit var dialog:AlertDialog
-    private lateinit var addSkillDialog:Dialog
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -59,15 +51,11 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     }
 
     private fun initializeAdapters() {
-        userProjectsRecyclerView = binding.rvProfilePageProjects
-        userProjectsAdapter = UserProjectsAdapter(ArrayList(), requireContext(), this)
-        userProjectsRecyclerView.adapter = userProjectsAdapter
-        userProjectsRecyclerView.layoutManager = LinearLayoutManager(this.activity)
+        binding.rvProfilePageProjects.adapter = UserProjectsAdapter(ArrayList(), requireContext(), this)
+        binding.rvProfilePageProjects.layoutManager = LinearLayoutManager(this.activity)
 
-        skillsRecyclerView = binding.rvProfilePageSkills
-        skillsAdapter = SkillsAdapter(ArrayList(), requireContext(), this)
-        skillsRecyclerView.adapter = skillsAdapter
-        skillsRecyclerView.layoutManager = GridLayoutManager(this.activity, 3)
+        binding.rvProfilePageSkills.adapter = SkillsAdapter(ArrayList(), requireContext(), this)
+        binding.rvProfilePageSkills.layoutManager = GridLayoutManager(this.activity, 3)
 
         dialog = Definitions().createProgressBar(requireContext())
     }
@@ -80,67 +68,109 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     }
 
     private fun setFields(){
-        mActivityViewModel.getUserResourceResponse.observe(viewLifecycleOwner, Observer{t ->
-            when(t.javaClass){
-            Resource.Success::class.java ->{
-                val user = t.data!!
-                binding.tvEmail.text = user.e_mail
-                binding.tvInstitution.text = if (user.institution != "") user.institution else  "Institution not specified!"
-                binding.tvJob.text = user.job
-                val naming = user.name + " " + user.surname
-                binding.textNameSurname.text = naming
+        mActivityViewModel.getUserResourceResponse.observe(viewLifecycleOwner, Observer { t ->
+            when (t.javaClass) {
+                Resource.Success::class.java -> {
+                    val user = t.data!!
+                    binding.tvEmail.text = user.e_mail
+                    binding.tvInstitution.text = if (user.institution != "") user.institution else "Institution not specified!"
+                    binding.tvJob.text = user.job
+                    val naming = user.name + " " + user.surname
+                    binding.textNameSurname.text = naming
 
-                mProfilePageViewModel.fetchResearch((activity as HomeActivity).token, user.id)
+                    mProfilePageViewModel.fetchResearch((activity as HomeActivity).token, user.id)
 
-                if(user.rate == -1.0){
-                    binding.ratingBar.visibility = View.GONE
-                    binding.noRatingTv.visibility = View.VISIBLE
+                    if (user.rate == -1.0) {
+                        binding.ratingBar.visibility = View.GONE
+                        binding.noRatingTv.visibility = View.VISIBLE
+                    } else {
+                        binding.ratingBar.visibility = View.VISIBLE
+                        binding.noRatingTv.visibility = View.GONE
+                        binding.ratingBar.rating = user.rate.toFloat()
+                    }
+
+                    Glide.with(this)
+                            .load(user.profile_photo)
+                            .placeholder(R.drawable.ic_o_logo)
+                            .into(binding.profilePhoto)
                 }
-                else {
-                    binding.ratingBar.visibility = View.VISIBLE
-                    binding.noRatingTv.visibility = View.GONE
-                    binding.ratingBar.rating = user.rate.toFloat()
-                }
-
-                Glide.with(this)
-                        .load(user.profile_photo)
-                        .placeholder(R.drawable.ic_o_logo)
-                        .into(binding.profilePhoto)
+                Resource.Error::class.java -> Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
             }
-            Resource.Error::class.java -> Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
-        } })
+        })
         mProfilePageViewModel.getUserSkills(mActivityViewModel.getUserResourceResponse.value?.data?.id!!, (activity as HomeActivity).token!!)
     }
 
     private fun setObservers() {
-        mProfilePageViewModel.getResearchesResourceResponse.observe(viewLifecycleOwner, Observer{ t ->
-            when(t.javaClass) {
-                Resource.Success::class.java -> userProjectsAdapter.submitElements(t.data!!.research_info)
+        mProfilePageViewModel.getResearchesResourceResponse.observe(viewLifecycleOwner, Observer { t ->
+            when (t.javaClass) {
+                Resource.Success::class.java -> (binding.rvProfilePageProjects.adapter as UserProjectsAdapter).submitElements(t.data!!.research_info)
                 Resource.Error::class.java -> Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
             }
         })
-        mProfilePageViewModel.allSkills.observe(viewLifecycleOwner, Observer{t->
-            when(t.javaClass){
+        mProfilePageViewModel.allSkills.observe(viewLifecycleOwner, Observer { t ->
+            when (t.javaClass) {
                 Resource.Success::class.java -> {
-//                    addSkillDialog = addSkillDialog(t.data.map{it})
+                    val skillNameList = mProfilePageViewModel.userSkills.value!!.data!!.skills.map { it.name }
+                    val bArray = t.data!!.map { skillNameList.contains(it) }.toBooleanArray()
+                    val dynamicBArray = bArray.copyOf()
+
+                    AlertDialog.Builder(context)
+                            .setCancelable(true)
+                            .setNeutralButton("Add Nonexistent Skill") { dialog, which ->
+                                dialog.dismiss()
+                                val tmpBinding = AddSkillBinding.inflate(layoutInflater, requireView().parent as ViewGroup, false)
+                                AlertDialog.Builder(context).setView(tmpBinding.root)
+                                        .setCancelable(true)
+                                        .setPositiveButton("Add") { _, _ ->
+                                            if (!tmpBinding.etNewSkill.text.isNullOrEmpty()) {
+                                                mProfilePageViewModel.addSkillToUser(tmpBinding.etNewSkill.text.toString().trim(), (activity as HomeActivity).token!!)
+                                            }
+                                }
+                                .create().show()
+                            }
+                            .setNegativeButton("Completed", null)
+                            .setMultiChoiceItems(t.data!!.toTypedArray(), bArray) { _, which, isChecked ->
+                                if (isChecked){
+                                    mProfilePageViewModel.addSkillToUser(t.data!![which], (activity as HomeActivity).token!!)
+                                }else{
+                                    mProfilePageViewModel.deleteSkillFromUser(t.data!![which], (activity as HomeActivity).token!!)
+                                }
+                            }
+                            .create().show()
+                    dialog.dismiss()
                 }
                 Resource.Error::class.java -> {
-
+                    Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
                 }
                 Resource.Loading::class.java -> dialog.show()
             }
         })
-        mProfilePageViewModel.userSkills.observe(viewLifecycleOwner, Observer{t->
-            when(t.javaClass){
+
+        mProfilePageViewModel.getAddDeleteSkillResourceResponse.observe(viewLifecycleOwner, { t ->
+            when (t.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java -> {
+                    mProfilePageViewModel.getUserSkills((activity as HomeActivity).user_id!!, (activity as HomeActivity).token!!)
                     dialog.dismiss()
-                    skillsAdapter.submitElements(t.data!!.skills.map { it.name })
                 }
                 Resource.Error::class.java -> {
+                    Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
                     dialog.dismiss()
+                }
+            }
+
+
+        })
+
+        mProfilePageViewModel.userSkills.observe(viewLifecycleOwner, Observer { t ->
+            when (t.javaClass) {
+                Resource.Success::class.java -> {
+                    (binding.rvProfilePageSkills.adapter as SkillsAdapter).submitElements(t.data!!.skills.map { it.name })
+                }
+                Resource.Error::class.java -> {
                     Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
                 }
-                Resource.Loading::class.java -> dialog.show()
             }
         })
     }
@@ -161,7 +191,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
         binding.addProjectIv.setOnClickListener{
             findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToAddResearchInfoFragment())
         }
-        binding.addProjectIv.setOnClickListener{
+        binding.addSkillIv.setOnClickListener{
             mProfilePageViewModel.getAllSkills()
         }
 
@@ -200,7 +230,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
         findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToEditResearchInfoFragment())
     }
 
-    override fun deleteSkillButtonClicked(skill:String, position:Int) {
+    override fun deleteSkillButtonClicked(skill: String, position: Int) {
         TODO("Not yet implemented")
     }
 

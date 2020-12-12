@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.*
+import com.google.gson.JsonObject
 
 class ProfilePageViewModel: ViewModel() {
 
@@ -12,6 +13,8 @@ class ProfilePageViewModel: ViewModel() {
     var userSkills: MutableLiveData<Resource<Skills>> = MutableLiveData()
     var currentResearch: MutableLiveData<Research> = MutableLiveData()
     val getResearchesResourceResponse: LiveData<Resource<Researches>>
+
+    val getAddDeleteSkillResourceResponse: LiveData<Resource<JsonObject>>
 
     var allSkills: MutableLiveData<Resource<List<String>>> = MutableLiveData()
 
@@ -21,6 +24,7 @@ class ProfilePageViewModel: ViewModel() {
         getResearchesResourceResponse = repository.researchesResourceResponse
         allSkills = repository.allSkills
         userSkills = repository.userSkills
+        getAddDeleteSkillResourceResponse = repository.addDeleteSkillResourceResponse
     }
 
     fun setCurrentResearch(research:Research){
@@ -34,11 +38,18 @@ class ProfilePageViewModel: ViewModel() {
         }
     }
 
+    fun addSkillToUser(skill:String, token:String){
+        repository.addSkillToUser(skill, token)
+    }
 
     fun getAllSkills() {
         repository.getAllSkills()
     }
     fun getUserSkills(userId:Int, token:String){
         repository.getUserSkills(userId, token)
+    }
+
+    fun deleteSkillFromUser(s: String, token: String) {
+        repository.deleteSkillFromUser(s, token)
     }
 }

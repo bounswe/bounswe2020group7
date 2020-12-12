@@ -115,10 +115,20 @@ interface Webservice {
     fun getAllJobs(): Call<List<Job>?>
 
 
-    @GET("/api/profile/skills")
+    @GET("api/profile/skills")
     fun getAllSkills(): Call<List<String>?>
 
     @GET("api/auth_system/skills")
     fun getUserSkills(@Query("user_id") user_id:Int,
                           @Header("auth_token") auth_token :String) : Call<Skills?>
+
+
+    @FormUrlEncoded
+    @POST("api/auth_system/skills")
+    fun addSkillToUser(@Field("skill") skill:String, @Header("auth_token") token:String): Call<JsonObject?>
+
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "api/auth_system/skills",hasBody = true)
+    fun deleteSkillFromUser(@Field("skill") s: String,
+                            @Header("auth_token") token: String): Call<JsonObject?>
 }

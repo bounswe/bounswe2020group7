@@ -4,6 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.RetrofitClient
 import com.cmpe451.platon.network.models.*
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -14,6 +16,8 @@ class ProfilePageRepository() {
     val researchesResourceResponse: MutableLiveData<Resource<Researches>> = MutableLiveData()
     val allSkills:MutableLiveData<Resource<List<String>>> = MutableLiveData()
     val userSkills:MutableLiveData<Resource<Skills>> = MutableLiveData()
+    val addDeleteSkillResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
+
 
     fun getResearches( userId: Int, authToken: String){
         val service = RetrofitClient.getService()
@@ -74,6 +78,52 @@ class ProfilePageRepository() {
             }
 
             override fun onFailure(call: Call<Skills?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+
+    fun addSkillToUser(skill: String, token: String) {
+        val service = RetrofitClient.getService()
+        val call = service.addSkillToUser(skill, token)
+        addDeleteSkillResourceResponse.value = Resource.Loading()
+        call.enqueue(object: Callback<JsonObject?>{
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when {
+                    response.isSuccessful && response.body() != null -> addDeleteSkillResourceResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null ->  {
+                        if (!JSONObject(response.errorBody()!!.string()).isNull("error"))
+                            addDeleteSkillResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).getString("error"))
+                        else addDeleteSkillResourceResponse.value = Resource.Error("Unknown error!")
+                    }
+                    else -> addDeleteSkillResourceResponse.value = Resource.Error("Unknown error!")
+                }
+            }
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+
+    fun deleteSkillFromUser(s: String, token: String) {
+        val service = RetrofitClient.getService()
+        val call = service.deleteSkillFromUser(s, token)
+        addDeleteSkillResourceResponse.value = Resource.Loading()
+        call.enqueue(object: Callback<JsonObject?>{
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when {
+                    response.isSuccessful && response.body() != null -> addDeleteSkillResourceResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null ->  {
+                        if (!JSONObject(response.errorBody()!!.string()).isNull("error"))
+                            addDeleteSkillResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).getString("error"))
+                        else addDeleteSkillResourceResponse.value = Resource.Error("Unknown error!")
+                    }
+                    else -> addDeleteSkillResourceResponse.value = Resource.Error("Unknown error!")
+                }
+            }
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
                 call.clone().enqueue(this)
             }
 
