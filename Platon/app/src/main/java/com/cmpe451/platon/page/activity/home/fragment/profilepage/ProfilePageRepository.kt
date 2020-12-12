@@ -13,6 +13,7 @@ class ProfilePageRepository() {
 
     val researchesResourceResponse: MutableLiveData<Resource<Researches>> = MutableLiveData()
     val allSkills:MutableLiveData<Resource<List<String>>> = MutableLiveData()
+    val userSkills:MutableLiveData<Resource<Skills>> = MutableLiveData()
 
     fun getResearches( userId: Int, authToken: String){
         val service = RetrofitClient.getService()
@@ -21,7 +22,9 @@ class ProfilePageRepository() {
         call.enqueue(object: Callback<Researches?>{
             override fun onResponse(call: Call<Researches?>, response: Response<Researches?>) {
                 when {
-                    response.isSuccessful && response.body() != null -> researchesResourceResponse.value = Resource.Success(response.body()!!)
+                    response.isSuccessful && response.body() != null -> {
+                        researchesResourceResponse.value = Resource.Success(response.body()!!)
+                    }
                     response.errorBody() != null -> researchesResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
                     else -> researchesResourceResponse.value = Resource.Error("Unknown error!")
                 }
@@ -48,6 +51,29 @@ class ProfilePageRepository() {
             }
 
             override fun onFailure(call: Call<List<String>?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+
+    fun getUserSkills(userId: Int, token: String) {
+        val service = RetrofitClient.getService()
+        val call = service.getUserSkills(userId, token)
+        userSkills.value = Resource.Loading()
+        call.enqueue(object: Callback<Skills?>{
+            override fun onResponse(call: Call<Skills?>, response: Response<Skills?>) {
+                when {
+                    response.isSuccessful && response.body() != null -> {
+                        userSkills.value = Resource.Success(response.body()!!)
+                        var o = 5
+                    }
+                    response.errorBody() != null -> userSkills.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> userSkills.value = Resource.Error("Unknown error!")
+                }
+            }
+
+            override fun onFailure(call: Call<Skills?>, t: Throwable) {
                 call.clone().enqueue(this)
             }
 

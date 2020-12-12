@@ -2,6 +2,8 @@ package com.cmpe451.platon.page.activity.home.fragment.otherprofile
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.cmpe451.platon.network.Resource
+import com.cmpe451.platon.network.models.Skills
 import com.cmpe451.platon.util.Definitions
 
 class OtherProfileViewModel : ViewModel() {
@@ -10,7 +12,7 @@ class OtherProfileViewModel : ViewModel() {
     var getResearchesResource = repository.researchesResource
     var getFollowResourceResponse = repository.followResourceResponse
     var getUnfollowResourceResponse = repository.unFollowResourceResponse
-
+    var userSkills: MutableLiveData<Resource<Skills>> =repository.userSkills
     var isUserPrivate = MutableLiveData<Boolean>()
     var isFollowing = MutableLiveData<Definitions.USERSTATUS>()
 
@@ -39,6 +41,9 @@ class OtherProfileViewModel : ViewModel() {
 
     fun unfollow(following_id: Int, token: String) {
         repository.unfollow(following_id, token)
+    }
+    fun getUserSkills(userId:Int, token:String){
+        repository.getUserSkills(userId, token)
     }
 
 

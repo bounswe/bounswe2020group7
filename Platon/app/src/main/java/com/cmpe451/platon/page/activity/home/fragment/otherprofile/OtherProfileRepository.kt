@@ -5,6 +5,7 @@ import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.OtherUser
 import com.cmpe451.platon.network.models.Researches
 import com.cmpe451.platon.network.RetrofitClient
+import com.cmpe451.platon.network.models.Skills
 import com.google.gson.JsonObject
 import org.json.JSONObject
 import retrofit2.Call
@@ -18,6 +19,7 @@ class OtherProfileRepository() {
     val researchesResource:MutableLiveData<Resource<Researches>> = MutableLiveData()
     var followResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
     var unFollowResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
+    val userSkills:MutableLiveData<Resource<Skills>> = MutableLiveData()
 
     fun getUser(userId:Int, token:String) {
         val service = RetrofitClient.getService()
@@ -95,6 +97,28 @@ class OtherProfileRepository() {
             }
 
             override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+    fun getUserSkills(userId: Int, token: String) {
+        val service = RetrofitClient.getService()
+        val call = service.getUserSkills(userId, token)
+        userSkills.value = Resource.Loading()
+        call.enqueue(object: Callback<Skills?>{
+            override fun onResponse(call: Call<Skills?>, response: Response<Skills?>) {
+                when {
+                    response.isSuccessful && response.body() != null -> {
+                        userSkills.value = Resource.Success(response.body()!!)
+                        var o = 5
+                    }
+                    response.errorBody() != null -> userSkills.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> userSkills.value = Resource.Error("Unknown error!")
+                }
+            }
+
+            override fun onFailure(call: Call<Skills?>, t: Throwable) {
                 call.clone().enqueue(this)
             }
 

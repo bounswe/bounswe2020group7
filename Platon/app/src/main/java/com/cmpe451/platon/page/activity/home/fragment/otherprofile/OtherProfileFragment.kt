@@ -14,11 +14,14 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.OtherUserProjectsAdapter
+import com.cmpe451.platon.adapter.SkillsAdapter
+import com.cmpe451.platon.adapter.SkillsOtherProfileAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentProfilePageOthersPrivateBinding
 import com.cmpe451.platon.databinding.UserProjectsCellBinding
@@ -40,6 +43,9 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
 
     private lateinit var userProjectsRecyclerView: RecyclerView
     private lateinit var userProjectsAdapter: OtherUserProjectsAdapter
+    private lateinit var skillsRecyclerView: RecyclerView
+    private lateinit var skillsAdapter: SkillsOtherProfileAdapter
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -61,6 +67,11 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
         userProjectsAdapter = OtherUserProjectsAdapter(ArrayList(), requireContext(), this)
         userProjectsRecyclerView.adapter = userProjectsAdapter
         userProjectsRecyclerView.layoutManager = LinearLayoutManager(this.activity)
+
+        skillsRecyclerView = binding.rvProfilePageSkills
+        skillsAdapter = SkillsOtherProfileAdapter(ArrayList(), requireContext())
+        skillsRecyclerView.adapter = skillsAdapter
+        skillsRecyclerView.layoutManager = GridLayoutManager(this.activity, 3)
 
         dialog = Definitions().createProgressBar(requireContext())
     }
@@ -139,6 +150,19 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                     Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
                     dialog.dismiss()
                 }
+            }
+        })
+        mOtherProfileViewModel.userSkills.observe(viewLifecycleOwner, Observer{t->
+            when(t.javaClass){
+                Resource.Success::class.java -> {
+                    dialog.dismiss()
+                    skillsAdapter.submitElements(t.data!!.skills.map { it.name })
+                }
+                Resource.Error::class.java -> {
+                    dialog.dismiss()
+                    Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+                }
+                Resource.Loading::class.java -> dialog.show()
             }
         })
     }

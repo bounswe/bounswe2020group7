@@ -9,12 +9,10 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.Transformations.map
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -111,7 +109,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
             }
             Resource.Error::class.java -> Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
         } })
-
+        mProfilePageViewModel.getUserSkills(mActivityViewModel.getUserResourceResponse.value?.data?.id!!, (activity as HomeActivity).token!!)
     }
 
     private fun setObservers() {
@@ -128,6 +126,19 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                 }
                 Resource.Error::class.java -> {
 
+                }
+                Resource.Loading::class.java -> dialog.show()
+            }
+        })
+        mProfilePageViewModel.userSkills.observe(viewLifecycleOwner, Observer{t->
+            when(t.javaClass){
+                Resource.Success::class.java -> {
+                    dialog.dismiss()
+                    skillsAdapter.submitElements(t.data!!.skills.map { it.name })
+                }
+                Resource.Error::class.java -> {
+                    dialog.dismiss()
+                    Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
                 }
                 Resource.Loading::class.java -> dialog.show()
             }
@@ -192,40 +203,5 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     override fun deleteSkillButtonClicked(skill:String, position:Int) {
         TODO("Not yet implemented")
     }
-
-    fun addSkillDialog(skills:Array<String>): Dialog {
-        return activity?.let {
-            val selectedItems = ArrayList<Int>() // Where we track the selected items
-            val builder = AlertDialog.Builder(it)
-            // Set the dialog title
-            builder.setTitle("Add your skills")
-                // Specify the list array, the items to be selected by default (null for none),
-                // and the listener through which to receive callbacks when items are selected
-                .setMultiChoiceItems(skills, null,
-                    DialogInterface.OnMultiChoiceClickListener { dialog, which, isChecked ->
-                        if (isChecked) {
-                            // If the user checked the item, add it to the selected items
-                            selectedItems.add(which)
-                        } else if (selectedItems.contains(which)) {
-                            // Else, if the item is already in the array, remove it
-                            selectedItems.remove(Integer.valueOf(which))
-                        }
-                    })
-                // Set the action buttons
-                .setPositiveButton("Submit",
-                    DialogInterface.OnClickListener { dialog, id ->
-                        // User clicked OK, so save the selectedItems results somewhere
-                        // or return them to the component that opened the dialog
-
-                    })
-                .setNegativeButton("Cancel",
-                    DialogInterface.OnClickListener { dialog, id ->
-
-                    })
-
-            builder.create()
-        } ?: throw IllegalStateException("Activity cannot be null")
-    }
-
 
 }

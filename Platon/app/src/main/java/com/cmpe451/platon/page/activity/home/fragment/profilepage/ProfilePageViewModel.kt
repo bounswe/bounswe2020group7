@@ -9,6 +9,7 @@ import com.cmpe451.platon.network.models.*
 class ProfilePageViewModel: ViewModel() {
 
 
+    var userSkills: MutableLiveData<Resource<Skills>> = MutableLiveData()
     var currentResearch: MutableLiveData<Research> = MutableLiveData()
     val getResearchesResourceResponse: LiveData<Resource<Researches>>
 
@@ -19,6 +20,7 @@ class ProfilePageViewModel: ViewModel() {
     init {
         getResearchesResourceResponse = repository.researchesResourceResponse
         allSkills = repository.allSkills
+        userSkills = repository.userSkills
     }
 
     fun setCurrentResearch(research:Research){
@@ -35,5 +37,8 @@ class ProfilePageViewModel: ViewModel() {
 
     fun getAllSkills() {
         repository.getAllSkills()
+    }
+    fun getUserSkills(userId:Int, token:String){
+        repository.getUserSkills(userId, token)
     }
 }

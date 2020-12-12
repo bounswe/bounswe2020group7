@@ -34,4 +34,10 @@ data class Auth(
         val token: String,
         val user_id:Int
 )
-
+data class Skill(
+        val id:Int,
+        val name: String
+)
+data class Skills(
+        val skills:List<Skill>
+)

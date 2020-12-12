@@ -118,4 +118,7 @@ interface Webservice {
     @GET("/api/profile/skills")
     fun getAllSkills(): Call<List<String>?>
 
+    @GET("api/auth_system/skills")
+    fun getUserSkills(@Query("user_id") user_id:Int,
+                          @Header("auth_token") auth_token :String) : Call<Skills?>
 }
