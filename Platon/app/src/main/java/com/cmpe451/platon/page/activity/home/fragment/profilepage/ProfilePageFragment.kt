@@ -1,6 +1,8 @@
 package com.cmpe451.platon.page.activity.home.fragment.profilepage
 
 import android.app.AlertDialog
+import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -79,6 +81,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                     binding.textNameSurname.text = naming
 
                     mProfilePageViewModel.fetchResearch((activity as HomeActivity).token, user.id)
+                    mProfilePageViewModel.getUserSkills((activity as HomeActivity).user_id!!, (activity as HomeActivity).token!!)
 
                     if (user.rate == -1.0) {
                         binding.ratingBar.visibility = View.GONE
@@ -97,7 +100,6 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                 Resource.Error::class.java -> Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
             }
         })
-        mProfilePageViewModel.getUserSkills(mActivityViewModel.getUserResourceResponse.value?.data?.id!!, (activity as HomeActivity).token!!)
     }
 
     private fun setObservers() {
@@ -106,61 +108,6 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                 Resource.Success::class.java -> (binding.rvProfilePageProjects.adapter as UserProjectsAdapter).submitElements(t.data!!.research_info)
                 Resource.Error::class.java -> Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
             }
-        })
-        mProfilePageViewModel.allSkills.observe(viewLifecycleOwner, Observer { t ->
-            when (t.javaClass) {
-                Resource.Success::class.java -> {
-                    val skillNameList = mProfilePageViewModel.userSkills.value!!.data!!.skills.map { it.name }
-                    val bArray = t.data!!.map { skillNameList.contains(it) }.toBooleanArray()
-                    val dynamicBArray = bArray.copyOf()
-
-                    AlertDialog.Builder(context)
-                            .setCancelable(true)
-                            .setNeutralButton("Add Nonexistent Skill") { dialog, which ->
-                                dialog.dismiss()
-                                val tmpBinding = AddSkillBinding.inflate(layoutInflater, requireView().parent as ViewGroup, false)
-                                AlertDialog.Builder(context).setView(tmpBinding.root)
-                                        .setCancelable(true)
-                                        .setPositiveButton("Add") { _, _ ->
-                                            if (!tmpBinding.etNewSkill.text.isNullOrEmpty()) {
-                                                mProfilePageViewModel.addSkillToUser(tmpBinding.etNewSkill.text.toString().trim(), (activity as HomeActivity).token!!)
-                                            }
-                                }
-                                .create().show()
-                            }
-                            .setNegativeButton("Completed", null)
-                            .setMultiChoiceItems(t.data!!.toTypedArray(), bArray) { _, which, isChecked ->
-                                if (isChecked){
-                                    mProfilePageViewModel.addSkillToUser(t.data!![which], (activity as HomeActivity).token!!)
-                                }else{
-                                    mProfilePageViewModel.deleteSkillFromUser(t.data!![which], (activity as HomeActivity).token!!)
-                                }
-                            }
-                            .create().show()
-                    dialog.dismiss()
-                }
-                Resource.Error::class.java -> {
-                    Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
-                    dialog.dismiss()
-                }
-                Resource.Loading::class.java -> dialog.show()
-            }
-        })
-
-        mProfilePageViewModel.getAddDeleteSkillResourceResponse.observe(viewLifecycleOwner, { t ->
-            when (t.javaClass) {
-                Resource.Loading::class.java -> dialog.show()
-                Resource.Success::class.java -> {
-                    mProfilePageViewModel.getUserSkills((activity as HomeActivity).user_id!!, (activity as HomeActivity).token!!)
-                    dialog.dismiss()
-                }
-                Resource.Error::class.java -> {
-                    Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
-                    dialog.dismiss()
-                }
-            }
-
-
         })
 
         mProfilePageViewModel.userSkills.observe(viewLifecycleOwner, Observer { t ->
@@ -192,9 +139,70 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
             findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToAddResearchInfoFragment())
         }
         binding.addSkillIv.setOnClickListener{
+            onAddDeleteSkillClicked()
             mProfilePageViewModel.getAllSkills()
         }
 
+    }
+
+    private fun onAddDeleteSkillClicked(){
+        mProfilePageViewModel.allSkills.observe(viewLifecycleOwner, Observer { t ->
+            when (t.javaClass) {
+                Resource.Success::class.java -> {
+                    val skillNameList = mProfilePageViewModel.userSkills.value!!.data!!.skills.map { it.name }
+                    val bArray = t.data!!.map { skillNameList.contains(it) }.toBooleanArray()
+                    AlertDialog.Builder(context)
+                            .setCancelable(true)
+                            .setNeutralButton("Add Nonexistent Skill") { dialog, which ->
+                                dialog.dismiss()
+                                val tmpBinding = AddSkillBinding.inflate(layoutInflater, requireView().parent as ViewGroup, false)
+                                AlertDialog.Builder(context).setView(tmpBinding.root)
+                                        .setCancelable(true)
+                                        .setPositiveButton("Add") { _, _ ->
+                                            if (!tmpBinding.etNewSkill.text.isNullOrEmpty()) {
+                                                mProfilePageViewModel.addSkillToUser(tmpBinding.etNewSkill.text.toString().trim(), (activity as HomeActivity).token!!)
+                                            }
+                                        }
+                                        .create().show()
+                            }.setOnDismissListener{
+                                mProfilePageViewModel.allSkills.removeObservers(viewLifecycleOwner)
+                            }
+                            .setNegativeButton("Completed", null)
+                            .setMultiChoiceItems(t.data!!.toTypedArray(), bArray) { _, which, isChecked ->
+                                if (isChecked){
+                                    mProfilePageViewModel.addSkillToUser(t.data!![which], (activity as HomeActivity).token!!)
+                                }else{
+                                    mProfilePageViewModel.deleteSkillFromUser(t.data!![which], (activity as HomeActivity).token!!)
+                                }
+                            }
+                            .create().show()
+                    dialog.dismiss()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
+                Resource.Loading::class.java ->
+                    dialog.show()
+            }
+        })
+
+
+
+        mProfilePageViewModel.getAddDeleteSkillResourceResponse.observe(viewLifecycleOwner, { t ->
+            when (t.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    mProfilePageViewModel.getUserSkills((activity as HomeActivity).user_id!!, (activity as HomeActivity).token!!)
+                    dialog.dismiss()
+                    mProfilePageViewModel.getAddDeleteSkillResourceResponse.removeObservers(viewLifecycleOwner)
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
+            }
+        })
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
