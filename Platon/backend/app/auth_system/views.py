@@ -466,12 +466,12 @@ class UserSkillAPI(Resource):
                    500: 'Database Connection'})
     @api.expect(get_userskill_parser)
     @login_required
-    @follow_required(param_loc = 'args', requested_user_id_key='user_id')
-    def get(user_id,self):
+    @follow_required(param_loc = 'form', requested_user_id_key='user_id')
+    def get(self):
         '''
             Returns a list of user's skills with id and name
         '''
-        form = GetUserSkillsForm(request.args)
+        form = GetUserSkillsForm(request.form)
         if form.validate():
             try:
                 user_skills = UserSkills.query.filter(UserSkills.user_id == form.user_id.data).all()
