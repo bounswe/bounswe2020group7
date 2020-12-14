@@ -2,17 +2,21 @@ package com.cmpe451.platon.page.activity.home
 
 import android.animation.LayoutTransition
 import android.app.AlertDialog
+import android.app.SearchManager
+import android.app.SearchableInfo
 import android.content.Intent
+import android.database.MatrixCursor
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.LinearLayout
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.cursoradapter.widget.CursorAdapter
+import androidx.cursoradapter.widget.SimpleCursorAdapter
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -31,6 +35,7 @@ import com.cmpe451.platon.databinding.ActivityHomeBinding
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.FollowRequest
 import com.cmpe451.platon.network.models.Notification
+import com.cmpe451.platon.network.models.SearchHistoryElement
 import com.cmpe451.platon.page.activity.login.LoginActivity
 import com.cmpe451.platon.page.activity.home.fragment.home.HomeFragmentDirections
 import com.cmpe451.platon.util.Definitions
@@ -59,7 +64,7 @@ class HomeActivity : BaseActivity(),
 
     private fun destroyToolbar() {
         binding.notificationRg.visibility = View.GONE
-        binding.searchAmongRb.visibility = View.GONE
+        binding.rgSearchAmong.visibility = View.GONE
         (toolbarRecyclerView.adapter as ToolbarElementsAdapter).clearElements()
     }
 
@@ -169,6 +174,9 @@ class HomeActivity : BaseActivity(),
         return super.onCreateOptionsMenu(menu)
     }
 
+
+    var historyCursor = MatrixCursor(arrayOf("_id", "query"))
+
     private fun initSearch(search: SearchView) {
 
         val searchBar = search.findViewById<LinearLayout>(R.id.search_bar)
@@ -181,28 +189,112 @@ class HomeActivity : BaseActivity(),
             toolbarRecyclerView.adapter = SearchElementsAdapter(arrayListOf(),this, this)
             toolbarRecyclerView.layoutManager = LinearLayoutManager(this)
 
-            when(binding.searchAmongRb.visibility){
+            when(binding.rgSearchAmong.visibility){
                 View.VISIBLE -> {
-                    binding.searchAmongRb.visibility = View.GONE
+                    binding.rgSearchAmong.visibility = View.GONE
                     (toolbarRecyclerView.adapter as SearchElementsAdapter).clearElements()
                 }
                 View.GONE -> {
-                    binding.searchAmongRb.visibility = View.VISIBLE
+                    binding.rgSearchAmong.visibility = View.VISIBLE
                     binding.notificationRg.visibility = View.GONE
                 }
             }
         }
+
+        search.findViewById<AutoCompleteTextView>(R.id.search_src_text).threshold = 1
+        val cursorAdapter = SimpleCursorAdapter(this,
+                android.R.layout.simple_spinner_item,
+                historyCursor,
+                arrayOf("query"),
+                arrayOf(android.R.id.text1).toIntArray(),
+                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER)
+        search.suggestionsAdapter = cursorAdapter
+        search.setOnSuggestionListener(object: SearchView.OnSuggestionListener{
+            override fun onSuggestionSelect(position: Int): Boolean {
+                Log.i("ERRROR", cursorAdapter.getItem(position).toString())
+                return true
+            }
+
+            override fun onSuggestionClick(position: Int): Boolean {
+                Log.i("ERRROR", cursorAdapter.getItem(position).toString())
+                return true
+            }
+
+        })
+
+
+        binding.rgSearchAmong.setOnCheckedChangeListener { _, checkedId ->
+            when(checkedId){
+                R.id.rb_searchUser -> {
+                    (toolbarRecyclerView.adapter as ToolbarElementsAdapter).clearElements()
+                    mActivityViewModel.fetchSearchHistory(token!!, 0)
+                }
+                R.id.rb_searchWorkspace ->{
+                    (toolbarRecyclerView.adapter as ToolbarElementsAdapter).clearElements()
+                    mActivityViewModel.fetchSearchHistory(token!!, 1)
+                }
+                R.id.rb_searchUpcoming ->{
+                    (toolbarRecyclerView.adapter as ToolbarElementsAdapter).clearElements()
+                    mActivityViewModel.fetchSearchHistory(token!!, 2)
+                }
+            }}
+
+        mActivityViewModel.getSearchHistoryResourceResponse.observe(this, { t->
+            when(t.javaClass){
+                Resource.Loading::class.java -> {
+                    dialog.show()
+                }
+                Resource.Success::class.java ->{
+                    t.data!!.search_history.forEachIndexed{ i, e ->
+                        historyCursor.addRow(arrayOf(i, e.query))
+                    }
+                    dialog.dismiss()
+                }
+                Resource.Error::class.java ->{
+                    Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
+            }
+        })
+
+
 
         search.setOnQueryTextListener( object: SearchView.OnQueryTextListener{
             override fun onQueryTextChange(newText: String?): Boolean {
                 return Log.println(Log.ERROR, "SEARCH:", newText.toString().trim())*0 == 0
             }
 
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                (toolbarRecyclerView.adapter as SearchElementsAdapter).addElement(0, query.toString())
+            override fun onQueryTextSubmit(query: String): Boolean {
+                when(binding.rgSearchAmong.checkedRadioButtonId){
+                    R.id.rb_searchUser ->{
+                        mActivityViewModel.searchUser(token!!, query, null,null, null)
+                    }
+                    R.id.rb_searchWorkspace ->{
+
+                    }
+                    R.id.rb_searchUpcoming ->{
+
+                    }
+                }
                 return true
             }
         })
+
+        mActivityViewModel.getSearchUserResourceResponse.observe(this, {t->
+            when(t.javaClass){
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    (toolbarRecyclerView.adapter as SearchElementsAdapter).clearElements()
+                    (toolbarRecyclerView.adapter as SearchElementsAdapter).submitElements(t.data!!.result_list.map { it.name + " " + it.surname+ " " + it.is_private.toString()})
+                    dialog.dismiss()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
+            }
+        })
+
 
             search.setOnCloseListener {
                 destroyToolbar()

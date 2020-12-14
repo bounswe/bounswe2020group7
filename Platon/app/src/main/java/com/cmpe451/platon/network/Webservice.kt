@@ -131,4 +131,17 @@ interface Webservice {
     @HTTP(method = "DELETE", path = "api/auth_system/skills",hasBody = true)
     fun deleteSkillFromUser(@Field("skill") s: String,
                             @Header("auth_token") token: String): Call<JsonObject?>
+
+
+    @GET("api/search_engine/search_history")
+    fun getSearchHistory(@Header("auth_token") token: String,
+                         @Query("search_type") i: Int): Call<SearchHistory?>
+
+    @GET("api/search_engine/user")
+    fun searchUser(@Header("auth_token") token: String,
+                   @Query("search_query") query:String,
+                    @Query("job_filter") job:String?,
+                   @Query("page") page:Int?,
+                   @Query("per_page") perPage:Int?):Call<UserSearch?>
+
 }

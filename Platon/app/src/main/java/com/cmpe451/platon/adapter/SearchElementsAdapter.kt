@@ -62,6 +62,11 @@ class SearchElementsAdapter(private val data: ArrayList<String>, private val con
         this.notifyItemInserted(position)
     }
 
+    fun submitElements(elements: List<String>){
+        data.addAll(elements)
+        this.notifyDataSetChanged()
+    }
+
     /**
      * Removes element at given position
      */

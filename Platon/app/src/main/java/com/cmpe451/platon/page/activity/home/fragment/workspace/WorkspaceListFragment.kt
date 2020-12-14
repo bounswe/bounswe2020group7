@@ -60,6 +60,7 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
             }
         })
     }
+
     private fun fetchWorkspaces(){
         mWorkspaceListViewModel.getWorkspaces((activity as HomeActivity).user_id!!, (activity as HomeActivity).token!!)
     }

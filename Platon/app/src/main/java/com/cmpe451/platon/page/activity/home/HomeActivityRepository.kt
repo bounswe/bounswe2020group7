@@ -1,16 +1,16 @@
 package com.cmpe451.platon.page.activity.home
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.RetrofitClient
-import com.cmpe451.platon.network.models.FollowRequests
-import com.cmpe451.platon.network.models.Notifications
-import com.cmpe451.platon.network.models.User
+import com.cmpe451.platon.network.models.*
 import com.google.gson.JsonObject
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.sql.SQLTransactionRollbackException
 
 class HomeActivityRepository {
 
@@ -18,7 +18,9 @@ class HomeActivityRepository {
     val userFollowRequestsResourceResponse:MutableLiveData<Resource<FollowRequests>> = MutableLiveData()
     val userNotificationsResourceResponse:MutableLiveData<Resource<Notifications>> = MutableLiveData()
     val userResourceResponse: MutableLiveData<Resource<User>> = MutableLiveData()
+    val searchHistoryResourceResponse:MutableLiveData<Resource<SearchHistory>> = MutableLiveData()
 
+    val searchUserResourceResponse:MutableLiveData<Resource<UserSearch>> = MutableLiveData()
 
     fun getUser(token:String){
         val service = RetrofitClient.getService()
@@ -120,6 +122,53 @@ class HomeActivityRepository {
                 call.clone().enqueue(this)
             }
         })
+    }
+
+    fun fetchSearchHistory(token: String, i: Int) {
+        val service = RetrofitClient.getService()
+        val call = service.getSearchHistory(token, i)
+        searchHistoryResourceResponse.value = Resource.Loading()
+        call.enqueue(object :Callback<SearchHistory?>{
+            override fun onResponse(call: Call<SearchHistory?>, response: Response<SearchHistory?>) {
+                when{
+                    response.isSuccessful && response.body() != null -> searchHistoryResourceResponse.value =  Resource.Success(response.body()!!)
+                    response.errorBody() != null -> {
+
+                        Log.i("Eerror", response.raw().toString())
+                        searchHistoryResourceResponse.value =  Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    }
+                    else -> searchHistoryResourceResponse.value =  Resource.Error("Unknown error!")
+                }
+            }
+
+            override fun onFailure(call: Call<SearchHistory?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+        })
+    }
+
+
+    fun searchUser(token: String, query:String, jobs:String?, page:Int?, perPage:Int?){
+        val service = RetrofitClient.getService()
+        val call = service.searchUser(token, query,jobs, page, perPage)
+
+        searchUserResourceResponse.value = Resource.Loading()
+        call.enqueue(object :Callback<UserSearch?>{
+            override fun onResponse(call: Call<UserSearch?>, response: Response<UserSearch?>) {
+                when{
+                    response.isSuccessful && response.body() != null -> searchUserResourceResponse.value =  Resource.Success(response.body()!!)
+                    response.errorBody() != null -> searchUserResourceResponse.value =  Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> searchUserResourceResponse.value =  Resource.Error("Unknown error!")
+                }
+            }
+
+            override fun onFailure(call: Call<UserSearch?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+        })
+
+
+
     }
 
 }

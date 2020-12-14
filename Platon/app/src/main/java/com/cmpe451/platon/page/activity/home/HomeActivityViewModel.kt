@@ -5,9 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.cmpe451.platon.network.Resource
-import com.cmpe451.platon.network.models.FollowRequests
-import com.cmpe451.platon.network.models.Notifications
-import com.cmpe451.platon.network.models.User
+import com.cmpe451.platon.network.models.*
 import com.google.gson.JsonObject
 
 class HomeActivityViewModel(application: Application):AndroidViewModel(application){
@@ -17,6 +15,10 @@ class HomeActivityViewModel(application: Application):AndroidViewModel(applicati
     val getUserNotificationsResourceResponse: MutableLiveData<Resource<Notifications>>
     val acceptRequestResourceResponse: MutableLiveData<Resource<JsonObject>>
 
+    val getSearchHistoryResourceResponse: MutableLiveData<Resource<SearchHistory>>
+    val getSearchUserResourceResponse:MutableLiveData<Resource<UserSearch>>
+
+
     val repository = HomeActivityRepository()
 
     init {
@@ -24,6 +26,8 @@ class HomeActivityViewModel(application: Application):AndroidViewModel(applicati
         getUserFollowRequestsResourceResponse = repository.userFollowRequestsResourceResponse
         getUserNotificationsResourceResponse = repository.userNotificationsResourceResponse
         acceptRequestResourceResponse = repository.acceptRequestResourceResponse
+        getSearchHistoryResourceResponse = repository.searchHistoryResourceResponse
+        getSearchUserResourceResponse = repository.searchUserResourceResponse
     }
 
     fun fetchUser(token:String?){
@@ -48,6 +52,14 @@ class HomeActivityViewModel(application: Application):AndroidViewModel(applicati
 
     fun deleteFollowRequest(followerId: Int, followingId:Int, token:String) {
         repository.deleteFollowRequest(followerId, followingId,token)
+    }
+
+    fun fetchSearchHistory(token: String, i: Int) {
+        repository.fetchSearchHistory(token, i)
+    }
+
+    fun searchUser(token:String, query:String, job:String?, page:Int?, perPage:Int?){
+        repository.searchUser(token, query, job, page, perPage)
     }
 
 }
