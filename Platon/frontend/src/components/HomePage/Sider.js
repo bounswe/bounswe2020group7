@@ -15,7 +15,7 @@ class Sider extends React.Component {
         this.state = {
             notifications:null,
             profileId: null,
-
+            notificationNum:0
 
         }
     }
@@ -31,9 +31,11 @@ class Sider extends React.Component {
         })
 
 
-        requestService.getNotifications().then((response) => {
+        requestService.getNotifications(1).then((response) => {
+        console.log(response)
             this.setState({
-                notifications: response.data,
+                notifications: response.data.notification_list,
+                notificationNum:response.data.notificationNum
             });
             console.log(response.data)
         });
@@ -49,6 +51,7 @@ class Sider extends React.Component {
                 mode="inline"
                 theme={'dark'}
             >
+            <Link to ={'/'}>
                 <SubMenu
                     onClick={this.handleClick()}
                     key="sub1"
@@ -60,19 +63,23 @@ class Sider extends React.Component {
                     }
                 >
                 </SubMenu>
+                </Link>
                 <Link to ={`/${this.state.profileId}`}>
 
 
                 <SubMenu key="sub2" icon={<AppstoreOutlined />}  title=" Profile">
 
                 </SubMenu></Link>
+              <Link to ={`/${this.state.profileId}`}>
                 <SubMenu
                     key="sub4"
                     title="Messages">
                 </SubMenu>
+                </Link>
+               <Link to ={`/${this.state.profileId}`}>
                 <SubMenu
                     key="sub4"
-                    title={this.state.notifications?"Notifications("+this.state.notifications.length+")":"Notificatios"}>
+                    title={this.state.notifications?"Notifications("+this.state.notificationNum+")":"Notifications"}>
                     {this.state.notifications && this.state.notifications.map( (notification) => {
                         return (
                             <p >{notification.text}</p>
@@ -83,15 +90,19 @@ class Sider extends React.Component {
                     })}
 
                 </SubMenu>
+                </Link>
+               <Link to ={`/${this.state.profileId}`}>
                 <SubMenu
                     key="sub4"
                     title="My Projects">
                 </SubMenu>
+                </Link>
+               <Link to ={`/${this.state.profileId}`}>
                 <SubMenu
                     key="sub4"
                     title="Settings">
                 </SubMenu>
-
+</Link>
 
             </Menu>
         );

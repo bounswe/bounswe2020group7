@@ -22,40 +22,6 @@ class HomePage extends React.Component {
     onPanelChange(value, mode) {
         console.log(value.format('YYYY-MM-DD'), mode);
     }
-/*
-*  <div>
-                    <Calendarr/>
-                </div>
-                   <div>
-                       <Sider></Sider>
-                   </div>
-                  <div>
-                      <InfiniteScroller/>
-                  </div>
-        <Layout>
-            <Layout>
-                <AppBar/>
-            </Layout>
-            <Layout>
-                <Layout
-                    style={{
-                        overflow: 'auto',
-                        height: '100vh',
-                        position: 'fixed',
-                        left: 0,
-                    }}
-                >
-                   <Sider></Sider>
-                </Layout>
-                <Layout className="site-layout" style={{ marginLeft: 400,height:400 }}>
-                    <Header className="site-layout-background" style={{ padding: 0 }} />
-                   <Layout><InfiniteScroller></InfiniteScroller>
-                   </Layout>
-                </Layout>
-
-                </Layout>
-            <Footer style={{ textAlign: 'center',position:'fixed',marginLeft:200 }}>Ant Design ©2018 Created by Ant UED</Footer>
-        </Layout>*/
 
     render(){
     return (
@@ -76,7 +42,7 @@ class HomePage extends React.Component {
                 >
                     <Sider></Sider>
                 </Layout>
-                <Layout className="site-layout" style={{marginLeft:400 }}>
+                <Layout className="site-layout" style={{marginLeft:'400px',marginTop:'20px' }}>
                     <Header className="site-layout-background" style={{ padding: 0 }} />
                     <Layout><InfiniteScroller></InfiniteScroller>:
                     </Layout>
