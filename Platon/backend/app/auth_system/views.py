@@ -467,7 +467,7 @@ class UserSkillAPI(Resource):
     @api.expect(get_userskill_parser)
     @login_required
     @follow_required(param_loc = 'args', requested_user_id_key='user_id')
-    def get(self):
+    def get(user_id,self):
         '''
             Returns a list of user's skills with id and name
         '''
