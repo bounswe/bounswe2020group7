@@ -1,12 +1,8 @@
 import './App.css';
 import Landing from './components/Landing/Landing';
 import React, { Component } from 'react';
-
 import HomePage from './components/HomePage/HomePage'
-
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
-
-
 import ForgotPassword from './components/ForgotPassword/ForgotPassword'
 import ResetPassword from './components/ResetPassword/ResetPassword'
 import Login from './components/Login/Login'
@@ -16,7 +12,6 @@ import EditProfile from './components/EditProfile/EditProfile';
 import Activation from './components/Activation/Activation'
 import { setAuthorizationToken } from './helpers/setAuthorizationToken';
 
-import NotFound from './components/NotFound/NotFound';
 
 
 class App extends Component {
