@@ -1,6 +1,7 @@
 from flask import make_response, jsonify, request
 from flask_restplus import Resource, Namespace, fields
 from flask import current_app as app
+import math
 
 from app import api, db
 from app.follow_system.forms import GetFollowingsForm, GetFollowersForm, GetFollowRequestsForm, \
@@ -27,19 +28,22 @@ user_data_model = api.model('User Data', {
     })
 
 followers_model = api.model('Followers', {
+    'number_of_pages': fields.Integer,
     'followers': fields.List(
         fields.Nested(user_data_model)
     )
 })
 
 followings_model = api.model('Followings', {
+    'number_of_pages': fields.Integer,
     'followings': fields.List(
         fields.Nested(user_data_model)
     )
 })
 
 follow_requests_model = api.model('Follow Requests', {
-    'follow request senders': fields.List(
+    'number_of_pages': fields.Integer,
+    'follow_requests': fields.List(
         fields.Nested(user_data_model)
     )
 })
@@ -72,10 +76,20 @@ class GetFollowingsAPI(Resource):
             for follow in followSearch:
                 following_users.append(User.query.filter(User.id == follow.following_id).first())
 
-            return make_response(jsonify({'followings': [
+            followings_list = [
                 {'id': following_user.id, 'name': following_user.name, 'surname': following_user.surname,
                  'e_mail': following_user.e_mail, 'rate': following_user.rate,
-                 'is_private': following_user.is_private} for following_user in following_users]}), 200)
+                 'is_private': following_user.is_private} for following_user in following_users]
+
+            # Pagination functionality
+            number_of_pages = 1
+            if form.page.data is not None and form.per_page.data is not None:
+                per_page = form.per_page.data
+                number_of_pages = math.ceil(len(followings_list) / per_page)
+                # Assign the page index to the maximum if it exceeds the max index
+                page = form.page.data if form.page.data < number_of_pages else number_of_pages-1
+                followings_list = followings_list[page*per_page:(page+1)*per_page]
+            return make_response(jsonify({'number_of_pages':number_of_pages ,'followings' :followings_list}),200)
 
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
@@ -142,10 +156,20 @@ class GetFollowersAPI(Resource):
             for follow in followSearch:
                 follower_users.append(User.query.filter(User.id == follow.follower_id).first())
 
-            return make_response(jsonify({'followers': [
+            followers_list = [
                 {'id': follower_user.id, 'name': follower_user.name, 'surname': follower_user.surname,
                  'e_mail': follower_user.e_mail, 'rate': follower_user.rate,
-                 'is_private': follower_user.is_private} for follower_user in follower_users]}), 200)
+                 'is_private': follower_user.is_private} for follower_user in follower_users]
+
+            # Pagination functionality
+            number_of_pages = 1
+            if form.page.data is not None and form.per_page.data is not None:
+                per_page = form.per_page.data
+                number_of_pages = math.ceil(len(followers_list) / per_page)
+                # Assign the page index to the maximum if it exceeds the max index
+                page = form.page.data if form.page.data < number_of_pages else number_of_pages-1
+                followers_list = followers_list[page*per_page:(page+1)*per_page]
+            return make_response(jsonify({'number_of_pages':number_of_pages ,'followers' :followers_list}),200)
 
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
@@ -184,10 +208,20 @@ class FollowRequestAPI(Resource):
             for follow in followSearch:
                 follower_users.append(User.query.filter(User.id == follow.follower_id).first())
 
-            return make_response(jsonify({'follow_requests': [
+            follow_request_senders_list = [
                 {'id': follower_user.id, 'name': follower_user.name, 'surname': follower_user.surname,
                  'e_mail': follower_user.e_mail, 'rate': follower_user.rate,
-                 'is_private': follower_user.is_private} for follower_user in follower_users]}), 200)
+                 'is_private': follower_user.is_private} for follower_user in follower_users]
+
+            # Pagination functionality
+            number_of_pages = 1
+            if form.page.data is not None and form.per_page.data is not None:
+                per_page = form.per_page.data
+                number_of_pages = math.ceil(len(follow_request_senders_list) / per_page)
+                # Assign the page index to the maximum if it exceeds the max index
+                page = form.page.data if form.page.data < number_of_pages else number_of_pages-1
+                follow_request_senders_list = follow_request_senders_list[page*per_page:(page+1)*per_page]
+            return make_response(jsonify({'number_of_pages':number_of_pages ,'follow_requests' :follow_request_senders_list}),200)
 
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)

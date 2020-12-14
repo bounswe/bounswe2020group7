@@ -6,31 +6,44 @@ from flask_restplus import reqparse
 # following: user that is followed by someone
 class GetFollowingsForm(Form):
     follower_id = IntegerField('follower_id', validators=[validators.DataRequired()])
+    page = IntegerField("page")
+    per_page = IntegerField("per_page")
 
 get_followings_parser = reqparse.RequestParser()
 get_followings_parser.add_argument('follower_id', required=True, type=int,
                                    help="ID of the follower. Follower is the one who follows someone.",
                                    location='args')
+get_followings_parser.add_argument('page',type=int,help="Page index that you want(Starts from 0)",location='args')
+get_followings_parser.add_argument('per_page',type=int,help="Number of items in a page",location='args')
 get_followings_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
 
 
 class GetFollowersForm(Form):
     following_id = IntegerField('following_id', validators=[validators.DataRequired()])
+    page = IntegerField("page")
+    per_page = IntegerField("per_page")
 
 get_followers_parser = reqparse.RequestParser()
 get_followers_parser.add_argument('following_id', required=True, type=int,
                                   help="ID of the following user. Following user is the one who is followed by someone.",
                                   location='args')
+get_followers_parser.add_argument('page',type=int,help="Page index that you want(Starts from 0)",location='args')
+get_followers_parser.add_argument('per_page',type=int,help="Number of items in a page",location='args')
 get_followers_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
 
 
 class GetFollowRequestsForm(Form):
     following_id = IntegerField('following_id', validators=[validators.DataRequired()])
+    page = IntegerField("page")
+    per_page = IntegerField("per_page")
 
 get_follow_requests_parser = reqparse.RequestParser()
 get_follow_requests_parser.add_argument('following_id', required=True, type=int,
                                         help="ID of the following user. Following user is the one who is followed by someone.",
                                         location='args')
+
+get_follow_requests_parser.add_argument('page',type=int,help="Page index that you want(Starts from 0)",location='args')
+get_follow_requests_parser.add_argument('per_page',type=int,help="Number of items in a page",location='args')
 get_follow_requests_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
 
 class SendFollowRequestsForm(Form):
