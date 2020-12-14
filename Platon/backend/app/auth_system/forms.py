@@ -94,7 +94,7 @@ delete_user_parser.add_argument("auth_token",required=True, type=str, help="Auth
 class GetUserSkillsForm(Form):
 	user_id = IntegerField("User ID", validators=[validators.DataRequired()])
 get_userskill_parser = reqparse.RequestParser()
-get_userskill_parser.add_argument("user_id", required=True, type=int, help="ID of the requested user.", location="form")
+get_userskill_parser.add_argument("user_id", required=True, type=int, help="ID of the requested user.", location="args")
 get_userskill_parser.add_argument("auth_token", required=True, type=str, help="Authentication token", location="headers")
 
 class PostUserSkillsForm(Form):

@@ -466,12 +466,12 @@ class UserSkillAPI(Resource):
                    500: 'Database Connection'})
     @api.expect(get_userskill_parser)
     @login_required
-    @follow_required(param_loc = 'form', requested_user_id_key='user_id')
+    @follow_required(param_loc = 'args', requested_user_id_key='user_id')
     def get(self):
         '''
             Returns a list of user's skills with id and name
         '''
-        form = GetUserSkillsForm(request.form)
+        form = GetUserSkillsForm(request.args)
         if form.validate():
             try:
                 user_skills = UserSkills.query.filter(UserSkills.user_id == form.user_id.data).all()
@@ -493,30 +493,38 @@ class UserSkillAPI(Resource):
 
     @api.doc(
         responses={200: 'Skill is Successfully Added', 400: 'Input Format Error',
-                   500: 'Database Connection'})
+                   500: 'Database Connection', 404: 'User is not found'})
     @api.expect(post_userskill_parser)
     @login_required
-    def post(user_id):
+    def post(user_id,self):
         '''
             Adds a new skill to user's skills with name
         '''
         form = PostUserSkillsForm(request.form)
         if form.validate():
             try:
-                skill_name = form.skill.data.title()
-                new_skill = Skills.query.filter(Skills.name == skill_name).first()
-                if new_skill is None:
-                    new_skill = Skills(name=skill_name)
-                    db.session.add(new_skill)
-                    db.session.commit()
-                new_userskill = UserSkills(user_id=user_id,
-                                           skill_id=new_skill.id)
-                db.session.add(new_userskill)
-                db.session.commit()
+                user = User.query.filter_by(id=user_id)
             except:
                 return make_response(jsonify({"error": "The server is not connected to the database."}), 500)
+            else:
+                if user is not None:
+                    try:
+                        skill_name = form.skill.data.title()
+                        new_skill = Skills.query.filter(Skills.name == skill_name).first()
+                        if new_skill is None:
+                            new_skill = Skills(name=skill_name)
+                            db.session.add(new_skill)
+                            db.session.commit()
+                        new_userskill = UserSkills(user_id=user_id,
+                                                   skill_id=new_skill.id)
+                        db.session.add(new_userskill)
+                        db.session.commit()
+                    except:
+                        return make_response(jsonify({"error": "The server is not connected to the database."}), 500)
 
-            return make_response(jsonify({'msg': 'Skill is successfully added'}), 200)
+                    return make_response(jsonify({'msg': 'Skill is successfully added'}), 200)
+                else:
+                    return make_response(jsonify({"error" : "The user is not found."}), 404)
         else:
             return make_response(jsonify({"error": "Missing data fields or invalid data."}), 400)
 
