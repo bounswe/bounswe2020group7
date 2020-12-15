@@ -149,7 +149,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
         mProfilePageViewModel.allSkills.observe(viewLifecycleOwner, Observer { t ->
             when (t.javaClass) {
                 Resource.Success::class.java -> {
-                    val skillNameList = mProfilePageViewModel.userSkills.value!!.data!!.skills.map { it.name }
+                    val skillNameList = (binding.rvProfilePageSkills.adapter as SkillsAdapter).getAllElements()
                     val bArray = t.data!!.map { skillNameList.contains(it) }.toBooleanArray()
                     AlertDialog.Builder(context)
                             .setCancelable(false)

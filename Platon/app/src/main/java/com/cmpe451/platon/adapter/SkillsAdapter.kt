@@ -64,5 +64,9 @@ class SkillsAdapter(private val data: ArrayList<String>, private val context: Co
         notifyDataSetChanged()
     }
 
+    fun getAllElements():ArrayList<String>{
+        return data
+    }
+
     override fun getItemCount() = data.size
 }
