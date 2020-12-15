@@ -67,11 +67,13 @@ class HomeActivity : BaseActivity(),
             search.onActionViewCollapsed()
         }
         //make GONE the views
+        binding.notificationRg.clearCheck()
+        binding.rgSearchAmong.clearCheck()
+
         binding.layJobQuery.visibility=View.GONE
         binding.notificationRg.visibility = View.GONE
         binding.rgSearchAmong.visibility = View.GONE
-        binding.notificationRg.clearCheck()
-        binding.rgSearchAmong.clearCheck()
+
         // if adapter not null, clear it
         if (binding.toolbarRecyclerview.adapter != null){
             (binding.toolbarRecyclerview.adapter as ToolbarElementsAdapter).clearElements()
