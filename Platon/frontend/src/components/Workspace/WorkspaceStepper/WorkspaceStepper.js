@@ -7,11 +7,13 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import WorkspaceInputOptional from '../WorkspaceInput/WorkspaceInputOptional/WorkspaceInputOptional';
 import WorkspaceInputRequired from '../WorkspaceInput/WorkspaceInputRequired/WorkspaceInputRequired';
-
+import WorkspaceInputDate from '../WorkspaceInput/WorkspaceInputDate/WorkspaceInputDate';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Paper from '@material-ui/core/Paper';
 
 import colors from '../../../utils/colors'
+
+
 
 const StyledStepLabel = withStyles({
     root: {
@@ -21,9 +23,17 @@ const StyledStepLabel = withStyles({
       "& .MuiStepIcon-completed": {
         color: colors.quaternaryLight,
       },
-
+      "& .MuiStepLabel-label": {
+        color: colors.secondary,
+      },
+      "& .MuiStepLabel-completed": {
+        color: colors.secondaryDark,
+      }
     },
   })(StepLabel);
+
+
+
 const useStyles = makeStyles((theme) => ({
 
   layout: {
@@ -58,23 +68,32 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(1),
   },
 }));
+const StyledButton = withStyles({
+  root: {
+    background: colors.tertiaryDark ,
+    color: colors.secondary,
 
-const steps = ['Shipping address', 'Payment details', 'Review your order'];
+    "&:hover": {
+      backgroundColor: colors.tertiary,
+    },
+  },
+})(Button);
+const steps = ['Workspace outline', 'Specify workspace', 'Deadline'];
 
-function getStepContent(step) {
+function getStepContent(step,props) {
   switch (step) {
     case 0:
-      return <WorkspaceInputRequired />;
+      return <WorkspaceInputRequired {...props}/>;
     case 1:
-      return <WorkspaceInputOptional />;
+      return <WorkspaceInputOptional {...props}/>;
     case 2:
-      return <WorkspaceInputOptional />;
+      return <WorkspaceInputDate/>;
     default:
       throw new Error('Unknown step');
   }
 }
 
-export default function Checkout() {
+export default function WorkspaceStepper(props) {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
 
@@ -91,44 +110,44 @@ export default function Checkout() {
       <CssBaseline />
       <main className={classes.layout}>
         <Paper style={{backgroundColor: colors.primaryLight}} className={classes.paper}>
-          <Typography  style={{color: colors.secondary}} component="h1" variant="h4" align="center">
+          <Typography  style={{color: colors.secondary}} component="h1" variant="h5" align="center">
             Create a new workspace
           </Typography>
           <Stepper style={{backgroundColor: colors.primaryLight}} activeStep={activeStep} className={classes.stepper}>
             {steps.map((label) => (
               <Step key={label}>
-                <StyledStepLabel style={{color: colors.quinary}} >{label}</StyledStepLabel>
+                <StyledStepLabel style={{color: colors.secondaryDark}} optional={<Typography variant="caption">{label === steps[0] ? "Required" : "Optional" }</Typography>}>{label}</StyledStepLabel>
               </Step>
             ))}
           </Stepper>
           <React.Fragment>
             {activeStep === steps.length ? (
               <React.Fragment>
-                <Typography variant="h5" gutterBottom>
-                  Thank you for your order.
+                <Typography variant="h5" gutterBottom align="center">
+                  Your workspace is created.
                 </Typography>
-                <Typography variant="subtitle1">
-                  Your order number is #2001539. We have emailed your order confirmation, and will
-                  send you an update when your order has shipped.
+                <Typography variant="subtitle1" align="center">
+                  You can check it in your workspace page.
                 </Typography>
               </React.Fragment>
             ) : (
               <React.Fragment>
-                {getStepContent(activeStep)}
+                {getStepContent(activeStep, {...props})}
                 <div className={classes.buttons}>
                   {activeStep !== 0 && (
-                    <Button onClick={handleBack} className={classes.button}>
+                    <StyledButton onClick={handleBack} className={classes.button}>
                       Back
-                    </Button>
+                    </StyledButton>
                   )}
-                  <Button
+                  <StyledButton
                     variant="contained"
                     color="primary"
                     onClick={handleNext}
                     className={classes.button}
+                    disabled={props.title === "" || props.description === ""}
                   >
-                    {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
-                  </Button>
+                    {activeStep === steps.length - 1 ? 'Create Workspace' : 'Next'}
+                  </StyledButton>
                 </div>
               </React.Fragment>
             )}

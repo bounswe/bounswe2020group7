@@ -19,6 +19,8 @@ const StyledRadio = withStyles({
   },
   checked: {},
 })(Radio);
+
+
 const StyledTextField = withStyles({
   root: {
     "& .MuiInputBase-input": {
@@ -59,6 +61,10 @@ class WorkspaceInput extends Component {
     this.setState({ is_private: event.target.value === "public" ? 0 : 1 });
   };
   render() {
+    console.log("is_private", this.props.is_private)
+    console.log("requirements", this.props.requirements)
+    console.log("max_col", this.props.max_collaborators)
+    console.log("skills", this.props.skills)
     return (
       <div
         className="container"
@@ -71,8 +77,8 @@ class WorkspaceInput extends Component {
           <RadioGroup
             aria-label="workspace-privacy"
             name="workspace-privacy"
-            value={!this.state.is_private ? "public" : "private"}
-            onChange={this.handleWorkspacePrivacy}
+            value={!this.props.is_private ? "public" : "private"}
+            onChange={(e) => this.props.handleIsPrivate(e.target.value === "public" ? 0 : 1 )}
           >
             <FormControlLabel
               value="public"
@@ -93,6 +99,8 @@ class WorkspaceInput extends Component {
           <StyledTextField
             id="outlined-number"
             type="number"
+            value={this.props.max_collaborators}
+            onChange={(e) => this.props.handleMaxCollaborators(e.target.value)}
             InputProps={{ inputProps: { min: 1 } }}
             variant="outlined"
           />
@@ -104,6 +112,8 @@ class WorkspaceInput extends Component {
           <StyledTextField
             fullWidth
             required
+            value={this.props.requirements}
+            onChange={(e) => this.props.handleRequirements(e.target.value)}
             variant="outlined"
             multiline
             rows={3}
@@ -113,7 +123,7 @@ class WorkspaceInput extends Component {
           <FormLabel className="WorkspaceInputFormLabel" component="legend">
             Skills
           </FormLabel>
-          <WorkspaceInputSkill />
+          <WorkspaceInputSkill skillsList={this.props.skillsList} skills={this.props.skills} handleSkills={this.props.handleSkills}/>
         </FormControl>
       </div>
     );

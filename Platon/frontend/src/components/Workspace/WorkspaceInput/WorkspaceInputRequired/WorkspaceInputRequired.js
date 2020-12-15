@@ -49,22 +49,26 @@ class WorkspaceInput extends Component {
   render() {
     return (
       <div className="container" style={{ display: "flex", flexDirection:"column",}} >
-        <FormControl style={{marginTop:"20px"}} component="fieldset">
+        <FormControl style={{marginTop:"10px"}} component="fieldset">
           <FormLabel className="MuiFormLabel-root" component="legend">Title</FormLabel>
 
           <StyledTextField
             fullWidth
             required
+            value={this.props.title}
             variant="outlined"
+            onChange={(e) => this.props.handleTitle(e.target.value)}
           />
         </FormControl>
-        <FormControl style={{marginTop:"20px"}}  component="fieldset">
+        <FormControl style={{marginTop:"10px"}}  component="fieldset">
           <FormLabel className="WorkspaceInputFormLabel" component="legend">Description</FormLabel>
           <StyledTextField
             fullWidth
             required
+            value={this.props.description}
             variant="outlined"
             multiline
+            onChange={(e) => this.props.handleDescription(e.target.value)}
             rows={6}
           />
         </FormControl>
