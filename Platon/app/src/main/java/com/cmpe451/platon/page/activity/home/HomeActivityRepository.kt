@@ -171,7 +171,7 @@ class HomeActivityRepository {
     }
 
 
-    fun searchUser(token: String, query:String, jobs:Int?, page:Int?, perPage:Int?){
+    fun searchUser(token: String?, query:String, jobs:Int?, page:Int?, perPage:Int?){
         val service = RetrofitClient.getService()
         val call = service.searchUser(token, query,jobs, page, perPage)
 

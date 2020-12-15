@@ -14,36 +14,66 @@
         <include layout="@layout/toolbar" />
 
     <RadioGroup
-        android:id="@+id/search_among_rb"
+        android:id="@+id/rg_searchAmong"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/primary_dark_darker"
-        android:checkedButton="@id/workspace_rb"
         android:orientation="horizontal"
         android:paddingHorizontal="@dimen/medium"
         android:visibility="gone">
 
         <TextView
-            android:id="@+id/textView4"
-            android:textColor="@color/primary_light"
+            android:id="@+id/tv_searchAmong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/search_among_str" />
+            android:text="@string/search_among_str"
+            android:textColor="@color/primary_light" />
 
         <RadioButton
-            android:id="@+id/workspace_rb"
-            android:textColor="@color/primary_light"
+            android:id="@+id/rb_searchWorkspace"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/workspaces_str" />
+            android:text="@string/workspaces_str"
+            android:textColor="@color/primary_light" />
 
         <RadioButton
-            android:id="@+id/rb_searchUser_t"
-            android:textColor="@color/primary_light"
+            android:id="@+id/rb_searchUser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/users_str" />
+            android:text="@string/users_str"
+            android:textColor="@color/primary_light" />
+
+        <RadioButton
+            android:id="@+id/rb_searchUpcoming"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/events_str"
+            android:textColor="@color/primary_light" />
     </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:padding="@dimen/large"
+        android:id="@+id/lay_jobQuery"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:background="@color/primary_dark_darker"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/title_text_size"
+            android:textColor="@color/primary_light"
+            android:text="@string/filter_by_job_str"
+            />
+        <Spinner
+            android:id="@+id/sp_jobQuery"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColorHint="@color/primary_light"
+            android:textColor="@color/primary_light" />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/toolbar_recyclerview"

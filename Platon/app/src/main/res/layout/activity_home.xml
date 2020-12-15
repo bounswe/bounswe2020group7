@@ -17,7 +17,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/primary_dark_darker"
-        android:checkedButton="@id/rb_searchUser"
         android:orientation="horizontal"
         android:paddingHorizontal="@dimen/medium"
         android:visibility="gone">
@@ -74,12 +73,12 @@
         android:textColorHint="@color/primary_light"
         android:textColor="@color/primary_light" />
     </LinearLayout>
+
     <RadioGroup
         android:id="@+id/notification_rg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/primary_dark_darker"
-        android:checkedButton="@id/general_ntf_rb"
         android:orientation="horizontal"
         android:paddingHorizontal="@dimen/medium"
         android:visibility="gone">

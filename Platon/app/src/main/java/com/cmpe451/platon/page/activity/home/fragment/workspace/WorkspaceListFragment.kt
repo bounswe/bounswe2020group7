@@ -62,7 +62,7 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
     }
 
     private fun fetchWorkspaces(){
-        mWorkspaceListViewModel.getWorkspaces((activity as HomeActivity).user_id!!, (activity as HomeActivity).token!!)
+        mWorkspaceListViewModel.getWorkspaces((activity as HomeActivity).userId!!, (activity as HomeActivity).token!!)
     }
 
 
@@ -92,7 +92,7 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
 
     override fun onWorkspaceListEditClicked(position: Int) {
         val bnd = Bundle()
-        bnd.putInt("user_id", (activity as HomeActivity).user_id!!)
+        bnd.putInt("user_id", (activity as HomeActivity).userId!!)
         bnd.putString("token", (activity as HomeActivity).token!!)
         bnd.putInt("workspace_id", position)
         startActivity(Intent(activity, WorkspaceActivity::class.java).putExtras(bnd))

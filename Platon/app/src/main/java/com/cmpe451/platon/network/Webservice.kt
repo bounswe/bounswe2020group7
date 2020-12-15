@@ -138,7 +138,7 @@ interface Webservice {
                          @Query("search_type") i: Int): Call<SearchHistory?>
 
     @GET("api/search_engine/user")
-    fun searchUser(@Header("auth_token") token: String,
+    fun searchUser(@Header("auth_token") token: String?,
                    @Query("search_query") query:String,
                     @Query("job_filter") job:Int?,
                    @Query("page") page:Int?,

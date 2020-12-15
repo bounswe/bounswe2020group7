@@ -28,7 +28,6 @@ class EditProfileFragment : Fragment() {
 
     private lateinit var binding: FragmentEditProfileBinding
     private val mEditProfileViewModel: EditProfileViewModel by viewModels()
-    private val mRegisterViewModel:RegisterViewModel by viewModels()
     private val mActivityViewModel: HomeActivityViewModel by activityViewModels()
     private lateinit var dialog:AlertDialog
 
@@ -46,7 +45,7 @@ class EditProfileFragment : Fragment() {
         setUserInfo()
     }
     private fun setListeners() {
-        mRegisterViewModel.getAllJobs()
+        mActivityViewModel.getAllJobs()
 
         setButtonListeners()
         setObservers()
@@ -96,7 +95,7 @@ class EditProfileFragment : Fragment() {
             }
         })
 
-        mRegisterViewModel.getJobListResourceResponse.observe(viewLifecycleOwner, Observer{ t ->
+        mActivityViewModel.getJobListResourceResponse.observe(viewLifecycleOwner, Observer{ t ->
             when (t.javaClass) {
                 Resource.Loading::class.java -> {
                     val x  = ArrayAdapter(requireContext(), R.layout.spinner_item, mutableListOf("Loading..."))
@@ -105,7 +104,7 @@ class EditProfileFragment : Fragment() {
                 }
                 Resource.Success::class.java -> {
                     val user = mActivityViewModel.getUserResourceResponse.value!!.data
-                    (binding.spJob.adapter as ArrayAdapter<*>).clear()
+                    (binding.spJob.adapter as ArrayAdapter<String>).clear()
                     (binding.spJob.adapter as ArrayAdapter<String>).addAll(t.data!!.map { it.name })
                     (binding.spJob.adapter as ArrayAdapter<String>).add("Not in list")
                     binding.spJob.setSelection(t.data!!.map { it.name }.indexOf(user?.job))

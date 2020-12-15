@@ -47,7 +47,7 @@ class FollowFragment:Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setAdapter()
         token = (activity as HomeActivity).token.toString()
-        userId = (activity as HomeActivity).user_id
+        userId = (activity as HomeActivity).userId
 
         setObservers()
 
@@ -101,7 +101,7 @@ class FollowFragment:Fragment() {
         adapter = FollowerFollowingAdapter(ArrayList()) { userId:Int->
 //            Toast.makeText(activity, userId, Toast.LENGTH_LONG)
 //            (activity as HomeActivity).navController.navigate(FollowersFollowingFragmentDirections.actionFollowersFollowingFragmentToProfilePagePrivateFragment(id))
-            if(userId == (activity as HomeActivity).user_id){
+            if(userId == (activity as HomeActivity).userId){
                 findNavController().navigate(FollowFragmentDirections.actionFollowFragmentToProfilePageFragment())
             }
             else {

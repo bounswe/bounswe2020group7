@@ -63,7 +63,7 @@ class HomeActivityViewModel(application: Application):AndroidViewModel(applicati
         repository.fetchSearchHistory(token, i)
     }
 
-    fun searchUser(token:String, query:String, job:Int?, page:Int?, perPage:Int?){
+    fun searchUser(token:String?, query:String, job:Int?, page:Int?, perPage:Int?){
         repository.searchUser(token, query, job, page, perPage)
     }
 

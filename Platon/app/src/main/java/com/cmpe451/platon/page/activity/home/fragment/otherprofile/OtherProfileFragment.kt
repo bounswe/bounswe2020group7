@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.OtherUserProjectsAdapter
-import com.cmpe451.platon.adapter.SkillsAdapter
 import com.cmpe451.platon.adapter.SkillsOtherProfileAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentProfilePageOthersPrivateBinding
@@ -250,7 +249,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
         }
         if(status == USERSTATUS.NOT_FOLLOWING){
             binding.buttonFollow.setOnClickListener {
-                mOtherProfileViewModel.follow((activity as HomeActivity).user_id!!, user?.id!!, (activity as HomeActivity).token!!)
+                mOtherProfileViewModel.follow((activity as HomeActivity).userId!!, user?.id!!, (activity as HomeActivity).token!!)
             }
             if(isUserPrivate){
                 binding.buttonFollowers.setOnClickListener {

@@ -47,7 +47,7 @@ class AddResearchInfoFragment : Fragment() {
                 Resource.Success::class.java ->{
                     Toast.makeText(activity, "Research Information is added!", Toast.LENGTH_SHORT).show()
                     mProfilePageViewModel.fetchResearch((activity as HomeActivity).token,
-                            (activity as HomeActivity).user_id
+                            (activity as HomeActivity).userId
                     )
                     dialog.dismiss()
                     findNavController().navigateUp()

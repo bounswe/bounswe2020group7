@@ -6,15 +6,8 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.util.Base64.decode
-import android.view.View
-import androidx.fragment.app.Fragment
+import android.widget.Toast
 import com.cmpe451.platon.R
-import com.cmpe451.platon.core.BaseActivity
-import com.google.gson.annotations.Expose
-import com.google.gson.annotations.SerializedName
-import retrofit2.http.FormUrlEncoded
-import java.lang.Byte.decode
 import java.util.*
 
 
@@ -43,10 +36,10 @@ class Definitions {
      * @param reason The reason for trending
      */
     class TrendingProject(
-        val project_title: String,
-        val img: Drawable?,
-        val description: String,
-        val reason: TREND
+            val project_title: String,
+            val img: Drawable?,
+            val description: String,
+            val reason: TREND
     ) {
         /**
          * Reason for trending is chosen by enumerator.
@@ -69,11 +62,11 @@ class Definitions {
      * @param date Date as string of the event
      */
     class UpcomingEvent(
-        val title: String,
-        val desc: String,
-        val img: Drawable?,
-        val type: TYPE,
-        val date: String
+            val title: String,
+            val desc: String,
+            val img: Drawable?,
+            val type: TYPE,
+            val date: String
     ){
         /**
          * Type of the event chosen by this.
@@ -97,7 +90,4 @@ class Definitions {
         dialogBuilder.setView(R.layout.progress_bar)
         return dialogBuilder.create()
     }
-
-
-
 }
