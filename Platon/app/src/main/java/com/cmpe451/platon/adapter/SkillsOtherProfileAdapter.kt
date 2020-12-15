@@ -13,8 +13,6 @@ class SkillsOtherProfileAdapter(private val data: ArrayList<String>, private val
     class SkillsViewHolder(private val view: View, var binding: SkillCellPersonalBinding) : RecyclerView.ViewHolder(view){
         fun bindData(binding: SkillCellPersonalBinding, model:String, position: Int) {
             binding.titleSkill.text = model
-            binding.deleteSkillIv.visibility = View.GONE
-
         }
     }
 

@@ -30,7 +30,7 @@ import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.activity.home.HomeActivityViewModel
 import com.cmpe451.platon.util.Definitions
 
-class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonClickListener, SkillsAdapter.SkillsButtonClickListener {
+class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonClickListener{
 
     private lateinit var binding: FragmentProfilePageBinding
     private val mProfilePageViewModel: ProfilePageViewModel by activityViewModels()
@@ -56,7 +56,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
         binding.rvProfilePageProjects.adapter = UserProjectsAdapter(ArrayList(), requireContext(), this)
         binding.rvProfilePageProjects.layoutManager = LinearLayoutManager(this.activity)
 
-        binding.rvProfilePageSkills.adapter = SkillsAdapter(ArrayList(), requireContext(), this)
+        binding.rvProfilePageSkills.adapter = SkillsAdapter(ArrayList(), requireContext())
         binding.rvProfilePageSkills.layoutManager = GridLayoutManager(this.activity, 3)
 
         dialog = Definitions().createProgressBar(requireContext())
@@ -152,9 +152,8 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                     val skillNameList = mProfilePageViewModel.userSkills.value!!.data!!.skills.map { it.name }
                     val bArray = t.data!!.map { skillNameList.contains(it) }.toBooleanArray()
                     AlertDialog.Builder(context)
-                            .setCancelable(true)
-                            .setNeutralButton("Add Nonexistent Skill") { dialog, which ->
-                                dialog.dismiss()
+                            .setCancelable(false)
+                            .setNeutralButton("Add Nonexistent Skill") { _, _ ->
                                 val tmpBinding = AddSkillBinding.inflate(layoutInflater, requireView().parent as ViewGroup, false)
                                 AlertDialog.Builder(context).setView(tmpBinding.root)
                                         .setCancelable(true)
@@ -164,19 +163,21 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                                             }
                                         }
                                         .create().show()
-                            }.setOnDismissListener{
-                                mProfilePageViewModel.allSkills.removeObservers(viewLifecycleOwner)
                             }
-                            .setNegativeButton("Completed", null)
+                            .setNegativeButton("Completed") { dial, _ ->
+                                dial.dismiss()
+                                mProfilePageViewModel.getAddDeleteSkillResourceResponse.removeObservers(viewLifecycleOwner)
+                            }
                             .setMultiChoiceItems(t.data!!.toTypedArray(), bArray) { _, which, isChecked ->
-                                if (isChecked){
+                                if (isChecked) {
                                     mProfilePageViewModel.addSkillToUser(t.data!![which], (activity as HomeActivity).token!!)
-                                }else{
+                                } else {
                                     mProfilePageViewModel.deleteSkillFromUser(t.data!![which], (activity as HomeActivity).token!!)
                                 }
                             }
                             .create().show()
                     dialog.dismiss()
+                    mProfilePageViewModel.allSkills.removeObservers(viewLifecycleOwner)
                 }
                 Resource.Error::class.java -> {
                     Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
@@ -195,7 +196,6 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                 Resource.Success::class.java -> {
                     mProfilePageViewModel.getUserSkills((activity as HomeActivity).user_id!!, (activity as HomeActivity).token!!)
                     dialog.dismiss()
-                    mProfilePageViewModel.getAddDeleteSkillResourceResponse.removeObservers(viewLifecycleOwner)
                 }
                 Resource.Error::class.java -> {
                     Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
@@ -236,10 +236,6 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     override fun onUserProjectEditClicked(position: Int) {
         mProfilePageViewModel.setCurrentResearch(mProfilePageViewModel.getResearchesResourceResponse.value?.data!!.research_info[position])
         findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToEditResearchInfoFragment())
-    }
-
-    override fun deleteSkillButtonClicked(skill: String, position: Int) {
-        TODO("Not yet implemented")
     }
 
 }

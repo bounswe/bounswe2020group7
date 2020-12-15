@@ -47,7 +47,6 @@ class HomeActivity : BaseActivity(),
 
     lateinit var toolbar: Toolbar
     lateinit var navController: NavController
-    private lateinit var toolbarRecyclerView: RecyclerView
     lateinit var binding : ActivityHomeBinding
     lateinit var search:SearchView
     private lateinit var dialog: AlertDialog
@@ -62,10 +61,17 @@ class HomeActivity : BaseActivity(),
         it.onNavDestinationSelected(navController)
     }
 
-    private fun destroyToolbar() {
+    private fun destroyToolbar(flag:Boolean=true) {
+        if(flag){
+            search.onActionViewCollapsed()
+        }
+
         binding.notificationRg.visibility = View.GONE
         binding.rgSearchAmong.visibility = View.GONE
-        (toolbarRecyclerView.adapter as ToolbarElementsAdapter).clearElements()
+        if (binding.toolbarRecyclerview.adapter != null){
+            (binding.toolbarRecyclerview.adapter as ToolbarElementsAdapter).clearElements()
+        }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,7 +103,6 @@ class HomeActivity : BaseActivity(),
 
     private fun initViews() {
         mActivityViewModel.fetchUser(token)
-        toolbarRecyclerView = binding.toolbarRecyclerview
         initListeners()
     }
 
@@ -105,139 +110,31 @@ class HomeActivity : BaseActivity(),
         dialog = Definitions().createProgressBar(this as BaseActivity)
         binding.notificationRg.setOnCheckedChangeListener { t, id->
             when(id){
-                R.id.general_ntf_rb ->{
-                    mActivityViewModel.getNotifications(token!!)
-                }
-                R.id.personal_ntf_rb ->{
-                    mActivityViewModel.getFollowRequests(mActivityViewModel.getUserResourceResponse.value?.data!!.id, token!!)
-                }
+                R.id.general_ntf_rb -> mActivityViewModel.getNotifications(token!!)
+                R.id.personal_ntf_rb ->mActivityViewModel.getFollowRequests(mActivityViewModel.getUserResourceResponse.value?.data!!.id, token!!)
             }
         }
-
-        mActivityViewModel.getUserNotificationsResourceResponse.observe(this, Observer{ t->
-            when(t.javaClass){
-                Resource.Success::class.java ->{
-                    toolbarRecyclerView.adapter = NotificationElementsAdapter(t.data!!.notification_list as ArrayList<Notification>,this, this)
-                    toolbarRecyclerView.layoutManager = LinearLayoutManager(this)
-                    dialog.dismiss()
-                }
-                Resource.Loading::class.java -> dialog.show()
-                Resource.Error::class.java -> {
-                    destroyToolbar()
-                    Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
-                    dialog.dismiss()
-                }
-            }
-        })
-
-        mActivityViewModel.getUserFollowRequestsResourceResponse.observe(this, Observer{ t->
-            when(t.javaClass){
-                Resource.Success::class.java ->{
-                    toolbarRecyclerView.adapter = FollowRequestElementsAdapter(t.data!!.follow_requests as ArrayList<FollowRequest>,this, this)
-                    toolbarRecyclerView.layoutManager = LinearLayoutManager(this)
-                    dialog.dismiss()
-                }
-                Resource.Loading::class.java -> dialog.show()
-                Resource.Error::class.java -> {
-                    destroyToolbar()
-                    Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
-                    dialog.dismiss()
-                }
-            }
-        })
-
-        mActivityViewModel.acceptRequestResourceResponse.observe(this, Observer{i->
-            when(i.javaClass){
-                Resource.Success::class.java -> {
-                    if (handledFollowRequestPosition != -1){
-                        (toolbarRecyclerView.adapter as ToolbarElementsAdapter)
-                                .removeElement(handledFollowRequestPosition)
-                        handledFollowRequestPosition = -1
-                    }
-                    dialog.dismiss()
-                }
-                Resource.Loading::class.java -> dialog.show()
-                Resource.Error::class.java-> {
-                    Toast.makeText(this, i.message, Toast.LENGTH_SHORT).show()
-                    dialog.dismiss()
-                }
-            }
-
-        })
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.actionbar, menu)
-        search = (menu?.findItem(R.id.search_btn)?.actionView as SearchView)
-
-        initSearch(search)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-
-    var historyCursor = MatrixCursor(arrayOf("_id", "query"))
-
-    private fun initSearch(search: SearchView) {
-
-        val searchBar = search.findViewById<LinearLayout>(R.id.search_bar)
-        searchBar.layoutTransition = LayoutTransition()
-
-        toolbarRecyclerView.adapter = SearchElementsAdapter(arrayListOf(),this, this)
-        toolbarRecyclerView.layoutManager = LinearLayoutManager(this)
-
-        search.setOnSearchClickListener{
-            toolbarRecyclerView.adapter = SearchElementsAdapter(arrayListOf(),this, this)
-            toolbarRecyclerView.layoutManager = LinearLayoutManager(this)
-
-            when(binding.rgSearchAmong.visibility){
-                View.VISIBLE -> {
-                    binding.rgSearchAmong.visibility = View.GONE
-                    (toolbarRecyclerView.adapter as SearchElementsAdapter).clearElements()
-                }
-                View.GONE -> {
-                    binding.rgSearchAmong.visibility = View.VISIBLE
-                    binding.notificationRg.visibility = View.GONE
-                }
-            }
-        }
-
-        search.findViewById<AutoCompleteTextView>(R.id.search_src_text).threshold = 1
-        val cursorAdapter = SimpleCursorAdapter(this,
-                android.R.layout.simple_spinner_item,
-                historyCursor,
-                arrayOf("query"),
-                arrayOf(android.R.id.text1).toIntArray(),
-                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER)
-        search.suggestionsAdapter = cursorAdapter
-        search.setOnSuggestionListener(object: SearchView.OnSuggestionListener{
-            override fun onSuggestionSelect(position: Int): Boolean {
-                Log.i("ERRROR", cursorAdapter.getItem(position).toString())
-                return true
-            }
-
-            override fun onSuggestionClick(position: Int): Boolean {
-                Log.i("ERRROR", cursorAdapter.getItem(position).toString())
-                return true
-            }
-
-        })
-
 
         binding.rgSearchAmong.setOnCheckedChangeListener { _, checkedId ->
             when(checkedId){
-                R.id.rb_searchUser -> {
-                    (toolbarRecyclerView.adapter as ToolbarElementsAdapter).clearElements()
-                    mActivityViewModel.fetchSearchHistory(token!!, 0)
-                }
-                R.id.rb_searchWorkspace ->{
-                    (toolbarRecyclerView.adapter as ToolbarElementsAdapter).clearElements()
-                    mActivityViewModel.fetchSearchHistory(token!!, 1)
-                }
-                R.id.rb_searchUpcoming ->{
-                    (toolbarRecyclerView.adapter as ToolbarElementsAdapter).clearElements()
-                    mActivityViewModel.fetchSearchHistory(token!!, 2)
-                }
+                R.id.rb_searchUser -> mActivityViewModel.fetchSearchHistory(token!!, 0)
+                R.id.rb_searchWorkspace ->mActivityViewModel.fetchSearchHistory(token!!, 1)
+                R.id.rb_searchUpcoming ->mActivityViewModel.fetchSearchHistory(token!!, 2)
             }}
+    }
+
+    private fun onSearchBarClicked() {
+        search.suggestionsAdapter = SimpleCursorAdapter(this,
+                android.R.layout.simple_spinner_dropdown_item,
+                null,
+                arrayOf("query"),
+                arrayOf(android.R.id.text1).toIntArray(),
+                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER)
+
+        search.setOnCloseListener {
+            destroyToolbar()
+            true
+        }
 
         mActivityViewModel.getSearchHistoryResourceResponse.observe(this, { t->
             when(t.javaClass){
@@ -245,9 +142,11 @@ class HomeActivity : BaseActivity(),
                     dialog.show()
                 }
                 Resource.Success::class.java ->{
+                    val historyCursor = MatrixCursor(arrayOf("_id", "query"))
                     t.data!!.search_history.forEachIndexed{ i, e ->
                         historyCursor.addRow(arrayOf(i, e.query))
                     }
+                    search.suggestionsAdapter.changeCursor(historyCursor)
                     dialog.dismiss()
                 }
                 Resource.Error::class.java ->{
@@ -257,35 +156,13 @@ class HomeActivity : BaseActivity(),
             }
         })
 
-
-
-        search.setOnQueryTextListener( object: SearchView.OnQueryTextListener{
-            override fun onQueryTextChange(newText: String?): Boolean {
-                return Log.println(Log.ERROR, "SEARCH:", newText.toString().trim())*0 == 0
-            }
-
-            override fun onQueryTextSubmit(query: String): Boolean {
-                when(binding.rgSearchAmong.checkedRadioButtonId){
-                    R.id.rb_searchUser ->{
-                        mActivityViewModel.searchUser(token!!, query, null,null, null)
-                    }
-                    R.id.rb_searchWorkspace ->{
-
-                    }
-                    R.id.rb_searchUpcoming ->{
-
-                    }
-                }
-                return true
-            }
-        })
-
         mActivityViewModel.getSearchUserResourceResponse.observe(this, {t->
             when(t.javaClass){
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java -> {
-                    (toolbarRecyclerView.adapter as SearchElementsAdapter).clearElements()
-                    (toolbarRecyclerView.adapter as SearchElementsAdapter).submitElements(t.data!!.result_list.map { it.name + " " + it.surname+ " " + it.is_private.toString()})
+                    binding.toolbarRecyclerview.adapter = SearchElementsAdapter(t.data!!.result_list
+                            .map { it.name + " " + it.surname+ " " + it.is_private.toString()} as ArrayList<String>,this, this)
+                    binding.toolbarRecyclerview.layoutManager = LinearLayoutManager(this)
                     dialog.dismiss()
                 }
                 Resource.Error::class.java -> {
@@ -296,29 +173,113 @@ class HomeActivity : BaseActivity(),
         })
 
 
-            search.setOnCloseListener {
-                destroyToolbar()
-                search.onActionViewCollapsed()
-                true
+        when(binding.rgSearchAmong.visibility){
+            View.VISIBLE -> destroyToolbar()
+            View.GONE -> {
+                destroyToolbar(false)
+                binding.rgSearchAmong.visibility = View.VISIBLE
+                when(binding.rgSearchAmong.checkedRadioButtonId){
+                    R.id.rb_searchUser ->{
+                        mActivityViewModel.fetchSearchHistory(token!!, 0)
+                    }
+                    R.id.rb_searchWorkspace->{
+                        mActivityViewModel.fetchSearchHistory(token!!, 1)
+                    }
+                    R.id.rb_searchUpcoming ->{
+                        mActivityViewModel.fetchSearchHistory(token!!, 2)
+                    }
+                }
             }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-        when(item.itemId){
-            R.id.logout_menu_btn -> onLogOutButtonClicked()
-            R.id.notification_btn -> onSeeNotificationsClicked()
         }
-        return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
+
+
+        search.setOnSuggestionListener(object: SearchView.OnSuggestionListener{
+            override fun onSuggestionSelect(position: Int): Boolean {
+                return true
+            }
+
+            override fun onSuggestionClick(position: Int): Boolean {
+                return true
+            }
+
+        })
+
+        search.setOnQueryTextListener( object: SearchView.OnQueryTextListener{
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextSubmit(query: String): Boolean {
+                when(binding.rgSearchAmong.checkedRadioButtonId){
+                    R.id.rb_searchUser ->{
+                        mActivityViewModel.searchUser(token!!, query, null,null, null)
+                    }
+                    R.id.rb_searchWorkspace ->{
+                    }
+                    R.id.rb_searchUpcoming ->{
+                    } }
+                return true
+            } })
+
     }
+
 
     private fun onSeeNotificationsClicked() {
         when(binding.notificationRg.visibility){
-            View.VISIBLE ->{
-                destroyToolbar()
-            }
+            View.VISIBLE -> destroyToolbar()
             View.GONE ->{
-                search.isIconified = true
+                destroyToolbar()
+
+                mActivityViewModel.getUserNotificationsResourceResponse.observe(this, Observer{ t->
+                    when(t.javaClass){
+                        Resource.Success::class.java ->{
+                            binding.toolbarRecyclerview.adapter = NotificationElementsAdapter(t.data!!.notification_list as ArrayList<Notification>,this, this)
+                            binding.toolbarRecyclerview.layoutManager = LinearLayoutManager(this)
+                            dialog.dismiss()
+                        }
+                        Resource.Loading::class.java -> dialog.show()
+                        Resource.Error::class.java -> {
+                            destroyToolbar()
+                            Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
+                            dialog.dismiss()
+                        }
+                    }
+                })
+
+                mActivityViewModel.getUserFollowRequestsResourceResponse.observe(this, Observer{ t->
+                    when(t.javaClass){
+                        Resource.Success::class.java ->{
+                            binding.toolbarRecyclerview.adapter = FollowRequestElementsAdapter(t.data!!.follow_requests as ArrayList<FollowRequest>,this, this)
+                            binding.toolbarRecyclerview.layoutManager = LinearLayoutManager(this)
+                            dialog.dismiss()
+                        }
+                        Resource.Loading::class.java -> dialog.show()
+                        Resource.Error::class.java -> {
+                            destroyToolbar()
+                            Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
+                            dialog.dismiss()
+                        }
+                    }
+                })
+
+                mActivityViewModel.acceptRequestResourceResponse.observe(this, Observer{i->
+                    when(i.javaClass){
+                        Resource.Success::class.java -> {
+                            if (handledFollowRequestPosition != -1){
+                                (binding.toolbarRecyclerview.adapter as ToolbarElementsAdapter)
+                                        .removeElement(handledFollowRequestPosition)
+                                handledFollowRequestPosition = -1
+                            }
+                            dialog.dismiss()
+                        }
+                        Resource.Loading::class.java -> dialog.show()
+                        Resource.Error::class.java-> {
+                            Toast.makeText(this, i.message, Toast.LENGTH_SHORT).show()
+                            dialog.dismiss()
+                        }
+                    }
+                })
+
                 when(binding.notificationRg.checkedRadioButtonId){
                     R.id.general_ntf_rb ->{
                         mActivityViewModel.getNotifications(token!!)
@@ -333,7 +294,6 @@ class HomeActivity : BaseActivity(),
     }
 
     private fun onLogOutButtonClicked(){
-        destroyToolbar()
         val sharedPrefs = getSharedPreferences("token_file", 0)
         sharedPrefs.edit().remove("mail").apply()
         sharedPrefs.edit().remove("pass").apply()
@@ -342,6 +302,17 @@ class HomeActivity : BaseActivity(),
         Toast.makeText(this, "Logout made", Toast.LENGTH_LONG).show()
     }
 
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.logout_menu_btn -> {
+                destroyToolbar()
+                onLogOutButtonClicked()
+            }
+            R.id.notification_btn -> onSeeNotificationsClicked()
+        }
+        return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
+    }
 
 
     override fun onSupportNavigateUp(): Boolean {
@@ -352,8 +323,6 @@ class HomeActivity : BaseActivity(),
 
     override fun onSearchButtonClicked(buttonName: String) {
     }
-
-
 
     override fun onNotificationButtonClicked(ntf: Notification, position: Int) {
     }
@@ -375,6 +344,16 @@ class HomeActivity : BaseActivity(),
             mActivityViewModel.deleteFollowRequest(request.id, mActivityViewModel.getUserResourceResponse.value?.data?.id!!, token!!)
         }
         handledFollowRequestPosition = position
+    }
+
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.actionbar, menu)
+        search = (menu?.findItem(R.id.search_btn)?.actionView as SearchView)
+        search.setOnSearchClickListener{
+            onSearchBarClicked()
+        }
+        return super.onCreateOptionsMenu(menu)
     }
 
 

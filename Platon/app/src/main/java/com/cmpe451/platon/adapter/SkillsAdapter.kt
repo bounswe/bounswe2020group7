@@ -7,21 +7,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.databinding.SkillCellPersonalBinding
 
-class SkillsAdapter(private val data: ArrayList<String>, private val context: Context, private val skillsButtonClickListener: SkillsButtonClickListener) :
+class SkillsAdapter(private val data: ArrayList<String>, private val context: Context) :
 
     RecyclerView.Adapter<SkillsAdapter.SkillsViewHolder>() {
     class SkillsViewHolder(private val view: View, var binding: SkillCellPersonalBinding) : RecyclerView.ViewHolder(view){
-        fun bindData(binding: SkillCellPersonalBinding, buttonClickListener: SkillsButtonClickListener, model:String, position: Int) {
+        fun bindData(binding: SkillCellPersonalBinding, model:String, position: Int) {
             binding.titleSkill.text = model
-            binding.deleteSkillIv.setOnClickListener{
-                buttonClickListener.deleteSkillButtonClicked(model, position)
-            }
-
         }
-    }
-
-    interface SkillsButtonClickListener{
-        fun deleteSkillButtonClicked(skill:String, position:Int)
     }
 
     // Create new views (invoked by the layout manager)
@@ -33,7 +25,7 @@ class SkillsAdapter(private val data: ArrayList<String>, private val context: Co
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(holder: SkillsViewHolder, position: Int) {
-        holder.bindData(holder.binding, skillsButtonClickListener, data[position], position)
+        holder.bindData(holder.binding, data[position], position)
     }
 
 

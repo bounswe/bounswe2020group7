@@ -25,14 +25,6 @@
             android:text="@string/skills"
             android:textColor="@color/primary_dark"
             android:textSize="@dimen/project_title_text_size"/>
-        <ImageView
-            android:id="@+id/delete_skill_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/large"
-            android:layout_alignParentRight="true"
-
-            android:src="@drawable/baseline_delete_white_24dp"/>
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

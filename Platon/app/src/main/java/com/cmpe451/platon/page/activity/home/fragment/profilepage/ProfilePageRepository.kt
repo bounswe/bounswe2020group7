@@ -1,5 +1,6 @@
 package com.cmpe451.platon.page.activity.home.fragment.profilepage
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.RetrofitClient
@@ -93,8 +94,10 @@ class ProfilePageRepository() {
                 when {
                     response.isSuccessful && response.body() != null -> addDeleteSkillResourceResponse.value = Resource.Success(response.body()!!)
                     response.errorBody() != null ->  {
-                        if (!JSONObject(response.errorBody()!!.string()).isNull("error"))
+                        if (!JSONObject(response.errorBody()!!.string()).isNull("error")){
                             addDeleteSkillResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).getString("error"))
+                        }
+
                         else addDeleteSkillResourceResponse.value = Resource.Error("Unknown error!")
                     }
                     else -> addDeleteSkillResourceResponse.value = Resource.Error("Unknown error!")
@@ -116,8 +119,10 @@ class ProfilePageRepository() {
                 when {
                     response.isSuccessful && response.body() != null -> addDeleteSkillResourceResponse.value = Resource.Success(response.body()!!)
                     response.errorBody() != null ->  {
-                        if (!JSONObject(response.errorBody()!!.string()).isNull("error"))
-                            addDeleteSkillResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).getString("error"))
+                        Log.i("ERORR",response.errorBody()!!.string().toString())
+                        val obj = JSONObject(response.errorBody()!!.string().toString())
+                        if (obj.has("error"))
+                            addDeleteSkillResourceResponse.value = Resource.Error(obj.getString("error"))
                         else addDeleteSkillResourceResponse.value = Resource.Error("Unknown error!")
                     }
                     else -> addDeleteSkillResourceResponse.value = Resource.Error("Unknown error!")

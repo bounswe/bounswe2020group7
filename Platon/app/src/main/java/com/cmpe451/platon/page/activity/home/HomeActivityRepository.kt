@@ -133,7 +133,6 @@ class HomeActivityRepository {
                 when{
                     response.isSuccessful && response.body() != null -> searchHistoryResourceResponse.value =  Resource.Success(response.body()!!)
                     response.errorBody() != null -> {
-
                         Log.i("Eerror", response.raw().toString())
                         searchHistoryResourceResponse.value =  Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
                     }
@@ -163,6 +162,7 @@ class HomeActivityRepository {
             }
 
             override fun onFailure(call: Call<UserSearch?>, t: Throwable) {
+                Log.i("Error", t.message.toString())
                 call.clone().enqueue(this)
             }
         })

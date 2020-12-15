@@ -38,7 +38,7 @@
             android:text="@string/workspaces_str" />
 
         <RadioButton
-            android:id="@+id/user_rb"
+            android:id="@+id/rb_searchUser_t"
             android:textColor="@color/primary_light"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
