@@ -10,6 +10,7 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
+import Grid from "@material-ui/core/Grid";
 import NavBar from "../NavBar/NavBar";
 import jwt_decode from "jwt-decode";
 import requestService from "../../services/requestService";
@@ -17,7 +18,6 @@ import {Link} from 'react-router-dom'
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import PersonIcon from '@material-ui/icons/Person';
@@ -306,7 +306,7 @@ class ProfilePage extends React.Component {
                 {this.state.researchs.map((value, index) => {
                   return(
                 <Col>
-                <Card className="ProfileProjectsCard">
+                <Card style={{backgroundColor: colors.tertiaryLight}}>
                   <Card.Body>
                   <Card.Title  style={{color: colors.primaryDark}}>Title</Card.Title>
                     <Card.Text style={{color: colors.primaryLight}}>{value.title}</Card.Text>
@@ -317,14 +317,29 @@ class ProfilePage extends React.Component {
 
                     <Card.Text style={{color: colors.primary}}>{value.year}</Card.Text>
                   </Card.Body>
-                  <EditResearchDialog type="EDIT" dialogTitle="Edit Research"  id={value.id} title={value.title} description={value.description} year={value.year}/>
-                  <Button onClick = {() => this.handleDeleteResearchInformation(value.id)} style={{backgroundColor: colors.quinary}}>Delete</Button>
+                  <Grid   container
+              spacing={0}
+                  direction="column"
+                  alignItems="center"
+                  justify="center"
+                  >
+                  <EditResearchDialog  type="EDIT" dialogTitle="Edit Research"  id={value.id} title={value.title} description={value.description} year={value.year}/>
+                  <Button  onClick = {() => this.handleDeleteResearchInformation(value.id)} style={{backgroundColor: colors.quinary}}>Delete</Button>
+                  </Grid>
                 </Card>
               </Col>)
                 })}
 
               </Row>
+              <Row style={{marginTop: "20px"}}>
+              <Grid container
+                  direction="column"
+                  alignItems="center"
+                  justify="center" >
+
               <EditResearchDialog type="NEW" dialogTitle="Add New Research" id={""} title={""} description={""} year={""}/>
+              </Grid>
+              </Row>
             </TabPanel>
             <TabPanel value={this.state.value} index={2}>
             <List>
