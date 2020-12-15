@@ -139,8 +139,8 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
             findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToAddResearchInfoFragment())
         }
         binding.addSkillIv.setOnClickListener{
-            onAddDeleteSkillClicked()
             mProfilePageViewModel.getAllSkills()
+            onAddDeleteSkillClicked()
         }
 
     }
