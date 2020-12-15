@@ -140,7 +140,7 @@ interface Webservice {
     @GET("api/search_engine/user")
     fun searchUser(@Header("auth_token") token: String,
                    @Query("search_query") query:String,
-                    @Query("job_filter") job:String?,
+                    @Query("job_filter") job:Int?,
                    @Query("page") page:Int?,
                    @Query("per_page") perPage:Int?):Call<UserSearch?>
 

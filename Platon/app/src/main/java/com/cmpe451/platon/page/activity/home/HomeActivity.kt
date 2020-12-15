@@ -34,8 +34,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.cmpe451.platon.databinding.ActivityHomeBinding
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.FollowRequest
+import com.cmpe451.platon.network.models.Job
 import com.cmpe451.platon.network.models.Notification
 import com.cmpe451.platon.network.models.SearchHistoryElement
+import com.cmpe451.platon.page.activity.home.fragment.editprofile.EditProfileViewModel
 import com.cmpe451.platon.page.activity.login.LoginActivity
 import com.cmpe451.platon.page.activity.home.fragment.home.HomeFragmentDirections
 import com.cmpe451.platon.util.Definitions
@@ -65,7 +67,7 @@ class HomeActivity : BaseActivity(),
         if(flag){
             search.onActionViewCollapsed()
         }
-
+        binding.layJobQuery.visibility=View.GONE
         binding.notificationRg.visibility = View.GONE
         binding.rgSearchAmong.visibility = View.GONE
         if (binding.toolbarRecyclerview.adapter != null){
@@ -117,20 +119,31 @@ class HomeActivity : BaseActivity(),
 
         binding.rgSearchAmong.setOnCheckedChangeListener { _, checkedId ->
             when(checkedId){
-                R.id.rb_searchUser -> mActivityViewModel.fetchSearchHistory(token!!, 0)
-                R.id.rb_searchWorkspace ->mActivityViewModel.fetchSearchHistory(token!!, 1)
-                R.id.rb_searchUpcoming ->mActivityViewModel.fetchSearchHistory(token!!, 2)
+                R.id.rb_searchUser -> {
+                    binding.layJobQuery.visibility = View.VISIBLE
+                    mActivityViewModel.fetchSearchHistory(token!!, 0)
+                    mActivityViewModel.getAllJobs()
+                }
+                R.id.rb_searchWorkspace ->{
+                    binding.layJobQuery.visibility = View.GONE
+                    mActivityViewModel.fetchSearchHistory(token!!, 1)
+                }
+                R.id.rb_searchUpcoming ->{
+                    binding.layJobQuery.visibility = View.GONE
+                    mActivityViewModel.fetchSearchHistory(token!!, 2)
+                }
             }}
     }
+    private var jobIdList:ArrayList<Int>?  = null
 
     private fun onSearchBarClicked() {
         var searchHistory: List<SearchHistoryElement>? = null
 
         search.suggestionsAdapter = SimpleCursorAdapter(this,
-                android.R.layout.simple_spinner_dropdown_item,
+                R.layout.spinner_item,
                 null,
                 arrayOf("query"),
-                arrayOf(android.R.id.text1).toIntArray(),
+                arrayOf(R.id.tv_spinner).toIntArray(),
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER)
 
         search.setOnCloseListener {
@@ -176,6 +189,26 @@ class HomeActivity : BaseActivity(),
             }
         })
 
+        mActivityViewModel.getJobListResourceResponse.observe(this, { t->
+            when(t.javaClass){
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    val aList = arrayListOf("Any")
+                    jobIdList = arrayListOf(-1)
+                    t.data!!.forEach {
+                        aList.add(it.name)
+                        jobIdList!!.add(it.id)}
+                    binding.spJobQuery.adapter = ArrayAdapter(this,R.layout.spinner_item, aList)
+                    dialog.dismiss()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
+            }
+        })
+
+
 
         when(binding.rgSearchAmong.visibility){
             View.VISIBLE -> destroyToolbar()
@@ -184,7 +217,9 @@ class HomeActivity : BaseActivity(),
                 binding.rgSearchAmong.visibility = View.VISIBLE
                 when(binding.rgSearchAmong.checkedRadioButtonId){
                     R.id.rb_searchUser ->{
+                        mActivityViewModel.getAllJobs()
                         mActivityViewModel.fetchSearchHistory(token!!, 0)
+                        binding.layJobQuery.visibility=View.VISIBLE
                     }
                     R.id.rb_searchWorkspace->{
                         mActivityViewModel.fetchSearchHistory(token!!, 1)
@@ -217,7 +252,13 @@ class HomeActivity : BaseActivity(),
             override fun onQueryTextSubmit(query: String): Boolean {
                 when(binding.rgSearchAmong.checkedRadioButtonId){
                     R.id.rb_searchUser ->{
-                        mActivityViewModel.searchUser(token!!, query, null,null, null)
+                        var jobQuery:Int? = null
+                        val pos = binding.spJobQuery.selectedItemPosition
+                        if (pos != 0){
+                            jobQuery = jobIdList?.get(pos)
+                        }
+                        
+                        mActivityViewModel.searchUser(token!!, query, jobQuery,null, null)
                     }
                     R.id.rb_searchWorkspace ->{
                     }

@@ -17,7 +17,7 @@ class HomeActivityViewModel(application: Application):AndroidViewModel(applicati
 
     val getSearchHistoryResourceResponse: MutableLiveData<Resource<SearchHistory>>
     val getSearchUserResourceResponse:MutableLiveData<Resource<UserSearch>>
-
+    var getJobListResourceResponse: MutableLiveData<Resource<List<Job>>>
 
     val repository = HomeActivityRepository()
 
@@ -28,6 +28,11 @@ class HomeActivityViewModel(application: Application):AndroidViewModel(applicati
         acceptRequestResourceResponse = repository.acceptRequestResourceResponse
         getSearchHistoryResourceResponse = repository.searchHistoryResourceResponse
         getSearchUserResourceResponse = repository.searchUserResourceResponse
+        getJobListResourceResponse = repository.jobListResourceResponse
+    }
+
+    fun getAllJobs() {
+        repository.getAllJobs()
     }
 
     fun fetchUser(token:String?){
@@ -58,7 +63,7 @@ class HomeActivityViewModel(application: Application):AndroidViewModel(applicati
         repository.fetchSearchHistory(token, i)
     }
 
-    fun searchUser(token:String, query:String, job:String?, page:Int?, perPage:Int?){
+    fun searchUser(token:String, query:String, job:Int?, page:Int?, perPage:Int?){
         repository.searchUser(token, query, job, page, perPage)
     }
 

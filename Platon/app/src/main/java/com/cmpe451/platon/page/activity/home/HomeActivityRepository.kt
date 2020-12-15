@@ -22,6 +22,30 @@ class HomeActivityRepository {
 
     val searchUserResourceResponse:MutableLiveData<Resource<UserSearch>> = MutableLiveData()
 
+    var jobListResourceResponse:MutableLiveData<Resource<List<Job>>> = MutableLiveData()
+
+    fun getAllJobs() {
+        val service = RetrofitClient.getService()
+        val call = service.getAllJobs()
+
+        jobListResourceResponse.value = Resource.Loading()
+
+        call.enqueue(object : Callback<List<Job>?> {
+            override fun onResponse(call: Call<List<Job>?>, response: Response<List<Job>?>) {
+                when {
+                    response.isSuccessful -> jobListResourceResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> jobListResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else ->jobListResourceResponse.value =  Resource.Error("Unknown error")
+                }
+            }
+
+            override fun onFailure(call: Call<List<Job>?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+
     fun getUser(token:String){
         val service = RetrofitClient.getService()
         val call = service.getUserInfo(token)
@@ -147,7 +171,7 @@ class HomeActivityRepository {
     }
 
 
-    fun searchUser(token: String, query:String, jobs:String?, page:Int?, perPage:Int?){
+    fun searchUser(token: String, query:String, jobs:Int?, page:Int?, perPage:Int?){
         val service = RetrofitClient.getService()
         val call = service.searchUser(token, query,jobs, page, perPage)
 
