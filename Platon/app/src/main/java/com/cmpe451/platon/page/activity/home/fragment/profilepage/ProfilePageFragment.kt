@@ -156,16 +156,18 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                             .setNeutralButton("Add Nonexistent Skill") { _, _ ->
                                 val tmpBinding = AddSkillBinding.inflate(layoutInflater, requireView().parent as ViewGroup, false)
                                 AlertDialog.Builder(context).setView(tmpBinding.root)
-                                        .setCancelable(true)
-                                        .setPositiveButton("Add") { _, _ ->
-                                            if (!tmpBinding.etNewSkill.text.isNullOrEmpty()) {
-                                                mProfilePageViewModel.addSkillToUser(tmpBinding.etNewSkill.text.toString().trim(), (activity as HomeActivity).token!!)
-                                            }
+                                        .setCancelable(false)
+                                        .setNegativeButton("Completed") { _, _ ->
+                                            mProfilePageViewModel.getAddDeleteSkillResourceResponse.removeObservers(viewLifecycleOwner)
                                         }
                                         .create().show()
+                                tmpBinding.btnAddSkill.setOnClickListener{
+                                    if (!tmpBinding.etNewSkill.text.isNullOrEmpty()) {
+                                        mProfilePageViewModel.addSkillToUser(tmpBinding.etNewSkill.text.toString().trim(), (activity as HomeActivity).token!!)
+                                    }
+                                }
                             }
-                            .setNegativeButton("Completed") { dial, _ ->
-                                dial.dismiss()
+                            .setNegativeButton("Completed") { _, _ ->
                                 mProfilePageViewModel.getAddDeleteSkillResourceResponse.removeObservers(viewLifecycleOwner)
                             }
                             .setMultiChoiceItems(t.data!!.toTypedArray(), bArray) { _, which, isChecked ->

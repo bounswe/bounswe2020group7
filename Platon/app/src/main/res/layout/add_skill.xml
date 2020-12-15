@@ -13,10 +13,18 @@
         android:id="@+id/et_newSkill"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/primary_dark"
         android:ems="10"
         android:inputType="textPersonName"
         android:hint="@string/skill_str"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
+    <Button
+        android:id="@+id/btn_addSkill"
+        android:layout_width="match_parent"
+        android:text="@string/add_str"
+        android:layout_height="wrap_content"/>
 </LinearLayout>
