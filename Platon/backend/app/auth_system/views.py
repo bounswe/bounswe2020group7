@@ -515,10 +515,14 @@ class UserSkillAPI(Resource):
                             new_skill = Skills(name=skill_name)
                             db.session.add(new_skill)
                             db.session.commit()
-                        new_userskill = UserSkills(user_id=user_id,
-                                                   skill_id=new_skill.id)
-                        db.session.add(new_userskill)
-                        db.session.commit()
+                        user_skill = UserSkills.query.filter(UserSkills.skill_id == new_skill.id).first()
+                        if user_skill is None:
+                            new_userskill = UserSkills(user_id=user_id,
+                                                    skill_id=new_skill.id)
+                            db.session.add(new_userskill)
+                            db.session.commit()
+                        else:
+                            return make_response(jsonify({'msg': 'Skill was already added'}), 200)
                     except:
                         return make_response(jsonify({"error": "The server is not connected to the database."}), 500)
 
@@ -533,7 +537,7 @@ class UserSkillAPI(Resource):
                    500: 'Database Connection', 404: 'Skill or UserSkill is not Found'})
     @api.expect(delete_userskill_parser)
     @login_required
-    def delete(user_id):
+    def delete(user_id,self):
         '''
             Deletes the skill from user's skills with name
         '''
