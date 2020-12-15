@@ -124,6 +124,8 @@ class HomeActivity : BaseActivity(),
     }
 
     private fun onSearchBarClicked() {
+        var searchHistory: List<SearchHistoryElement>? = null
+
         search.suggestionsAdapter = SimpleCursorAdapter(this,
                 android.R.layout.simple_spinner_dropdown_item,
                 null,
@@ -142,8 +144,10 @@ class HomeActivity : BaseActivity(),
                     dialog.show()
                 }
                 Resource.Success::class.java ->{
+                    searchHistory = t.data!!.search_history
+
                     val historyCursor = MatrixCursor(arrayOf("_id", "query"))
-                    t.data!!.search_history.forEachIndexed{ i, e ->
+                    searchHistory!!.forEachIndexed{ i, e ->
                         historyCursor.addRow(arrayOf(i, e.query))
                     }
                     search.suggestionsAdapter.changeCursor(historyCursor)
@@ -199,6 +203,7 @@ class HomeActivity : BaseActivity(),
             }
 
             override fun onSuggestionClick(position: Int): Boolean {
+                search.setQuery(searchHistory?.get(position)!!.query ,false)
                 return true
             }
 
@@ -249,7 +254,12 @@ class HomeActivity : BaseActivity(),
                 mActivityViewModel.getUserFollowRequestsResourceResponse.observe(this, Observer{ t->
                     when(t.javaClass){
                         Resource.Success::class.java ->{
-                            binding.toolbarRecyclerview.adapter = FollowRequestElementsAdapter(t.data!!.follow_requests as ArrayList<FollowRequest>,this, this)
+                            val reqList = t.data!!.follow_requests
+                            if(reqList.isEmpty()){
+                                Toast.makeText(this, "There is nothing here", Toast.LENGTH_SHORT).show()
+                            }
+
+                            binding.toolbarRecyclerview.adapter = FollowRequestElementsAdapter(reqList as ArrayList<FollowRequest>,this, this)
                             binding.toolbarRecyclerview.layoutManager = LinearLayoutManager(this)
                             dialog.dismiss()
                         }
