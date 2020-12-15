@@ -81,7 +81,7 @@ class UserSearchAPI(Resource):
                         id_list = [i[0] for i in result_id_score]
                         if user.id not in id_list:
                             result_list.append({"id":user.id, "name": user.name, "surname": user.surname, 
-                                            "profile_photo" : user.profile_photo, "is_private": user.is_private, "job_id" : user.job_id})
+                                            "profile_photo" : user.profile_photo, "is_private": int(user.is_private), "job_id" : user.job_id})
                             result_id_score.append((user.id,score))
                         else:
                             id_index = id_list.index(user.id)
@@ -107,7 +107,7 @@ class UserSearchAPI(Resource):
                             except:
                                 return make_response(jsonify({"error": "Database Connection Problem."}), 500)
                             result_list.append({"id":user.id, "name": user.name, "surname": user.surname, 
-                                            "profile_photo" : user.profile_photo, "is_private": user.is_private, "job_id" : user.job_id})
+                                            "profile_photo" : user.profile_photo, "is_private": int(user.is_private), "job_id" : user.job_id})
                             result_id_score.append((user.id,score))
                         else:
                             id_index = id_list.index(owner_id.user_id)
@@ -124,7 +124,7 @@ class UserSearchAPI(Resource):
                         id_list = [i[0] for i in result_id_score]
                         if user[0] not in id_list:
                             result_list.append({"id":user[0], "name": user[1], "surname": user[2], 
-                                            "profile_photo" : user[3], "is_private": user[4],"job_id" : user.job_id})
+                                            "profile_photo" : user[3], "is_private": int(user[4]),"job_id" : user.job_id})
                             result_id_score.append((user.id,score))
                         else:
                             id_index = id_list.index(user[0])
@@ -144,7 +144,7 @@ class UserSearchAPI(Resource):
                         sorted_result_list.pop(i)
             number_of_pages = 1
             # Apply Pagination
-            if form.page.data is not None and form.per_page.data:
+            if form.page.data is not None and form.per_page.data is not None:
                 per_page = form.per_page.data
                 number_of_pages = math.ceil(len(sorted_id_list)/per_page)
                 page = form.page.data if form.page.data < number_of_pages else number_of_pages-1
