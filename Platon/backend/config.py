@@ -55,3 +55,7 @@ MAIL_DEFAULT_SENDER = ('Platon','platon.group7@gmail.com')
 
 # Secret key for signing cookies
 SECRET_KEY = "secret"
+
+WORKSPACE_FILE_PATH = "~/workspaces"
+
+PROFILE_PHOTO_PATH = "~/profile_photos"

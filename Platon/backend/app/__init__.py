@@ -5,6 +5,8 @@ from flask_restplus import Api
 from flask_mail import Mail
 from flask_cors import CORS
 
+import os
+
 db = SQLAlchemy()
 migrate = Migrate()
 api = Api()
@@ -38,13 +40,21 @@ def create_app(config_class='config'):
     from app.follow_system.views import register_resources as follow_module
     from app.profile_management.views import register_resources as profile_module
     from app.search_engine.views import register_resources as search_engine
+    from app.workspace_system.views import register_resources as workspace_system
 
     # Register blueprint(s)
     auth_module(api)
     follow_module(api)
     profile_module(api)
     search_engine(api)
+    workspace_system(api)
 
+    if not os.path.exists(app.config['WORKSPACE_FILE_PATH']):
+        os.mkdir(app.config['WORKSPACE_FILE_PATH'])
+
+    if not os.path.exists(app.config['PROFILE_PHOTO_PATH']):
+        os.mkdir(app.config['PROFILE_PHOTO_PATH'])
+    
     with app.app_context():
         # This will create the database file using SQLAlchemy
         db.create_all()    
