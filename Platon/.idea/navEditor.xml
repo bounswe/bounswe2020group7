@@ -170,8 +170,8 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="-1394" />
-                            <option name="y" value="-433" />
+                            <option name="x" value="-1406" />
+                            <option name="y" value="-539" />
                           </Point>
                         </option>
                         <option name="myPositions">
@@ -258,9 +258,18 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="12" />
-                            <option name="y" value="12" />
+                            <option name="x" value="-1227" />
+                            <option name="y" value="-3" />
                           </Point>
+                        </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_workspaceListFragment_to_otherProfileFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
                         </option>
                       </LayoutPositions>
                     </value>

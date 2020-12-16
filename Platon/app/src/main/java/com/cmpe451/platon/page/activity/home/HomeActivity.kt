@@ -30,10 +30,9 @@ import com.cmpe451.platon.adapter.ToolbarElementsAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.ActivityHomeBinding
 import com.cmpe451.platon.network.Resource
-import com.cmpe451.platon.network.models.FollowRequest
-import com.cmpe451.platon.network.models.Notification
-import com.cmpe451.platon.network.models.SearchHistoryElement
+import com.cmpe451.platon.network.models.*
 import com.cmpe451.platon.page.activity.home.fragment.home.HomeFragmentDirections
+import com.cmpe451.platon.page.activity.home.fragment.workspace.WorkspaceListFragmentDirections
 import com.cmpe451.platon.page.activity.login.LoginActivity
 import com.cmpe451.platon.util.Definitions
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -68,17 +67,22 @@ class HomeActivity : BaseActivity(),
             // collapse the search action view
             search.onActionViewCollapsed()
         }
-        //make GONE the views
 
         binding.layJobQuery.visibility=View.GONE
         binding.notificationRg.visibility = View.GONE
         binding.rgSearchAmong.visibility = View.GONE
 
+        binding.rgSearchAmong.setOnCheckedChangeListener(null)
+        binding.notificationRg.setOnCheckedChangeListener(null)
+
+        binding.rgSearchAmong.clearCheck()
+        binding.notificationRg.clearCheck()
         // if adapter not null, clear it
         if (binding.toolbarRecyclerview.adapter != null){
             (binding.toolbarRecyclerview.adapter as ToolbarElementsAdapter).clearElements()
         }
 
+        //make GONE the views
         mActivityViewModel.getSearchUserResourceResponse.removeObservers(this)
         mActivityViewModel.getSearchHistoryResourceResponse.removeObservers(this)
         mActivityViewModel.getJobListResourceResponse.removeObservers(this)
@@ -86,6 +90,7 @@ class HomeActivity : BaseActivity(),
         mActivityViewModel.getUserNotificationsResourceResponse.removeObservers(this)
         mActivityViewModel.getUserFollowRequestsResourceResponse.removeObservers(this)
         mActivityViewModel.acceptRequestResourceResponse.removeObservers(this)
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -138,32 +143,6 @@ class HomeActivity : BaseActivity(),
         // create dialog, which is not singleton
         //TODO make alert dialog singleton
         dialog = Definitions().createProgressBar(this as BaseActivity)
-
-        //listener for notification radio group
-        binding.notificationRg.setOnCheckedChangeListener { d, id->
-            when(id){
-                R.id.general_ntf_rb -> mActivityViewModel.getNotifications(token!!)
-                R.id.personal_ntf_rb -> mActivityViewModel.getFollowRequests(userId!!, token!!)
-            }
-        }
-
-        //listener for search radio group
-        binding.rgSearchAmong.setOnCheckedChangeListener { _, id ->
-            when(id){
-                R.id.rb_searchUser -> {
-                    binding.layJobQuery.visibility = View.VISIBLE
-                    mActivityViewModel.fetchSearchHistory(token!!, 0)
-                    mActivityViewModel.getAllJobs()
-                }
-                R.id.rb_searchWorkspace ->{
-                    binding.layJobQuery.visibility = View.GONE
-                    mActivityViewModel.fetchSearchHistory(token!!, 1)
-                }
-                R.id.rb_searchUpcoming ->{
-                    binding.layJobQuery.visibility = View.GONE
-                    mActivityViewModel.fetchSearchHistory(token!!, 2)
-                }
-            }}
     }
 
     /**
@@ -183,6 +162,25 @@ class HomeActivity : BaseActivity(),
             View.GONE -> {
                 // destroy toolbar, but do not collapse search view
                 destroyToolbar(false)
+
+                //listener for search radio group
+                binding.rgSearchAmong.setOnCheckedChangeListener { _, id ->
+                    when(id){
+                        R.id.rb_searchUser -> {
+                            binding.layJobQuery.visibility = View.VISIBLE
+                            mActivityViewModel.fetchSearchHistory(token!!, 0)
+                            mActivityViewModel.getAllJobs()
+                        }
+                        R.id.rb_searchWorkspace ->{
+                            binding.layJobQuery.visibility = View.GONE
+                            mActivityViewModel.fetchSearchHistory(token!!, 1)
+                        }
+                        R.id.rb_searchUpcoming ->{
+                            binding.layJobQuery.visibility = View.GONE
+                            mActivityViewModel.fetchSearchHistory(token!!, 2)
+                        }
+                    }}
+
                 // make radio group visible
                 binding.rgSearchAmong.visibility = View.VISIBLE
 
@@ -192,13 +190,13 @@ class HomeActivity : BaseActivity(),
                         Resource.Loading::class.java -> dialog.show()
                         Resource.Success::class.java -> {
                             searchHistory = t.data!!.search_history
-
                             val historyCursor = MatrixCursor(arrayOf("_id", "query"))
                             searchHistory!!.forEachIndexed { i, e ->
                                 historyCursor.addRow(arrayOf(i, e.query))
                             }
                             // set adapter's cursor with retrieved suggestion items
                             search.suggestionsAdapter.changeCursor(historyCursor)
+
                             dialog.dismiss()
                         }
                         Resource.Error::class.java -> {
@@ -214,8 +212,7 @@ class HomeActivity : BaseActivity(),
                         Resource.Loading::class.java -> dialog.show()
                         Resource.Success::class.java -> {
                             // define new adapter
-                            binding.toolbarRecyclerview.adapter = SearchElementsAdapter(t.data!!.result_list
-                                    .map { it.name + " " + it.surname + " " + it.is_private.toString() } as ArrayList<String>, this, this)
+                            binding.toolbarRecyclerview.adapter = SearchElementsAdapter(t.data!!.result_list as ArrayList<SearchElement>, this, this)
                             dialog.dismiss()
                         }
                         Resource.Error::class.java -> {
@@ -238,6 +235,7 @@ class HomeActivity : BaseActivity(),
                                 jobIdList!!.add(it.id)
                             }
                             binding.spJobQuery.adapter = ArrayAdapter(this, R.layout.spinner_item, aList)
+
                             dialog.dismiss()
                         }
                         Resource.Error::class.java -> {
@@ -293,6 +291,13 @@ class HomeActivity : BaseActivity(),
             }
             View.GONE ->{
                 destroyToolbar()
+                //listener for notification radio group
+                binding.notificationRg.setOnCheckedChangeListener { d, id->
+                    when(id){
+                        R.id.general_ntf_rb -> mActivityViewModel.getNotifications(token!!)
+                        R.id.personal_ntf_rb -> mActivityViewModel.getFollowRequests(userId!!, token!!)
+                    }
+                }
 
                 binding.notificationRg.visibility = View.VISIBLE
 
@@ -300,7 +305,6 @@ class HomeActivity : BaseActivity(),
                     when(t.javaClass){
                         Resource.Success::class.java ->{
                             binding.toolbarRecyclerview.adapter = NotificationElementsAdapter(t.data!!.notification_list as ArrayList<Notification>,this, this)
-                            binding.toolbarRecyclerview.layoutManager = LinearLayoutManager(this)
                             dialog.dismiss()
                         }
                         Resource.Loading::class.java -> dialog.show()
@@ -315,13 +319,7 @@ class HomeActivity : BaseActivity(),
                 mActivityViewModel.getUserFollowRequestsResourceResponse.observe(this, Observer{ t->
                     when(t.javaClass){
                         Resource.Success::class.java ->{
-                            val reqList = t.data!!.follow_requests
-                            if(reqList.isEmpty()){
-                                Toast.makeText(this, "There is nothing here", Toast.LENGTH_SHORT).show()
-                            }
-
-                            binding.toolbarRecyclerview.adapter = FollowRequestElementsAdapter(reqList as ArrayList<FollowRequest>,this, this)
-                            binding.toolbarRecyclerview.layoutManager = LinearLayoutManager(this)
+                            binding.toolbarRecyclerview.adapter = FollowRequestElementsAdapter(t.data!!.follow_requests as ArrayList<FollowRequest>,this, this)
                             dialog.dismiss()
                         }
                         Resource.Loading::class.java -> dialog.show()
@@ -381,7 +379,25 @@ class HomeActivity : BaseActivity(),
         return super.onSupportNavigateUp()
     }
 
-    override fun onSearchButtonClicked(buttonName: String) {
+    override fun onSearchButtonClicked(element: SearchElement, position: Int) {
+
+        when(binding.bottomNavBar.selectedItemId) {
+            R.id.workspaceFragment -> {
+                if (element.id != userId) {
+                    navController.navigate(WorkspaceListFragmentDirections.actionWorkspaceListFragmentToOtherProfileFragment(element.id))
+                } else {
+                    binding.bottomNavBar.selectedItemId = R.id.profilePageFragment
+                }
+            }
+            R.id.homeFragment -> {
+                if (element.id != userId) {
+                    navController.navigate(HomeFragmentDirections.actionHomeFragmentToOtherProfileFragment(element.id))
+                } else {
+                    binding.bottomNavBar.selectedItemId = R.id.profilePageFragment
+                }
+            }
+        }
+        destroyToolbar()
     }
 
     override fun onNotificationButtonClicked(ntf: Notification, position: Int) {
@@ -430,6 +446,5 @@ class HomeActivity : BaseActivity(),
 
         return super.onCreateOptionsMenu(menu)
     }
-
 
 }

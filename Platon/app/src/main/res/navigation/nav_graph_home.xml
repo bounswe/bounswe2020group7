@@ -79,5 +79,12 @@
     <fragment
         android:id="@+id/workspaceListFragment"
         android:name="com.cmpe451.platon.page.activity.home.fragment.workspace.WorkspaceListFragment"
-        android:label="WorkspaceListFragment" />
+        android:label="Workspaces">
+        <action
+            android:id="@+id/action_workspaceListFragment_to_otherProfileFragment"
+            app:destination="@id/otherProfileFragment" />
+        <action
+            android:id="@+id/action_workspaceListFragment_to_profilePageFragment"
+            app:destination="@id/profilePageFragment" />
+    </fragment>
 </navigation>

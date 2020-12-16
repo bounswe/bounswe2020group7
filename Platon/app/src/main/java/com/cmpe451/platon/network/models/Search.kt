@@ -10,11 +10,11 @@ data class SearchHistoryElement(
 
 data class UserSearch(
     val number_of_pages:Int,
-    val result_list:List<UserSearchElement>
+    val result_list:List<SearchElement>
 )
 
-data class UserSearchElement(
-    val id:Int,
+data class SearchElement(
+        val id:Int,
     val is_private:Int,
     val job_id:Int,
     val name:String,

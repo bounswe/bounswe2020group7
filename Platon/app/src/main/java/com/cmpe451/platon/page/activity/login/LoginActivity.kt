@@ -27,6 +27,7 @@ import com.cmpe451.platon.adapter.ToolbarElementsAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.ActivityLoginBinding
 import com.cmpe451.platon.network.Resource
+import com.cmpe451.platon.network.models.SearchElement
 import com.cmpe451.platon.network.models.SearchHistoryElement
 import com.cmpe451.platon.page.activity.home.HomeActivityViewModel
 import com.cmpe451.platon.util.Definitions
@@ -107,8 +108,7 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                     when(t.javaClass){
                         Resource.Loading::class.java -> dialog.show()
                         Resource.Success::class.java -> {
-                            binding.toolbarRecyclerview.adapter = SearchElementsAdapter(t.data!!.result_list
-                                    .map { it.name + " " + it.surname+ " " + it.is_private.toString()} as ArrayList<String>,this, this)
+                            binding.toolbarRecyclerview.adapter = SearchElementsAdapter(t.data!!.result_list as ArrayList<SearchElement>,this, this)
                             binding.toolbarRecyclerview.layoutManager = LinearLayoutManager(this)
                             dialog.dismiss()
                         }
@@ -204,8 +204,8 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
         return super.onSupportNavigateUp()
     }
 
-
-    override fun onSearchButtonClicked(buttonName: String) {
-        TODO("Not yet implemented")
+    override fun onSearchButtonClicked(element: SearchElement, position: Int) {
+        //TODO("Not yet implemented")
     }
+
 }
