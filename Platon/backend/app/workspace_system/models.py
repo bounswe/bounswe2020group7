@@ -15,34 +15,34 @@ class Workspace(db.Model):
     trending_score = db.Column(db.Float, default = 0.0)
     view_count = db.Column(db.Integer,default=0)
 
-class WorkspaceSkills(db.Model):
+class WorkspaceSkill(db.Model):
     __tablename__ = "workspace_skills"
     workspace_id = db.Column(db.Integer,db.ForeignKey('workspaces.id',ondelete="CASCADE"),primary_key=True)
     skill_id = db.Column(db.Integer,db.ForeignKey('skills.id',ondelete="CASCADE"),primary_key=True)
 
-class WorkspaceRequirements(db.Model):
+class WorkspaceRequirement(db.Model):
     __tablename__ = "workspace_requirements"
     workspace_id = db.Column(db.Integer,db.ForeignKey('workspaces.id',ondelete="CASCADE"),primary_key=True)
     requirements = db.Column(db.String(200))
 
-class Contributions(db.Model):
+class Contribution(db.Model):
     __tablename__ = "contributions"
     workspace_id = db.Column(db.Integer,db.ForeignKey('workspaces.id'),primary_key=True)
     user_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"),primary_key=True)
     is_active = db.Column(db.Boolean,nullable=False)
 
-class CollaborationInvitations(db.Model):
+class CollaborationInvitation(db.Model):
     __tablename__ = "collaboration_invitations"
     workspace_id = db.Column(db.Integer,db.ForeignKey('workspaces.id',ondelete="CASCADE"),primary_key=True)
     invitee_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"),primary_key=True)
     invitor_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"))
 
-class CollaborationApplications(db.Model):
+class CollaborationApplication(db.Model):
     __tablename__ = "collaboration_applications"
     workspace_id = db.Column(db.Integer,db.ForeignKey('workspaces.id',ondelete="CASCADE"),primary_key=True)
     applicant_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"),primary_key=True)
 
-class Milestones(db.Model):
+class Milestone(db.Model):
     __tablename__ = "milestones"
     id = db.Column(db.Integer,primary_key=True,autoincrement=True)
     creator_id = db.Column(db.Integer,db.ForeignKey('users.id'))
@@ -51,7 +51,7 @@ class Milestones(db.Model):
     description = db.Column(db.String(500),nullable=False)
     deadline = db.Column(db.DateTime, nullable=False)
 
-class Issues(db.Model):
+class Issue(db.Model):
     __tablename__ = "issues"
     id = db.Column(db.Integer,primary_key=True,autoincrement=True)
     creator_id = db.Column(db.Integer,db.ForeignKey('users.id'))
@@ -61,12 +61,12 @@ class Issues(db.Model):
     deadline = db.Column(db.DateTime)
     is_open = db.Column(db.Boolean)
 
-class IssueAssignees(db.Model):
+class IssueAssignee(db.Model):
     __tablename__ = "issue_assignees"
     issue_id = db.Column(db.Integer,db.ForeignKey('issues.id',ondelete="CASCADE"),primary_key=True)
     assignee_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"),primary_key=True)
 
-class IssueComments(db.Model):
+class IssueComment(db.Model):
     __tablename__ = "issue_comments"
     id = db.Column(db.Integer,primary_key=True,autoincrement=True)
     issue_id = db.Column(db.Integer,db.ForeignKey('issues.id',ondelete="CASCADE"))
