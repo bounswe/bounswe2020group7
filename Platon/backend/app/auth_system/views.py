@@ -599,6 +599,9 @@ class ProfilePhotoAPI(Resource):
                 user = User.query.filter(User.id == form.user_id.data).first()
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+            if user is None:
+                return make_response(jsonify({'error': 'User not found'}),401)
             # Take the path of profile photo
             profile_photo_path = user.profile_photo
             
