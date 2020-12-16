@@ -22,7 +22,7 @@ class HomeActivityRepository {
 
     val searchUserResourceResponse:MutableLiveData<Resource<UserSearch>> = MutableLiveData()
 
-    var jobListResourceResponse:MutableLiveData<Resource<List<Job>>> = MutableLiveData()
+    val jobListResourceResponse:MutableLiveData<Resource<List<Job>>> = MutableLiveData()
 
     fun getAllJobs() {
         val service = RetrofitClient.getService()

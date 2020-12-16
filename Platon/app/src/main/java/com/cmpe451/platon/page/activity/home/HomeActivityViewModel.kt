@@ -10,14 +10,14 @@ import com.google.gson.JsonObject
 
 class HomeActivityViewModel(application: Application):AndroidViewModel(application){
 
-    var getUserResourceResponse: LiveData<Resource<User>>
+    val getUserResourceResponse: MutableLiveData<Resource<User>>
     val getUserFollowRequestsResourceResponse: MutableLiveData<Resource<FollowRequests>>
     val getUserNotificationsResourceResponse: MutableLiveData<Resource<Notifications>>
     val acceptRequestResourceResponse: MutableLiveData<Resource<JsonObject>>
 
     val getSearchHistoryResourceResponse: MutableLiveData<Resource<SearchHistory>>
     val getSearchUserResourceResponse:MutableLiveData<Resource<UserSearch>>
-    var getJobListResourceResponse: MutableLiveData<Resource<List<Job>>>
+    val getJobListResourceResponse: MutableLiveData<Resource<List<Job>>>
 
     val repository = HomeActivityRepository()
 

@@ -4,10 +4,12 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.database.MatrixCursor
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
@@ -41,14 +43,14 @@ class HomeActivity : BaseActivity(),
         FollowRequestElementsAdapter.FollowRequestButtonClickListener,
         NotificationElementsAdapter.NotificationButtonClickListener {
 
-    lateinit var navController: NavController
+    private lateinit var navController: NavController
     lateinit var binding : ActivityHomeBinding
     lateinit var search:SearchView
     private lateinit var dialog: AlertDialog
     private val mActivityViewModel: HomeActivityViewModel by viewModels()
 
     // when notification handled, will be stored here
-    private var handledFollowRequestPosition: Int = -1
+    private var handledFollowRequestPosition = -1
     var token:String? = null
     var userId:Int? = null
 
@@ -67,8 +69,6 @@ class HomeActivity : BaseActivity(),
             search.onActionViewCollapsed()
         }
         //make GONE the views
-        binding.notificationRg.clearCheck()
-        binding.rgSearchAmong.clearCheck()
 
         binding.layJobQuery.visibility=View.GONE
         binding.notificationRg.visibility = View.GONE
@@ -79,6 +79,13 @@ class HomeActivity : BaseActivity(),
             (binding.toolbarRecyclerview.adapter as ToolbarElementsAdapter).clearElements()
         }
 
+        mActivityViewModel.getSearchUserResourceResponse.removeObservers(this)
+        mActivityViewModel.getSearchHistoryResourceResponse.removeObservers(this)
+        mActivityViewModel.getJobListResourceResponse.removeObservers(this)
+
+        mActivityViewModel.getUserNotificationsResourceResponse.removeObservers(this)
+        mActivityViewModel.getUserFollowRequestsResourceResponse.removeObservers(this)
+        mActivityViewModel.acceptRequestResourceResponse.removeObservers(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -105,9 +112,6 @@ class HomeActivity : BaseActivity(),
         setSupportActionBar(findViewById(R.id.toolbar))
         //actionbar will be able to navigate
         NavigationUI.setupActionBarWithNavController(this, navController)
-
-        //bottom nav bar will be able to navigate
-        //NavigationUI.setupWithNavController(binding.bottomNavBar, navController)
 
         initViews()
     }
@@ -136,10 +140,10 @@ class HomeActivity : BaseActivity(),
         dialog = Definitions().createProgressBar(this as BaseActivity)
 
         //listener for notification radio group
-        binding.notificationRg.setOnCheckedChangeListener { _, id->
+        binding.notificationRg.setOnCheckedChangeListener { d, id->
             when(id){
                 R.id.general_ntf_rb -> mActivityViewModel.getNotifications(token!!)
-                R.id.personal_ntf_rb ->mActivityViewModel.getFollowRequests(userId!!, token!!)
+                R.id.personal_ntf_rb -> mActivityViewModel.getFollowRequests(userId!!, token!!)
             }
         }
 
@@ -174,9 +178,6 @@ class HomeActivity : BaseActivity(),
             // if visible destroy the toolbar, and remove observers
             View.VISIBLE ->{
                 destroyToolbar()
-                mActivityViewModel.getSearchUserResourceResponse.removeObservers(this)
-                mActivityViewModel.getSearchHistoryResourceResponse.removeObservers(this)
-                mActivityViewModel.getJobListResourceResponse.removeObservers(this)
             }
             // if gone, create view
             View.GONE -> {
@@ -186,21 +187,21 @@ class HomeActivity : BaseActivity(),
                 binding.rgSearchAmong.visibility = View.VISIBLE
 
                 //observer for search history
-                mActivityViewModel.getSearchHistoryResourceResponse.observe(this, { t->
-                    when(t.javaClass){
+                mActivityViewModel.getSearchHistoryResourceResponse.observe(this, { t ->
+                    when (t.javaClass) {
                         Resource.Loading::class.java -> dialog.show()
-                        Resource.Success::class.java ->{
+                        Resource.Success::class.java -> {
                             searchHistory = t.data!!.search_history
 
                             val historyCursor = MatrixCursor(arrayOf("_id", "query"))
-                            searchHistory!!.forEachIndexed{ i, e ->
+                            searchHistory!!.forEachIndexed { i, e ->
                                 historyCursor.addRow(arrayOf(i, e.query))
                             }
                             // set adapter's cursor with retrieved suggestion items
                             search.suggestionsAdapter.changeCursor(historyCursor)
                             dialog.dismiss()
                         }
-                        Resource.Error::class.java ->{
+                        Resource.Error::class.java -> {
                             Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
                             dialog.dismiss()
                         }
@@ -208,13 +209,13 @@ class HomeActivity : BaseActivity(),
                 })
 
                 // listener for search user results
-                mActivityViewModel.getSearchUserResourceResponse.observe(this, {t->
-                    when(t.javaClass){
+                mActivityViewModel.getSearchUserResourceResponse.observe(this, { t ->
+                    when (t.javaClass) {
                         Resource.Loading::class.java -> dialog.show()
                         Resource.Success::class.java -> {
                             // define new adapter
                             binding.toolbarRecyclerview.adapter = SearchElementsAdapter(t.data!!.result_list
-                                    .map { it.name + " " + it.surname+ " " + it.is_private.toString()} as ArrayList<String>,this, this)
+                                    .map { it.name + " " + it.surname + " " + it.is_private.toString() } as ArrayList<String>, this, this)
                             dialog.dismiss()
                         }
                         Resource.Error::class.java -> {
@@ -225,16 +226,18 @@ class HomeActivity : BaseActivity(),
                 })
 
                 // listener for all job list
-                mActivityViewModel.getJobListResourceResponse.observe(this, { t->
-                    when(t.javaClass){
+                mActivityViewModel.getJobListResourceResponse.observe(this, { t ->
+                    when (t.javaClass) {
                         Resource.Loading::class.java -> dialog.show()
                         Resource.Success::class.java -> {
                             val aList = arrayListOf("Any")
                             jobIdList = arrayListOf(-1)
-                            t.data!!.forEach { aList.add(it.name)
+                            t.data!!.forEach {
+                                aList.add(it.name)
                                 // fill joblistId array defined above
-                                jobIdList!!.add(it.id)}
-                            binding.spJobQuery.adapter = ArrayAdapter(this,R.layout.spinner_item, aList)
+                                jobIdList!!.add(it.id)
+                            }
+                            binding.spJobQuery.adapter = ArrayAdapter(this, R.layout.spinner_item, aList)
                             dialog.dismiss()
                         }
                         Resource.Error::class.java -> {
@@ -287,9 +290,6 @@ class HomeActivity : BaseActivity(),
         when(binding.notificationRg.visibility){
             View.VISIBLE ->{
                 destroyToolbar()
-                mActivityViewModel.getUserNotificationsResourceResponse.removeObservers(this)
-                mActivityViewModel.getUserFollowRequestsResourceResponse.removeObservers(this)
-                mActivityViewModel.acceptRequestResourceResponse.removeObservers(this)
             }
             View.GONE ->{
                 destroyToolbar()
@@ -336,10 +336,10 @@ class HomeActivity : BaseActivity(),
                 mActivityViewModel.acceptRequestResourceResponse.observe(this, Observer{i->
                     when(i.javaClass){
                         Resource.Success::class.java -> {
-                            if (handledFollowRequestPosition != -1){
+                            if (this.handledFollowRequestPosition != -1){
                                 (binding.toolbarRecyclerview.adapter as ToolbarElementsAdapter)
-                                        .removeElement(handledFollowRequestPosition)
-                                handledFollowRequestPosition = -1
+                                        .removeElement(this.handledFollowRequestPosition)
+                                this.handledFollowRequestPosition = -1
                             }
                             dialog.dismiss()
                         }
@@ -350,7 +350,6 @@ class HomeActivity : BaseActivity(),
                         }
                     }
                 })
-
             }
         }
     }
@@ -397,14 +396,14 @@ class HomeActivity : BaseActivity(),
         if(mActivityViewModel.getUserResourceResponse.value!=null && token!=null){
             mActivityViewModel.acceptFollowRequest(request.id, mActivityViewModel.getUserResourceResponse.value?.data?.id!!, token!!)
         }
-        handledFollowRequestPosition = position
+        this.handledFollowRequestPosition = position
     }
 
     override fun onFollowRequestRejectClicked(request: FollowRequest, position: Int) {
         if(mActivityViewModel.getUserResourceResponse.value!=null && token!=null){
             mActivityViewModel.deleteFollowRequest(request.id, mActivityViewModel.getUserResourceResponse.value?.data?.id!!, token!!)
         }
-        handledFollowRequestPosition = position
+        this.handledFollowRequestPosition = position
     }
 
 
