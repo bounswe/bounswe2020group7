@@ -10,6 +10,7 @@ import Logo from '../Logo/Logo';
 import colors from '../../utils/colors';
 import {Link, Redirect} from 'react-router-dom'
 import authService from "../../services/authService";
+import jwt_decode from "jwt-decode";
 
 const StyledButton = withStyles({
   root: {
@@ -84,10 +85,13 @@ const useStyles = makeStyles((theme) => ({
 function handleLogout(){
   authService.logout();
   document.location.href="/";
+
 }
 
 export default function NavBar() {
   const classes = useStyles();
+  const token = localStorage.getItem("jwtToken");
+  const decoded = jwt_decode(token);
 
   return (
     <div className={classes.root}>
@@ -121,6 +125,7 @@ export default function NavBar() {
 
           <div>
           <Link to='/' style={{textDecoration: "none"}}><StyledButton>Home</StyledButton></Link>
+          <Link to={`/${decoded.id}`} style={{textDecoration: "none"}}><StyledButton>Profile</StyledButton></Link>
           <StyledButton onClick={handleLogout}>Log Out</StyledButton>
           </div>
         </Toolbar>

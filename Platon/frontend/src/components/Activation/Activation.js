@@ -74,7 +74,7 @@ class Activation extends Component {
     const url = config.BASE_URL;
     let formData = new FormData();
 
-    formData.append("is_valid", true);
+    formData.append("is_valid", 1);
     var urlParams = new URLSearchParams(this.props.location.search);
     const token= urlParams.get('token')
 

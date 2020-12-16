@@ -1,5 +1,6 @@
 import React, { createElement } from 'react';
-import { Comment, Tooltip, Avatar } from 'antd';
+import { Comment, Tooltip } from 'antd';
+import Avatar from '@material-ui/core/Avatar';
 import moment from 'moment';
 import { DislikeOutlined, LikeOutlined, DislikeFilled, LikeFilled } from '@ant-design/icons';
 import colors from "../../utils/colors";
@@ -9,6 +10,8 @@ class Commentt extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            liked:false,
+            disliked:false,
             likes: 0,
             dislikes: 0,
             action:'',
@@ -27,20 +30,42 @@ class Commentt extends React.Component {
     }
 
     like = () => {
+     if(!this.state.liked && !this.state.disliked )
+        {
         this.setLikes(1);
         this.setDislikes(0);
+        this.setLiked();
         this.setAction('liked');
+        }
+       else if(!this.state.liked && this.state.disliked)
+                {        this.setLikes(1);
+                         this.setLiked();
+                         this.setDislikes(-1);
+                         this.setAction('liked');
+                }
     };
+     setLiked = () => {
+            this.setState({liked:true,disliked:false})
+        }
+     setDisliked = () => {
+                    this.setState({liked:false,disliked:true})
+                }
 
     dislike = () => {
-        this.setLikes(0);
+        if(!this.state.liked && !this.state.disliked)
+        {this.setLikes(0);
+        this.setDisliked();
         this.setDislikes(1);
-        this.setAction('disliked');
+        this.setAction('disliked');}
+        else if(this.state.liked && !this.state.disliked)
+        {        this.setLikes(-1);
+                 this.setDisliked();
+                 this.setDislikes(1);
+                 this.setAction('disliked');
+        }
+
     };
 
-/*
-*
-* */
 
     render() {
         const actions = [
@@ -68,29 +93,25 @@ class Commentt extends React.Component {
         ];
         //
         return (
+        <div
+        style={{display:'flex'}}
+        >
+        <Avatar
+                                 src={this.props.avatar}
+                                 alt="Han Solo"
+                             />
+
             <Comment
                 actions={actions}
-                author={<a>{this.props.title}</a>}
-                avatar={
-                    <Avatar
-                        src={this.props.avatar}
-                        alt="Han Solo"
-                        style={{width:'300px',height:'300px'}}
-                        width={300}
-                        height={300}
-                    />
-                }
+                author={'Chris Keko'}
                 content={
                     <p>
+                    {this.props.title}
                     </p>
-                }
-                datetime={
-                    <Tooltip title={moment().format('YYYY-MM-DD HH:mm:ss')}>
-                        <span>{moment().fromNow()}</span>
-                    </Tooltip>
                 }
                 style={{color:colors.tertiary} }
             />
+            </div>
         );
     };
 }
