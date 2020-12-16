@@ -380,7 +380,6 @@ class HomeActivity : BaseActivity(),
     }
 
     override fun onSearchButtonClicked(element: SearchElement, position: Int) {
-
         when(binding.bottomNavBar.selectedItemId) {
             R.id.workspaceFragment -> {
                 if (element.id != userId) {
@@ -404,7 +403,22 @@ class HomeActivity : BaseActivity(),
     }
 
     override fun onFollowRequestNameClicked(request: FollowRequest, position: Int) {
-        navController.navigate(HomeFragmentDirections.actionHomeFragmentToOtherProfileFragment(request.id))
+        when(binding.bottomNavBar.selectedItemId) {
+            R.id.workspaceFragment -> {
+                if (request.id != userId) {
+                    navController.navigate(WorkspaceListFragmentDirections.actionWorkspaceListFragmentToOtherProfileFragment(request.id))
+                } else {
+                    binding.bottomNavBar.selectedItemId = R.id.profilePageFragment
+                }
+            }
+            R.id.homeFragment -> {
+                if (request.id != userId) {
+                    navController.navigate(HomeFragmentDirections.actionHomeFragmentToOtherProfileFragment(request.id))
+                } else {
+                    binding.bottomNavBar.selectedItemId = R.id.profilePageFragment
+                }
+            }
+        }
         destroyToolbar()
     }
 
