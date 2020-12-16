@@ -3,3 +3,11 @@
     border-radius: 0.5em;
     padding: 16px;
  }
+ .TrendingProjectsSpinner{
+   margin: 20vh 0px;
+   height: 20vh;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+
+ }

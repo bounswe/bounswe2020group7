@@ -13,10 +13,10 @@ import Login from './components/Login/Login'
 import Register from './components/Register/Register'
 import ProfilePage from './components/ProfilePage/ProfilePage'
 import EditProfile from './components/EditProfile/EditProfile';
-import Activation from './components/Activation/Activation'
+import Activation from './components/Activation/Activation';
+import Workspace from './components/Workspace/Workspace';
 import { setAuthorizationToken } from './helpers/setAuthorizationToken';
 
-import NotFound from './components/NotFound/NotFound';
 
 
 class App extends Component {
@@ -64,15 +64,13 @@ class App extends Component {
 
       <Route path='/:profileId(\d+)' exact component={!this.state.isAuthenticated ? Landing : ProfilePage}/>
       <Route path='/:profileId(\d+)/edit' exact component={!this.state.isAuthenticated ? Landing : EditProfile}/>
-
+      <Route path='/workspace/new' exact component={Workspace}/>
 
       <Route path='/login' exact component={() => <Login isAuthenticated={this.state.isAuthenticated} handlerSuccessfulLogin={this.handlerSuccessfulLogin} />}/>
       <Route path='/register' exact  component={Register}/>
       <Route path='/forgotpassword' exact component={ForgotPassword}/>
       <Route path='/resetpassword'  component={ResetPassword}/>
 
-      {/*<Route path="*"><NotFound isAuthenticated={this.state.isAuthenticated} /></Route>*/}
-      {/*<Route path='*' component={() => <NotFound isAuthenticated={this.state.isAuthenticated} />} />*/}
 
 
       </div>

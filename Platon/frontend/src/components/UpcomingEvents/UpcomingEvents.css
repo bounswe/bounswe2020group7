@@ -3,3 +3,12 @@
     border-radius: 0.5em;
     padding: 16px;
  }
+
+ .UpcomingEventsSpinner{
+    margin: 20vh 0px;
+    height: 20vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+  }
