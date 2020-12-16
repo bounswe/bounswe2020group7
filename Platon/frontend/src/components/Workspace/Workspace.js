@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 import Navbar from "../NavBar/NavBar";
-import Container from "@material-ui/core/Container";
-import Typography from "@material-ui/core/Typography";
 import WorkspaceInput from "./WorkspaceInput/WorkspaceInput";
 import colors from "../../utils/colors";
 import config from "../../utils/config";
@@ -76,7 +74,7 @@ class Workspace extends Component {
   };
   handleSkills = (value) => {
     this.setState({
-      skills: [...this.state.skills, value]
+      skills: value
     });
   };
   render() {

@@ -61,10 +61,7 @@ const StyledTextField = withStyles({
 })(TextField);
 
 
-export default function WorkspaceInputSkill(props) {
-  const classes = useStyles();
-  const [value, setValue] = React.useState([]);
-  const skillsList = props.skillsList
+export default function Affinities(props) {
   const handleKeyDown = event => {
     switch (event.key) {
       case ",":
@@ -72,7 +69,7 @@ export default function WorkspaceInputSkill(props) {
         event.preventDefault();
         event.stopPropagation();
         if (event.target.value.length > 0) {
-          props.handleSkills(event.target.value);
+          props.handleSkills([...props.skills, event.target.value]);
         }
         break;
       }
@@ -85,21 +82,20 @@ export default function WorkspaceInputSkill(props) {
         multiple
         freeSolo
         id="tags-outlined"
-        options={skillsList}
+        options={props.skillsList}
         getOptionLabel={option => option}
-        value = {props.skills}
-        onChange={(event, newValue) =>  props.handleSkills(newValue[newValue.length-1])}
+        value={props.skills}
+        onChange={(event, newValue) => props.handleSkills(newValue)}
         filterSelectedOptions
         renderInput={params => {
-          console.log("params", params)
           params.inputProps.onKeyDown = handleKeyDown;
           return (
             <StyledTextField
               {...params}
               variant="outlined"
-
+              required
               name="affinities"
-
+              label={props.label}
               placeholder={props.label}
               id="affinities"
               fullWidth
