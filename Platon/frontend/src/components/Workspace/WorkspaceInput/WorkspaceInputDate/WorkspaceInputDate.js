@@ -36,7 +36,7 @@ const StyledTextField = withStyles({
   })(TextField);
 
 
-export default function WorkspaceInputDate() {
+export default function WorkspaceInputDate(props) {
     let today = new Date();
     let dd = today.getDate();
     let mm = today.getMonth()+1;
@@ -50,12 +50,7 @@ export default function WorkspaceInputDate() {
         mm=`0${mm}`;
     }
     today = `${yyyy}-${mm}-${dd}`;
-    const [date, setDate] = useState(
-        moment(new Date()).format("YYYY-MM-DD")
-     );
-    const handleChangeDate = e => {
-        setDate(e.target.value);
-     };
+
   return (
     <div className="container" style={{ display: "flex", flexDirection:"column",}} >
     <FormControl style={{marginTop:"10px"}} component="fieldset">
@@ -66,8 +61,8 @@ export default function WorkspaceInputDate() {
         variant="outlined"
         name="date"
         InputLabelProps={{ shrink: true }}
-        value={null}
-        onChange={handleChangeDate}
+        value={props.deadline}
+        onChange={(e) => props.handleDeadline(e.target.value)}
         fullWidth
       />
       </FormControl>

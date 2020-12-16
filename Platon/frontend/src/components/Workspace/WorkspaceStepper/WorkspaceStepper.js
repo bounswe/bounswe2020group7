@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { makeStyles, withStyles} from '@material-ui/core/styles';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
@@ -10,7 +10,7 @@ import WorkspaceInputRequired from '../WorkspaceInput/WorkspaceInputRequired/Wor
 import WorkspaceInputDate from '../WorkspaceInput/WorkspaceInputDate/WorkspaceInputDate';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Paper from '@material-ui/core/Paper';
-
+import Spinner from '../../Spinner/Spinner'
 import colors from '../../../utils/colors'
 
 
@@ -34,7 +34,7 @@ const StyledStepLabel = withStyles({
 
 
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = (theme) => ({
 
   layout: {
     width: 'auto',
@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
     marginLeft: theme.spacing(1),
   },
-}));
+});
 const StyledButton = withStyles({
   root: {
     background: colors.tertiaryDark ,
@@ -87,73 +87,98 @@ function getStepContent(step,props) {
     case 1:
       return <WorkspaceInputOptional {...props}/>;
     case 2:
-      return <WorkspaceInputDate/>;
+      return <WorkspaceInputDate {...props} />;
     default:
       throw new Error('Unknown step');
   }
 }
 
-export default function WorkspaceStepper(props) {
-  const classes = useStyles();
-  const [activeStep, setActiveStep] = React.useState(0);
 
-  const handleNext = () => {
-    setActiveStep(activeStep + 1);
+class WorkspaceStepper extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { activeStep: 0 }
+  }
+  handleNext = () => {
+    this.setState({activeStep: this.state.activeStep + 1});
   };
 
-  const handleBack = () => {
-    setActiveStep(activeStep - 1);
+  handleBack = () => {
+    this.setState({activeStep: this.state.activeStep - 1});
   };
+  handleCreateWorkspace = () => {
+    this.handleNext();
+    this.props.handleSubmit();
+  }
 
-  return (
-    <React.Fragment>
-      <CssBaseline />
-      <main className={classes.layout}>
-        <Paper style={{backgroundColor: colors.primaryLight}} className={classes.paper}>
-          <Typography  style={{color: colors.secondary}} component="h1" variant="h5" align="center">
-            Create a new workspace
-          </Typography>
-          <Stepper style={{backgroundColor: colors.primaryLight}} activeStep={activeStep} className={classes.stepper}>
-            {steps.map((label) => (
-              <Step key={label}>
-                <StyledStepLabel style={{color: colors.secondaryDark}} optional={<Typography variant="caption">{label === steps[0] ? "Required" : "Optional" }</Typography>}>{label}</StyledStepLabel>
-              </Step>
-            ))}
-          </Stepper>
-          <React.Fragment>
-            {activeStep === steps.length ? (
-              <React.Fragment>
-                <Typography variant="h5" gutterBottom align="center">
-                  Your workspace is created.
-                </Typography>
-                <Typography variant="subtitle1" align="center">
-                  You can check it in your workspace page.
-                </Typography>
-              </React.Fragment>
-            ) : (
-              <React.Fragment>
-                {getStepContent(activeStep, {...props})}
-                <div className={classes.buttons}>
-                  {activeStep !== 0 && (
-                    <StyledButton onClick={handleBack} className={classes.button}>
-                      Back
-                    </StyledButton>
-                  )}
-                  <StyledButton
-                    variant="contained"
-                    color="primary"
-                    onClick={handleNext}
-                    className={classes.button}
-                    disabled={props.title === "" || props.description === ""}
+
+  render() {
+    const { classes } = this.props;
+    return (
+      <React.Fragment>
+        <CssBaseline />
+        <main className={classes.layout}>
+          <Paper style={{backgroundColor: colors.primaryLight}} className={classes.paper}>
+            <Typography  style={{color: colors.secondary}} component="h1" variant="h5" align="center">
+              Create a new workspace
+            </Typography>
+            <Stepper style={{backgroundColor: colors.primaryLight}} activeStep={this.state.activeStep} className={classes.stepper}>
+              {steps.map((label) => (
+                <Step key={label}>
+                  <StyledStepLabel style={{color: colors.secondaryDark}} optional={<Typography variant="caption">{label === steps[0] ? "Required" : "Optional" }</Typography>}>{label}</StyledStepLabel>
+                </Step>
+              ))}
+            </Stepper>
+            <React.Fragment>
+              {this.state.activeStep === steps.length ?
+                this.props.isSending ? (
+                  <div
+                    style={{
+                      margin: "5vh 0px",
+                      height: "5vh",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
                   >
-                    {activeStep === steps.length - 1 ? 'Create Workspace' : 'Next'}
-                  </StyledButton>
-                </div>
-              </React.Fragment>
-            )}
-          </React.Fragment>
-        </Paper>
-      </main>
-    </React.Fragment>
-  );
+                    <Spinner />
+                  </div>
+                ):(
+                <React.Fragment>
+                  <Typography style={(this.props.created) ? {color: colors.quaternary} : {color: colors.quinary}} variant="h6" gutterBottom align="center">
+                  {(this.props.created) ? ("Your workspace is created.") : ("Oops!...")}
+                  </Typography>
+                  <Typography style={{color: colors.secondary}} variant="subtitle1" align="center">
+                  {(this.props.created) ?  ("You can check it in your workspace page.") : ("Error occured. Your workspace can not be created.")}
+                  </Typography>
+                </React.Fragment>
+              ) : (
+                <React.Fragment>
+                  {getStepContent(this.state.activeStep, {...this.props})}
+                  <div className={classes.buttons}>
+                    {this.state.activeStep !== 0 && (
+                      <StyledButton onClick={this.handleBack} className={classes.button}>
+                        Back
+                      </StyledButton>
+                    )}
+                    <StyledButton
+                      variant="contained"
+                      color="primary"
+                      onClick={this.state.activeStep === steps.length - 1 ? this.handleCreateWorkspace : this.handleNext}
+                      className={classes.button}
+                      disabled={this.props.title === "" || this.props.description === ""}
+                    >
+                      {this.state.activeStep === steps.length - 1 ? 'Create Workspace' : 'Next'}
+                    </StyledButton>
+                  </div>
+                </React.Fragment>
+              )}
+            </React.Fragment>
+          </Paper>
+        </main>
+      </React.Fragment>
+    );
+  }
 }
+
+export default withStyles(useStyles)(WorkspaceStepper);

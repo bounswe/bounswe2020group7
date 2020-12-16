@@ -61,10 +61,7 @@ class WorkspaceInput extends Component {
     this.setState({ is_private: event.target.value === "public" ? 0 : 1 });
   };
   render() {
-    console.log("is_private", this.props.is_private)
-    console.log("requirements", this.props.requirements)
-    console.log("max_col", this.props.max_collaborators)
-    console.log("skills", this.props.skills)
+
     return (
       <div
         className="container"

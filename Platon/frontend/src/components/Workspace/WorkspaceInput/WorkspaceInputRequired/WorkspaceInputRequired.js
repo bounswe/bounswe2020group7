@@ -39,13 +39,11 @@ class WorkspaceInput extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      is_private: 0,
+
     };
   }
 
-  handleWorkspacePrivacy = (event) => {
-    this.setState({ is_private: event.target.value === "public" ? 0 : 1 });
-  };
+
   render() {
     return (
       <div className="container" style={{ display: "flex", flexDirection:"column",}} >
