@@ -106,7 +106,7 @@ interface Webservice {
 
 
     @FormUrlEncoded
-    @HTTP(method = "DELETE", path = "api/follow/following",hasBody = true)
+    @HTTP(method = "DELETE", path = "api/follow/followings",hasBody = true)
     fun unfollow(@Field("following_id") follower_id:Int,
                  @Header("auth_token") auth_token :String) : Call<JsonObject?>
 

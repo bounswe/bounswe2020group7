@@ -164,6 +164,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                 Resource.Loading::class.java -> dialog.show()
             }
         })
+
     }
 
     private fun setView(status:USERSTATUS, isUserPrivate:Boolean) {
@@ -286,85 +287,10 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
         userId = args.userId
         if(userId != null && (activity as HomeActivity).token != null){
             mOtherProfileViewModel.getUser(userId!!, (activity as HomeActivity).token!!)
+            mOtherProfileViewModel.getUserSkills(userId!!, (activity as HomeActivity).token!!)
         }
     }
 
-    private fun setUser(){
-        /*user = presenter.getUser()
-        binding.textNameSurname.text = user.name + " " + user.surname
-        when(user.rate){
-            1.0 -> {
-                binding.firstStarYellow.visibility = View.VISIBLE
-                binding.secondStarYellow.visibility = View.GONE
-                binding.thirdStarYellow.visibility = View.GONE
-                binding.forthStarYellow.visibility = View.GONE
-                binding.fifthStarYellow.visibility = View.GONE
-                binding.firstGrayStar.visibility = View.VISIBLE
-                binding.secondGrayStar.visibility = View.VISIBLE
-                binding.thirdGrayStar.visibility = View.VISIBLE
-                binding.forthGrayStar.visibility = View.VISIBLE
-                binding.fifthGrayStar.visibility = View.GONE
-                binding.textRate.visibility = View.GONE
-            }
-            2.0 -> {
-                binding.firstStarYellow.visibility = View.VISIBLE
-                binding.secondStarYellow.visibility = View.VISIBLE
-                binding.thirdStarYellow.visibility = View.GONE
-                binding.forthStarYellow.visibility = View.GONE
-                binding.fifthStarYellow.visibility = View.GONE
-                binding.firstGrayStar.visibility = View.VISIBLE
-                binding.secondGrayStar.visibility = View.VISIBLE
-                binding.thirdGrayStar.visibility = View.VISIBLE
-                binding.forthGrayStar.visibility = View.GONE
-                binding.fifthGrayStar.visibility = View.GONE
-                binding.textRate.visibility = View.GONE
-            }
-            3.0 -> {
-                binding.firstStarYellow.visibility = View.VISIBLE
-                binding.secondStarYellow.visibility = View.VISIBLE
-                binding.thirdStarYellow.visibility = View.VISIBLE
-                binding.forthStarYellow.visibility = View.GONE
-                binding.fifthStarYellow.visibility = View.GONE
-                binding.firstGrayStar.visibility = View.VISIBLE
-                binding.secondGrayStar.visibility = View.VISIBLE
-                binding.thirdGrayStar.visibility = View.GONE
-                binding.forthGrayStar.visibility = View.GONE
-                binding.fifthGrayStar.visibility = View.GONE
-                binding.textRate.visibility = View.GONE
-            }
-            4.0 -> {
-                binding.firstStarYellow.visibility = View.VISIBLE
-                binding.secondStarYellow.visibility = View.VISIBLE
-                binding.thirdStarYellow.visibility = View.VISIBLE
-                binding.forthStarYellow.visibility = View.VISIBLE
-                binding.fifthStarYellow.visibility = View.GONE
-                binding.firstGrayStar.visibility = View.VISIBLE
-                binding.secondGrayStar.visibility = View.GONE
-                binding.thirdGrayStar.visibility = View.GONE
-                binding.forthGrayStar.visibility = View.GONE
-                binding.fifthGrayStar.visibility = View.GONE
-                binding.textRate.visibility = View.GONE
-            }
-            5.0 -> {
-                binding.firstStarYellow.visibility = View.VISIBLE
-                binding.secondStarYellow.visibility = View.VISIBLE
-                binding.thirdStarYellow.visibility = View.VISIBLE
-                binding.forthStarYellow.visibility = View.VISIBLE
-                binding.fifthStarYellow.visibility = View.VISIBLE
-                binding.firstGrayStar.visibility = View.GONE
-                binding.secondGrayStar.visibility = View.GONE
-                binding.thirdGrayStar.visibility = View.GONE
-                binding.forthGrayStar.visibility = View.GONE
-                binding.fifthGrayStar.visibility = View.GONE
-                binding.textRate.visibility = View.GONE
-
-            }
-            else -> binding.textRate.visibility = View.VISIBLE
-        }
-
-         */
-
-    }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)

@@ -381,7 +381,7 @@ class HomeActivity : BaseActivity(),
 
     override fun onSearchButtonClicked(element: SearchElement, position: Int) {
         when(binding.bottomNavBar.selectedItemId) {
-            R.id.workspaceFragment -> {
+            R.id.workspaceListFragment -> {
                 if (element.id != userId) {
                     navController.navigate(WorkspaceListFragmentDirections.actionWorkspaceListFragmentToOtherProfileFragment(element.id))
                 } else {
@@ -404,7 +404,7 @@ class HomeActivity : BaseActivity(),
 
     override fun onFollowRequestNameClicked(request: FollowRequest, position: Int) {
         when(binding.bottomNavBar.selectedItemId) {
-            R.id.workspaceFragment -> {
+            R.id.workspaceListFragment -> {
                 if (request.id != userId) {
                     navController.navigate(WorkspaceListFragmentDirections.actionWorkspaceListFragmentToOtherProfileFragment(request.id))
                 } else {

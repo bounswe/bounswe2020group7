@@ -111,7 +111,6 @@ class OtherProfileRepository() {
                 when {
                     response.isSuccessful && response.body() != null -> {
                         userSkills.value = Resource.Success(response.body()!!)
-                        var o = 5
                     }
                     response.errorBody() != null -> userSkills.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
                     else -> userSkills.value = Resource.Error("Unknown error!")
