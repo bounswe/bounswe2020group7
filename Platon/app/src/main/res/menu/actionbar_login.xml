@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/search_btn"
+        android:icon="@drawable/ic_search_24dp"
+        android:title="@string/search_str"
+        android:visible="true"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/loginFragment"
+        android:icon="@drawable/ic_login_24dp"
+        android:title="@string/login_str"
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/registerFragment"
+        android:icon="@drawable/ic_register_24dp"
+        android:title="@string/register_str"
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+</menu>

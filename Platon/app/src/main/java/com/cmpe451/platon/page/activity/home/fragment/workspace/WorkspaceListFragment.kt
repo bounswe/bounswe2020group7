@@ -67,17 +67,8 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
 
 
     override fun onPrepareOptionsMenu(menu: Menu) {
+        menu.findItem(R.id.logout_menu_btn)?.isVisible = false
         super.onPrepareOptionsMenu(menu)
-
-        // clear search bar, and make it icon
-        val search = (menu.findItem(R.id.search_btn)?.actionView as SearchView)
-        search.setQuery("", false)
-        search.isIconified = true
-        menu.findItem(R.id.registerFragment)?.isVisible = false
-        menu.findItem(R.id.loginFragment)?.isVisible = false
-        menu.findItem(R.id.search_btn)?.isVisible = true
-        menu.findItem(R.id.notification_btn)?.isVisible = true
-        menu.findItem(R.id.add_workspace_btn)?.isVisible = true
     }
 
     override fun onWorkspaceListButtonClicked(binding: WorkspaceCellBinding, position: Int) {
