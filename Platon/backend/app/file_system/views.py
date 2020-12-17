@@ -3,7 +3,7 @@ from flask_restplus import Resource,Namespace, fields
 from flask import send_from_directory
 
 from app.file_system.forms import FileInfoForm, FileForm, file_post_parser, FileGetForm, file_get_parser,file_delete_parser
-from app.file_system.forms import FolderInfoForm, folder_get_parser, FolderPostPutForm, folder_post_put_parser
+from app.file_system.forms import FolderInfoForm, folder_get_parser, FolderPostPutForm, folder_post_put_parser, folder_delete_parser
 from app.file_system.helpers import FileSystem 
 from app import api, db
 import os
@@ -115,7 +115,7 @@ class FolderSystemAPI(Resource):
                     file_list.append(element)
                 elif FileSystem.is_directory_exists(folder_path + os.path.sep + element):
                     folder_list.append(element)
-            return make_response(jsonify({"files":file_list,"folders":folder_list,"cwd":folder_path}),200)            
+            return make_response(jsonify({"files":file_list,"folders":folder_list,"cwd":form.path.data}),200)            
         else:
             return make_response(jsonify({"err":"Invalid Input"}),400)
 
@@ -164,11 +164,13 @@ class FolderSystemAPI(Resource):
         else:
             return make_response(jsonify({"err":"Invalid Input"}),400)
 
-    @api.expect(folder_get_parser)
+    @api.expect(folder_delete_parser)
     def delete(self):
         form = FolderInfoForm(request.form)
         if form.validate():
             ws_path = FileSystem.workspace_base_path(form.workspace_id.data)
+            if form.path.data == ".":
+                return make_response(jsonify({"err":"Main Folder can not be deleted"}),400)
             # Control given path exists or not
             folder_path = ws_path + os.path.sep + form.path.data
             if not FileSystem.is_directory_exists(folder_path):
