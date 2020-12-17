@@ -7,7 +7,6 @@ import Dialog from "@material-ui/core/Dialog";
 import { TextField } from "@material-ui/core";
 import axios from 'axios';
 import MuiAlert from "@material-ui/lab/Alert";
-import jwt_decode from "jwt-decode";
 import config from "../../../utils/config";
 import Snackbar from "@material-ui/core/Snackbar";
 import colors from "../../../utils/colors";
@@ -19,7 +18,6 @@ function SimpleDialog(props) {
   const { onClose, open } = props;
   const { id, title, description, year } = props;
   const { type, dialogTitle } = props;
-  const [newId, setId] = React.useState(id);
   const [newTitle, setTitle] = React.useState(title);
   const [newDescription, setDescription] = React.useState(description);
   const [newYear, setYear] = React.useState(year);
@@ -30,9 +28,6 @@ function SimpleDialog(props) {
     onClose(true);
   };
 
-  const handleListItemClick = (value) => {
-    onClose(value);
-  };
   const handleCloseSuccess = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -55,7 +50,7 @@ function SimpleDialog(props) {
     let formData = new FormData();
 
     if(type==="EDIT") {
-      formData.append("research_id", newId)
+      formData.append("research_id", id)
       formData.append("research_title", newTitle)
       formData.append("description", newDescription)
       formData.append("year", newYear)
