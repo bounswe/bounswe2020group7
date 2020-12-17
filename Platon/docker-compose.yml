@@ -58,6 +58,8 @@ services:
           - backend
     ports:
       - "5000:5000"
+    volumes:
+      - platon_data:/data
 
   # frontend:
   #   build: 
@@ -74,3 +76,4 @@ services:
   #     - "80:3000"
 volumes:
   mysql_data:
+  platon_data:

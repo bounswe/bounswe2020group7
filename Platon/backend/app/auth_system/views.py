@@ -1,4 +1,4 @@
-from flask import make_response,jsonify,request
+from flask import make_response,jsonify,request, send_from_directory
 from flask_restplus import Resource,Namespace, fields
 from flask import current_app as app
 from flask_mail import Message 
@@ -13,17 +13,19 @@ from app.auth_system.forms import UpdateUserForm, update_user_parser
 from app.auth_system.forms import DeleteUserForm, delete_user_parser
 from app.auth_system.forms import GetUserSkillsForm, get_userskill_parser
 from app.auth_system.forms import PostUserSkillsForm, post_userskill_parser
-from app.auth_system.forms import DeleteUserSkillsForm, delete_userskill_parser
+from app.auth_system.forms import DeleteUserSkillsForm, delete_userskill_parser, FileForm
+from app.auth_system.forms import ProfilePhotoForm, profile_photo_parser
 from app.auth_system.models import User
 from app.profile_management.models import Jobs, Skills, UserSkills
 from app.follow_system.models import Follow, FollowRequests
-from app.follow_system.helpers import follow_required
-from app.auth_system.helpers import generate_token,send_email,login_required, hashed
+from app.auth_system.helpers import generate_token,send_email,login_required, hashed, allowed_file
 from app.profile_management.helpers import ResearchInfoFetch
 from app.follow_system.helpers import follow_required
 
 from hashlib import sha256
 import datetime
+import os
+import pathlib
 
 auth_system_ns = Namespace("Authentication System",
                             description="Authentication System Endpoints",
@@ -160,7 +162,7 @@ class GetSelfAPI(Resource):
                                         "surname": logged_in_user.surname,
                                         "is_private": logged_in_user.is_private,
                                         "rate": logged_in_user.rate,
-                                        "profile_photo": logged_in_user.profile_photo,
+                                        "profile_photo": "/auth_system/profile_photo?user_id={}".format(logged_in_user.id),
                                         "e_mail": logged_in_user.e_mail,
                                         "google_scholar_name": logged_in_user.google_scholar_name,
                                         "researchgate_name": logged_in_user.researchgate_name,
@@ -229,7 +231,7 @@ class UserAPI(Resource):
                                         "is_private": existing_user.is_private,
                                         "following_status": following_status,
                                         "rate": existing_user.rate,
-                                        "profile_photo": existing_user.profile_photo,
+                                        "profile_photo": "/auth_system/profile_photo?user_id={}".format(existing_user.id),
                                         "google_scholar_name": existing_user.google_scholar_name,
                                         "researchgate_name": existing_user.researchgate_name,
                                         "job": user_job.name,
@@ -289,7 +291,7 @@ class UserAPI(Resource):
                                         surname=form.surname.data,
                                         is_private=False,
                                         rate=-1.0,
-                                        profile_photo=form.profile_photo.data,
+                                        profile_photo='',
                                         google_scholar_name=form.google_scholar_name.data,
                                         researchgate_name=form.researchgate_name.data,
                                         job_id=new_user_job.id,
@@ -380,11 +382,37 @@ class UserAPI(Resource):
                             # Replaces the "job" in the form data with its ID.
                             new_attributes["job_id"] = new_user_job.id
                             del new_attributes["job"]
-
+                    except:
+                        return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+                    # Check for File Upload
+                    file_form = FileForm(request.files)
+                    profile_photo_change = False
+                    if file_form.validate():
+                        profile_photo = file_form.profile_photo.data
+                        existing_user_record = existing_user.first()
+                        # Control there is a previous profile photo
+                        if existing_user_record.profile_photo is not None and existing_user_record.profile_photo != '':
+                            # Remove Previous Photo
+                            fullpath = app.config["PROFILE_PHOTO_PATH"] + os.path.sep + existing_user_record.profile_photo
+                            if os.path.isfile(fullpath):
+                                os.remove(fullpath)
+                            else:
+                                new_attributes["profile_photo"] = ""   
+                        if allowed_file(profile_photo.filename):
+                            profile_photo_change = True
+                            filename, file_extension = os.path.splitext(profile_photo.filename)
+                            photo_path = str(existing_user_record.id)+file_extension
+                            fullpath = app.config["PROFILE_PHOTO_PATH"] + os.path.sep + photo_path
+                            profile_photo.save(fullpath)
+                            if existing_user_record.profile_photo != photo_path:
+                                new_attributes["profile_photo"] = photo_path
+                    try:            
                         if new_attributes:
                             # Updates the attributes of the user in the database.
                             existing_user.update(new_attributes)
                             db.session.commit()
+                        elif profile_photo_change:
+                            return make_response(jsonify({"message" : "Profile photo successfully changed"}), 500)
                         else:
                             return make_response(jsonify({"message" : "Server has received the request but there was no information to be updated."}), 202)    
                     except:
@@ -560,6 +588,33 @@ class UserSkillAPI(Resource):
         else:
             return make_response(jsonify({"error": "Missing data fields or invalid data."}), 400)
 
+@auth_system_ns.route("/profile_photo")
+class ProfilePhotoAPI(Resource):
+
+    @api.expect(profile_photo_parser)
+    def get(self):
+        form = ProfilePhotoForm(request.args)
+        if form.validate():
+            try:
+                user = User.query.filter(User.id == form.user_id.data).first()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+            if user is None:
+                return make_response(jsonify({'error': 'User not found'}),401)
+            # Take the path of profile photo
+            profile_photo_path = user.profile_photo
+            
+            if profile_photo_path is None or profile_photo_path == '':
+                return  make_response(jsonify({'error': 'Profile Photo is Not Found'}), 401)
+
+            profile_photo_full_path =  app.config['PROFILE_PHOTO_PATH'] + os.path.sep + profile_photo_path
+            if os.path.isfile(profile_photo_full_path):
+                return send_from_directory(directory=app.config["PROFILE_PHOTO_PATH"], filename=profile_photo_path)
+            else:
+                return  make_response(jsonify({'error': 'Profile Photo is Not Found'}), 401)
+        else:
+            return  make_response(jsonify({'error': 'Please give user id'}), 401)
 
 def register_resources(api):
     api.add_namespace(auth_system_ns)

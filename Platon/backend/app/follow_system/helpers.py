@@ -4,6 +4,7 @@ from functools import wraps
 
 from app.auth_system.models import User
 from app.follow_system.models import Follow
+from app.profile_management.models import Jobs
 
 def follow_required(param_loc,requested_user_id_key):
     """
@@ -42,7 +43,20 @@ def follow_required(param_loc,requested_user_id_key):
                 except:
                     return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
                 if follow is None:
-                    return make_response(jsonify({'error' : 'The Account that you try to reach is private'}),403)
+                    try:
+                        job = Jobs.query.filter(Jobs.id==requested_user.job_id).first()
+                    except:
+                        return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
+
+                    response = {
+                        'name': requested_user.name,
+                        'surname': requested_user.surname,
+                        'profile_photo': "/auth_system/profile_photo?user_id={}".format(requested_user.id),
+                        'job':job.name,
+                        'institute': requested_user.institution,
+                        'error' : 'The Account that you try to reach is private'
+                    }
+                    return make_response(jsonify(response),403)
             return func(*args,**kwargs)
         return follow_check
     return follow_required_inner
