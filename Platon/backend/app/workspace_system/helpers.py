@@ -1,6 +1,6 @@
 from flask import make_response,jsonify,request
 
-from app.workspace_system.models import Workspace, Contributions
+from app.workspace_system.models import Workspace, Contribution
 from functools import wraps
 
 def workspace_exists(param_loc,workspace_id_key):
@@ -57,13 +57,13 @@ def active_contribution_required(param_loc,workspace_id_key):
                     return make_response(jsonify({'error':'Wrong input format'}),400)
             user_id = args[0]
             try:
-                contribution = Contributions.query.filter((Contributions.ws_id == workspace_id) & (Contributions.user_id == user_id)).first()
+                contribution = Contribution.query.filter((Contribution.workspace_id == workspace_id) & (Contribution.user_id == user_id)).first()
             except:
                 return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
             if contribution is None:
-                return make_response(jsonify({'error': 'You have contribute to the Workspace'}),404)
+                return make_response(jsonify({'error': 'You have to contribute the Workspace'}),404)
             if int(contribution.is_active) != 1:
-                return make_response(jsonify({'error': 'You have contribute to the Workspace actively'}),404)
+                return make_response(jsonify({'error': 'You have to contribute the Workspace actively'}),404)
             return func(*args,**kwargs)
         return contribution_check
     return active_contribution_required_inner

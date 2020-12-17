@@ -59,7 +59,7 @@ class FileSystemAPI(Resource):
     @login_required
     @workspace_exists(param_loc='form',workspace_id_key='workspace_id')
     @active_contribution_required(param_loc='form',workspace_id_key='workspace_id')
-    def post(self):
+    def post(user_id,self):
         form = FileInfoForm(request.form)
         file_form = FileForm(request.files)
         if file_form.validate() and form.validate():
@@ -92,7 +92,7 @@ class FileSystemAPI(Resource):
     @login_required
     @workspace_exists(param_loc='form',workspace_id_key='workspace_id')
     @active_contribution_required(param_loc='form',workspace_id_key='workspace_id')    
-    def put(self):
+    def put(user_id,self):
         form = FileInfoForm(request.form)
         file_form = FileForm(request.files)
         if file_form.validate() and form.validate():
@@ -123,7 +123,7 @@ class FileSystemAPI(Resource):
     @login_required
     @workspace_exists(param_loc='form',workspace_id_key='workspace_id')
     @active_contribution_required(param_loc='form',workspace_id_key='workspace_id')
-    def delete(self):
+    def delete(user_id,self):
         form = FileInfoForm(request.form)
         if form.validate():
             ws_path = FileSystem.workspace_base_path(form.workspace_id.data)
@@ -154,7 +154,7 @@ class FolderSystemAPI(Resource):
     @login_required
     @workspace_exists(param_loc='args',workspace_id_key='workspace_id')
     @active_contribution_required(param_loc='args',workspace_id_key='workspace_id')
-    def get(self):
+    def get(user_id,self):
         form = FolderInfoForm(request.args)
         if form.validate():
             ws_path = FileSystem.workspace_base_path(form.workspace_id.data)
@@ -184,7 +184,7 @@ class FolderSystemAPI(Resource):
     @login_required
     @workspace_exists(param_loc='form',workspace_id_key='workspace_id')
     @active_contribution_required(param_loc='form',workspace_id_key='workspace_id')
-    def post(self):
+    def post(user_id,self):
         form = FolderPostPutForm(request.form)
         if form.validate():
             ws_path = FileSystem.workspace_base_path(form.workspace_id.data)
@@ -216,7 +216,7 @@ class FolderSystemAPI(Resource):
     @login_required
     @workspace_exists(param_loc='form',workspace_id_key='workspace_id')
     @active_contribution_required(param_loc='form',workspace_id_key='workspace_id')
-    def put(self):
+    def put(user_id,self):
         form = FolderPostPutForm(request.form)
         if form.validate():
             ws_path = FileSystem.workspace_base_path(form.workspace_id.data)
@@ -247,7 +247,7 @@ class FolderSystemAPI(Resource):
     @login_required
     @workspace_exists(param_loc='form',workspace_id_key='workspace_id')
     @active_contribution_required(param_loc='form',workspace_id_key='workspace_id')
-    def delete(self):
+    def delete(user_id,self):
         form = FolderInfoForm(request.form)
         if form.validate():
             ws_path = FileSystem.workspace_base_path(form.workspace_id.data)
