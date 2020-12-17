@@ -52,11 +52,11 @@ def create_app(config_class='config'):
     file_system(api)
 
     if not os.path.exists(app.config['WORKSPACE_FILE_PATH']):
-        os.mkdir(app.config['WORKSPACE_FILE_PATH'])
+        os.makedirs(app.config['WORKSPACE_FILE_PATH'])
 
     if not os.path.exists(app.config['PROFILE_PHOTO_PATH']):
-        os.mkdir(app.config['PROFILE_PHOTO_PATH'])
-    
+        os.makedirs(app.config['PROFILE_PHOTO_PATH'])
+
     with app.app_context():
         # This will create the database file using SQLAlchemy
         db.create_all()    

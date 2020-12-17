@@ -58,4 +58,4 @@ SECRET_KEY = "secret"
 
 WORKSPACE_FILE_PATH = BASE_DIR + os.path.sep + "data" + os.path.sep + "workspaces"
 
-PROFILE_PHOTO_PATH = BASE_DIR + os.path.sep + "data" + os.path.sep + "profile_photos"
+PROFILE_PHOTO_PATH = BASE_DIR + os.path.sep + "data" + os.path.sep +"profile_photos"
