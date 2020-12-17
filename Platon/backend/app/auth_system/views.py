@@ -515,14 +515,14 @@ class UserSkillAPI(Resource):
                             new_skill = Skills(name=skill_name)
                             db.session.add(new_skill)
                             db.session.commit()
-                        user_skill = UserSkills.query.filter(UserSkills.skill_id == new_skill.id).first()
+                        user_skill = UserSkills.query.filter((UserSkills.skill_id==new_skill.id)&(UserSkills.user_id==user_id)).first()
                         if user_skill is None:
                             new_userskill = UserSkills(user_id=user_id,
                                                     skill_id=new_skill.id)
                             db.session.add(new_userskill)
                             db.session.commit()
                         else:
-                            return make_response(jsonify({'msg': 'Skill was already added'}), 200)
+                            return make_response(jsonify({'msg': 'Skill was already added'}), 409)
                     except:
                         return make_response(jsonify({"error": "The server is not connected to the database."}), 500)
 
@@ -548,7 +548,7 @@ class UserSkillAPI(Resource):
                 skill = Skills.query.filter_by(name=skill_name).first()
                 if skill is None:
                     return make_response(jsonify({'error': 'Skill is not found'}), 404)
-                userskill = UserSkills.query.filter_by(skill_id=skill.id).first()
+                userskill = UserSkills.query.filter((UserSkills.skill_id==skill.id)&(UserSkills.user_id==user_id)).first()
                 if userskill is None:
                     return make_response(jsonify({'error': 'User Skill is not found'}), 404)
                 else:
