@@ -156,13 +156,16 @@ class GetSelfAPI(Resource):
             # If yes, user information is returned.
             # If not, an error is raised.
             if logged_in_user is not None:
+                profile_photo = ''
+                if allowed_file(logged_in_user.profile_photo):
+                    profile_photo = "/auth_system/profile_photo?user_id={}".format(logged_in_user.id)
                 account_information = {
                                         "id": logged_in_user.id,
                                         "name": logged_in_user.name,
                                         "surname": logged_in_user.surname,
                                         "is_private": logged_in_user.is_private,
                                         "rate": logged_in_user.rate,
-                                        "profile_photo": "/auth_system/profile_photo?user_id={}".format(logged_in_user.id),
+                                        "profile_photo": profile_photo,
                                         "e_mail": logged_in_user.e_mail,
                                         "google_scholar_name": logged_in_user.google_scholar_name,
                                         "researchgate_name": logged_in_user.researchgate_name,
@@ -222,7 +225,9 @@ class UserAPI(Resource):
                         following_status = -1 # Represents that the requester user does not follow the requested user and has not yet sent a request to follow them.
                     
                     user_job = Jobs.query.filter(Jobs.id == existing_user.job_id).first()
-
+                    profile_photo = ''
+                    if allowed_file(existing_user.profile_photo):
+                        profile_photo = "/auth_system/profile_photo?user_id={}".format(existing_user.id)
                     account_information = { 
                                         "id": existing_user.id,
                                         "name": existing_user.name,
@@ -231,7 +236,7 @@ class UserAPI(Resource):
                                         "is_private": existing_user.is_private,
                                         "following_status": following_status,
                                         "rate": existing_user.rate,
-                                        "profile_photo": "/auth_system/profile_photo?user_id={}".format(existing_user.id),
+                                        "profile_photo": profile_photo,
                                         "google_scholar_name": existing_user.google_scholar_name,
                                         "researchgate_name": existing_user.researchgate_name,
                                         "job": user_job.name,
