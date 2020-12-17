@@ -34,14 +34,27 @@ file_delete_parser.add_argument('path',required=True,type=str,help="Path of the 
 file_delete_parser.add_argument('filename',required=True,type=str,help="Name of the File",location='form')
 file_delete_parser.add_argument('auth_token', required=False ,type=str,help="Authantication Token(If registered)",location='headers')
 
-class FolderInfo(Form):
+class FolderInfoForm(Form):
     workspace_id = IntegerField("workspace_id",validators=[validators.DataRequired()])
     path = StringField("path",validators=[validators.DataRequired()])
-    foldername = StringField("foldername",validators=[validators.DataRequired()])
 
 folder_get_parser = reqparse.RequestParser()
 folder_get_parser.add_argument('workspace_id',required=True,type=int,help="Name of the File",location='args')
-folder_get_parser.add_argument('path',required=True,type=str,help="Path of the File",location='args')
-folder_get_parser.add_argument('filename',required=True,type=str,help="Name of the File",location='args')
+folder_get_parser.add_argument('path',required=True,type=str,help="Path of the Folder",location='args')
 folder_get_parser.add_argument('auth_token', required=False ,type=str,help="Authantication Token(If registered)",location='headers')
 
+class FolderPostPutForm(Form):
+    workspace_id = IntegerField("workspace_id",validators=[validators.DataRequired()])
+    path = StringField("path",validators=[validators.DataRequired()])
+    new_folder_name = StringField("new_folder_name",validators=[validators.DataRequired()])
+
+folder_post_put_parser = reqparse.RequestParser()
+folder_post_put_parser.add_argument('workspace_id',required=True,type=int,help="Name of the File",location='form')
+folder_post_put_parser.add_argument('path',required=True,type=str,help="Path of the Folder",location='form')
+folder_post_put_parser.add_argument('new_folder_name',required=True,type=str,help="Name of the new folder",location='form')
+folder_post_put_parser.add_argument('auth_token', required=False ,type=str,help="Authantication Token(If registered)",location='headers')
+
+folder_delete_parser = reqparse.RequestParser()
+folder_delete_parser.add_argument('workspace_id',required=True,type=int,help="Name of the File",location='form')
+folder_delete_parser.add_argument('path',required=True,type=str,help="Path of the Folder",location='form')
+folder_delete_parser.add_argument('auth_token', required=False ,type=str,help="Authantication Token(If registered)",location='headers')
