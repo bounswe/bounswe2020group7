@@ -14,9 +14,22 @@ file_system_ns = Namespace("File System",
                                 description="File System Endpoints",
                                 path = "/file_system")
 
+
+folder_models = api.model("Folder Model",{
+    "files" : fields.List(fields.String),
+    "folders" : fields.List(fields.String),
+    "cwd" : fields.String
+})
+
 @file_system_ns.route("/file")
 class FileSystemAPI(Resource):
 
+    @api.doc(responses={
+                200: "Valid Data",
+                400: "Invalid Input",
+                401: "Authantication Problem",
+                404: "User if not found"
+    })
     @api.expect(file_get_parser)
     def get(self):
         form = FileGetForm(request.args)
@@ -30,6 +43,12 @@ class FileSystemAPI(Resource):
         else:
             return make_response(jsonify({"err":"Invalid Input"}),400)
 
+    @api.doc(responses={
+                201: "File Successfully Uploaded",
+                400: "Invalid Input",
+                401: "Authantication Problem",
+                404: "User if not found"
+    })
     @api.expect(file_post_parser)
     def post(self):
         form = FileInfoForm(request.form)
@@ -54,6 +73,12 @@ class FileSystemAPI(Resource):
         else:
             return make_response(jsonify({"err":"Invalid Input"}),400)
     
+    @api.doc(responses={
+                200: "File Name Successfully Changed",
+                400: "Invalid Input",
+                401: "Authantication Problem",
+                404: "User if not found"
+    })
     @api.expect(file_post_parser)
     def put(self):
         form = FileInfoForm(request.form)
@@ -76,6 +101,12 @@ class FileSystemAPI(Resource):
         else:
             return make_response(jsonify({"err":"Invalid Input"}),400)
     
+    @api.doc(responses={
+                200: "File Successfully Deleted",
+                400: "Invalid Input",
+                401: "Authantication Problem",
+                404: "User if not found"
+    })
     @api.expect(file_delete_parser)
     def delete(self):
         form = FileInfoForm(request.form)
@@ -98,6 +129,12 @@ class FileSystemAPI(Resource):
 @file_system_ns.route("/folder")
 class FolderSystemAPI(Resource):
 
+    @api.doc(responses={
+                400: "Invalid Input",
+                401: "Authantication Problem",
+                404: "User if not found"
+    })
+    @api.response(200, 'Valid Folder', folder_models)
     @api.expect(folder_get_parser)
     def get(self):
         form = FolderInfoForm(request.args)
@@ -119,6 +156,12 @@ class FolderSystemAPI(Resource):
         else:
             return make_response(jsonify({"err":"Invalid Input"}),400)
 
+    @api.doc(responses={
+                201: "Folder Successfully Created",
+                400: "Invalid Input",
+                401: "Authantication Problem",
+                404: "User if not found"
+    })
     @api.expect(folder_post_put_parser)
     def post(self):
         form = FolderPostPutForm(request.form)
@@ -142,6 +185,12 @@ class FolderSystemAPI(Resource):
         else:
             return make_response(jsonify({"err":"Invalid Input"}),400)
 
+    @api.doc(responses={
+                200: "Folder Name Successfully Changed",
+                400: "Invalid Input",
+                401: "Authantication Problem",
+                404: "User if not found"
+    })
     @api.expect(folder_post_put_parser)
     def put(self):
         form = FolderPostPutForm(request.form)
@@ -164,6 +213,12 @@ class FolderSystemAPI(Resource):
         else:
             return make_response(jsonify({"err":"Invalid Input"}),400)
 
+    @api.doc(responses={
+                200: "Folder Successfully Deleted",
+                400: "Invalid Input",
+                401: "Authantication Problem",
+                404: "User if not found"
+    })
     @api.expect(folder_delete_parser)
     def delete(self):
         form = FolderInfoForm(request.form)
