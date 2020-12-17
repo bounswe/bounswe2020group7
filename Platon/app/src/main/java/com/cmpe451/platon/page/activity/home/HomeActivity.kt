@@ -365,20 +365,19 @@ class HomeActivity : BaseActivity(),
                 onLogOutButtonClicked()
             }
             R.id.notification_btn -> onSeeNotificationsClicked()
-            R.id.add_workspace_btn->onAddWorkspaceClickked()
+            R.id.add_workspace_btn -> onAddWorkspaceClicked()
         }
         return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
     }
 
-    private fun onAddWorkspaceClickked() {
+    private fun onAddWorkspaceClicked(){
         val bnd = Bundle()
-        bnd.putInt("user_id", this.userId!!)
-        bnd.putString("token", this.token!!)
-        bnd.putInt("workspace_id", -1)
+        bnd.putString("token", token!!)
+        bnd.putInt("user_id", userId!!)
         bnd.putBoolean("add", true)
+        bnd.putInt("workspace_id", -1)
         startActivity(Intent(this, WorkspaceActivity::class.java).putExtras(bnd))
     }
-
 
     override fun onBackPressed() {
         onSupportNavigateUp()

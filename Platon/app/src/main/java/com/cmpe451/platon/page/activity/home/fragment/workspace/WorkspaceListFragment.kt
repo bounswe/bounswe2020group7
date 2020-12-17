@@ -68,6 +68,7 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.logout_menu_btn)?.isVisible = false
+        menu.findItem(R.id.add_workspace_btn)?.isVisible = true
         super.onPrepareOptionsMenu(menu)
     }
 
@@ -80,14 +81,5 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
 
         binding.descWorkspaceTv.refreshDrawableState()
         Definitions().vibrate(50, activity as BaseActivity)
-    }
-
-    override fun onWorkspaceListEditClicked(position: Int) {
-        val bnd = Bundle()
-        bnd.putInt("user_id", (activity as HomeActivity).userId!!)
-        bnd.putString("token", (activity as HomeActivity).token!!)
-        bnd.putInt("workspace_id", position)
-        bnd.putBoolean("add", false)
-        startActivity(Intent(activity, WorkspaceActivity::class.java).putExtras(bnd))
     }
 }

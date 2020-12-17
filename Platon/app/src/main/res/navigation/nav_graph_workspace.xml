@@ -14,5 +14,5 @@
     <fragment
         android:id="@+id/addWorkspaceFragment"
         android:name="com.cmpe451.platon.page.activity.workspace.fragment.AddWorkspaceFragment"
-        android:label="AddWorkspaceFragment" />
+        android:label="Add Workspace" />
 </navigation>

@@ -11,63 +11,45 @@
     android:layout_height = "wrap_content">
 
     <RelativeLayout
-        android:id="@+id/firstRelative"
+        android:id="@+id/expand_rl"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <RelativeLayout
-            android:id="@+id/expand_rl"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@id/edit_iv">
+        android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/title_workspace_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:maxLines="1"
-                android:text="@string/workspace_title_str"
-                android:textColor="@color/primary_dark"
-                android:textSize="@dimen/project_title_text_size"/>
-
-            <TextView
-                android:background="@drawable/view_back"
-                android:id="@+id/desc_workspace_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_below="@id/title_workspace_tv"
-                android:padding="@dimen/medium"
-                android:text="@string/desc_str"
-                android:textColor="@color/primary_light"
-                android:textSize="@dimen/desc_text_size"
-                android:visibility="gone" />
-
-            <TextView
-                android:layout_alignParentEnd="true"
-                android:id="@+id/workspace_state_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/workspace_state_str"
-                android:layout_below="@id/desc_workspace_tv"
-                android:textColor="@color/primary_dark"
-                android:textSize="@dimen/subtitle_text_size" />
-
-
-
-
-        </RelativeLayout>
-        <ImageView
-            android:id="@+id/edit_iv"
+        <TextView
+            android:id="@+id/title_workspace_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:maxLines="1"
+            android:text="@string/workspace_title_str"
+            android:textColor="@color/primary_dark"
+            android:textSize="@dimen/project_title_text_size" />
 
-            android:src="@drawable/baseline_open_in_full_white_24dp"/>
+        <TextView
+            android:id="@+id/desc_workspace_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title_workspace_tv"
+            android:layout_alignParentStart="true"
+            android:background="@drawable/view_back"
+            android:padding="@dimen/medium"
+            android:text="@string/desc_str"
+            android:textColor="@color/primary_light"
+            android:textSize="@dimen/desc_text_size"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/workspace_state_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/desc_workspace_tv"
+            android:layout_alignParentEnd="true"
+            android:text="@string/workspace_state_str"
+            android:textColor="@color/primary_dark"
+            android:textSize="@dimen/subtitle_text_size" />
+
+
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

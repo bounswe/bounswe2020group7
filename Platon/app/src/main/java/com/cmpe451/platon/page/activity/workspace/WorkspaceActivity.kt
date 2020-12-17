@@ -7,12 +7,14 @@ import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.onNavDestinationSelected
 import com.cmpe451.platon.R
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.ActivityWorkspaceBinding
+import com.cmpe451.platon.page.activity.workspace.fragment.WorkspaceFragmentDirections
 import com.cmpe451.platon.util.Definitions
 
 class WorkspaceActivity : BaseActivity() {
@@ -55,6 +57,10 @@ class WorkspaceActivity : BaseActivity() {
     }
 
     private fun initViews() {
+        if(addClicked == true){
+            navController.navigate(WorkspaceFragmentDirections.actionWorkspaceFragmentToAddWorkspaceFragment())
+        }
+
         initListeners()
     }
 
@@ -69,6 +75,10 @@ class WorkspaceActivity : BaseActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {
+        onSupportNavigateUp()
     }
 
     override fun onSupportNavigateUp(): Boolean {

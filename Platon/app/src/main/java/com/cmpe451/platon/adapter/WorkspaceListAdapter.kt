@@ -23,19 +23,14 @@ class WorkspaceListAdapter(private val data: ArrayList<Workspace>, private val c
 
         fun bindData(binding: WorkspaceCellBinding, position: Int,buttonClickListener: WorkspaceListButtonClickListener) {
             val expandRl : RelativeLayout = view.findViewById(R.id.expand_rl)
-            val editImg : ImageView = view.findViewById(R.id.edit_iv)
             expandRl.setOnClickListener{
                 buttonClickListener.onWorkspaceListButtonClicked(binding,position)
-            }
-            editImg.setOnClickListener{
-                buttonClickListener.onWorkspaceListEditClicked(position)
             }
         }
     }
 
     interface WorkspaceListButtonClickListener{
         fun onWorkspaceListButtonClicked(binding: WorkspaceCellBinding, position: Int)
-        fun onWorkspaceListEditClicked(position: Int)
     }
 
     // Create new views (invoked by the layout manager)
