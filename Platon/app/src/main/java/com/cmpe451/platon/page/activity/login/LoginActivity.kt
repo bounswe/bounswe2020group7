@@ -225,13 +225,30 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        destroyToolbar()
         return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
     }
 
+    override fun onBackPressed() {
+        onSupportNavigateUp()
+    }
 
     override fun onSupportNavigateUp(): Boolean {
-        destroyToolbar()
-        navController.navigateUp()
+        when(navController.currentDestination?.id){
+            R.id.landingFragment ->{
+                val exitDialog = AlertDialog.Builder(this)
+                        .setMessage("Do you want to exit?")
+                        .setPositiveButton("EXIT") { _, _ ->
+                            finish()
+                        }
+                        .setNegativeButton("No", null)
+                        .create().show()
+            }
+            else ->{
+                navController.navigateUp()
+            }
+        }
+
         return super.onSupportNavigateUp()
     }
 
