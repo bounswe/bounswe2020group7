@@ -51,6 +51,8 @@ class TestConfig:
     # Secret key for signing cookies
     SECRET_KEY = "secret"
 
+    PROFILE_PHOTO_PATH = BASE_DIR + os.path.sep + "data" + os.path.sep +"profile_photos"
+
 class BaseTest(TestCase):
 
     def create_app(self):

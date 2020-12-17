@@ -9,6 +9,12 @@ from dateutil import parser
 from hashlib import sha256
 from functools import wraps
 
+ALLOWED_PHOTO_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_PHOTO_EXTENSIONS
+
 def generate_token(user_id,expire_duration):
     """
         Generates new token for given user id

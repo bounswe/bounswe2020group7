@@ -5,6 +5,8 @@ from flask_restplus import Api
 from flask_mail import Mail
 from flask_cors import CORS
 
+import os
+
 db = SQLAlchemy()
 migrate = Migrate()
 api = Api()
@@ -44,6 +46,9 @@ def create_app(config_class='config'):
     follow_module(api)
     profile_module(api)
     search_engine(api)
+
+    if not os.path.exists(app.config['PROFILE_PHOTO_PATH']):
+        os.makedirs(app.config['PROFILE_PHOTO_PATH'])
 
     with app.app_context():
         # This will create the database file using SQLAlchemy
