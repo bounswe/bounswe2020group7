@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import Navbar from "../NavBar/NavBar";
-import colors from "../../utils/colors";
-import config from "../../utils/config";
-import "./Workspace.css";
-import WorkspaceStepper from "./WorkspaceStepper/WorkspaceStepper";
+import Navbar from "../../NavBar/NavBar";
+import colors from "../../../utils/colors";
+import config from "../../../utils/config";
+import "./WorkspaceCreate.css";
+import WorkspaceStepper from "../WorkspaceStepper/WorkspaceStepper";
 import axios from "axios";
-import Spinner from "../Spinner/Spinner";
+import Spinner from "../../Spinner/Spinner";
 import MuiAlert from "@material-ui/lab/Alert";
 import Snackbar from "@material-ui/core/Snackbar";
 
@@ -13,7 +13,7 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-class Workspace extends Component {
+class WorkspaceCreate extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -229,4 +229,4 @@ class Workspace extends Component {
   }
 }
 
-export default Workspace;
+export default WorkspaceCreate;

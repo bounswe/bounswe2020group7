@@ -91,10 +91,10 @@ class Sider extends React.Component {
 
                 </SubMenu>
                 </Link>
-               <Link to ={`/${this.state.profileId}`}>
+               <Link to ={`/${this.state.profileId}/workspace`}>
                 <SubMenu
                     key="sub4"
-                    title="My Projects">
+                    title="Workspaces">
                 </SubMenu>
                 </Link>
                <Link to ={`/${this.state.profileId}`}>

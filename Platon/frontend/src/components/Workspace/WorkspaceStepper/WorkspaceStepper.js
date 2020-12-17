@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { makeStyles, withStyles} from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
@@ -12,6 +12,8 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Paper from '@material-ui/core/Paper';
 import Spinner from '../../Spinner/Spinner'
 import colors from '../../../utils/colors'
+import {Link} from 'react-router-dom'
+import jwt_decode from "jwt-decode";
 
 
 
@@ -97,8 +99,16 @@ function getStepContent(step,props) {
 class WorkspaceStepper extends Component {
   constructor(props) {
     super(props);
-    this.state = { activeStep: 0 }
+    this.state = { activeStep: 0, profileId: null }
   }
+  componentDidMount(){
+    const token = localStorage.getItem("jwtToken");
+    const decoded = jwt_decode(token);
+    this.setState({
+      profileId: decoded.id
+    })
+  }
+
   handleNext = () => {
     this.setState({activeStep: this.state.activeStep + 1});
   };
@@ -149,7 +159,7 @@ class WorkspaceStepper extends Component {
                   {(this.props.created) ? ("Your workspace is created.") : ("Oops!...")}
                   </Typography>
                   <Typography style={{color: colors.secondary}} variant="subtitle1" align="center">
-                  {(this.props.created) ?  ("You can check it in your workspace page.") : ("Error occured. Your workspace can not be created.")}
+                  {(this.props.created) ?  <Link to = {`/${this.state.profileId}/workspace`}>"You can check it in your workspace page."</Link> : ("Error occured. Your workspace can not be created.")}
                   </Typography>
                 </React.Fragment>
               ) : (

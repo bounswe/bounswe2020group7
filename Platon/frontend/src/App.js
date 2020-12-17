@@ -1,12 +1,8 @@
 import './App.css';
 import Landing from './components/Landing/Landing';
 import React, { Component } from 'react';
-
 import HomePage from './components/HomePage/HomePage'
-
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
-
-
 import ForgotPassword from './components/ForgotPassword/ForgotPassword'
 import ResetPassword from './components/ResetPassword/ResetPassword'
 import Login from './components/Login/Login'
@@ -14,9 +10,9 @@ import Register from './components/Register/Register'
 import ProfilePage from './components/ProfilePage/ProfilePage'
 import EditProfile from './components/EditProfile/EditProfile';
 import Activation from './components/Activation/Activation';
-import Workspace from './components/Workspace/Workspace';
+import WorkspaceCreate from './components/Workspace/WorkspaceCreate/WorkspaceCreate';
+import WorkspaceList from './components/Workspace/WorkspaceList/WorkspaceList';
 import { setAuthorizationToken } from './helpers/setAuthorizationToken';
-
 
 
 class App extends Component {
@@ -64,7 +60,8 @@ class App extends Component {
 
       <Route path='/:profileId(\d+)' exact component={!this.state.isAuthenticated ? Landing : ProfilePage}/>
       <Route path='/:profileId(\d+)/edit' exact component={!this.state.isAuthenticated ? Landing : EditProfile}/>
-      <Route path='/workspace/new' exact component={Workspace}/>
+      <Route path='/:profileId(\d+)/workspace' exact component={WorkspaceList}/>
+      <Route path='/:profileId(\d+)/workspace/new' exact component={WorkspaceCreate}/>
 
       <Route path='/login' exact component={() => <Login isAuthenticated={this.state.isAuthenticated} handlerSuccessfulLogin={this.handlerSuccessfulLogin} />}/>
       <Route path='/register' exact  component={Register}/>
