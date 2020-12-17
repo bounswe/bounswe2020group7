@@ -120,7 +120,7 @@ class UserSearchTests(BaseTest):
         users = [
             User("umut@deneme.com", True, "b73ec5e4625ffcb6d0d70826f33be7a75d45b37046e26c4b60d9111266d70e32", 3.5,
                  "Umut", "Özdemir", False, None, None, None, 1, "boun"),
-            User("can@deneme.com", False, "cce0c2170d1ae52e099c716165d80119ee36840e3252e57f2b2b4d6bb111d8a5", 3.4,
+            User("can@deneme.com", True, "cce0c2170d1ae52e099c716165d80119ee36840e3252e57f2b2b4d6bb111d8a5", 3.4,
                  "Can", "Deneme", False, None, None, None, 2, "boun")
         ]
         for user in users:

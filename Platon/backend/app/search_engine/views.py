@@ -80,6 +80,8 @@ class UserSearchAPI(Resource):
                     for user in owner_list:
                         id_list = [i[0] for i in result_id_score]
                         if user.id not in id_list:
+                            if user.is_valid == 0:
+                                continue
                             result_list.append({"id":user.id, "name": user.name, "surname": user.surname, 
                                             "profile_photo" : user.profile_photo, "is_private": int(user.is_private), "job_id" : user.job_id})
                             result_id_score.append((user.id,score))
@@ -106,6 +108,8 @@ class UserSearchAPI(Resource):
                                 user = User.query.filter(User.id == owner_id.user_id).first()
                             except:
                                 return make_response(jsonify({"error": "Database Connection Problem."}), 500)
+                            if user.is_valid == 0:
+                                continue
                             result_list.append({"id":user.id, "name": user.name, "surname": user.surname, 
                                             "profile_photo" : user.profile_photo, "is_private": int(user.is_private), "job_id" : user.job_id})
                             result_id_score.append((user.id,score))
@@ -118,11 +122,13 @@ class UserSearchAPI(Resource):
                     query = '(LOWER(name) REGEXP ".*{0}.*" OR LOWER(surname) REGEXP ".*{0}.*" \
                     OR LOWER(`e_mail`) REGEXP ".*{0}.*" OR LOWER(institution) REGEXP ".*{0}.*")' \
                     .format(token)
-                    sql_statement = "SELECT id,name,surname,profile_photo,is_private,job_id FROM users WHERE {}".format(query)
+                    sql_statement = "SELECT id,name,surname,profile_photo,is_private,job_id,is_valid FROM users WHERE {}".format(query)
                     result = db.engine.execute(sql_statement)
                     for user in result:
                         id_list = [i[0] for i in result_id_score]
                         if user[0] not in id_list:
+                            if user[-1] == 0:
+                                continue
                             result_list.append({"id":user[0], "name": user[1], "surname": user[2], 
                                             "profile_photo" : user[3], "is_private": int(user[4]),"job_id" : user.job_id})
                             result_id_score.append((user.id,score))
@@ -155,6 +161,7 @@ class UserSearchAPI(Resource):
                 SearchEngine.add_search_history_item(decode_token(auth_token),search_query,int(SearchType.USER))
             except:
                 pass
+            # Remove Non-Valid Users
             return make_response(jsonify({"number_of_pages": number_of_pages,"result_list": sorted_result_list}))
         return make_response(jsonify({"error": "Missing data fields or invalid data."}), 400)
 
