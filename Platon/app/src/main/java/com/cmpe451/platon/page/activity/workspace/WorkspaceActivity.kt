@@ -14,6 +14,7 @@ import androidx.navigation.ui.onNavDestinationSelected
 import com.cmpe451.platon.R
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.ActivityWorkspaceBinding
+import com.cmpe451.platon.page.activity.workspace.fragment.WorkspaceFragmentDirections
 import com.cmpe451.platon.util.Definitions
 
 class WorkspaceActivity : BaseActivity() {
@@ -28,6 +29,7 @@ class WorkspaceActivity : BaseActivity() {
     var token:String? = null
     var user_id:Int? = null
     var workspace_id:Int? = null
+    var addClicked:Boolean? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_Platon)
@@ -36,6 +38,7 @@ class WorkspaceActivity : BaseActivity() {
         token = intent.extras?.getString("token")
         user_id = intent.extras?.getInt("user_id")
         workspace_id = intent.extras?.getInt("workspace_id")
+        addClicked = intent.extras?.getBoolean("add")
 
         if (token == null || user_id == null || workspace_id == null){
             finish()
@@ -54,6 +57,10 @@ class WorkspaceActivity : BaseActivity() {
     }
 
     private fun initViews() {
+        if(addClicked == true){
+            navController.navigate(WorkspaceFragmentDirections.actionWorkspaceFragmentToAddWorkspaceFragment())
+        }
+
         initListeners()
     }
 
@@ -62,7 +69,7 @@ class WorkspaceActivity : BaseActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.actionbar, menu)
+        menuInflater.inflate(R.menu.actionbar_workspace, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -70,8 +77,17 @@ class WorkspaceActivity : BaseActivity() {
         return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
     }
 
+    override fun onBackPressed() {
+        onSupportNavigateUp()
+    }
+
     override fun onSupportNavigateUp(): Boolean {
-        navController.navigateUp()
+        when(navController.currentDestination?.id){
+            R.id.addWorkspaceFragment -> finish()
+            else-> navController.navigateUp()
+        }
+
+
         return super.onSupportNavigateUp()
     }
 }

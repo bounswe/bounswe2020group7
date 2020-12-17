@@ -203,16 +203,10 @@ class RegisterFragment : Fragment() {
 
 
     override fun onPrepareOptionsMenu(menu: Menu) {
-        super.onPrepareOptionsMenu(menu)
-
-        val search = (menu.findItem(R.id.search_btn)?.actionView as SearchView)
-        search.setQuery("", false)
-        search.isIconified = true
-
-        menu.findItem(R.id.notification_btn)?.isVisible = false
+        menu.findItem(R.id.search_btn)?.isVisible = false
         menu.findItem(R.id.registerFragment)?.isVisible = false
         menu.findItem(R.id.loginFragment)?.isVisible = false
-        menu.findItem(R.id.search_btn)?.isVisible = false
+        super.onPrepareOptionsMenu(menu)
     }
 }
 

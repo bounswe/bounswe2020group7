@@ -90,19 +90,6 @@ class LandingFragment : Fragment(),TrendingProjectsAdapter.TrendingProjectButton
         Definitions().vibrate(50, activity as BaseActivity)
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        super.onPrepareOptionsMenu(menu)
-
-        val search = (menu.findItem(R.id.search_btn)?.actionView as SearchView)
-        search.setQuery("", false)
-        search.isIconified = true
-
-        menu.findItem(R.id.notification_btn).isVisible = false
-        menu.findItem(R.id.registerFragment).isVisible = true
-        menu.findItem(R.id.loginFragment).isVisible = true
-        menu.findItem(R.id.logout_menu_btn).isVisible = false
-    }
-
 
     override fun onTrendingProjectButtonClicked(binding: TrendProjectCellBinding, position:Int) {
         if (binding.descTrendProjectTv.visibility == View.GONE){

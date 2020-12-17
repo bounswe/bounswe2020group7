@@ -5,6 +5,7 @@ package com.cmpe451.platon.page.activity.login
  */
 
 import android.app.AlertDialog
+import android.database.MatrixCursor
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -14,8 +15,6 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
-import androidx.cursoradapter.widget.CursorAdapter
-import androidx.cursoradapter.widget.SimpleCursorAdapter
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
@@ -94,22 +93,39 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
     }
 
     private fun onSearchBarClicked() {
+        // when clicked on search button
         when(binding.rgSearchAmong.visibility){
+            // if visible destroy the toolbar, and remove observers
             View.VISIBLE ->{
                 destroyToolbar()
-                mActivityViewModel.getSearchUserResourceResponse.removeObservers(this)
-                mActivityViewModel.getJobListResourceResponse.removeObservers(this)
             }
+            // if gone, create view
             View.GONE -> {
+                // destroy toolbar, but do not collapse search view
                 destroyToolbar(false)
+
+                //listener for search radio group
+                binding.rgSearchAmong.setOnCheckedChangeListener { _, id ->
+                    when(id){
+                        R.id.rb_searchUser -> {
+                            binding.layJobQuery.visibility = View.VISIBLE
+                            mActivityViewModel.getAllJobs()
+                        }
+                        R.id.rb_searchWorkspace ->binding.layJobQuery.visibility = View.GONE
+
+                        R.id.rb_searchUpcoming ->binding.layJobQuery.visibility = View.GONE
+                    }}
+
+                // make radio group visible
                 binding.rgSearchAmong.visibility = View.VISIBLE
 
-                mActivityViewModel.getSearchUserResourceResponse.observe(this, {t->
-                    when(t.javaClass){
+                // listener for search user results
+                mActivityViewModel.getSearchUserResourceResponse.observe(this, { t ->
+                    when (t.javaClass) {
                         Resource.Loading::class.java -> dialog.show()
                         Resource.Success::class.java -> {
-                            binding.toolbarRecyclerview.adapter = SearchElementsAdapter(t.data!!.result_list as ArrayList<SearchElement>,this, this)
-                            binding.toolbarRecyclerview.layoutManager = LinearLayoutManager(this)
+                            // define new adapter
+                            binding.toolbarRecyclerview.adapter = SearchElementsAdapter(t.data!!.result_list as ArrayList<SearchElement>, this, this)
                             dialog.dismiss()
                         }
                         Resource.Error::class.java -> {
@@ -119,16 +135,20 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                     }
                 })
 
-                mActivityViewModel.getJobListResourceResponse.observe(this, { t->
-                    when(t.javaClass){
+                // listener for all job list
+                mActivityViewModel.getJobListResourceResponse.observe(this, { t ->
+                    when (t.javaClass) {
                         Resource.Loading::class.java -> dialog.show()
                         Resource.Success::class.java -> {
                             val aList = arrayListOf("Any")
                             jobIdList = arrayListOf(-1)
                             t.data!!.forEach {
                                 aList.add(it.name)
-                                jobIdList!!.add(it.id)}
-                            binding.spJobQuery.adapter = ArrayAdapter(this,R.layout.spinner_item, aList)
+                                // fill joblistId array defined above
+                                jobIdList!!.add(it.id)
+                            }
+                            binding.spJobQuery.adapter = ArrayAdapter(this, R.layout.spinner_item, aList)
+
                             dialog.dismiss()
                         }
                         Resource.Error::class.java -> {
@@ -154,30 +174,41 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                         if (pos != 0){
                             jobQuery = jobIdList?.get(pos)
                         }
-
                         mActivityViewModel.searchUser(null, query, jobQuery,null, null)
                     }
-                    R.id.rb_searchWorkspace ->{ }
-                    R.id.rb_searchUpcoming ->{ } }
+                    R.id.rb_searchWorkspace ->{}
+                    R.id.rb_searchUpcoming -> {}}
                 return true
             } })
     }
-
+    /**
+     * Clears the toolbar/action bar's state.
+     * Notification/search and others
+     */
     private fun destroyToolbar(flag:Boolean=true) {
         if(flag){
+            // collapse the search action view
             search.onActionViewCollapsed()
         }
+
         binding.layJobQuery.visibility=View.GONE
-        binding.rgSearchAmong.clearCheck()
         binding.rgSearchAmong.visibility = View.GONE
+
+        binding.rgSearchAmong.setOnCheckedChangeListener(null)
+
+        binding.rgSearchAmong.clearCheck()
+        // if adapter not null, clear it
         if (binding.toolbarRecyclerview.adapter != null){
             (binding.toolbarRecyclerview.adapter as ToolbarElementsAdapter).clearElements()
         }
 
+        //make GONE the views
+        mActivityViewModel.getSearchUserResourceResponse.removeObservers(this)
+        mActivityViewModel.getJobListResourceResponse.removeObservers(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.actionbar, menu)
+        menuInflater.inflate(R.menu.actionbar_login, menu)
         search = (menu?.findItem(R.id.search_btn)?.actionView as SearchView)
         search.setOnSearchClickListener{
             onSearchBarClicked()
@@ -194,13 +225,30 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        destroyToolbar()
         return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
     }
 
+    override fun onBackPressed() {
+        onSupportNavigateUp()
+    }
 
     override fun onSupportNavigateUp(): Boolean {
-        destroyToolbar()
-        navController.navigateUp()
+        when(navController.currentDestination?.id){
+            R.id.landingFragment ->{
+                val exitDialog = AlertDialog.Builder(this)
+                        .setMessage("Do you want to exit?")
+                        .setPositiveButton("EXIT") { _, _ ->
+                            finish()
+                        }
+                        .setNegativeButton("No", null)
+                        .create().show()
+            }
+            else ->{
+                navController.navigateUp()
+            }
+        }
+
         return super.onSupportNavigateUp()
     }
 

@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -90,12 +91,6 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
     }
 
 
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        super.onPrepareOptionsMenu(menu)
-        menu.findItem(R.id.registerFragment).isVisible = false
-        menu.findItem(R.id.loginFragment).isVisible = false
-    }
-
     override fun onTrendingProjectButtonClicked(binding: TrendProjectCellBinding, position: Int) {
         if (binding.descTrendProjectTv.visibility == View.GONE){
             binding.descTrendProjectTv.visibility = View.VISIBLE
@@ -121,5 +116,10 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
 
     override fun onActivityStreamButtonClicked(binding: ActivityStreamCellBinding, position: Int) {
         //todo
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        menu.findItem(R.id.logout_menu_btn)?.isVisible = false
+        super.onPrepareOptionsMenu(menu)
     }
 }

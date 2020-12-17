@@ -10,13 +10,16 @@
         android:label="Home" >
         <action
             android:id="@+id/action_homeFragment_to_profilePageFragment"
-            app:destination="@id/profilePageFragment" />
+            app:destination="@id/profilePageFragment"
+            app:popUpToInclusive="false" />
         <action
             android:id="@+id/action_homeFragment_to_otherProfileFragment"
-            app:destination="@id/otherProfileFragment" />
+            app:destination="@id/otherProfileFragment"
+            app:popUpToInclusive="false" />
         <action
             android:id="@+id/action_homeFragment_to_workspaceListFragment2"
-            app:destination="@id/workspaceListFragment" />
+            app:destination="@id/workspaceListFragment"
+            app:popUpToInclusive="false" />
     </fragment>
     <fragment
         android:id="@+id/profilePageFragment"

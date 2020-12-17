@@ -6,21 +6,9 @@
         android:id="@+id/logout_menu_btn"
         android:title="@string/logout_str"
         android:icon="@drawable/ic_logout_24px"
-        android:visible="false"
+        android:visible="true"
         app:showAsAction="ifRoom" />
 
-    <item
-        android:id="@+id/loginFragment"
-        android:icon="@drawable/ic_login_24dp"
-        android:title="@string/login_str"
-        android:visible="true"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/registerFragment"
-        android:icon="@drawable/ic_register_24dp"
-        android:title="@string/register_str"
-        android:visible="true"
-        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/search_btn"
         android:icon="@drawable/ic_search_24dp"
@@ -35,6 +23,12 @@
         android:title="@string/notification_str"
         android:visible="true"
         app:showAsAction="ifRoom"
-
         />
+
+    <item
+        android:id="@+id/add_workspace_btn"
+        android:title="@string/add_sorkspace_str"
+        android:icon="@drawable/baseline_add_white_24dp"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
 </menu>

@@ -4,16 +4,13 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.database.MatrixCursor
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
-import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
-import androidx.appcompat.widget.Toolbar
 import androidx.cursoradapter.widget.CursorAdapter
 import androidx.cursoradapter.widget.SimpleCursorAdapter
 import androidx.lifecycle.Observer
@@ -34,8 +31,8 @@ import com.cmpe451.platon.network.models.*
 import com.cmpe451.platon.page.activity.home.fragment.home.HomeFragmentDirections
 import com.cmpe451.platon.page.activity.home.fragment.workspace.WorkspaceListFragmentDirections
 import com.cmpe451.platon.page.activity.login.LoginActivity
+import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.util.Definitions
-import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class HomeActivity : BaseActivity(),
         SearchElementsAdapter.SearchButtonClickListener,
@@ -115,7 +112,7 @@ class HomeActivity : BaseActivity(),
 
         // prepare action bar
         setSupportActionBar(findViewById(R.id.toolbar))
-        //actionbar will be able to navigate
+        //actionbar_login will be able to navigate
         NavigationUI.setupActionBarWithNavController(this, navController)
 
         initViews()
@@ -368,18 +365,43 @@ class HomeActivity : BaseActivity(),
                 onLogOutButtonClicked()
             }
             R.id.notification_btn -> onSeeNotificationsClicked()
+            R.id.add_workspace_btn -> onAddWorkspaceClicked()
         }
         return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
     }
 
+    private fun onAddWorkspaceClicked(){
+        val bnd = Bundle()
+        bnd.putString("token", token!!)
+        bnd.putInt("user_id", userId!!)
+        bnd.putBoolean("add", true)
+        bnd.putInt("workspace_id", -1)
+        startActivity(Intent(this, WorkspaceActivity::class.java).putExtras(bnd))
+    }
+
+    override fun onBackPressed() {
+        onSupportNavigateUp()
+    }
 
     override fun onSupportNavigateUp(): Boolean {
         destroyToolbar()
         when(navController.currentDestination?.id){
             R.id.followFragment -> binding.bottomNavBar.selectedItemId = R.id.profilePageFragment
-            else -> navController.navigateUp()
+            R.id.homeFragment->{
+                val exitDialog = AlertDialog.Builder(this)
+                        .setMessage("Do you want to exit?")
+                        .setPositiveButton("EXIT") { _, _ ->
+                            finish()
+                        }
+                        .setNegativeButton("No", null)
+                        .create().show()
+            }
+            R.id.workspaceListFragment-> binding.bottomNavBar.selectedItemId = R.id.homeFragment
+            R.id.profilePageFragment -> binding.bottomNavBar.selectedItemId = R.id.homeFragment
+            else -> {
+                navController.navigateUp()
+            }
         }
-
         return super.onSupportNavigateUp()
     }
 
@@ -442,7 +464,7 @@ class HomeActivity : BaseActivity(),
 
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.actionbar, menu)
+        menuInflater.inflate(R.menu.actionbar_home, menu)
         search = (menu?.findItem(R.id.search_btn)?.actionView as SearchView)
         search.setOnSearchClickListener{
             onSearchBarClicked()
