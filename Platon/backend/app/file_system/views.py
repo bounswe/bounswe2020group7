@@ -4,7 +4,9 @@ from flask import send_from_directory
 
 from app.file_system.forms import FileInfoForm, FileForm, file_post_parser, FileGetForm, file_get_parser,file_delete_parser
 from app.file_system.forms import FolderInfoForm, folder_get_parser, FolderPostPutForm, folder_post_put_parser, folder_delete_parser
-from app.file_system.helpers import FileSystem 
+from app.file_system.helpers import FileSystem
+from app.workspace_system.helpers import workspace_exists,active_contribution_required
+from app.auth_system.helpers import login_required
 from app import api, db
 import os
 import pathlib
@@ -24,6 +26,7 @@ folder_models = api.model("Folder Model",{
 @file_system_ns.route("/file")
 class FileSystemAPI(Resource):
 
+
     @api.doc(responses={
                 200: "Valid Data",
                 400: "Invalid Input",
@@ -31,7 +34,10 @@ class FileSystemAPI(Resource):
                 404: "User if not found"
     })
     @api.expect(file_get_parser)
-    def get(self):
+    @login_required
+    @workspace_exists(param_loc='args',workspace_id_key='workspace_id')
+    @active_contribution_required(param_loc='args',workspace_id_key='workspace_id')
+    def get(user_id,self):
         form = FileGetForm(request.args)
         if form.validate():
             ws_path = FileSystem.workspace_base_path(form.workspace_id.data)
@@ -50,6 +56,9 @@ class FileSystemAPI(Resource):
                 404: "User if not found"
     })
     @api.expect(file_post_parser)
+    @login_required
+    @workspace_exists(param_loc='form',workspace_id_key='workspace_id')
+    @active_contribution_required(param_loc='form',workspace_id_key='workspace_id')
     def post(self):
         form = FileInfoForm(request.form)
         file_form = FileForm(request.files)
@@ -80,6 +89,9 @@ class FileSystemAPI(Resource):
                 404: "User if not found"
     })
     @api.expect(file_post_parser)
+    @login_required
+    @workspace_exists(param_loc='form',workspace_id_key='workspace_id')
+    @active_contribution_required(param_loc='form',workspace_id_key='workspace_id')    
     def put(self):
         form = FileInfoForm(request.form)
         file_form = FileForm(request.files)
@@ -108,6 +120,9 @@ class FileSystemAPI(Resource):
                 404: "User if not found"
     })
     @api.expect(file_delete_parser)
+    @login_required
+    @workspace_exists(param_loc='form',workspace_id_key='workspace_id')
+    @active_contribution_required(param_loc='form',workspace_id_key='workspace_id')
     def delete(self):
         form = FileInfoForm(request.form)
         if form.validate():
@@ -136,6 +151,9 @@ class FolderSystemAPI(Resource):
     })
     @api.response(200, 'Valid Folder', folder_models)
     @api.expect(folder_get_parser)
+    @login_required
+    @workspace_exists(param_loc='args',workspace_id_key='workspace_id')
+    @active_contribution_required(param_loc='args',workspace_id_key='workspace_id')
     def get(self):
         form = FolderInfoForm(request.args)
         if form.validate():
@@ -163,6 +181,9 @@ class FolderSystemAPI(Resource):
                 404: "User if not found"
     })
     @api.expect(folder_post_put_parser)
+    @login_required
+    @workspace_exists(param_loc='form',workspace_id_key='workspace_id')
+    @active_contribution_required(param_loc='form',workspace_id_key='workspace_id')
     def post(self):
         form = FolderPostPutForm(request.form)
         if form.validate():
@@ -192,6 +213,9 @@ class FolderSystemAPI(Resource):
                 404: "User if not found"
     })
     @api.expect(folder_post_put_parser)
+    @login_required
+    @workspace_exists(param_loc='form',workspace_id_key='workspace_id')
+    @active_contribution_required(param_loc='form',workspace_id_key='workspace_id')
     def put(self):
         form = FolderPostPutForm(request.form)
         if form.validate():
@@ -220,6 +244,9 @@ class FolderSystemAPI(Resource):
                 404: "User if not found"
     })
     @api.expect(folder_delete_parser)
+    @login_required
+    @workspace_exists(param_loc='form',workspace_id_key='workspace_id')
+    @active_contribution_required(param_loc='form',workspace_id_key='workspace_id')
     def delete(self):
         form = FolderInfoForm(request.form)
         if form.validate():
