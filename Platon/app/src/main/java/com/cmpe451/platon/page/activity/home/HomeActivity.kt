@@ -34,6 +34,7 @@ import com.cmpe451.platon.network.models.*
 import com.cmpe451.platon.page.activity.home.fragment.home.HomeFragmentDirections
 import com.cmpe451.platon.page.activity.home.fragment.workspace.WorkspaceListFragmentDirections
 import com.cmpe451.platon.page.activity.login.LoginActivity
+import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.util.Definitions
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -368,8 +369,18 @@ class HomeActivity : BaseActivity(),
                 onLogOutButtonClicked()
             }
             R.id.notification_btn -> onSeeNotificationsClicked()
+            R.id.add_workspace_btn->onAddWorkspaceClickked()
         }
         return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
+    }
+
+    private fun onAddWorkspaceClickked() {
+        val bnd = Bundle()
+        bnd.putInt("user_id", this.userId!!)
+        bnd.putString("token", this.token!!)
+        bnd.putInt("workspace_id", -1)
+        bnd.putBoolean("add", true)
+        startActivity(Intent(this, WorkspaceActivity::class.java).putExtras(bnd))
     }
 
 

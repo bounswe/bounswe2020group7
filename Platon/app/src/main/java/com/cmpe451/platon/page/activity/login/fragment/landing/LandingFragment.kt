@@ -101,6 +101,7 @@ class LandingFragment : Fragment(),TrendingProjectsAdapter.TrendingProjectButton
         menu.findItem(R.id.registerFragment).isVisible = true
         menu.findItem(R.id.loginFragment).isVisible = true
         menu.findItem(R.id.logout_menu_btn).isVisible = false
+        menu.findItem(R.id.add_workspace_btn)?.isVisible = false
     }
 
 

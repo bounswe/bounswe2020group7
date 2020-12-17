@@ -28,6 +28,7 @@ class WorkspaceActivity : BaseActivity() {
     var token:String? = null
     var user_id:Int? = null
     var workspace_id:Int? = null
+    var addClicked:Boolean? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_Platon)
@@ -36,6 +37,7 @@ class WorkspaceActivity : BaseActivity() {
         token = intent.extras?.getString("token")
         user_id = intent.extras?.getInt("user_id")
         workspace_id = intent.extras?.getInt("workspace_id")
+        addClicked = intent.extras?.getBoolean("add")
 
         if (token == null || user_id == null || workspace_id == null){
             finish()
@@ -71,7 +73,12 @@ class WorkspaceActivity : BaseActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        navController.navigateUp()
+        when(navController.currentDestination?.id){
+            R.id.addWorkspaceFragment -> finish()
+            else-> navController.navigateUp()
+        }
+
+
         return super.onSupportNavigateUp()
     }
 }

@@ -155,6 +155,7 @@ class ForgotPasswordFragment : Fragment() {
         menu.findItem(R.id.registerFragment)?.isVisible = false
         menu.findItem(R.id.loginFragment)?.isVisible = false
         menu.findItem(R.id.search_btn)?.isVisible = false
+        menu.findItem(R.id.add_workspace_btn)?.isVisible = false
 
     }
 }

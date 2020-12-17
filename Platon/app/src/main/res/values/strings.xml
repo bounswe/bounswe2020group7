@@ -99,4 +99,5 @@
     <string name="events_str">Events</string>
     <string name="add_str">Add</string>
     <string name="filter_by_job_str">Filter by job:</string>
+    <string name="add_sorkspace_str">Add Workspace</string>
 </resources>

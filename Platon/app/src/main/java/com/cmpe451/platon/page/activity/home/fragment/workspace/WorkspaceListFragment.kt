@@ -77,6 +77,7 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
         menu.findItem(R.id.loginFragment)?.isVisible = false
         menu.findItem(R.id.search_btn)?.isVisible = true
         menu.findItem(R.id.notification_btn)?.isVisible = true
+        menu.findItem(R.id.add_workspace_btn)?.isVisible = true
     }
 
     override fun onWorkspaceListButtonClicked(binding: WorkspaceCellBinding, position: Int) {
@@ -95,6 +96,7 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
         bnd.putInt("user_id", (activity as HomeActivity).userId!!)
         bnd.putString("token", (activity as HomeActivity).token!!)
         bnd.putInt("workspace_id", position)
+        bnd.putBoolean("add", false)
         startActivity(Intent(activity, WorkspaceActivity::class.java).putExtras(bnd))
     }
 }

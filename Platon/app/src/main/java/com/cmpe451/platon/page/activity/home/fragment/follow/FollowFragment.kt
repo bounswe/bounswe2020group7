@@ -93,6 +93,7 @@ class FollowFragment:Fragment() {
         menu.findItem(R.id.search_btn)?.isVisible = false
         menu.findItem(R.id.logout_menu_btn)?.isVisible = false
         menu.findItem(R.id.notification_btn)?.isVisible = false
+        menu.findItem(R.id.add_workspace_btn)?.isVisible = false
     }
 
     private fun setAdapter(){

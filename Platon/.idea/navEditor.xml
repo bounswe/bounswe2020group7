@@ -284,6 +284,18 @@
             <LayoutPositions>
               <option name="myPositions">
                 <map>
+                  <entry key="addWorkspaceFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="542" />
+                            <option name="y" value="-165" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
                   <entry key="workspaceFragment">
                     <value>
                       <LayoutPositions>
