@@ -23,9 +23,9 @@ class FileSystem(Resource):
             ws_path = app.config["WORKSPACE_FILE_PATH"] + os.path.sep + str(form.workspace_id.data)
             path = ws_path + os.path.sep + form.path.data
             file_path = path + os.path.sep + form.filename.data
-            if not pathlib.Path(file_path).exists():
+            if not os.path.isfile(file_path):
                 return make_response(jsonify({"err":"There is no such file"}),400) 
-            return send_from_directory(form.path.data,form.filename.data)
+            return send_from_directory(path,form.filename.data)
         else:
             return make_response(jsonify({"err":"Invalid Input"}),400)
 
@@ -60,7 +60,7 @@ class FileSystem(Resource):
                 return make_response(jsonify({"err":"Give Appropriate Path"}),400)
             
             file_path = path + os.path.sep + form.filename.data
-            if pathlib.Path(file_path):
+            if os.path.isfile(file_path):
                 return make_response(jsonify({"err":"Give Appropriate Filename"}),400)
 
             new_file.save(file_path)
@@ -98,7 +98,7 @@ class FileSystem(Resource):
                 return make_response(jsonify({"err":"Give Appropriate Path"}),400)
             
             file_path = path + os.path.sep + form.filename.data
-            if not pathlib.Path(file_path):
+            if not os.path.isfile(file_path):
                 return make_response(jsonify({"err":"Give Appropriate Filename"}),400)
             
             os.remove(file_path)
@@ -134,7 +134,7 @@ class FileSystem(Resource):
                 return make_response(jsonify({"err":"Give Appropriate Path"}),400)
             
             file_path = path + os.path.sep + form.filename.data
-            if not pathlib.Path(file_path):
+            if not os.path.isfile(file_path):
                 return make_response(jsonify({"err":"Give Appropriate Filename"}),400)
             
             os.remove(file_path) 
