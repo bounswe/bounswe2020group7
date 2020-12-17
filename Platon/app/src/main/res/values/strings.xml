@@ -100,4 +100,11 @@
     <string name="add_str">Add</string>
     <string name="filter_by_job_str">Filter by job:</string>
     <string name="add_sorkspace_str">Add Workspace</string>
+    <string name="max_collab_str">Maximum Number of Collaborators</string>
+    <string name="requirements_str">Requirements</string>
+    <string name="private_workspace_str">Private Workspace</string>
+    <string name="edit_workspace_str">Edit Workspace</string>
+    <string name="delete_workspace_str">Delete Workspace</string>
+    <string name="deadline_str">Deadline</string>
+    <string name="collaborators">Collaborators</string>
 </resources>

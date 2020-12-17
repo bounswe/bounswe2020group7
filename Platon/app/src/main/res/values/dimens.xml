@@ -42,4 +42,5 @@
     <dimen name="project_title_text_size">20sp</dimen>
     <dimen name="desc_text_size">12sp</dimen>
     <dimen name="subtitle_text_size">10sp</dimen>
+    <dimen name="details_text_size">16</dimen>
 </resources>

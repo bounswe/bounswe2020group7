@@ -386,7 +386,10 @@ class HomeActivity : BaseActivity(),
 
     override fun onSupportNavigateUp(): Boolean {
         destroyToolbar()
-        navController.navigateUp()
+        when(navController.currentDestination?.id){
+            R.id.followFragment -> binding.bottomNavBar.selectedItemId = R.id.profilePageFragment
+            else -> navController.navigateUp()
+        }
         return super.onSupportNavigateUp()
     }
 

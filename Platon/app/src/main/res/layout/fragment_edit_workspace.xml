@@ -91,6 +91,27 @@
             android:textColorHint="@color/secondary_blue"
             android:textColorLink="@color/secondary_blue" />
         <LinearLayout
+            android:padding="@dimen/xx_small"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/workspace_state_str"
+                android:backgroundTint="@color/secondary_blue"
+                android:textSize="@dimen/project_title_text_size"
+                android:textColorHighlight="@color/primary_light"
+                android:textColorHint="@color/secondary_blue"
+                android:textColor="@color/secondary_blue" />
+
+            <Spinner
+                android:id="@+id/sp_state"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dialog" />
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -125,12 +146,20 @@
             />
 
         <Button
-            android:id="@+id/button_workspace_add"
+            android:id="@+id/button_workspace_edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:backgroundTint="@color/secondary_blue_transparent"
-            android:text="@string/add_sorkspace_str"
+            android:text="@string/edit_workspace_str"
+            android:textColor="@color/primary_light" />
+        <Button
+            android:id="@+id/button_workspace_delete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:backgroundTint="@color/secondary_orange_transparent"
+            android:text="@string/delete_workspace_str"
             android:textColor="@color/primary_light" />
 
     </LinearLayout>
