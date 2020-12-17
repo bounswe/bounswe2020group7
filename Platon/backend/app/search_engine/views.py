@@ -7,7 +7,7 @@ from app.search_engine.helpers import SearchEngine, SearchType
 from app.search_engine.models import SearchHistoryItem
 from app.profile_management.models import Jobs,Skills,UserSkills
 from app.auth_system.models import User
-from app.auth_system.helpers import decode_token,login_required
+from app.auth_system.helpers import decode_token,login_required,allowed_file
 
 from app import api, db
 import math
@@ -82,8 +82,11 @@ class UserSearchAPI(Resource):
                         if user.id not in id_list:
                             if user.is_valid == 0:
                                 continue
+                            profile_photo = ""
+                            if allowed_file(user.profile_photo):
+                                profile_photo = "/auth_system/profile_photo?user_id={}".format(user.id)
                             result_list.append({"id":user.id, "name": user.name, "surname": user.surname, 
-                                            "profile_photo" : user.profile_photo, "is_private": int(user.is_private), "job_id" : user.job_id})
+                                            "profile_photo" : profile_photo, "is_private": int(user.is_private), "job_id" : user.job_id})
                             result_id_score.append((user.id,score))
                         else:
                             id_index = id_list.index(user.id)
@@ -110,8 +113,11 @@ class UserSearchAPI(Resource):
                                 return make_response(jsonify({"error": "Database Connection Problem."}), 500)
                             if user.is_valid == 0:
                                 continue
+                            profile_photo = ""
+                            if allowed_file(user.profile_photo):
+                                profile_photo = "/auth_system/profile_photo?user_id={}".format(user.id)
                             result_list.append({"id":user.id, "name": user.name, "surname": user.surname, 
-                                            "profile_photo" : user.profile_photo, "is_private": int(user.is_private), "job_id" : user.job_id})
+                                            "profile_photo" : profile_photo, "is_private": int(user.is_private), "job_id" : user.job_id})
                             result_id_score.append((user.id,score))
                         else:
                             id_index = id_list.index(owner_id.user_id)
@@ -129,8 +135,11 @@ class UserSearchAPI(Resource):
                         if user[0] not in id_list:
                             if user[-1] == 0:
                                 continue
+                            profile_photo = ""
+                            if allowed_file(user[3]):
+                                profile_photo = "/auth_system/profile_photo?user_id={}".format(user.id)
                             result_list.append({"id":user[0], "name": user[1], "surname": user[2], 
-                                            "profile_photo" : user[3], "is_private": int(user[4]),"job_id" : user.job_id})
+                                            "profile_photo" : profile_photo, "is_private": int(user[4]),"job_id" : user.job_id})
                             result_id_score.append((user.id,score))
                         else:
                             id_index = id_list.index(user[0])
