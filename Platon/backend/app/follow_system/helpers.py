@@ -5,6 +5,7 @@ from functools import wraps
 from app.auth_system.models import User
 from app.follow_system.models import Follow, FollowRequests
 from app.profile_management.models import Jobs
+from app.auth_system.helpers import allowed_file
 
 def follow_required(param_loc,requested_user_id_key):
     """
@@ -57,11 +58,13 @@ def follow_required(param_loc,requested_user_id_key):
                             following_status = -1 # Represents that the existing user does not follow the requested user and has not yet sent a request to follow them.
                     except:
                         return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
-
+                    profile_photo = ''
+                    if allowed_file(requested_user.profile_photo):
+                        profile_photo = "/auth_system/profile_photo?user_id={}".format(requested_user.id)
                     response = {
                         'name': requested_user.name,
                         'surname': requested_user.surname,
-                        'profile_photo': "/auth_system/profile_photo?user_id={}".format(requested_user.id),
+                        'profile_photo': profile_photo,
                         'job':job.name,
                         'following_status': following_status,
                         'institute': requested_user.institution,
