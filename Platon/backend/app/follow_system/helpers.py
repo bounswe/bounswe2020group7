@@ -114,6 +114,7 @@ def follow_required_user(param_loc,requested_user_id_key):
                         'job':job.name,
                         'following_status': following_status,
                         'institute': requested_user.institution,
+                        'is_private': requested_user.is_private,
                         'error' : 'The Account that you try to reach is private'
                     }
                     return make_response(jsonify(response),206)
