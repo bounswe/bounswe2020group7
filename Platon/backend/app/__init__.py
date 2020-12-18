@@ -40,14 +40,19 @@ def create_app(config_class='config'):
     from app.follow_system.views import register_resources as follow_module
     from app.profile_management.views import register_resources as profile_module
     from app.search_engine.views import register_resources as search_engine
-    from app.workspace_system.views import register_resources as workspace_module
+    from app.file_system.views import register_resources as file_system
+    #from app.workspace_system.views import register_resources as workspace_module
 
     # Register blueprint(s)
     auth_module(api)
     follow_module(api)
     profile_module(api)
     search_engine(api)
-    workspace_module(api)
+    #workspace_module(api)
+    file_system(api)
+
+    if not os.path.exists(app.config['WORKSPACE_FILE_PATH']):
+        os.makedirs(app.config['WORKSPACE_FILE_PATH'])
 
     if not os.path.exists(app.config['PROFILE_PHOTO_PATH']):
         os.makedirs(app.config['PROFILE_PHOTO_PATH'])

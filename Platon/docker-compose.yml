@@ -59,7 +59,7 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - platon_data:/data
+      - platon_data:/platon_backend/data
 
   # frontend:
   #   build: 
