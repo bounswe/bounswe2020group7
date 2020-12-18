@@ -3,6 +3,8 @@ from flask import make_response,jsonify,request
 from app.workspace_system.models import Workspace, Contribution
 from functools import wraps
 
+from app import app,db
+
 def workspace_exists(param_loc,workspace_id_key):
     """
         param_loc: it only can be "args" or "form" which specifies the location of the requested wokspace id in the request
@@ -67,3 +69,39 @@ def active_contribution_required(param_loc,workspace_id_key):
             return func(*args,**kwargs)
         return contribution_check
     return active_contribution_required_inner
+
+class TredingProjectManager():
+    """
+        It is used to calculate nex tranding score
+        trending_score[t+1] = trnding_score[t]*aging_factor + view_count[t]    
+        It must be between 0 and 1
+    """
+    aging_factor = 0.8
+
+    @staticmethod
+    def update_trending_point(workspace):
+        """
+            Updates the trending score according to the aging factor
+            `workspace`: Workspace instance
+        """
+        prev_score = workspace.trending_score
+        prev_count = workspace.view_count
+        new_scores = {}
+        new_score = prev_score * TredingProjectManager.aging_factor + prev_count
+        if new_score != prev_score:
+            new_scores["trending_score"] = new_score
+        if prev_count != 0:
+            new_scores["view_count"] = 0
+        if new_scores:
+            workspace.update(new_scores)
+
+    @staticmethod
+    def update_all_trending_points():
+        with app.app_context():
+            try:
+               all_workspaces = Workspace.query.all()
+            except:
+                return
+            for workspace in all_workspaces:
+                TredingProjectManager.update_trending_point(workspace)
+            db.session.commit()

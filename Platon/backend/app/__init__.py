@@ -11,9 +11,10 @@ db = SQLAlchemy()
 migrate = Migrate()
 api = Api()
 mail = Mail()
+app = Flask(__name__)
 
 def create_app(config_class='config'):
-    global api
+    global api,app
 
     app = Flask(__name__)
     app.config.from_object(config_class)
