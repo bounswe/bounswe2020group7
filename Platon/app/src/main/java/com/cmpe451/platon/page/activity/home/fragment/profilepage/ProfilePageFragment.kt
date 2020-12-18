@@ -105,7 +105,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     private fun setObservers() {
         mProfilePageViewModel.getResearchesResourceResponse.observe(viewLifecycleOwner, Observer { t ->
             when (t.javaClass) {
-                Resource.Success::class.java -> (binding.rvProfilePageProjects.adapter as UserProjectsAdapter).submitElements(t.data!!.research_info)
+                Resource.Success::class.java -> (binding.rvProfilePageProjects.adapter as UserProjectsAdapter).submitElements(t.data!!.research_info!!)
                 Resource.Error::class.java -> Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
             }
         })
@@ -113,7 +113,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
         mProfilePageViewModel.userSkills.observe(viewLifecycleOwner, Observer { t ->
             when (t.javaClass) {
                 Resource.Success::class.java -> {
-                    (binding.rvProfilePageSkills.adapter as SkillsAdapter).submitElements(t.data!!.skills.map { it.name })
+                    (binding.rvProfilePageSkills.adapter as SkillsAdapter).submitElements(t.data!!.skills!!.map { it.name })
                 }
                 Resource.Error::class.java -> {
                     Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
@@ -241,7 +241,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     }
 
     override fun onUserProjectEditClicked(position: Int) {
-        mProfilePageViewModel.setCurrentResearch(mProfilePageViewModel.getResearchesResourceResponse.value?.data!!.research_info[position])
+        mProfilePageViewModel.setCurrentResearch(mProfilePageViewModel.getResearchesResourceResponse.value?.data!!.research_info!![position])
         findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToEditResearchInfoFragment())
     }
 

@@ -2,6 +2,7 @@ package com.cmpe451.platon.page.activity.home.fragment.otherprofile
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -87,8 +88,8 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                         .placeholder(R.drawable.ic_o_logo)
                         .into(binding.profilePhoto);
                     mOtherProfileViewModel.setUserInfo()
-                    setView(mOtherProfileViewModel.isFollowing.value!!, mOtherProfileViewModel.isUserPrivate.value!!)
-                    setListeners(mOtherProfileViewModel.isFollowing.value!!, mOtherProfileViewModel.isUserPrivate.value!!)
+                    setView(mOtherProfileViewModel.isFollowing.value!!, mOtherProfileViewModel.isUserPrivate.value?:true)
+                    setListeners(mOtherProfileViewModel.isFollowing.value!!, mOtherProfileViewModel.isUserPrivate.value?:true)
                 }
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Error::class.java-> {
@@ -100,16 +101,20 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
 
         mOtherProfileViewModel.isFollowing.observe(viewLifecycleOwner, Observer{it->
             if(it != null){
-                setView(it, mOtherProfileViewModel.isUserPrivate.value!!)
-                setListeners(it, mOtherProfileViewModel.isUserPrivate.value!!)
+                setView(it, mOtherProfileViewModel.isUserPrivate.value?:true)
+                setListeners(it, mOtherProfileViewModel.isUserPrivate.value?:true)
             }
         })
 
         mOtherProfileViewModel.getResearchesResource.observe(viewLifecycleOwner, Observer { i ->
             when(i.javaClass){
                 Resource.Success::class.java -> {
-                    val researches = i.data!!.research_info
-                    userProjectsAdapter.submitElements(researches)
+
+                    if(i.data != null && i.data!!.research_info != null){
+                        val researches = i.data!!.research_info!!
+                        userProjectsAdapter.submitElements(researches)
+                    }
+
                     dialog.dismiss()
                 }
                 Resource.Loading::class.java -> dialog.show()
@@ -155,7 +160,10 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
             when(t.javaClass){
                 Resource.Success::class.java -> {
                     dialog.dismiss()
-                    skillsAdapter.submitElements(t.data!!.skills.map { it.name })
+                    if(t.data != null && t.data!!.skills != null){
+                        skillsAdapter.submitElements(t.data!!.skills!!.map { it.name })
+                    }
+
                 }
                 Resource.Error::class.java -> {
                     dialog.dismiss()
@@ -181,7 +189,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
             binding.tvJob.text = user?.job
 
             mOtherProfileViewModel.fetchResearch((activity as HomeActivity).token!!,
-                    user!!.id
+                    user!!.id!!
             )
         }
         if(status == USERSTATUS.REQUESTED){
@@ -205,7 +213,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                 binding.tvInstitution.text = user?.institution ?: "Institution not specified!"
                 binding.tvJob.text = user?.job
                 mOtherProfileViewModel.fetchResearch((activity as HomeActivity).token!!,
-                        user!!.id
+                        user!!.id!!
                 )
             }
 

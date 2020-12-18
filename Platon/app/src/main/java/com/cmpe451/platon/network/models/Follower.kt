@@ -2,10 +2,12 @@ package com.cmpe451.platon.network.models
 
 
 data class Following(
+        val number_of_pages: Int,
         val followings: List<FollowPerson>
 )
 
 data class Followers(
+        val number_of_pages: Int,
         val followers: List<FollowPerson>
 )
 
@@ -33,6 +35,7 @@ data class Notifications(
 
 
 data class FollowRequests(
+        val number_of_pages: Int,
         val follow_requests:List<FollowRequest>
 )
 

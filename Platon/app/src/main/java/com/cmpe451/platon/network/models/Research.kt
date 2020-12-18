@@ -10,6 +10,6 @@ data class Research(
 
 
 data class Researches(
-    val research_info: List<Research>,
+    val research_info: List<Research>?,
     val number_of_pages: Int
 )
