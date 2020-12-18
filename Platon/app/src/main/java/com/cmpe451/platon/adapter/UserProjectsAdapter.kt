@@ -91,7 +91,6 @@ class UserProjectsAdapter(private val data: ArrayList<Research>, private val con
         this.notifyDataSetChanged()
     }
     fun submitElements(list: List<Research>){
-        data.clear()
         data.addAll(list)
         notifyDataSetChanged()
     }

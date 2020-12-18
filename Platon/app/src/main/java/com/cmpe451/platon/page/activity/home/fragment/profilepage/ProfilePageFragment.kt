@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.SearchView
@@ -25,6 +26,7 @@ import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.AddSkillBinding
 import com.cmpe451.platon.databinding.FragmentProfilePageBinding
 import com.cmpe451.platon.databinding.UserProjectsCellBinding
+import com.cmpe451.platon.listener.PaginationListener
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.activity.home.HomeActivityViewModel
@@ -53,8 +55,28 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     }
 
     private fun initializeAdapters() {
+        val height = resources.displayMetrics.heightPixels
+        val width = resources.displayMetrics.widthPixels
+
+        val layoutManager = LinearLayoutManager(this.activity)
+
         binding.rvProfilePageProjects.adapter = UserProjectsAdapter(ArrayList(), requireContext(), this)
-        binding.rvProfilePageProjects.layoutManager = LinearLayoutManager(this.activity)
+        binding.rvProfilePageProjects.layoutManager = layoutManager
+
+        binding.rvProfilePageProjects.layoutParams = LinearLayout.LayoutParams(width,height/3)
+
+        binding.rvProfilePageProjects.addOnScrollListener(object:PaginationListener(layoutManager){
+            override fun loadMoreItems() {
+                currentPage++
+                mProfilePageViewModel.fetchResearch((activity as HomeActivity).token, (activity as HomeActivity).userId, currentPage, 5)
+            }
+
+            override var isLastPage: Boolean = false
+            override var isLoading: Boolean = false
+            override var currentPage: Int = 0
+        })
+
+
 
         binding.rvProfilePageSkills.adapter = SkillsAdapter(ArrayList(), requireContext())
         binding.rvProfilePageSkills.layoutManager = GridLayoutManager(this.activity, 3)
@@ -80,7 +102,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                     val naming = user.name + " " + user.surname
                     binding.textNameSurname.text = naming
 
-                    mProfilePageViewModel.fetchResearch((activity as HomeActivity).token, user.id)
+                    mProfilePageViewModel.fetchResearch((activity as HomeActivity).token, user.id, 0, 5)
                     mProfilePageViewModel.getUserSkills((activity as HomeActivity).userId!!, (activity as HomeActivity).token!!)
 
                     if (user.rate == -1.0) {

@@ -20,9 +20,9 @@ class ProfilePageRepository() {
     val addDeleteSkillResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
 
 
-    fun getResearches( userId: Int, authToken: String){
+    fun getResearches( userId: Int, authToken: String, page:Int?, perPage:Int?){
         val service = RetrofitClient.getService()
-        val call = service.getResearches(userId, authToken)
+        val call = service.getResearches(userId, authToken, page, perPage)
         researchesResourceResponse.value = Resource.Loading()
         call.enqueue(object: Callback<Researches?>{
             override fun onResponse(call: Call<Researches?>, response: Response<Researches?>) {

@@ -46,7 +46,9 @@ interface Webservice {
 
     @GET("api/profile/research_information")
     fun getResearches(@Query("user_id") userId: Int,
-                      @Header("auth_token") auth_token: String ) : Call<Researches?>
+                      @Header("auth_token") auth_token: String,
+                      @Query("page") page:Int?,
+                      @Query("per_page") perPage:Int? ) : Call<Researches?>
 
     @FormUrlEncoded
     @PUT("api/auth_system/user")

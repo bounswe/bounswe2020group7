@@ -41,10 +41,10 @@ class OtherProfileRepository() {
         })
     }
 
-    fun getResearch(token: String, userId: Int) {
+    fun getResearch(token: String, userId: Int, page:Int?, perPage:Int?) {
         researchesResource.value = Resource.Loading()
         val service = RetrofitClient.getService()
-        val call = service.getResearches(userId, token)
+        val call = service.getResearches(userId, token, page, perPage)
 
         call.enqueue(object: Callback<Researches?>{
             override fun onResponse(call: Call<Researches?>, response: Response<Researches?>) {

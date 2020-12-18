@@ -32,9 +32,9 @@ class ProfilePageViewModel: ViewModel() {
     }
 
 
-    fun fetchResearch(token: String?, userId:Int?) {
+    fun fetchResearch(token: String?, userId:Int?, page:Int?, perPage:Int?) {
         if(token != null && userId != null){
-            repository.getResearches(userId, token)
+            repository.getResearches(userId, token, page, perPage)
         }
     }
 

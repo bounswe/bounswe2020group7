@@ -29,8 +29,8 @@ class OtherProfileViewModel : ViewModel() {
         }
     }
 
-    fun fetchResearch(token: String, userId: Int) {
-        repository.getResearch(token, userId)
+    fun fetchResearch(token: String, userId: Int, page:Int?, perPage:Int?) {
+        repository.getResearch(token, userId,page, perPage)
     }
     fun setIsFollowing(status:Definitions.USERSTATUS){
         isFollowing.value = status

@@ -188,9 +188,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
             binding.tvInstitution.text = user?.institution ?: "Institution not specified!"
             binding.tvJob.text = user?.job
 
-            mOtherProfileViewModel.fetchResearch((activity as HomeActivity).token!!,
-                    user!!.id!!
-            )
+            mOtherProfileViewModel.fetchResearch((activity as HomeActivity).token!!, user!!.id!!,0,5)
         }
         if(status == USERSTATUS.REQUESTED){
             binding.buttonFollow.text = "REQUESTED"
@@ -212,9 +210,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                 binding.tvEmail.text = user?.e_mail
                 binding.tvInstitution.text = user?.institution ?: "Institution not specified!"
                 binding.tvJob.text = user?.job
-                mOtherProfileViewModel.fetchResearch((activity as HomeActivity).token!!,
-                        user!!.id!!
-                )
+                mOtherProfileViewModel.fetchResearch((activity as HomeActivity).token!!, user!!.id!!, 0, 5)
             }
 
         }
