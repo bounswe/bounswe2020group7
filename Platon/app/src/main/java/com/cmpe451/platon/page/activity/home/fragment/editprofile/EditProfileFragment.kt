@@ -58,8 +58,7 @@ class EditProfileFragment : Fragment() {
             val institution = if (binding.etInstitution.text.isEmpty()) "" else binding.etInstitution.text.toString().trim()
 
             mEditProfileViewModel.editProfile(binding.firstnameTv,
-                    binding.lastnameTv, jobStr ,institution, binding.privateSwitch.isChecked,
-                    binding.ppTv, binding.googleScholarTv, binding.researchGateTv, (activity as HomeActivity).token)
+                    binding.lastnameTv, jobStr ,institution, binding.privateSwitch.isChecked, binding.googleScholarTv, binding.researchGateTv, (activity as HomeActivity).token)
         }
 
         binding.spJob.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
@@ -127,7 +126,6 @@ class EditProfileFragment : Fragment() {
             binding.lastnameTv.setText(user.surname)
             binding.etInstitution.setText(user.institution)
             binding.privateSwitch.isChecked = user.is_private
-            binding.ppTv.setText(user.profile_photo)
             binding.googleScholarTv.setText(user.google_scholar_name)
             binding.researchGateTv.setText(user.researchgate_name)
         }

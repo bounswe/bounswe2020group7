@@ -2,6 +2,7 @@ package com.cmpe451.platon.util
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.VibrationEffect

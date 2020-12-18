@@ -15,7 +15,6 @@ class EditProfileRepository() {
 
     fun editUser(name:String?,surname:String?,
                  job:String?, institution:String?, isPrivate:Boolean,
-                 profilePhoto:String?,
                  google_scholar_name:String?,
                  researchgate_name:String?,authToken: String){
 
@@ -23,7 +22,7 @@ class EditProfileRepository() {
 
         editProfileResourceResponse.value = Resource.Loading()
         val service = RetrofitClient.getService()
-        val call = service.editUserInfo(name, surname, job, institution,  if (isPrivate) 1 else 0, profilePhoto, google_scholar_name, researchgate_name, authToken)
+        val call = service.editUserInfo(name, surname, job, institution,  if (isPrivate) 1 else 0, google_scholar_name, researchgate_name, authToken)
 
         call.enqueue(object :Callback<JsonObject?> {
             override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {

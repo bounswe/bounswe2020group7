@@ -55,7 +55,6 @@ interface Webservice {
                      @Field("job") job:String?,
                      @Field("institution") institution:String?,
                      @Field("is_private") is_private:Int?,
-                     @Field("profile_photo") profilePhoto:String?,
                      @Field("google_scholar_name") google_scholar_name:String?,
                      @Field("researchgate_name") researchgate_name:String?,
                      @Header("auth_token") auth_token :String) : Call<JsonObject?>

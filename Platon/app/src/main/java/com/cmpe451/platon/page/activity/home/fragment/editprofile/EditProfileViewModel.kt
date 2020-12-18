@@ -11,7 +11,6 @@ class EditProfileViewModel:ViewModel() {
 
     fun editProfile(firstnameTv:TextView, lastnameTv:TextView, job:String,
                             institution:String, isPrivateUser:Boolean,
-                            profilePhotoTv:TextView,
                             googleScholarTv:TextView,
                             researchGateTv:TextView, token:String?){
 
@@ -32,14 +31,9 @@ class EditProfileViewModel:ViewModel() {
             researchgate_name  = researchGateTv.text.toString()
         }
 
-        var profilePhoto:String? = null
-        if(!profilePhotoTv.text.isNullOrEmpty()){
-            profilePhoto  = profilePhotoTv.text.toString()
-        }
-
 
         if(token != null) {
-            repository.editUser(name, surname, job, institution, isPrivateUser, profilePhoto, google_scholar_name, researchgate_name, token)
+            repository.editUser(name, surname, job, institution, isPrivateUser, google_scholar_name, researchgate_name, token)
         }}
 
 }
