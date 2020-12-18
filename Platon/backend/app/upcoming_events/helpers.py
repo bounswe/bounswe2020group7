@@ -1,10 +1,11 @@
 import requests
 import re
-import atexit
-from apscheduler.schedulers.background import BackgroundScheduler
 
 from app.upcoming_events.models import UpcomingEvent
-from app import db
+from app import db,app
+
+import atexit
+from apscheduler.schedulers.background import BackgroundScheduler
 
 class UpcomingEventsManager():
 
@@ -47,30 +48,31 @@ class UpcomingEventsManager():
         all_events = []
         for i in range(number_of_pages):
             all_events += UpcomingEventsManager.parse_page(i+1)
+        return all_events
     
     @staticmethod
     def update_upcoming_events():
         upcoming_events = UpcomingEventsManager.parse_all_pages()
-        try:
-            existing_upcoming_events = UpcomingEvent.query.filter().all()
-        except:
-            pass
-        existing_titles = [existing_event.title for existing_event in existing_upcoming_events]
-        try:
+        with app.app_context():
+            existing_upcoming_events =  UpcomingEvent.query.all()
+        existing_titles = [existing_event.acronym for existing_event in existing_upcoming_events]
+        upcoming_event_dict = {existing_event.acronym : existing_event for existing_event in existing_upcoming_events}
+        with app.app_context():
             for upcoming_event in upcoming_events:
-                if upcoming_event["title"] in existing_titles:
+                if upcoming_event["acronym"] in existing_titles:
                     continue
-                new_event = UpcomingEvent(upcoming_event["title"],upcoming_event["acronym"],upcoming_event["location"],
-                                        upcoming_event["date"],upcoming_event["deadline"],upcoming_event["link"])
-                db.session.add(new_event)
-            db.session.commit()
-        except:
-            return
-
+                else:
+                    new_event = UpcomingEvent(upcoming_event["title"],upcoming_event["acronym"],upcoming_event["location"],
+                                            upcoming_event["date"],upcoming_event["deadline"],upcoming_event["link"])
+                    try:
+                        db.session.add(new_event)
+                        db.session.commit()
+                    except:
+                        pass
 
 def schedule_regularly():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(func=UpcomingEventsManager.update_upcoming_events, trigger="interval",seconds=10)
+    scheduler.add_job(func=UpcomingEventsManager.update_upcoming_events, trigger="interval",seconds=60*60)
     scheduler.start()
     # Shut down the scheduler when exiting the app
-    atexit.register(lambda: scheduler.shutdown())    
+    atexit.register(lambda: scheduler.shutdown())   
