@@ -13,6 +13,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
+import com.cmpe451.platon.databinding.FollowRequestCellBinding
 import com.cmpe451.platon.network.models.FollowRequest
 import com.cmpe451.platon.network.models.Notification
 
@@ -35,18 +36,15 @@ class FollowRequestElementsAdapter(private val data: ArrayList<FollowRequest>, p
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder.
     // Each data item is just a string in this case that is shown in a TextView.
-    class MyViewHolder(val myView: View) : RecyclerView.ViewHolder(myView){
-        var myTextView = myView.findViewById(R.id.name_block) as TextView
-        var acceptButton = myView.findViewById(R.id.accept_icon) as ImageView
-        var rejectButton = myView.findViewById(R.id.reject_icon) as ImageView
+    class MyViewHolder(val binding: FollowRequestCellBinding) : RecyclerView.ViewHolder(binding.root){
         fun bindData(request: FollowRequest, buttonClickListener: FollowRequestButtonClickListener, position: Int) {
-            myTextView.setOnClickListener{
+            binding.nameBlock.setOnClickListener{
                 buttonClickListener.onFollowRequestNameClicked(request, position)
             }
-            acceptButton.setOnClickListener{
+            binding.acceptIcon.setOnClickListener{
                 buttonClickListener.onFollowRequestAcceptClicked(request, position)
             }
-            rejectButton.setOnClickListener{
+            binding.acceptIcon.setOnClickListener{
                 buttonClickListener.onFollowRequestRejectClicked(request, position)
             }
         }
@@ -56,10 +54,7 @@ class FollowRequestElementsAdapter(private val data: ArrayList<FollowRequest>, p
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         // create a new view
-        val textView = MyViewHolder(LayoutInflater.from(parent.context)
-                .inflate(R.layout.follow_request_cell, parent, false))
-        // set the view's size, margins, paddings and layout parameters
-        return textView
+        return MyViewHolder(FollowRequestCellBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     // Replace the contents of a view (invoked by the layout manager)
@@ -67,7 +62,7 @@ class FollowRequestElementsAdapter(private val data: ArrayList<FollowRequest>, p
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.myTextView.text = data[position].name +  " " + data[position].surname
+        holder.binding.nameBlock.text = data[position].name +  " " + data[position].surname
         holder.bindData(data[position], followRequestButtonClickListener, position)
     }
 

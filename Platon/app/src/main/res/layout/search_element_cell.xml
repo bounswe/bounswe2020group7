@@ -1,27 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.cardview.widget.CardView xmlns:android = "http://schemas.android.com/apk/res/android"
+xmlns:card_view = "http://schemas.android.com/apk/res-auto"
+card_view:cardCornerRadius = "@dimen/medium"
+card_view:cardElevation="@dimen/xxx_small"
+android:layout_marginBottom="@dimen/xx_small"
+android:layout_width = "match_parent"
+card_view:contentPadding="@dimen/medium"
+card_view:cardBackgroundColor="@color/primary_dark_lighter"
+android:layout_height = "wrap_content">
 
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="@dimen/inner_frame_layout_padding"
-    android:background="@drawable/search_element_cell_back">
-
-    <TextView
-        android:id="@+id/title_trend_project_tv"
+    <RelativeLayout
+        android:id="@+id/rl_searchElement"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerInParent="true"
-        android:gravity="center_vertical|center_horizontal"
-        android:padding="@dimen/inner_frame_layout_padding_2"
-        android:text="@string/hello_world"
-        android:textColor="@color/primary_light"
-        android:textSize="@dimen/title_text_size"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="wrap_content">
 
+        <ImageView
+            android:id="@+id/iw_searchImage"
+            android:src="@drawable/ic_o_logo"
+            android:layout_width="@dimen/xxxxx_large"
+            android:layout_height="@dimen/xxxxx_large"
+            android:layout_alignParentStart="true" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/tv_searchElement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/title_logo_padding"
+            android:layout_toEndOf="@+id/iw_searchImage"
+            android:maxLines="1"
+            android:text="@string/search_str"
+            android:textColor="@color/primary_light"
+            android:textSize="@dimen/project_title_text_size" />
+
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>
