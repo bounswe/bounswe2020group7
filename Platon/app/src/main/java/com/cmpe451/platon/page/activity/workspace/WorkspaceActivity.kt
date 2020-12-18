@@ -84,6 +84,7 @@ class WorkspaceActivity : BaseActivity() {
     override fun onSupportNavigateUp(): Boolean {
         when(navController.currentDestination?.id){
             R.id.addWorkspaceFragment -> finish()
+            R.id.workspaceFragment -> finish()
             else-> navController.navigateUp()
         }
 
