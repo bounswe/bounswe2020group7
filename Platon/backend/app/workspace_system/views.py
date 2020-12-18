@@ -8,9 +8,10 @@ from app.auth_system.models import User
 from app.follow_system.models import Follow, FollowRequests
 from app.auth_system.views import login_required
 from app.follow_system.helpers import follow_required
-from app.workspace_system.models import Issue, IssueAssignee, IssueComment
+from app.workspace_system.models import Issue, IssueAssignee, IssueComment, Workspace, Contribution
 from app.profile_management.models import Jobs
 from app.workspace_system.forms import GetIssuesForm, GetIssueCommentForm, GetIssueAssigneeForm, PostIssueAssigneeForm, PostIssueCommentForm, PostIssuesForm, PutIssuesForm, DeleteIssueAssigneeForm, DeleteIssueCommentForm, DeleteIssuesForm
+from app.workspace_system.helpers import workspace_exists,active_contribution_required
 
 workspace_system_ns = Namespace("Workspace System",
                              description="Workspace System Endpoints",
@@ -22,6 +23,7 @@ class GetIssuesAPI(Resource):
 
     # pagination will be added later.
     @login_required
+    @workspace_exists(param_loc='args',workspace_id_key='workspace_id')
     def get(user_id, self):
         '''
             Let's return Issues.
@@ -30,6 +32,25 @@ class GetIssuesAPI(Resource):
         if form.validate():
             workspace_id = form.workspace_id.data
 
+            # check if the workspace is public or not.
+            try:
+                workspaceSearch = Workspace.query.filter(Workspace.id == workspace_id).first()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+            if workspaceSearch.is_private:
+                # check if current user is an active contributor.
+                try:
+                    contributionSearch = Contribution.query.filter((Contribution.workspace_id == workspace_id)&(Contribution.user_id == user_id)).first()
+                except:
+                    return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+                if contributionSearch is None:
+                    return make_response(jsonify({'error': 'User is not a contributor'}), 401)
+
+                if not contributionSearch.is_active:
+                    return make_response(jsonify({'error': 'User is not an active contributor currently'}), 401)
+            
             try:
                 issueSearch = Issue.query.filter(Issue.workspace_id == workspace_id)
             except:
@@ -69,8 +90,8 @@ class GetIssuesAPI(Resource):
                     'creator_surname': creator_user.surname, 
                     'creator_e-mail': creator_user.e_mail, 
                     'creator_rate': creator_user.rate, 
-                    'creator_job_name': job_name,
-                    'is_private': creator.is_private
+                    'creator_job_name': job_name.name,
+                    'creator_is_private': creator_user.is_private
                     })
             
             return make_response(jsonify({'result': return_list}),200)
