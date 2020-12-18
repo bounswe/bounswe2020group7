@@ -1,4 +1,4 @@
-package com.cmpe451.platon.page.activity.workspace.fragment
+package com.cmpe451.platon.page.activity.workspace.fragment.addworkspace
 
 import android.os.Bundle
 import android.view.LayoutInflater

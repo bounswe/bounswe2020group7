@@ -10,14 +10,23 @@ class WorkspaceListRepository() {
 
     fun getWorkspaces(userId: Int, token: String) {
         var res :Resource<List<Workspace>> = Resource.Success(listOf(
-                Workspace(1, "ws1", "djfksljfksjfklsjfksjfklsjdflk", "jskjdksjdks"),
-                Workspace(2, "ws1", "djfksljfksjfklsjfksjfklsjdflk", "jskjdksjdks"),
-                Workspace(3, "ws1", "djfksljfksjfklsjfksjfklsjdflk", "jskjdksjdks"),
-                Workspace(4, "ws1", "djfksljfksjfklsjfksjfklsjdflk", "jskjdksjdks"),
-                Workspace(5, "ws1", "djfksljfksjfklsjfksjfklsjdflk", "jskjdksjdks"),
-                Workspace(6, "ws1", "djfksljfksjfklsjfksjfklsjdflk", "jskjdksjdks"),
-                Workspace(7, "ws1", "djfksljfksjfklsjfksjfklsjdflk", "jskjdksjdks"),
-                Workspace(8, "ws1", "djfksljfksjfklsjfksjfklsjdflk", "jskjdksjdks"),
+            Workspace(1, "First Ws", 5, "20.10.2020", false, "requiuerireiurie",
+                "descrjhekrjjhklsdjds", 0, listOf("python","matlab","c++")),
+            Workspace(2, "First Ws", 5, "20.10.2020", false, "requiuerireiurie",
+                "descrjhekrjjhklsdjds", 0, listOf("python","matlab","c++")),
+            Workspace(3, "First Ws", 5, "20.10.2020", false, "requiuerireiurie",
+                "descrjhekrjjhklsdjds", 0, listOf("python","matlab","c++")),
+            Workspace(4, "First Ws", 5, "20.10.2020", false, "requiuerireiurie",
+                "descrjhekrjjhklsdjds", 0, listOf("python","matlab","c++")),
+            Workspace(5, "First Ws", 5, "20.10.2020", false, "requiuerireiurie",
+                "descrjhekrjjhklsdjds", 0, listOf("python","matlab","c++")),
+            Workspace(6, "First Ws", 5, "20.10.2020", false, "requiuerireiurie",
+                "descrjhekrjjhklsdjds", 0, listOf("python","matlab","c++")),
+            Workspace(7, "First Ws", 5, "20.10.2020", false, "requiuerireiurie",
+                "descrjhekrjjhklsdjds", 0, listOf("python","matlab","c++")),
+            Workspace(8, "First Ws", 5, "20.10.2020", false, "requiuerireiurie",
+                "descrjhekrjjhklsdjds", 0, listOf("python","matlab","c++")),
+
         ))
         workspaces.value = res
     }

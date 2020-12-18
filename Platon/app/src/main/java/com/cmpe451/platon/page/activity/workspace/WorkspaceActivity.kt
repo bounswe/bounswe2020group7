@@ -14,7 +14,7 @@ import androidx.navigation.ui.onNavDestinationSelected
 import com.cmpe451.platon.R
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.ActivityWorkspaceBinding
-import com.cmpe451.platon.page.activity.workspace.fragment.WorkspaceFragmentDirections
+import com.cmpe451.platon.page.activity.workspace.fragment.workspace.WorkspaceFragmentDirections
 import com.cmpe451.platon.util.Definitions
 
 class WorkspaceActivity : BaseActivity() {

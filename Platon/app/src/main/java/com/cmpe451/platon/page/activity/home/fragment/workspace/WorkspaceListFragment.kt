@@ -72,14 +72,12 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
         super.onPrepareOptionsMenu(menu)
     }
 
-    override fun onWorkspaceListButtonClicked(binding: WorkspaceCellBinding, position: Int) {
-        if (binding.descWorkspaceTv.visibility == View.GONE){
-            binding.descWorkspaceTv.visibility = View.VISIBLE
-        }else{
-            binding.descWorkspaceTv.visibility = View.GONE
-        }
-
-        binding.descWorkspaceTv.refreshDrawableState()
-        Definitions().vibrate(50, activity as BaseActivity)
+    override fun onWorkspaceListButtonClicked(binding: WorkspaceCellBinding, projectId: Int) {
+        val bnd = Bundle()
+        bnd.putString("token", (activity as HomeActivity).token!!)
+        bnd.putInt("user_id", (activity as HomeActivity).userId!!)
+        bnd.putBoolean("add", false)
+        bnd.putInt("workspace_id", projectId)
+        startActivity(Intent(activity, WorkspaceActivity::class.java).putExtras(bnd))
     }
 }

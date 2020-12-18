@@ -53,6 +53,7 @@ class Definitions {
         FOLLOWING, NOT_FOLLOWING, REQUESTED
     }
 
+
     /**
      * Upcoming events are serialized according to this.
      * @param title Title of the upcoming event

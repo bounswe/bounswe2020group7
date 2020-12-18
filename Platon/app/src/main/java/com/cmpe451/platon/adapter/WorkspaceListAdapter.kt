@@ -21,16 +21,16 @@ class WorkspaceListAdapter(private val data: ArrayList<Workspace>, private val c
     // Each data item is just a string in this case that is shown in a TextView.
     class WorkspaceListViewHolder(private val view: View, var binding: WorkspaceCellBinding) : RecyclerView.ViewHolder(view){
 
-        fun bindData(binding: WorkspaceCellBinding, position: Int,buttonClickListener: WorkspaceListButtonClickListener) {
+        fun bindData(binding: WorkspaceCellBinding, projectId: Int,buttonClickListener: WorkspaceListButtonClickListener) {
             val expandRl : RelativeLayout = view.findViewById(R.id.expand_rl)
             expandRl.setOnClickListener{
-                buttonClickListener.onWorkspaceListButtonClicked(binding,position)
+                buttonClickListener.onWorkspaceListButtonClicked(binding,projectId)
             }
         }
     }
 
     interface WorkspaceListButtonClickListener{
-        fun onWorkspaceListButtonClicked(binding: WorkspaceCellBinding, position: Int)
+        fun onWorkspaceListButtonClicked(binding: WorkspaceCellBinding, projectId: Int)
     }
 
     // Create new views (invoked by the layout manager)
@@ -45,9 +45,13 @@ class WorkspaceListAdapter(private val data: ArrayList<Workspace>, private val c
     override fun onBindViewHolder(holder: WorkspaceListViewHolder, position: Int) {
         holder.binding.descWorkspaceTv.text = data[position].description
         holder.binding.titleWorkspaceTv.text = data[position].title
-        holder.binding.workspaceStateTv.text = data[position].state
+        holder.binding.workspaceStateTv.text = when(data[position].state){
+            0-> "Search for Collaborators State"
+            1-> "Ongoing State"
+            else -> "Finished"
+        }
 
-        holder.bindData(holder.binding, position, workspaceListButtonClickListener)
+        holder.bindData(holder.binding, data[position].id, workspaceListButtonClickListener)
     }
 
 
