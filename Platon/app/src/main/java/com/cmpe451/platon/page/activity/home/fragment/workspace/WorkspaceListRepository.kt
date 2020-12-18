@@ -26,6 +26,16 @@ class WorkspaceListRepository() {
                 "descrjhekrjjhklsdjds", 0, listOf("python","matlab","c++")),
             Workspace(8, "First Ws", 5, "20.10.2020", false, "requiuerireiurie",
                 "descrjhekrjjhklsdjds", 0, listOf("python","matlab","c++")),
+            Workspace(9, "First Ws", 5, "20.10.2020", false, "requiuerireiurie",
+                    "descrjhekrjjhklsdjds", 0, listOf("python","matlab","c++")),
+            Workspace(10, "First Ws", 5, "20.10.2020", false, "requiuerireiurie",
+                    "descrjhekrjjhklsdjds", 0, listOf("python","matlab","c++")),
+            Workspace(11, "First Ws", 5, "20.10.2020", false, "requiuerireiurie",
+                    "descrjhekrjjhklsdjds", 0, listOf("python","matlab","c++")),
+            Workspace(12, "First Ws", 5, "20.10.2020", false, "requiuerireiurie",
+                    "descrjhekrjjhklsdjds", 0, listOf("python","matlab","c++")),
+            Workspace(13, "First Ws", 5, "20.10.2020", false, "requiuerireiurie",
+                    "descrjhekrjjhklsdjds", 0, listOf("python","matlab","c++")),
 
         ))
         workspaces.value = res

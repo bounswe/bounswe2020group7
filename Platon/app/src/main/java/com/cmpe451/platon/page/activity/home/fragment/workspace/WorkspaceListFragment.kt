@@ -18,6 +18,7 @@ import com.cmpe451.platon.adapter.WorkspaceListAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentWorkspaceListBinding
 import com.cmpe451.platon.databinding.WorkspaceCellBinding
+import com.cmpe451.platon.listener.PaginationListener
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
@@ -42,11 +43,29 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        workspaceListAdapter = WorkspaceListAdapter(ArrayList(), requireContext(), this)
-        binding.workspaceListRv.layoutManager = LinearLayoutManager(activity)
-        binding.workspaceListRv.adapter = workspaceListAdapter
+        setListeners()
         setObservers()
         fetchWorkspaces()
+    }
+
+    private fun setListeners() {
+        workspaceListAdapter = WorkspaceListAdapter(ArrayList(), requireContext(), this)
+        val layoutManager = LinearLayoutManager(activity)
+        binding.workspaceListRv.layoutManager = layoutManager
+        binding.workspaceListRv.adapter = workspaceListAdapter
+
+        binding.workspaceListRv.addOnScrollListener(object: PaginationListener(layoutManager){
+            override fun loadMoreItems() {
+                //isLoading = true;
+                currentPage++;
+                mWorkspaceListViewModel.getWorkspaces((activity as HomeActivity).userId!!, (activity as HomeActivity).token!!)
+            }
+
+            override var isLastPage: Boolean = false
+            override var isLoading: Boolean = false
+            override var currentPage: Int = PAGE_START
+
+        })
     }
 
     private fun setObservers(){
