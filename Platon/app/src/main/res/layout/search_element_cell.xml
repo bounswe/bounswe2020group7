@@ -17,8 +17,8 @@ android:layout_height = "wrap_content">
         <ImageView
             android:id="@+id/iw_searchImage"
             android:src="@drawable/ic_o_logo"
-            android:layout_width="@dimen/xxxxx_large"
-            android:layout_height="@dimen/xxxxx_large"
+            android:layout_width="@dimen/medium_photo"
+            android:layout_height="@dimen/medium_photo"
             android:layout_alignParentStart="true" />
 
         <TextView

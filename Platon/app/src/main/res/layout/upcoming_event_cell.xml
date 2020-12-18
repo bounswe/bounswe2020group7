@@ -5,7 +5,6 @@
     card_view:cardElevation="@dimen/xxx_small"
     android:layout_marginBottom="@dimen/xx_small"
     android:layout_width = "match_parent"
-    android:layout_marginHorizontal="@dimen/xx_large"
     card_view:contentPadding="@dimen/medium"
     card_view:cardBackgroundColor="@color/secondary_green_transparent"
     android:layout_height = "wrap_content">

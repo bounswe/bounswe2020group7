@@ -108,9 +108,9 @@ class HomeActivityRepository {
         })
     }
 
-    fun getFollowRequests(id:Int, token:String){
+    fun getFollowRequests(id:Int, token:String, page: Int?, pageSize: Int?){
         val service = RetrofitClient.getService()
-        val call = service.getFollowRequests(id, token)
+        val call = service.getFollowRequests(id, token, page, pageSize)
         userFollowRequestsResourceResponse.value = Resource.Loading()
 
         call.enqueue(object :Callback<FollowRequests?>{
@@ -129,9 +129,9 @@ class HomeActivityRepository {
 
     }
 
-    fun getNotifications(token: String){
+    fun getNotifications(token: String, page: Int?, pageSize:Int?){
         val service = RetrofitClient.getService()
-        val call = service.getNotifications(token)
+        val call = service.getNotifications(token,page, pageSize)
         userNotificationsResourceResponse.value = Resource.Loading()
         call.enqueue(object :Callback<Notifications?>{
             override fun onResponse(call: Call<Notifications?>, response: Response<Notifications?>) {

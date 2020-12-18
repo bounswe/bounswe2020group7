@@ -61,12 +61,12 @@
             android:textSize="@dimen/project_title_text_size" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:paddingHorizontal="@dimen/medium"
-            android:fontFamily="@font/dm_sans_bold"
             android:id="@+id/pre_login_trending_projects_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/xx_small">
+            android:layout_marginTop="@dimen/xx_small"
+            android:fontFamily="@font/dm_sans_bold"
+            android:paddingHorizontal="@dimen/medium">
 
         </androidx.recyclerview.widget.RecyclerView>
 
@@ -89,11 +89,11 @@
 
 
         <androidx.recyclerview.widget.RecyclerView
-            android:paddingHorizontal="@dimen/medium"
             android:id="@+id/pre_login_upcoming_events_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/xx_small" />
+            android:layout_marginTop="@dimen/xx_small"
+            android:paddingHorizontal="@dimen/medium" />
 
     </LinearLayout>
 

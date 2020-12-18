@@ -230,7 +230,7 @@
                 android:id="@+id/rv_workspace_skills"
                 android:background="@drawable/view_back_darker"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/recycler_view_height_medium"
                 android:layout_margin="@dimen/profile_page_margin"
                 app:layout_constraintBottom_toTopOf="@id/projects_title"
                 app:layout_constraintLeft_toLeftOf="parent"

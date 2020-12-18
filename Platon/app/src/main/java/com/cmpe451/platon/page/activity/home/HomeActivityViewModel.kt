@@ -41,12 +41,12 @@ class HomeActivityViewModel(application: Application):AndroidViewModel(applicati
         }
     }
 
-    fun getNotifications(token:String){
-        repository.getNotifications(token)
+    fun getNotifications(token:String, page:Int?, pageSize:Int?){
+        repository.getNotifications(token, page, pageSize)
     }
 
-    fun getFollowRequests(id:Int, token:String){
-        repository.getFollowRequests(id, token)
+    fun getFollowRequests(id:Int, token:String, page: Int?, pageSize: Int?){
+        repository.getFollowRequests(id, token, page, pageSize)
 
     }
 

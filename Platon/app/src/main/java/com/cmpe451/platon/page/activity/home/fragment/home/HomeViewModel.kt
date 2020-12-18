@@ -26,8 +26,8 @@ class HomeViewModel: ViewModel() {
         return  repository.fetchTrendingProjects()
     }
 
-    fun getActivities(token:String) {
-        repository.getActivityStream(token)
+    fun getActivities(token:String, page:Int?, pageSize:Int?) {
+        repository.getActivityStream(token,page, pageSize)
     }
 
 

@@ -88,13 +88,20 @@ interface Webservice {
 
 
     @GET("api/profile/front_page")
-    fun getActivityStream(@Header("auth_token") auth_token :String) : Call<List<ActivityStreamElement>?>
+    fun getActivityStream(@Header("auth_token") auth_token :String,
+                          @Query("page") page:Int?,
+                          @Query("per_page") perPage:Int?) : Call<List<ActivityStreamElement>?>
 
     @GET("api/profile/notifications")
-    fun getNotifications(@Header("auth_token") auth_token :String) : Call<Notifications?>
+    fun getNotifications(@Header("auth_token") auth_token :String,
+            @Query("page") page:Int?,
+            @Query("per_page") perPage:Int?) : Call<Notifications?>
 
     @GET("api/follow/follow_requests")
-    fun getFollowRequests(@Query("following_id") id:Int, @Header("auth_token") auth_token :String) : Call<FollowRequests?>
+    fun getFollowRequests(@Query("following_id") id:Int,
+                          @Header("auth_token")auth_token :String,
+                            @Query("page") page:Int?,
+                          @Query("per_page") perPage:Int?)  : Call<FollowRequests?>
 
     @FormUrlEncoded
     @HTTP(method = "DELETE", path = "api/follow/follow_requests",hasBody = true)

@@ -18,8 +18,8 @@
 
             <ImageView
                 android:id="@+id/profile_photo"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
+                android:layout_width="@dimen/large_photo"
+                android:layout_height="@dimen/large_photo"
                 android:layout_margin="@dimen/profile_page_margin"
                 android:src="@drawable/ic_o_logo_100"
                 app:layout_constraintStart_toStartOf="@id/name_block"
@@ -230,7 +230,6 @@
                 android:shadowDy="1"
                 android:shadowRadius="2"
                 android:text="@string/skills"
-                android:textAllCaps="false"
                 android:textColor="@color/secondary_blue"
                 android:textSize="@dimen/project_title_text_size" />
             <ImageView
@@ -244,7 +243,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_profile_page_skills"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/recycler_view_height_medium"
             android:layout_margin="@dimen/profile_page_margin"
             app:layout_constraintBottom_toTopOf="@id/projects_title"
             app:layout_constraintLeft_toLeftOf="parent"

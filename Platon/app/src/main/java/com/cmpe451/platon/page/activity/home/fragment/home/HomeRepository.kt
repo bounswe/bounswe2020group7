@@ -17,9 +17,9 @@ class HomeRepository{
     val activityStreamResourceResponse:MutableLiveData<Resource<List<ActivityStreamElement>>> = MutableLiveData()
 
 
-    fun getActivityStream(token:String){
+    fun getActivityStream(token:String, page:Int?, pageSize:Int?){
         val service = RetrofitClient.getService()
-        val call = service.getActivityStream(token)
+        val call = service.getActivityStream(token, page, pageSize)
 
         activityStreamResourceResponse.value = Resource.Loading()
         call.enqueue(object : Callback<List<ActivityStreamElement>?> {

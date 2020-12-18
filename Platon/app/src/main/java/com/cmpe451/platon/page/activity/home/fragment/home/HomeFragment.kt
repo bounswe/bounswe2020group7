@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -51,7 +52,7 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
         initViews()
         setListeners()
 
-        mHomeViewModel.getActivities((activity as HomeActivity).token!!)
+        mHomeViewModel.getActivities((activity as HomeActivity).token!!, 0, 5)
     }
 
 
@@ -61,18 +62,29 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
         val myUpcomingEvents: ArrayList<Definitions.UpcomingEvent> = mHomeViewModel.getUpcomingEvents()
         val myActivities: ArrayList<ActivityStreamElement> = arrayListOf()
 
+        val height = resources.displayMetrics.heightPixels
+        val width = resources.displayMetrics.widthPixels
+
+        val layoutManagerTrending = LinearLayoutManager(context)
+        val layoutManageUpcoming = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        val layoutManageActivity = LinearLayoutManager(context)
+
+        binding.homeActivityStreamRecyclerView.layoutParams = LinearLayout.LayoutParams(width, (height/2))
+        //binding.homeUpcomingEventsRecyclerView.layoutParams = LinearLayout.LayoutParams(width/2, height/2)
+        binding.homeTrendingProjectsRecyclerView.layoutParams = LinearLayout.LayoutParams(width, (height/2))
+
         trendingProjectsRecyclerView = binding.homeTrendingProjectsRecyclerView
         trendingProjectsRecyclerView.adapter = TrendingProjectsAdapter(myTrendingProject, requireContext(), this)
-        trendingProjectsRecyclerView.layoutManager = LinearLayoutManager(context)
+        trendingProjectsRecyclerView.layoutManager = layoutManagerTrending
+
 
         upcomingEventsRecyclerView = binding.homeUpcomingEventsRecyclerView
         upcomingEventsRecyclerView.adapter = UpcomingEventsAdapter(myUpcomingEvents,requireContext(), this)
-        upcomingEventsRecyclerView.layoutManager = LinearLayoutManager(context,
-            LinearLayoutManager.HORIZONTAL, false)
+        upcomingEventsRecyclerView.layoutManager = layoutManageUpcoming
 
         activityStreamRecyclerView = binding.homeActivityStreamRecyclerView
         activityStreamRecyclerView.adapter = ActivityStreamAdapter(myActivities, requireContext(), this)
-        activityStreamRecyclerView.layoutManager = LinearLayoutManager(context)
+        activityStreamRecyclerView.layoutManager = layoutManageActivity
     }
 
 
