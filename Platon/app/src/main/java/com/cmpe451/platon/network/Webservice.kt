@@ -2,6 +2,7 @@ package com.cmpe451.platon.network
 
 import com.cmpe451.platon.network.models.*
 import com.google.gson.JsonObject
+import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -50,6 +51,7 @@ interface Webservice {
                       @Query("page") page:Int?,
                       @Query("per_page") perPage:Int? ) : Call<Researches?>
 
+    //@Multipart
     @FormUrlEncoded
     @PUT("api/auth_system/user")
     fun editUserInfo(@Field("name") name:String?,
@@ -59,6 +61,7 @@ interface Webservice {
                      @Field("is_private") is_private:Int?,
                      @Field("google_scholar_name") google_scholar_name:String?,
                      @Field("researchgate_name") researchgate_name:String?,
+                     //@Part("image") image:MultipartBody.Part?,
                      @Header("auth_token") auth_token :String) : Call<JsonObject?>
     @FormUrlEncoded
     @POST("api/profile/research_information")

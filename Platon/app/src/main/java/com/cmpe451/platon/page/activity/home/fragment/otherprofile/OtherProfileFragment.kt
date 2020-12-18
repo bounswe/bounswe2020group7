@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.OtherUserProjectsAdapter
 import com.cmpe451.platon.adapter.SkillsOtherProfileAdapter
@@ -84,12 +85,14 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                     val user = i.data!!
                     binding.textNameSurname.text = user.name + " " + user.surname
                     Glide.with(this)
-                        .load(user.profile_photo)
+                        .load(Definitions.API_URL + "api" + user.profile_photo)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .placeholder(R.drawable.ic_o_logo)
                         .into(binding.profilePhoto);
+                    Log.i("Addr", Definitions.API_URL + "api" + user.profile_photo)
                     mOtherProfileViewModel.setUserInfo()
-                    setView(mOtherProfileViewModel.isFollowing.value!!, mOtherProfileViewModel.isUserPrivate.value?:true)
-                    setListeners(mOtherProfileViewModel.isFollowing.value!!, mOtherProfileViewModel.isUserPrivate.value?:true)
+                    setView(mOtherProfileViewModel.isFollowing.value!!, mOtherProfileViewModel.isUserPrivate.value!!)
+                    setListeners(mOtherProfileViewModel.isFollowing.value!!, mOtherProfileViewModel.isUserPrivate.value!!)
                 }
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Error::class.java-> {
@@ -101,8 +104,8 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
 
         mOtherProfileViewModel.isFollowing.observe(viewLifecycleOwner, Observer{it->
             if(it != null){
-                setView(it, mOtherProfileViewModel.isUserPrivate.value?:true)
-                setListeners(it, mOtherProfileViewModel.isUserPrivate.value?:true)
+                setView(it, mOtherProfileViewModel.isUserPrivate.value!!)
+                setListeners(it, mOtherProfileViewModel.isUserPrivate.value!!)
             }
         })
 

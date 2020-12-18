@@ -130,7 +130,7 @@ class HomeActivity : BaseActivity(),
         val width = resources.displayMetrics.widthPixels
 
         //linear layout params
-        binding.toolbarRecyclerview.layoutParams =  LinearLayout.LayoutParams((width), (height/2.5).toInt())
+        binding.toolbarRecyclerview.layoutParams =  LinearLayout.LayoutParams((width), height/3)
 
         val layoutManager = LinearLayoutManager(this)
         // init layout manager of toolbar recycler view

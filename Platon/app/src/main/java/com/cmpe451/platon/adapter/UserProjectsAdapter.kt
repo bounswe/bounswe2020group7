@@ -95,6 +95,12 @@ class UserProjectsAdapter(private val data: ArrayList<Research>, private val con
         notifyDataSetChanged()
     }
 
+    fun replaceElements(list: List<Research>){
+        data.clear()
+        data.addAll(list)
+        notifyDataSetChanged()
+    }
+
 
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = data.size

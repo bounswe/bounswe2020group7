@@ -39,6 +39,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     private val mActivityViewModel: HomeActivityViewModel by activityViewModels()
 
     private lateinit var dialog:AlertDialog
+    private var maxPageNumberResearch:Int=0;
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -67,16 +68,17 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
 
         binding.rvProfilePageProjects.addOnScrollListener(object:PaginationListener(layoutManager){
             override fun loadMoreItems() {
-                currentPage++
-                mProfilePageViewModel.fetchResearch((activity as HomeActivity).token, (activity as HomeActivity).userId, currentPage, 5)
+                if(maxPageNumberResearch-1 > currentPage){
+                    currentPage++
+                    Toast.makeText(requireContext(), "Next page fetched!", Toast.LENGTH_SHORT).show()
+                    mProfilePageViewModel.fetchResearch((activity as HomeActivity).token, (activity as HomeActivity).userId, currentPage, 5)
+                }
             }
 
             override var isLastPage: Boolean = false
             override var isLoading: Boolean = false
             override var currentPage: Int = 0
         })
-
-
 
         binding.rvProfilePageSkills.adapter = SkillsAdapter(ArrayList(), requireContext())
         binding.rvProfilePageSkills.layoutManager = GridLayoutManager(this.activity, 3)
@@ -102,6 +104,9 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                     val naming = user.name + " " + user.surname
                     binding.textNameSurname.text = naming
 
+                    (binding.rvProfilePageProjects.adapter as UserProjectsAdapter).clearElements()
+
+
                     mProfilePageViewModel.fetchResearch((activity as HomeActivity).token, user.id, 0, 5)
                     mProfilePageViewModel.getUserSkills((activity as HomeActivity).userId!!, (activity as HomeActivity).token!!)
 
@@ -124,10 +129,14 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
         })
     }
 
+
     private fun setObservers() {
         mProfilePageViewModel.getResearchesResourceResponse.observe(viewLifecycleOwner, Observer { t ->
             when (t.javaClass) {
-                Resource.Success::class.java -> (binding.rvProfilePageProjects.adapter as UserProjectsAdapter).submitElements(t.data!!.research_info!!)
+                Resource.Success::class.java -> {
+                    maxPageNumberResearch = t.data!!.number_of_pages
+                    (binding.rvProfilePageProjects.adapter as UserProjectsAdapter).submitElements(t.data!!.research_info!!)
+                }
                 Resource.Error::class.java -> Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
             }
         })
@@ -263,6 +272,8 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     }
 
     override fun onUserProjectEditClicked(position: Int) {
+        (binding.rvProfilePageProjects.adapter as UserProjectsAdapter).clearElements()
+
         mProfilePageViewModel.setCurrentResearch(mProfilePageViewModel.getResearchesResourceResponse.value?.data!!.research_info!![position])
         findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToEditResearchInfoFragment())
     }

@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.cmpe451.platon.R
 import com.cmpe451.platon.databinding.SearchElementCellBinding
 import com.cmpe451.platon.network.models.SearchElement
@@ -51,7 +52,7 @@ class SearchElementsAdapter(private val data: ArrayList<SearchElement>, private 
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         Log.i("Photo", data[position].profile_photo)
-        Glide.with(context).load(Definitions.API_URL + "api/" + data[position].profile_photo).into(holder.binding.iwSearchImage)
+        Glide.with(context).load(Definitions.API_URL + "api" + data[position].profile_photo).diskCacheStrategy(DiskCacheStrategy.NONE).into(holder.binding.iwSearchImage)
         holder.binding.tvSearchElement.text = data[position].name + " " + data[position].surname
         holder.bindData(data[position], position,searchButtonClickListener)
     }
