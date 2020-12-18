@@ -2,7 +2,7 @@ import requests
 import json
 import atexit
 from apscheduler.schedulers.background import BackgroundScheduler
-from app import db
+from app import db,app
 from bs4 import BeautifulSoup
 from enum import IntEnum
 
@@ -67,13 +67,14 @@ class ResearchInfoFetch():
         """
             Updates the Google Scholar and ResearchGate information of all users in the system
         """
-        try:
-            all_users = User.query.all()
-        except:
-            return
-        else:
-            for user in all_users:
-                update_research_info(user.id)
+        with app.app_context():
+            try:
+                all_users = User.query.all()
+            except:
+                return
+            else:
+                for user in all_users:
+                    update_research_info(user.id)
 
     @staticmethod
     def update_research_info(user_id):

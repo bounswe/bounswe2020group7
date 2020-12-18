@@ -107,12 +107,14 @@ def follow_required_user(param_loc,requested_user_id_key):
                     if allowed_file(requested_user.profile_photo):
                         profile_photo = "/auth_system/profile_photo?user_id={}".format(requested_user.id)
                     response = {
+                        'id': requested_user.id,
                         'name': requested_user.name,
                         'surname': requested_user.surname,
                         'profile_photo': profile_photo,
                         'job':job.name,
                         'following_status': following_status,
                         'institute': requested_user.institution,
+                        'is_private': requested_user.is_private,
                         'error' : 'The Account that you try to reach is private'
                     }
                     return make_response(jsonify(response),206)
