@@ -58,3 +58,43 @@ class DeleteWorkspaceForm(Form):
 delete_workspace_parser = reqparse.RequestParser()
 delete_workspace_parser.add_argument("workspace_id",required=True,type=int,help="ID of the requested workspace", location="args")
 delete_workspace_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
+
+
+class GetIssuesForm(Form):
+	workspace_id = IntegerField('workspace_id', validators=[validators.DataRequired()])
+
+class PostIssuesForm(Form):
+	workspace_id = IntegerField('workspace_id', validators=[validators.DataRequired()])
+	title = StringField("Title of the issue", validators=[validators.DataRequired(), validators.Length(max=256)])
+	description = StringField("Description of the issue", validators=[validators.DataRequired(), validators.Length(max=2000)])
+	deadline = StringField("Deadline of the issue", validators=[validators.optional(), validators.Regexp(regex=date_regex)])
+
+class PutIssuesForm(Form):
+	issue_id = IntegerField('issue_id', validators=[validators.DataRequired()])
+	title = StringField('Updated title', validators = [validators.optional()])
+	description = StringField("Updated description of the issue", validators=[validators.optional(), validators.Length(max=2000)])
+	deadline = StringField("Updated deadline of the workspace", validators=[validators.optional(), validators.Regexp(regex=date_regex)])
+
+class DeleteIssuesForm(Form):
+	issue_id = IntegerField('issue_id', validators=[validators.DataRequired()])
+
+class GetIssueAssigneeForm(Form):
+	workspace_id = IntegerField('workspace_id', validators=[validators.DataRequired()])
+
+class PostIssueAssigneeForm(Form):
+	issue_id = IntegerField('issue_id', validators=[validators.DataRequired()])
+	assignee_id = IntegerField('assignee_id', validators=[validators.DataRequired()])
+
+class DeleteIssueAssigneeForm(Form):
+	issue_id = IntegerField('issue_id', validators=[validators.DataRequired()])
+	assignee_id = IntegerField('assignee_id', validators=[validators.DataRequired()])
+
+class GetIssueCommentForm(Form):
+	issue_id = IntegerField('issue_id', validators=[validators.DataRequired()])
+
+class PostIssueCommentForm(Form):
+	issue_id = IntegerField('issue_id', validators=[validators.DataRequired()])
+	comment = StringField('comment', validators=[validators.DataRequired()])
+
+class DeleteIssueCommentForm(Form):
+	comment_id = IntegerField('comment_id', validators=[validators.DataRequired()])
