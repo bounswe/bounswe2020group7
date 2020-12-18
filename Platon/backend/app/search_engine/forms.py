@@ -1,5 +1,4 @@
 from wtforms import Form, StringField, IntegerField, BooleanField, validators
-from app import api
 from flask_restplus import reqparse
 
 class UserSearchForm(Form):
