@@ -1,6 +1,9 @@
 from flask import make_response,jsonify,request
 
 from app.workspace_system.models import Workspace, Contribution
+
+import atexit
+from apscheduler.schedulers.background import BackgroundScheduler
 from functools import wraps
 
 from app import app,db
@@ -86,14 +89,8 @@ class TredingProjectManager():
         """
         prev_score = workspace.trending_score
         prev_count = workspace.view_count
-        new_scores = {}
-        new_score = prev_score * TredingProjectManager.aging_factor + prev_count
-        if new_score != prev_score:
-            new_scores["trending_score"] = new_score
-        if prev_count != 0:
-            new_scores["view_count"] = 0
-        if new_scores:
-            workspace.update(new_scores)
+        workspace.trending_score = prev_score * TredingProjectManager.aging_factor + prev_count
+        workspace.view_count = 0
 
     @staticmethod
     def update_all_trending_points():
@@ -105,3 +102,10 @@ class TredingProjectManager():
             for workspace in all_workspaces:
                 TredingProjectManager.update_trending_point(workspace)
             db.session.commit()
+
+def schedule_regularly():
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(func=TredingProjectManager.update_all_trending_points, trigger="interval",seconds=60*60)
+    scheduler.start()
+    # Shut down the scheduler when exiting the app
+    atexit.register(lambda: scheduler.shutdown())    
