@@ -19,7 +19,7 @@ workspace_system_ns = Namespace("Workspace System",
                     
 
 @workspace_system_ns.route("/issue")
-class GetIssuesAPI(Resource):
+class IssueAPI(Resource):
 
     # pagination will be added later.
     @login_required
@@ -96,6 +96,33 @@ class GetIssuesAPI(Resource):
             
             return make_response(jsonify({'result': return_list}),200)
             
+        else:
+            return make_response(jsonify({'error': 'Input Format Error'}), 400)
+
+    @login_required
+    @workspace_exists(param_loc='form',workspace_id_key='workspace_id')
+    @active_contribution_required(param_loc='form',workspace_id_key='workspace_id')
+    def post(user_id, self):
+        '''
+            Creates issue
+        '''
+        form = PostIssuesForm(request.form)
+        if form.validate():
+            
+            try: 
+                # Create issue record
+                issue = Issue(user_id, form.workspace_id.data, form.title.data, form.description.data, form.deadline.data)
+            except:
+                return make_response(jsonify({'error': 'Issue record is not created'}), 500)
+
+            try:
+                db.session.add(issue)
+                db.session.commit()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+            return make_response(jsonify({'msg': 'Issue is successfully created'}), 200)
+
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
 

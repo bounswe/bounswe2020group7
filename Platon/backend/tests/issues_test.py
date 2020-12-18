@@ -104,7 +104,6 @@ class IssuesTest(BaseTest):
         db.session.commit()
         
 
-
     def test_get_issues(self):
 
         # Can(2) will try to get the issues of a public workspace. It should be successful.
@@ -127,7 +126,7 @@ class IssuesTest(BaseTest):
 
         # Can(2) will try to get the issues of a private workspace in which
         # he is an active contributor. It should be successful.
-        valid_token = generate_token(1, datetime.timedelta(minutes=10))
+        valid_token = generate_token(2, datetime.timedelta(minutes=10))
 
         data = {'workspace_id': 2}
         actual_response = self.client.get('/api/workspace/issue', query_string=data,
@@ -150,7 +149,7 @@ class IssuesTest(BaseTest):
 
         # Can(2) will try to post an issue into an workspace in which he is a contributor. Success.
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
-        data = {'workspace_id': 2, 'title': "vlog idea", 'description': "why not vlogging the diffs?", 'deadline': '2020-12-29 14:14:14'}
+        data = {'workspace_id': 2, 'title': "vlog idea", 'description': "why not vlogging the diffs?", 'deadline': datetime.datetime(2020, 12, 30)}
         actual_response = self.client.post('/api/workspace/issue', data=data,
                                           headers={'auth_token': valid_token})
 
@@ -159,12 +158,13 @@ class IssuesTest(BaseTest):
 
         # Can(2) will try to post an issue into an workspace in which he is not a contributor. Fail.
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
-        data = {'workspace_id': 2, 'title': "vlog idea", 'description': "why not vlogging the diffs?", 'deadline': '2020-12-29 14:14:14'}
+        data = {'workspace_id': 1, 'title': "vlog idea", 'description': "why not vlogging the diffs?", 'deadline': datetime.datetime(2020, 12, 30)}
         actual_response = self.client.post('/api/workspace/issue', data=data,
                                           headers={'auth_token': valid_token})
 
-        self.assertEqual(actual_response.status_code, 401, 'Incorrect HTTP Response Code')
-
+        # 404 is used, because active_contribution_required decorator returns 404.
+        self.assertEqual(actual_response.status_code, 404, 'Incorrect HTTP Response Code')
+    
     def test_put_issues(self):
 
         # Can(2) will try to update an issue at an workspace in which he is a contributor. Success.

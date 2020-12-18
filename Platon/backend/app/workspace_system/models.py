@@ -71,11 +71,13 @@ class Issue(db.Model):
     deadline = db.Column(db.DateTime)
     is_open = db.Column(db.Boolean)
 
-    def __init__(self, creator_id_, workspace_id_, title_, description_):
+    def __init__(self, creator_id_, workspace_id_, title_, description_, deadline_=None, is_open_=True):
         self.creator_id = creator_id_
         self.workspace_id = workspace_id_
         self.title = title_
         self.description = description_
+        self.deadline = deadline_
+        self.is_open = is_open_
 
 class IssueAssignee(db.Model):
     __tablename__ = "issue_assignees"

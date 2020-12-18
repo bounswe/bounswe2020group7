@@ -1,4 +1,4 @@
-from wtforms import Form, StringField, IntegerField, FieldList, validators
+from wtforms import Form, StringField, IntegerField, FieldList, validators, DateTimeField
 from flask_restplus import reqparse
 
 date_regex = "^(20|21)\\d\\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$"
@@ -67,13 +67,13 @@ class PostIssuesForm(Form):
 	workspace_id = IntegerField('workspace_id', validators=[validators.DataRequired()])
 	title = StringField("Title of the issue", validators=[validators.DataRequired(), validators.Length(max=256)])
 	description = StringField("Description of the issue", validators=[validators.DataRequired(), validators.Length(max=2000)])
-	deadline = StringField("Deadline of the issue", validators=[validators.optional(), validators.Regexp(regex=date_regex)])
+	deadline = DateTimeField("Deadline of the issue", validators=[validators.optional()])
 
 class PutIssuesForm(Form):
 	issue_id = IntegerField('issue_id', validators=[validators.DataRequired()])
 	title = StringField('Updated title', validators = [validators.optional()])
 	description = StringField("Updated description of the issue", validators=[validators.optional(), validators.Length(max=2000)])
-	deadline = StringField("Updated deadline of the workspace", validators=[validators.optional(), validators.Regexp(regex=date_regex)])
+	deadline = DateTimeField("Updated deadline of the workspace", validators=[validators.optional()])
 
 class DeleteIssuesForm(Form):
 	issue_id = IntegerField('issue_id', validators=[validators.DataRequired()])
