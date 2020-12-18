@@ -3,7 +3,7 @@ from flask_restplus import Resource
 from functools import wraps
 
 from app.auth_system.models import User
-from app.follow_system.models import Follow
+from app.follow_system.models import Follow, FollowRequests
 from app.profile_management.models import Jobs
 
 def follow_required(param_loc,requested_user_id_key):
@@ -48,11 +48,22 @@ def follow_required(param_loc,requested_user_id_key):
                     except:
                         return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
 
+                    try:
+                        following_status = -1 # initialized to -1, does not matter.
+                        # Checks if the existing user sent the follow request previously.
+                        if FollowRequests.query.filter_by(follower_id=user_id, following_id=requested_user_id).first() is not None:
+                            following_status = 0 # Represents that the existing user has already sent a follow request to the requested user and it is pending.
+                        else:
+                            following_status = -1 # Represents that the existing user does not follow the requested user and has not yet sent a request to follow them.
+                    except:
+                        return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
+
                     response = {
                         'name': requested_user.name,
                         'surname': requested_user.surname,
                         'profile_photo': "/auth_system/profile_photo?user_id={}".format(requested_user.id),
                         'job':job.name,
+                        'following_status': following_status,
                         'institute': requested_user.institution,
                         'error' : 'The Account that you try to reach is private'
                     }
