@@ -19,6 +19,7 @@ class WorkspaceView extends Component {
       error: false,
       loaded: true,
       profileId: null,
+
     };
   }
   componentDidMount() {

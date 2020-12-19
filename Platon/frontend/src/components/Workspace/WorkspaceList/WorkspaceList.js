@@ -60,35 +60,15 @@ const useStyles = (theme) => ({
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
-const workspaces = [
-  {
-    title: "Artificial Intelligence for Artificial Intelligence",
-    description:
-      "The main goals of the project are to find functions, algorithms, and methods how to create a program or some device of artificial intelligence which will create another AI to find the best solutions in changing business environments.",
-  },
-  {
-    title: "The deep problems with deep learning",
-    description:
-      "Understand and contribute to deep learning, especially as applied to machine learning and machine decision making algorithms. Goal is to codesign algorithms with capabilities of device hardware capabilities.",
-  },
-  {
-    title: "Deep Learning",
-    description:
-      "This project's main goal is to develop novel deep learning algorithms for pattern recognition.",
-  },
-  {
-    title: "Mechanical Simulation of Quantum Mechanics",
-    description: "To establish the mechanical origin of quantum mechanics.",
-  },
-];
+
 class WorkspaceList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      workspaces: null,
+      workspaces: [],
       success: false,
       error: false,
-      loaded: true,
+      loaded: false,
       profileId: null
     };
   }
@@ -104,7 +84,8 @@ class WorkspaceList extends Component {
     .then((response) => {
       if (response.status === 200) {
         this.setState({
-          workspaces: response.data.workspaces
+          workspaces: response.data.workspaces,
+          loaded: true,
         });
       }
     })
@@ -149,7 +130,8 @@ class WorkspaceList extends Component {
                 >
                   Workspaces
                 </Typography>
-                {this.state.workspaces !== null ? this.state.workspaces.map((item, index) => {
+
+                {this.state.workspaces.length !== 0 ? (this.state.workspaces.map((item, index) => {
                   return (
                     <Card className={classes.root}>
                       <CardHeader style={{color: colors.primaryDark}} title={item.title} />
@@ -175,7 +157,14 @@ class WorkspaceList extends Component {
                       </CardActions>
                     </Card>
                   );
-                }) : <div>You havent create a workspace</div>}
+                })):                <Typography
+                style={{ color: colors.secondary, marginBottom: "20px" }}
+                component="h1"
+                variant="h6"
+                align="center"
+              >
+                You have not created any workspace yet.
+              </Typography>}
 
               </div>
               <Link to = {`/${this.state.profileId}/workspace/new`} style={{textDecoration: "none"}}>
