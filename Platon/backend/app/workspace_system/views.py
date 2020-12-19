@@ -144,7 +144,7 @@ class WorkspacesAPI(Resource):
                     # If not, an error is raised.
                     # If yes, workspace information is returned.
                     if requested_workspace.is_private and \
-                    (Contribution.query.filter_by(workspace_id=form.workspace_id.data, contributor_id=requester_id, is_active=True).first() is None):
+                    (Contribution.query.filter_by(workspace_id=form.workspace_id.data, user_id=requester_id, is_active=True).first() is None):
                         return make_response(jsonify({"error" : "The user is not allowed to view this workspace."}), 401)
                     else:
                         workspace_information = {

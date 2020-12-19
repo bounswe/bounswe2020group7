@@ -46,7 +46,7 @@ def add_workspace_contribution(workspace_id, contributor_id):
 	This method adds the contribution of the user with the ID "contributor_id"
 	to the workspace with the given ID.
 	'''
-	workspace_contribution = Contribution(workspace_id=workspace_id, contributor_id=contributor_id, is_active=True)
+	workspace_contribution = Contribution(workspace_id=workspace_id, user_id=contributor_id, is_active=True)
 	db.session.add(workspace_contribution)
 	db.session.commit()
 

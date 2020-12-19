@@ -27,7 +27,7 @@ class WorkspaceRequirement(db.Model):
 class Contribution(db.Model):
     __tablename__ = "contributions"
     workspace_id = db.Column(db.Integer,db.ForeignKey('workspaces.id'),primary_key=True)
-    contributor_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"),primary_key=True)
+    user_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"),primary_key=True)
     is_active = db.Column(db.Boolean,nullable=False)
 
 class CollaborationInvitation(db.Model):
