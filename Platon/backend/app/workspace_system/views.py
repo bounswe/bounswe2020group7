@@ -125,50 +125,5 @@ class WorkspacesAPI(Resource):
             return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
 
 
-    # PUT request
-    @api.expect(update_workspace_parser)
-    @api.doc(responses={
-                200: "Workspace information has been successfully updated.",
-                202: "Server has received the request but there was no information to be updated.",
-                400: "Missing data fields or invalid data.",
-                404: "The workspace is not found.",
-                500: "The server is not connected to the database."
-            })
-    def put(self):
-        '''
-        Updates the requested workspace.
-        '''
-
-        # Parses the form data.
-        form = UpdateWorkspaceForm(request.form)
-
-        if form.validate():
-            return make_response(jsonify({"message" : form.data}), 200)
-        else:
-            return make_response(jsonify({"error" : "Missing data fields or invalid data."}, 400))
-
-
-    # DELETE request
-    @api.expect(delete_workspace_parser)
-    @api.doc(responses={
-                200: "Workspace has been successfully deleted.",
-                400: "Missing data fields or invalid data.",
-                404: "The workspace is not found.",
-                500: "The server is not connected to the database."
-            })
-    def delete(self):
-        '''
-        Deletes the requested workspace.
-        '''
-
-        # Parses the form data.
-        form = DeleteWorkspaceForm(request.args)
-
-        if form.validate():
-            return make_response(jsonify({"message" : form.data}), 200)
-        else:
-            return make_response(jsonify({"error" : "Missing data fields or invalid data."}, 400))
-
-
 def register_resources(api):
     api.add_namespace(workspace_system_ns)
