@@ -64,3 +64,6 @@ class TrendingProjectsForm(Form):
 
 trending_project_parser = reqparse.RequestParser()
 trending_project_parser.add_argument("number_of_workspaces",required=True,type=int,help="Number of Workspaces", location="args")
+
+get_self_parser = reqparse.RequestParser()
+get_self_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
