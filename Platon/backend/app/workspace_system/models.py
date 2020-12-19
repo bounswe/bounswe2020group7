@@ -14,6 +14,12 @@ class Workspace(db.Model):
     trending_score = db.Column(db.Float, default = 0.0)
     view_count = db.Column(db.Integer,default=0)
 
+    def __init__(self, creator_id_, is_private_, title_, state_):
+        self.creator_id = creator_id_
+        self.is_private = is_private_
+        self.title = title_
+        self.state = state_
+
 class WorkspaceSkill(db.Model):
     __tablename__ = "workspace_skills"
     workspace_id = db.Column(db.Integer,db.ForeignKey('workspaces.id',ondelete="CASCADE"),primary_key=True)
@@ -29,6 +35,11 @@ class Contribution(db.Model):
     workspace_id = db.Column(db.Integer,db.ForeignKey('workspaces.id'),primary_key=True)
     user_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"),primary_key=True)
     is_active = db.Column(db.Boolean,nullable=False)
+    
+    def __init__(self, workspace_id_, user_id_, is_active_):
+        self.workspace_id = workspace_id_
+        self.user_id = user_id_
+        self.is_active = is_active_
 
 class CollaborationInvitation(db.Model):
     __tablename__ = "collaboration_invitations"
@@ -60,10 +71,22 @@ class Issue(db.Model):
     deadline = db.Column(db.DateTime)
     is_open = db.Column(db.Boolean)
 
+    def __init__(self, creator_id_, workspace_id_, title_, description_, deadline_=None, is_open_=True):
+        self.creator_id = creator_id_
+        self.workspace_id = workspace_id_
+        self.title = title_
+        self.description = description_
+        self.deadline = deadline_
+        self.is_open = is_open_
+
 class IssueAssignee(db.Model):
     __tablename__ = "issue_assignees"
     issue_id = db.Column(db.Integer,db.ForeignKey('issues.id',ondelete="CASCADE"),primary_key=True)
     assignee_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"),primary_key=True)
+
+    def __init__(self, issue_id_, assignee_id_):
+        self.issue_id = issue_id_
+        self.assignee_id = assignee_id_
 
 class IssueComment(db.Model):
     __tablename__ = "issue_comments"
@@ -72,7 +95,13 @@ class IssueComment(db.Model):
     commenter_id = db.Column(db.Integer,db.ForeignKey('users.id'))
     comment = db.Column(db.String(512))
 
+    def __init__(self, issue_id_, commenter_id_, comment_):
+        self.issue_id = issue_id_
+        self.commenter_id = commenter_id_
+        self.comment = comment_
+
 class Requirement(db.Model):
     __tablename__ = "requirements"
     id = db.Column(db.Integer,primary_key=True,autoincrement=True)
     text = db.Column(db.String(200))
+
