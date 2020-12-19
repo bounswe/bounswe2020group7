@@ -24,6 +24,7 @@ import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentLandingBinding
 import com.cmpe451.platon.databinding.TrendProjectCellBinding
 import com.cmpe451.platon.databinding.UpcomingEventCellBinding
+import com.cmpe451.platon.listener.PaginationListener
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.ActivityStreamElement
 import com.cmpe451.platon.network.models.TrendingProject
@@ -42,6 +43,8 @@ class LandingFragment : Fragment(),TrendingProjectsAdapter.TrendingProjectButton
     private lateinit var sharedPreferences: SharedPreferences
 
     lateinit var binding: FragmentLandingBinding
+
+    private var maxPageNumberUpcoming:Int=0
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -91,9 +94,9 @@ class LandingFragment : Fragment(),TrendingProjectsAdapter.TrendingProjectButton
         mHomeViewModel.getUpcomingEventsResourceResponse.observe(viewLifecycleOwner, {t->
             when(t.javaClass){
                 Resource.Success::class.java ->{
-                    binding.preLoginUpcomingEventsRecyclerView.adapter =
-                            UpcomingEventsAdapter(t.data!!.upcoming_events as ArrayList<UpcomingEvent>, requireContext(), this)
-                }
+                    maxPageNumberUpcoming = t.data!!.number_of_pages
+                    (binding.preLoginUpcomingEventsRecyclerView.adapter as UpcomingEventsAdapter).submitList(
+                        t.data!!.upcoming_events!! as ArrayList<UpcomingEvent>)                }
                 Resource.Error::class.java ->{
                     Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
                 }
@@ -110,6 +113,20 @@ class LandingFragment : Fragment(),TrendingProjectsAdapter.TrendingProjectButton
 
         binding.preLoginTrendingProjectsRecyclerView.layoutManager = layoutManagerTrending
         binding.preLoginUpcomingEventsRecyclerView.layoutManager = layoutManageUpcoming
+        binding.preLoginUpcomingEventsRecyclerView.adapter = UpcomingEventsAdapter(ArrayList(),requireContext(), this)
+        binding.preLoginUpcomingEventsRecyclerView.addOnScrollListener(object: PaginationListener(layoutManageUpcoming){
+            override fun loadMoreItems() {
+                if(maxPageNumberUpcoming-1 > currentPage){
+                    currentPage++
+                    mHomeViewModel.getUpcomingEvents(currentPage, 5)
+                    Toast.makeText(requireContext(), "Next page", Toast.LENGTH_LONG).show()
+                }
+            }
+
+            override var isLastPage: Boolean = false
+            override var isLoading: Boolean = false
+            override var currentPage: Int = 0
+        })
 
         binding.preLoginUpcomingEventsRecyclerView .layoutParams = LinearLayout.LayoutParams(width, (height/2))
         //binding.homeUpcomingEventsRecyclerView.layoutParams = LinearLayout.LayoutParams(width/2, height/2)

@@ -14,9 +14,9 @@ class FollowRepository() {
     val followersResource: MutableLiveData<Resource<Followers>> = MutableLiveData(Resource.Loading())
     val followingResource: MutableLiveData<Resource<Following>> = MutableLiveData(Resource.Loading())
 
-    fun getFollowers(followingId: Int, authToken: String){
+    fun getFollowers(followingId: Int, authToken: String, page:Int, per_page:Int){
         val service = RetrofitClient.getService()
-        service.getFollowers(followingId, authToken).enqueue(object : Callback<Followers?> {
+        service.getFollowers(followingId, page, per_page, authToken).enqueue(object : Callback<Followers?> {
             override fun onResponse(call: Call<Followers?>, response: Response<Followers?>) {
                 when{
                     response.isSuccessful && response.body() != null-> followersResource.value = Resource.Success(response.body()!!)
@@ -29,9 +29,9 @@ class FollowRepository() {
             }
         })
     }
-    fun getFollowing(followingId: Int, authToken: String){
+    fun getFollowing(followingId: Int, authToken: String, page:Int, per_page:Int){
         val service = RetrofitClient.getService()
-        service.getFollowing(followingId, authToken).enqueue(object : Callback<Following?> {
+        service.getFollowing(followingId, page, per_page, authToken).enqueue(object : Callback<Following?> {
 
             override fun onResponse(call: Call<Following?>, response: Response<Following?>) {
                 when{

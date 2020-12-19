@@ -30,7 +30,7 @@ class FollowerFollowingAdapter(private val dataSet: ArrayList<FollowPerson>, val
         return ViewHolder(view)
     }
     fun submitList(list:ArrayList<FollowPerson>){
-        this.dataSet.clear()
+//        this.dataSet.clear()
         this.dataSet.addAll(list)
         notifyDataSetChanged()
     }
