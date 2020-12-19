@@ -1,4 +1,8 @@
-from app import db
+from app import app, db
+from functools import wraps
+from flask import make_response,jsonify,request
+import atexit
+from apscheduler.schedulers.background import BackgroundScheduler
 
 from app.workspace_system.models import WorkspaceSkill, WorkspaceRequirement, Contribution, Requirement
 from app.profile_management.models import Skills
@@ -123,3 +127,42 @@ def active_contribution_required(param_loc,workspace_id_key):
             return func(*args,**kwargs)
         return contribution_check
     return active_contribution_required_inner
+
+
+class TredingProjectManager():
+    """
+        It is used to calculate nex tranding score
+        trending_score[t+1] = trnding_score[t]*aging_factor + view_count[t]    
+        It must be between 0 and 1
+    """
+    aging_factor = 0.8
+
+    @staticmethod
+    def update_trending_point(workspace):
+        """
+            Updates the trending score according to the aging factor
+            `workspace`: Workspace instance
+        """
+        prev_score = workspace.trending_score
+        prev_count = workspace.view_count
+        workspace.trending_score = prev_score * TredingProjectManager.aging_factor + prev_count
+        workspace.view_count = 0
+
+    @staticmethod
+    def update_all_trending_points():
+        with app.app_context():
+            try:
+               all_workspaces = Workspace.query.all()
+            except:
+                return
+            for workspace in all_workspaces:
+                TredingProjectManager.update_trending_point(workspace)
+            db.session.commit()
+
+def schedule_regularly():
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(func=TredingProjectManager.update_all_trending_points, trigger="interval",seconds=60*60)
+    scheduler.start()
+    # Shut down the scheduler when exiting the app
+    atexit.register(lambda: scheduler.shutdown())    
+    

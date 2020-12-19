@@ -1,16 +1,14 @@
 from flask import current_app as app
-from flask_restplus import Namespace, Resource
+from flask_restplus import Namespace, Resource, fields
 from flask import make_response,jsonify,request
 
 from app import api, db
 
-from app.workspace_system.forms import CreateWorkspaceForm, create_workspace_parser
-from app.workspace_system.forms import ReadWorkspaceForm, read_workspace_parser
-from app.workspace_system.forms import UpdateWorkspaceForm, update_workspace_parser
-from app.workspace_system.forms import DeleteWorkspaceForm, delete_workspace_parser
+from app.workspace_system.forms import *
 
 from app.workspace_system.models import Workspace, WorkspaceSkill, WorkspaceRequirement, Contribution, Requirement
 from app.profile_management.models import Skills
+from app.auth_system.models import User
 
 from app.auth_system.helpers import login_required
 from app.workspace_system.helpers import *
@@ -19,6 +17,50 @@ from app.file_system.helpers import FileSystem
 workspace_system_ns = Namespace("Workspace System",
                             description="Workspace System Endpoints",
                             path = "/workspaces")
+
+
+contributor_model = api.model("Contributor", {
+    "id": fields.Integer,
+    "name": fields.String,
+    "surname": fields.String,
+    }
+)
+
+workspace_model = api.model('Worksapce', {
+    "id": fields.Integer,
+    "title": fields.String,
+    "is_private": fields.Integer,
+    "description": fields.String,
+    "state": fields.Integer,
+    "deadline": fields.String,
+    "creation_time": fields.String,
+    "max_contibutors": fields.Integer,
+    "contributors": fields.List(
+        fields.Nested(contributor_model)
+    ),
+})
+
+workspace_list_model = api.model('Worksapce List', {
+    'workspaces': fields.List(
+        fields.Nested(workspace_model)
+    )
+})
+
+workspace_small_model = api.model('Workspace', {
+    "id": fields.Integer,
+    "title": fields.String,
+    "description": fields.String,
+    "state": fields.Integer,
+    "contributors": fields.List(
+        fields.Nested(contributor_model)
+    ),
+})
+
+trending_workspaces_model = api.model('Trending Projects', {
+    'trending_projects': fields.List(
+        fields.Nested(workspace_small_model)
+    )
+})
 
 
 @workspace_system_ns.route("")
@@ -124,51 +166,100 @@ class WorkspacesAPI(Resource):
         else:
             return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
 
+          
+@workspace_system_ns.route("/self")
+class GetSelfWorkspaces(Resource):
 
-    # PUT request
-    @api.expect(update_workspace_parser)
-    @api.doc(responses={
-                200: "Workspace information has been successfully updated.",
-                202: "Server has received the request but there was no information to be updated.",
-                400: "Missing data fields or invalid data.",
-                404: "The workspace is not found.",
-                500: "The server is not connected to the database."
-            })
-    def put(self):
-        '''
-        Updates the requested workspace.
-        '''
+    @api.doc(responses={401:'Authantication Problem',500:'Database Connection Problem'})
+    @api.response(200,'Valid Response',workspace_list_model)
+    @api.expect(get_self_parser)
+    @login_required
+    def get(user_id,self):
+        try:
+            contributions = Contribution.query.filter(Contribution.user_id==user_id).all()
+        except:
+            return make_response(jsonify({"err": "Database Connection Error"}),500)
+        workspaces = []
+        for contribution in contributions:
+            if contribution.is_active == 0:
+                continue
+            try:
+                ws = Workspace.query.get(contribution.workspace_id)
+            except:
+                return make_response(jsonify({"err": "Database Connection Error"}),500)
+            try:
+                contributors = Contribution.query.filter(Contribution.workspace_id == ws.id).all()
+            except:
+                return make_response(jsonify({"err": "Database Connection Error"}),500)
+            contributor_list = []
+            for contributor in contributors:
+                try:
+                    user = User.query.get(contributor.user_id)
+                except:
+                    return make_response(jsonify({"err": "Database Connection Error"}),500)
+                contributor_list.append({
+                        "id": user.id,
+                        "name": user.name,
+                        "surname": user.surname
+                })
+            ws_dict = {
+                "id": ws.id,
+                "is_private": int(ws.is_private),
+                "title": ws.title,
+                "state": ws.state,
+                "creation_time": ws.timestamp,
+                "description": ws.description,
+                "deadline": ws.deadline,
+                "max_collaborators": ws.max_collaborators,
+                "contributors": contributor_list
+            }
+            workspaces.append(ws_dict)
+        return make_response(jsonify({"workspaces": workspaces}),200)
 
-        # Parses the form data.
-        form = UpdateWorkspaceForm(request.form)
+      
+@workspace_system_ns.route("/trending_projects")
+class TrendingWorkspacesAPI(Resource):
 
+    @api.doc(responses={500 : 'Database Connection Error',400: 'Invalid Input Format'})
+    @api.response(200, 'Valid Response', trending_workspaces_model)
+    @api.expect(trending_project_parser)
+    def get(self):
+        form = TrendingProjectsForm(request.args)
         if form.validate():
-            return make_response(jsonify({"message" : form.data}), 200)
+            try:
+                all_workspaces = Workspace.query.order_by(Workspace.trending_score.desc()).all()
+            except:
+                return make_response(jsonify({"err": "Database Connection Error"}),500)
+            all_workspaces = all_workspaces[:form.number_of_workspaces.data]
+            workspace_response = [{
+                "id": workspace.id,
+                "title": workspace.title,
+                "description": workspace.description,
+                "state": workspace.state
+            } for workspace in all_workspaces if workspace.is_private == 0]
+            # Add Contributors of the workspaces
+            for index,workspace in enumerate(workspace_response):
+                try:
+                    contributors = Contribution.query.filter(Contribution.workspace_id == workspace["id"]).all()
+                except:
+                    return make_response(jsonify({"err": "Database Connection Error"}),500)
+                contributor_list = []
+                for contributor in contributors:
+                    try:
+                        user = User.query.get(contributor.user_id)
+                    except:
+                        return make_response(jsonify({"err": "Database Connection Error"}),500)
+                    contributor_list.append({
+                        "id": user.id,
+                        "name": user.name,
+                        "surname": user.surname
+                    })
+                workspace_response[index]["contributor_list"] = contributor_list
+            return make_response(jsonify({"trending_projects": workspace_response}),200)
         else:
-            return make_response(jsonify({"error" : "Missing data fields or invalid data."}, 400))
-
-
-    # DELETE request
-    @api.expect(delete_workspace_parser)
-    @api.doc(responses={
-                200: "Workspace has been successfully deleted.",
-                400: "Missing data fields or invalid data.",
-                404: "The workspace is not found.",
-                500: "The server is not connected to the database."
-            })
-    def delete(self):
-        '''
-        Deletes the requested workspace.
-        '''
-
-        # Parses the form data.
-        form = DeleteWorkspaceForm(request.args)
-
-        if form.validate():
-            return make_response(jsonify({"message" : form.data}), 200)
-        else:
-            return make_response(jsonify({"error" : "Missing data fields or invalid data."}, 400))
+            return make_response(jsonify({"err": "Invalid Input Format"}),400)
 
 
 def register_resources(api):
+    schedule_regularly()
     api.add_namespace(workspace_system_ns)
