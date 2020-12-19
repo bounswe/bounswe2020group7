@@ -1,140 +1,140 @@
 import React, { Component } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import {withStyles} from '@material-ui/core/styles';
-
-import TreeView from "@material-ui/lab/TreeView";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import TreeItem from "@material-ui/lab/TreeItem";
-import colors from "../../../../utils/colors";
-
-
-const StyledTreeItem = withStyles({
+import { withStyles } from "@material-ui/core/styles";
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import ListItemText from '@material-ui/core/ListItemText';
+import Avatar from '@material-ui/core/Avatar';
+import IconButton from '@material-ui/core/IconButton';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import FolderIcon from '@material-ui/icons/Folder';
+import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
+import DeleteIcon from '@material-ui/icons/Delete';
+import axios from "axios";
+import jwt_decode from "jwt-decode";
+import config from '../../../../utils/config';
+import colors from '../../../../utils/colors';
+const useStyles = (theme) => ({
   root: {
-     "&.Mui-selected:focus > .MuiTreeItem-content .MuiTreeItem-label": {
-      backgroundColor: colors.tertiaryDark
-    }
+    flexGrow: 1,
+    maxWidth: 752,
+  },
+  demo: {
+    backgroundColor: colors.secondary,
+  },
+  title: {
+    margin: theme.spacing(4, 0, 2),
+  },
+});
 
-  },
-})(TreeItem);
-
-const data = {
-  1: {
-    id: "1",
-    name: "Files",
-    children: [
-    ],
-  },
-  2: {
-    id: "2",
-    name: "Images",
-    children: [
-    ],
-  },
-};
-const renderTree = (nodes) => {
-  return (
-    <StyledTreeItem   key={nodes.id} nodeId={nodes.id} label={nodes.name}>
-      {Array.isArray(nodes.children)
-        ? nodes.children.map((node) => renderTree(node))
-        : null}
-    </StyledTreeItem>
+function generate(element) {
+  return [0, 1, 2].map((value) =>
+    React.cloneElement(element, {
+      key: value,
+    }),
   );
-};
+}
+
 class WorkspaceViewFileSection extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      expanded: [],
-      selected: [],
-      fileStructure: data,
-      folderName: "",
-      fileName: "",
+      cwd: ".",
+      route: ".",
+      folders: [],
+      files: []
     };
   }
-
-  handleToggle = (event, nodeIds) => {
-    this.setState({ expanded: [...this.state.expanded, nodeIds] });
-  };
-  handleSelect = (event, nodeIds) => {
-    this.setState({ selected: [nodeIds] });
-  };
-  createFolder = () => {
-    //TODO dont create a directory with same name exists already
-    if (this.state.folderName !== "") {
-      for(var key in this.state.fileStructure){
-        if(this.state.folderName === this.state.fileStructure[key].name){
-          console.log("File name exists!");
-          return;
-        }
+  componentDidMount(){
+    const token = localStorage.getItem("jwtToken");
+    axios.defaults.headers.common["auth_token"] = `${token}`;
+    const url = config.BASE_URL
+    let c_workspace_id = 2
+    axios.get(url+'/api/file_system/folder', {
+      params: {
+        path: this.state.route,
+        workspace_id: c_workspace_id
       }
-      let size = Object.keys(this.state.fileStructure).length + 1;
-      this.setState({
-        fileStructure: {...this.state.fileStructure,
-            [`${size}`]: { id: `${size}`, name: this.state.folderName, children: []},
-           },
-      });
-    }
-  };
+    }).then((response) => {
+      console.log(response)
+      if (response.status === 200) {
+        this.setState({
+          files: response.data.files,
+          folders: response.data.folders,
 
-  createFile = (selected) => {
-    //TODO dont create a directory with same name exists already
-    if (this.state.fileName !== "") {
-      for(var key in this.state.fileStructure.children){
-        if(this.state.fileName === this.state.fileStructure[key].name){
-          console.log("File name exists!");
-          return;
-        }
+        });
       }
-    }
-    if(selected.length===0){
-      console.log("klasör seçmedin dostum");
-      return;
-    }
-    if(!(selected[0] in this.state.fileStructure)){
-      console.log("Filea file eklenmez");
-      return;
-    }
-    let size = this.state.fileStructure[selected[0]].children.length + 1
-    let fileObjId = selected[0] + "-" + size
-    let fileObj = {id: fileObjId, name: this.state.fileName, children:[]}
-    let prevState = this.state.fileStructure;
-    prevState[selected[0]].children.push(fileObj)
-    this.setState({
-      fileStructure: prevState
     })
-
-  };
+    .catch((err) => {
+      /*this.setState({
+        isSending: false,
+        error: "Error occured. " + err.message,
+      });*/
+      console.log(err);
+    });
+  }
   render() {
+    const {classes} = this.props
     return (
-      <div>
-        <TreeView
-          defaultCollapseIcon={<ExpandMoreIcon />}
-          defaultExpandIcon={<ChevronRightIcon />}
+      <div className={classes.root}>
 
-          onNodeToggle={this.handleToggle}
-          onNodeSelect={this.handleSelect}
-          style={{ color: colors.secondary }}
-        >
-          {Object.keys(this.state.fileStructure).map((index)=> renderTree(this.state.fileStructure[index]))}
-        </TreeView>
 
-        <input
-          onChange={(e) => this.setState({ folderName: e.target.value })}
-          name="folderName"
-          label="FolderName"
-        />
-        <button onClick={this.createFolder}>Create folder</button>
-        <input
-        type="file"
-          onChange={(e) => this.setState({ fileName: e.target.value })}
-          name="fileName"
-          label="fileName"
-        />
-        <button onClick={() => this.createFile(this.state.selected)}>Create File</button>
+
+            <div className={classes.demo}>
+              <List >
+                {this.state.folders.map((element) => (
+                  <ListItem>
+                    <ListItemAvatar>
+                      <Avatar>
+                        <FolderIcon style={{color:colors.secondary}} />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                     style={{color: colors.primary}}
+                      primary={element}
+                    />
+                    <ListItemSecondaryAction>
+                      <IconButton edge="end" aria-label="delete">
+                        <DeleteIcon />
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                ))}
+                {this.state.files.map((element) => (
+                  <ListItem>
+                    <ListItemAvatar>
+                      <Avatar>
+                        <InsertDriveFileIcon style={{color:colors.secondary}}/>
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={element}
+                    />
+                    <ListItemSecondaryAction>
+                      <IconButton edge="end" aria-label="delete">
+                        <DeleteIcon />
+                      </IconButton>
+                      <IconButton edge="end" aria-label="delete">
+                        <DeleteIcon />
+                      </IconButton>
+
+
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                ))}
+              </List>
+            </div>
+
       </div>
     );
   }
 }
 
-export default WorkspaceViewFileSection;
+export default withStyles(useStyles)(WorkspaceViewFileSection);
+

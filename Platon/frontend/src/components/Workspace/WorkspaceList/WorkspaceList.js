@@ -23,6 +23,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import {Link} from 'react-router-dom'
 import jwt_decode from "jwt-decode";
+
 const useStyles = (theme) => ({
   root: {
     flexGrow: 1,
@@ -84,6 +85,7 @@ class WorkspaceList extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      workspaces: null,
       success: false,
       error: false,
       loaded: true,
@@ -93,12 +95,29 @@ class WorkspaceList extends Component {
   componentDidMount() {
     const token = localStorage.getItem("jwtToken");
     const decoded = jwt_decode(token);
+    axios.defaults.headers.common["auth_token"] = `${token}`;
+    const url = config.BASE_URL
     this.setState({
-        profileId: decoded.id
-      })
+      profileId: decoded.id
+    })
+    axios.get(url+'/api/workspaces/self')
+    .then((response) => {
+      if (response.status === 200) {
+        this.setState({
+          workspaces: response.data.workspaces
+        });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+
+
   }
   render() {
     const { classes } = this.props;
+    console.log(this.state.workspaces)
     return (
       <div className="WorkspaceListContainer">
         <Navbar />
@@ -130,7 +149,7 @@ class WorkspaceList extends Component {
                 >
                   Workspaces
                 </Typography>
-                {workspaces.map((item, index) => {
+                {this.state.workspaces !== null ? this.state.workspaces.map((item, index) => {
                   return (
                     <Card className={classes.root}>
                       <CardHeader style={{color: colors.primaryDark}} title={item.title} />
@@ -145,7 +164,7 @@ class WorkspaceList extends Component {
                         </Typography>
                       </CardContent>
                       <CardActions style={{display: "flex",  justifyContent: "space-between"}}>
-                      <Link to = {`/${this.state.profileId}/workspace/workspaceid`}>
+                      <Link to = {`/${this.state.profileId}/workspace/${item.id}`}>
                         <IconButton aria-label="view">
                           <PageviewIcon style={{color: colors.tertiary}}/>
                         </IconButton>
@@ -156,7 +175,8 @@ class WorkspaceList extends Component {
                       </CardActions>
                     </Card>
                   );
-                })}
+                }) : <div>You havent create a workspace</div>}
+
               </div>
               <Link to = {`/${this.state.profileId}/workspace/new`} style={{textDecoration: "none"}}>
               <IconButton disableRipple aria-label="create" style={{border: "none", borderRadius: "0%", backgroundColor: colors.tertiaryDark}}>
