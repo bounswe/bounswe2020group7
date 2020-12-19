@@ -1,19 +1,20 @@
 import React, { Component } from "react";
-import Navbar from "../NavBar/NavBar";
-import colors from "../../utils/colors";
-import config from "../../utils/config";
-import "./Workspace.css";
-import WorkspaceStepper from "./WorkspaceStepper/WorkspaceStepper";
+import Navbar from "../../NavBar/NavBar";
+import colors from "../../../utils/colors";
+import config from "../../../utils/config";
+import "./WorkspaceCreate.css";
+import WorkspaceStepper from "../WorkspaceStepper/WorkspaceStepper";
 import axios from "axios";
-import Spinner from "../Spinner/Spinner";
+import Spinner from "../../Spinner/Spinner";
 import MuiAlert from "@material-ui/lab/Alert";
 import Snackbar from "@material-ui/core/Snackbar";
+import jwt_decode from "jwt-decode";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-class Workspace extends Component {
+class WorkspaceCreate extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -119,20 +120,26 @@ class Workspace extends Component {
       formData.append("max_collaborators", this.state.max_collaborators);
     }
     if (this.state.requirements !== "") {
-      formData.append("requirements", this.state.requirements);
+      let requirementsSent = this.state.requirements.split(",")
+      formData.append("requirements", JSON.stringify(requirementsSent));
     }
     if (this.state.skills.length !== 0) {
-      formData.append("skills", this.state.skills);
+
+      formData.append("skills", JSON.stringify(this.state.skills));
     }
     if (this.state.deadline !== "") {
       formData.append("deadline", this.state.deadline);
     }
     this.setState({ isSending: true });
-    //const url = config.BASE_URL
-    const url = "https://jsonplaceholder.typicode.com";
+    const url = config.BASE_URL
+    const token = localStorage.getItem("jwtToken");
     axios
-      .post(url + "/posts", formData)
-      .then((response) => {
+      .post(url + "/api/workspaces", formData, {
+        headers: {
+          'auth_token': token //the token is a variable which holds the token
+        },
+      }).then((response) => {
+
         if (response.status === 201) {
           this.setState({
             isSending: false,
@@ -229,4 +236,4 @@ class Workspace extends Component {
   }
 }
 
-export default Workspace;
+export default WorkspaceCreate;

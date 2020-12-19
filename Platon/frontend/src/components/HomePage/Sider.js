@@ -101,4 +101,20 @@ class Sider extends React.Component {
 }
 
 
+                </SubMenu>
+                </Link>
+               <Link to ={`/${this.state.profileId}/workspace`}>
+                <SubMenu
+                    key="sub4"
+                    title="Workspaces">
+                </SubMenu>
+                </Link>
+               <Link to ={`/${this.state.profileId}`}>
+                <SubMenu
+                    key="sub4"
+                    title="Settings">
+                </SubMenu>
+</Link>
+
+
 export default Sider

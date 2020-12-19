@@ -48,7 +48,7 @@ class HomePage extends React.Component {
                     </Layout>
                 </Layout>
             </Layout>
-            <Footer style={{ textAlign: 'center',position:'fixed',marginLeft:200 }}>Ant Design ©2018 Created by Ant UED</Footer>
+            <Footer style={{ textAlign: 'center',position:'fixed',marginLeft:200 }}>Platon</Footer>
         </Layout>
 
 

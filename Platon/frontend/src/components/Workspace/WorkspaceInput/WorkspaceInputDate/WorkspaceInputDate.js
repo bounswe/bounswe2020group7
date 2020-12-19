@@ -1,10 +1,9 @@
-import React, {useState} from 'react';
+import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import colors from '../../../../utils/colors';
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
-import moment from 'moment';
 
 const StyledTextField = withStyles({
     root: {
