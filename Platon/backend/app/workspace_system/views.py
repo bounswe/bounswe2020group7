@@ -98,11 +98,11 @@ class WorkspacesAPI(Resource):
                     add_workspace_requirements(new_workspace.id, new_workspace_requirements)
                     add_workspace_contribution(new_workspace.id, requester_id)
                 except:
-                    return make_response(jsonify({"error" : "The server is not connected to the database. (Workspace skills/requirements/contributions could not get created.)"}, 500))
+                    return make_response(jsonify({"error" : "The server is not connected to the database. (Workspace skills/requirements/contributions could not get created.)"}), 500)
                 else:
-                    return make_response(jsonify({"message" : "Workspace has been successfully created."}, 201))
+                    return make_response(jsonify({"message" : "Workspace has been successfully created."}), 201)
         else:
-            return make_response(jsonify({"error" : "Missing data fields or invalid data."}, 400))
+            return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
 
 
     # GET request
