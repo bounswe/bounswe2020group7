@@ -4,7 +4,7 @@ class UpcomingEvent(db.Model):
     __tablename__ = "upcoming_events"
     id = db.Column(db.Integer,primary_key=True,autoincrement=True)
     title = db.Column(db.String(200),nullable=False)
-    acronym = db.Column(db.String(30),nullable=False)
+    acronym = db.Column(db.String(100),nullable=False)
     location = db.Column(db.String(100))
     date = db.Column(db.String(100))
     deadline = db.Column(db.String(100))
