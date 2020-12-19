@@ -14,13 +14,21 @@ class UpcomingEventsManager():
     date_regex = '<td align="[\s\S]*">([\s\S]*?)</td>\s<td align="[\s\S]*">([\s\S]*?)</td>\s<td align="[\s\S]*">([\s\S]*?)</td>'
 
     @staticmethod
+    def convert_to_utf_8(string):
+        return string.encode("ascii", "ignore").decode("utf-8")
+
+    @staticmethod
     def parse_event(first_part,second_part):
         # Parse link and title by using regular expressions
         link,acronym,title = re.findall(UpcomingEventsManager.title_regex,first_part)[0]
         # Parse date, deadline and location by uning regular expressions
         date,location,deadline = re.findall(UpcomingEventsManager.date_regex,second_part)[0]
-        return {'link': "http://www.wikicfp.com" + link, 'acronym': acronym, 'title': title,
-                'date': date, 'location': location, 'deadline': deadline}
+        convert_to_utf_8 = UpcomingEventsManager.convert_to_utf_8
+        if title == 'Kantâ\x80\x99s Transcendental Dialectic: A Re-Evaluation':
+            a = convert_to_utf_8(title)
+        return {'link': "http://www.wikicfp.com" + convert_to_utf_8(link), 'acronym': convert_to_utf_8(acronym),
+                'title': convert_to_utf_8(title), 'date': convert_to_utf_8(date), 
+                'location': convert_to_utf_8(location), 'deadline': convert_to_utf_8(deadline)}
     
     @staticmethod
     def get_number_of_pages():
@@ -64,15 +72,15 @@ class UpcomingEventsManager():
                 else:
                     new_event = UpcomingEvent(upcoming_event["title"],upcoming_event["acronym"],upcoming_event["location"],
                                             upcoming_event["date"],upcoming_event["deadline"],upcoming_event["link"])
-                    try:
-                        db.session.add(new_event)
-                        db.session.commit()
-                    except:
-                        pass
-
+                try:
+                    db.session.add(new_event)
+                    db.session.commit()
+                except:
+                    pass
+                
 def schedule_regularly():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(func=UpcomingEventsManager.update_upcoming_events, trigger="interval",seconds=60*60)
+    scheduler.add_job(func=UpcomingEventsManager.update_upcoming_events, trigger="interval",seconds=1)
     scheduler.start()
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())   
