@@ -4,12 +4,12 @@ class Workspace(db.Model):
     __tablename__ = "workspaces"
     id = db.Column(db.Integer,primary_key=True,autoincrement=True)
     creator_id = db.Column(db.Integer,db.ForeignKey('users.id'))
-    is_private = db.Column(db.Boolean,nullable=False)
+    is_private = db.Column(db.Boolean,default=False,nullable=False)
     title = db.Column(db.String(256),nullable=False)
-    state = db.Column(db.SmallInteger,nullable=False)
+    state = db.Column(db.SmallInteger,default=0,nullable=False)
     timestamp = db.Column(db.DateTime,default=db.func.now(),nullable=False)
     description = db.Column(db.String(2000))
-    deadline = db.Column(db.DateTime)
+    deadline = db.Column(db.DateTime,nullable=True)
     max_collaborators = db.Column(db.SmallInteger,default=10)
     trending_score = db.Column(db.Float, default = 0.0)
     view_count = db.Column(db.Integer,default=0)
@@ -22,12 +22,12 @@ class WorkspaceSkill(db.Model):
 class WorkspaceRequirement(db.Model):
     __tablename__ = "workspace_requirements"
     workspace_id = db.Column(db.Integer,db.ForeignKey('workspaces.id',ondelete="CASCADE"),primary_key=True)
-    requirements = db.Column(db.String(200))
+    requirement_id = db.Column(db.Integer,db.ForeignKey('requirements.id',ondelete="CASCADE"),primary_key=True)
 
 class Contribution(db.Model):
     __tablename__ = "contributions"
     workspace_id = db.Column(db.Integer,db.ForeignKey('workspaces.id'),primary_key=True)
-    user_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"),primary_key=True)
+    contributor_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"),primary_key=True)
     is_active = db.Column(db.Boolean,nullable=False)
 
 class CollaborationInvitation(db.Model):
@@ -71,3 +71,8 @@ class IssueComment(db.Model):
     issue_id = db.Column(db.Integer,db.ForeignKey('issues.id',ondelete="CASCADE"))
     commenter_id = db.Column(db.Integer,db.ForeignKey('users.id'))
     comment = db.Column(db.String(512))
+
+class Requirement(db.Model):
+    __tablename__ = "requirements"
+    id = db.Column(db.Integer,primary_key=True,autoincrement=True)
+    text = db.Column(db.String(200))
