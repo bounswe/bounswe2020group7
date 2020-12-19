@@ -12,7 +12,7 @@ from app.auth_system.models import User
 
 from app.auth_system.helpers import login_required
 from app.workspace_system.helpers import *
-from app.file_system.helpers.FileSystem import initialize_ws
+from app.file_system.helpers import FileSystem
 
 workspace_system_ns = Namespace("Workspace System",
                             description="Workspace System Endpoints",
@@ -92,7 +92,7 @@ class WorkspacesAPI(Resource):
             except:
                 return make_response(jsonify({"error" : "The server is not connected to the database. (Workspace could not get created.)"}, 500))
             else:
-                initialize_ws(new_workspace.id)
+                FileSystem.initialize_ws(new_workspace.id)
                 try:
                     add_workspace_skills(new_workspace.id, new_workspace_skills)
                     add_workspace_requirements(new_workspace.id, new_workspace_requirements)
