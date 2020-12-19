@@ -2,13 +2,18 @@
     background-color: #5A5E5F;
     border-radius: 0.5em;
     padding: 16px;
- }
+}
 
- .UpcomingEventsSpinner{
+.UpcomingEventsSpinner {
     margin: 20vh 0px;
     height: 20vh;
     display: flex;
     justify-content: center;
     align-items: center;
+}
 
-  }
+.paginationContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

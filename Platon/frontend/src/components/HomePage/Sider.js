@@ -50,25 +50,20 @@ class Sider extends React.Component {
       >
         <Menu.Item
           key={'1'}
+          icon={<MailOutlined color='white' />}
         >
           <Link to={'/'}>
-            <span>
-              <MailOutlined />
-              <span>Home</span>
-            </span>
+            <span>Home</span>
           </Link>
         </Menu.Item>
-        <Menu.Item key="2">
+        <Menu.Item key="2" icon={<AppstoreOutlined />}>
           <Link to={`/${this.state.profileId}`}>
-            <AppstoreOutlined />
             <span>Profile</span>
           </Link>
         </Menu.Item>
-        <Menu.Item
-          key="3"
-        >
+        <Menu.Item key="3">
           <Link to={`/${this.state.profileId}`}>
-            <span> Messages </span>
+            <span>Messages</span>
           </Link>
         </Menu.Item>
         <SubMenu
