@@ -58,3 +58,12 @@ class DeleteWorkspaceForm(Form):
 delete_workspace_parser = reqparse.RequestParser()
 delete_workspace_parser.add_argument("workspace_id",required=True,type=int,help="ID of the requested workspace", location="args")
 delete_workspace_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
+
+class TrendingProjectsForm(Form):
+	number_of_workspaces = IntegerField("number_of_workspaces",validators=[validators.DataRequired()])
+
+trending_project_parser = reqparse.RequestParser()
+trending_project_parser.add_argument("number_of_workspaces",required=True,type=int,help="Number of Workspaces", location="args")
+
+get_self_parser = reqparse.RequestParser()
+get_self_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
