@@ -10,8 +10,13 @@ import { withStyles } from '@material-ui/core/styles'
 const BASE_URL = 'http://18.185.75.161:5000/api/upcoming_events'
 const ITEMS_PER_PAGE = 5
 
+const useStyles = (theme) => ({
+  typography: {
+    color: colors.secondaryDark,
+  },
+})
 
-const UpcomingEvents = () => {
+const UpcomingEvents = (props) => {
   const [data, setData] = useState({})
   const [fetching, setFetching] = useState(false)
   const [page, setPage] = useState(1)
@@ -21,10 +26,9 @@ const UpcomingEvents = () => {
       color: colors.secondary,
     },
     selected: {
-      backgroundColor: colors.quaternaryDark + '!important'
+      backgroundColor: colors.quaternaryDark + '!important',
     },
   }, { name: 'MuiPaginationItem' })(Pagination)
-
 
   useEffect(() => {
     const endPoint = `${BASE_URL}?page=${page - 1}&per_page=${ITEMS_PER_PAGE}`
@@ -68,7 +72,20 @@ const UpcomingEvents = () => {
             />
           ))}
           <div className='paginationContainer'>
-            <StyledPagination count={data.number_of_pages} onChange={handlePageChange} page={page}/>
+            <StyledPagination
+              count={data.number_of_pages}
+              onChange={handlePageChange}
+              page={page}
+            />
+            <div className="disclaimer" style={{ marginTop: '8px' }}>
+              <Typography
+                component="body2"
+                variant="body2"
+                className={props.classes.typography}
+              >
+                Disclaimer: Data is provided by <a href='http://www.wikicfp.com/cfp/'>CFP API</a>.
+              </Typography>
+            </div>
           </div>
         </div>
       )}
@@ -76,4 +93,4 @@ const UpcomingEvents = () => {
   )
 }
 
-export default UpcomingEvents
+export default withStyles(useStyles)(UpcomingEvents)
