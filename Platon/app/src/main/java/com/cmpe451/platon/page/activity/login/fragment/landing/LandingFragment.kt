@@ -72,7 +72,7 @@ class LandingFragment : Fragment(),TrendingProjectsAdapter.TrendingProjectButton
         }
         return false
     }
-    
+
     private fun setObservers(){
         mHomeViewModel.getTrendingProjectsResourceResponse.observe(viewLifecycleOwner, {t->
             when(t.javaClass){
