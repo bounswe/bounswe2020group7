@@ -8,13 +8,9 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.cmpe451.platon.R
-import com.cmpe451.platon.databinding.TrendProjectCellBinding
 import com.cmpe451.platon.databinding.UpcomingEventCellBinding
-import com.cmpe451.platon.util.Definitions.TrendingProject
-import com.cmpe451.platon.util.Definitions.UpcomingEvent
+import com.cmpe451.platon.network.models.UpcomingEvent
 
 class UpcomingEventsAdapter(private val data: ArrayList<UpcomingEvent>, private val context: Context, private val upcomingEventsButtonClickListener: UpcomingButtonClickListener) :
 
@@ -59,12 +55,9 @@ class UpcomingEventsAdapter(private val data: ArrayList<UpcomingEvent>, private 
         // - replace the contents of the view with that element
 
         holder.binding.upcomingEventTitle.text = data[position].title
-        val drawable = data[position].img
-        drawable?.setBounds(0,0,drawable.intrinsicWidth,drawable.intrinsicHeight)
-        holder.binding.upcomingEventTitle.setCompoundDrawables(drawable, null, null, null)
         holder.binding.upcomingEventDate.text = data[position].date
-        holder.binding.upcomingEventDesc.text = data[position].desc
-        holder.binding.upcomingEventType.text = data[position].type.toString()
+        holder.binding.upcomingEventDesc.text = data[position].location
+        holder.binding.upcomingEventType.text = data[position].date
 
         holder.bindData(position, upcomingEventsButtonClickListener)
     }

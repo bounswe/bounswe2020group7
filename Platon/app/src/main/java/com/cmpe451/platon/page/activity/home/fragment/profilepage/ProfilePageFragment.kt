@@ -70,7 +70,6 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
             override fun loadMoreItems() {
                 if(maxPageNumberResearch-1 > currentPage){
                     currentPage++
-                    Toast.makeText(requireContext(), "Next page fetched!", Toast.LENGTH_SHORT).show()
                     mProfilePageViewModel.fetchResearch((activity as HomeActivity).token, (activity as HomeActivity).userId, currentPage, 5)
                 }
             }

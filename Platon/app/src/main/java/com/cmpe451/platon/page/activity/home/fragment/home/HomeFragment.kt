@@ -1,5 +1,6 @@
 package com.cmpe451.platon.page.activity.home.fragment.home
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -23,16 +24,18 @@ import com.cmpe451.platon.databinding.TrendProjectCellBinding
 import com.cmpe451.platon.databinding.UpcomingEventCellBinding
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.ActivityStreamElement
+import com.cmpe451.platon.network.models.TrendingProject
+import com.cmpe451.platon.network.models.UpcomingEvent
 import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.util.Definitions
+import java.lang.Error
 
 class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonClickListener, UpcomingEventsAdapter.UpcomingButtonClickListener, ActivityStreamAdapter.ActivityStreamButtonClickListener {
 
-    private lateinit var trendingProjectsRecyclerView: RecyclerView
-    private lateinit var upcomingEventsRecyclerView: RecyclerView
-    private lateinit var activityStreamRecyclerView: RecyclerView
     private lateinit var binding: FragmentHomeBinding
     private val mHomeViewModel: HomeViewModel by activityViewModels()
+
+    private lateinit var dialog:AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,14 +55,47 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
         initViews()
         setListeners()
 
+        setObservers()
         mHomeViewModel.getActivities((activity as HomeActivity).token!!, 0, 5)
+        mHomeViewModel.getTrendingProjects(10)
+        mHomeViewModel.getUpcomingEvents(0, 5)
+
+
     }
 
+    private fun setObservers(){
+        mHomeViewModel.getTrendingProjectsResourceResponse.observe(viewLifecycleOwner, {t->
+            when(t.javaClass){
+                Resource.Success::class.java ->{
+                    binding.homeTrendingProjectsRecyclerView.adapter =
+                            TrendingProjectsAdapter(t.data!!.trending_projects as ArrayList<TrendingProject>, requireContext(), this)
 
+                }
+                Resource.Error::class.java ->{
+                    Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
+
+
+        mHomeViewModel.getUpcomingEventsResourceResponse.observe(viewLifecycleOwner, {t->
+            when(t.javaClass){
+                Resource.Success::class.java ->{
+                    binding.homeUpcomingEventsRecyclerView.adapter =
+                            UpcomingEventsAdapter(t.data!!.upcoming_events as ArrayList<UpcomingEvent>, requireContext(), this)
+
+                }
+                Resource.Error::class.java ->{
+                    Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+
+
+        })
+    }
 
     private fun initViews() {
-        val myTrendingProject: ArrayList<Definitions.TrendingProject> = mHomeViewModel.getTrendingProjects()
-        val myUpcomingEvents: ArrayList<Definitions.UpcomingEvent> = mHomeViewModel.getUpcomingEvents()
+
         val myActivities: ArrayList<ActivityStreamElement> = arrayListOf()
 
         val height = resources.displayMetrics.heightPixels
@@ -69,31 +105,28 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
         val layoutManageUpcoming = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         val layoutManageActivity = LinearLayoutManager(context)
 
+        binding.homeTrendingProjectsRecyclerView.layoutManager = layoutManagerTrending
+        binding.homeUpcomingEventsRecyclerView.layoutManager = layoutManageUpcoming
+        binding.homeActivityStreamRecyclerView.layoutManager = layoutManageActivity
+
+
         binding.homeActivityStreamRecyclerView.layoutParams = LinearLayout.LayoutParams(width, (height/2))
         //binding.homeUpcomingEventsRecyclerView.layoutParams = LinearLayout.LayoutParams(width/2, height/2)
         binding.homeTrendingProjectsRecyclerView.layoutParams = LinearLayout.LayoutParams(width, (height/2))
 
-        trendingProjectsRecyclerView = binding.homeTrendingProjectsRecyclerView
-        trendingProjectsRecyclerView.adapter = TrendingProjectsAdapter(myTrendingProject, requireContext(), this)
-        trendingProjectsRecyclerView.layoutManager = layoutManagerTrending
 
+        binding.homeActivityStreamRecyclerView.adapter = ActivityStreamAdapter(myActivities, requireContext(), this)
 
-        upcomingEventsRecyclerView = binding.homeUpcomingEventsRecyclerView
-        upcomingEventsRecyclerView.adapter = UpcomingEventsAdapter(myUpcomingEvents,requireContext(), this)
-        upcomingEventsRecyclerView.layoutManager = layoutManageUpcoming
-
-        activityStreamRecyclerView = binding.homeActivityStreamRecyclerView
-        activityStreamRecyclerView.adapter = ActivityStreamAdapter(myActivities, requireContext(), this)
-        activityStreamRecyclerView.layoutManager = layoutManageActivity
     }
 
 
     private fun setListeners() {
+        dialog = Definitions().createProgressBar(requireContext())
 
         mHomeViewModel.getActivityStreamResourceResponse.observe(viewLifecycleOwner, { t->
             when(t.javaClass){
                 Resource.Success::class.java -> {
-                    (activityStreamRecyclerView.adapter as ActivityStreamAdapter).submitElements(t.data as ArrayList<ActivityStreamElement>)
+                    (binding.homeActivityStreamRecyclerView.adapter as ActivityStreamAdapter).submitElements(t.data as ArrayList<ActivityStreamElement>)
                 }
                 Resource.Error::class.java ->Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
             }

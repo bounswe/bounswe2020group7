@@ -10,9 +10,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.databinding.TrendProjectCellBinding
+import com.cmpe451.platon.network.models.TrendingProject
 import com.cmpe451.platon.util.Definitions
 
-class TrendingProjectsAdapter(private val data: ArrayList<Definitions.TrendingProject>, private val context: Context, private val trendingProjectsButtonClickListener: TrendingProjectButtonClickListener) :
+class TrendingProjectsAdapter(private val data: ArrayList<TrendingProject>, private val context: Context, private val trendingProjectsButtonClickListener: TrendingProjectButtonClickListener) :
 
         RecyclerView.Adapter<TrendingProjectsAdapter.TrendProjectViewHolder>() {
 
@@ -48,11 +49,8 @@ class TrendingProjectsAdapter(private val data: ArrayList<Definitions.TrendingPr
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
-        val drawable = data[position].img
-        drawable?.setBounds(0,0,drawable.intrinsicWidth,drawable.intrinsicHeight)
         holder.binding.descTrendProjectTv.text = data[position].description
-        holder.binding.titleTrendProjectTv.text = data[position].project_title
-        holder.binding.titleTrendProjectTv.setCompoundDrawables(drawable, null, null, null)
+        holder.binding.titleTrendProjectTv.text = data[position].title
         holder.binding.whyTrendProjectTv.text = "Popular"
 
         holder.bindData(holder.binding, position, trendingProjectsButtonClickListener)
@@ -62,7 +60,7 @@ class TrendingProjectsAdapter(private val data: ArrayList<Definitions.TrendingPr
     /**
      * Adds element to given position
      */
-    fun addElement(position: Int, element: Definitions.TrendingProject){
+    fun addElement(position: Int, element: TrendingProject){
         data.add(position, element)
         this.notifyItemInserted(position)
     }
@@ -77,7 +75,7 @@ class TrendingProjectsAdapter(private val data: ArrayList<Definitions.TrendingPr
     /**
      * Updates element at given position
      */
-    fun updateElement(position: Int, element: Definitions.TrendingProject){
+    fun updateElement(position: Int, element:TrendingProject){
         data[position] = element
         this.notifyItemChanged(position)
     }
@@ -88,7 +86,7 @@ class TrendingProjectsAdapter(private val data: ArrayList<Definitions.TrendingPr
         data.clear()
         this.notifyDataSetChanged()
     }
-    fun submitElements(list: List<Definitions.TrendingProject>){
+    fun submitElements(list: List<TrendingProject>){
         data.clear()
         data.addAll(list)
         notifyDataSetChanged()
