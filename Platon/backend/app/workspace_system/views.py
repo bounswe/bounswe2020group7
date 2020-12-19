@@ -162,12 +162,14 @@ class IssueAPI(Resource):
                     return make_response(jsonify({'error': 'User is not an active contributor currently'}), 401)
             
             try:
-                issueSearch = Issue.query.filter(Issue.workspace_id == workspace_id)
+                issueSearch = Issue.query.filter(Issue.workspace_id == workspace_id).all()
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
-            if issueSearch is []:
-                return make_response(jsonify({'error': 'Issues not found'}), 404)
+            # If there is no issue in corresponding issue, I'll return an empty list with 200 code.
+            # Since it is not some kind of an error, I thought 200 code is more appropriate.
+            if len(issueSearch) == 0:
+                return make_response(jsonify({'result': []}), 200)
 
             return_list = []
             for issue in issueSearch:
@@ -204,7 +206,16 @@ class IssueAPI(Resource):
                     'creator_is_private': creator_user.is_private
                     })
             
-            return make_response(jsonify({'result': return_list}),200)
+            # Pagination functionality
+            number_of_pages = 1
+            if form.page.data is not None and form.per_page.data is not None:
+                per_page = form.per_page.data
+                number_of_pages = math.ceil(len(followings_list) / per_page)
+                # Assign the page index to the maximum if it exceeds the max index
+                page = form.page.data if form.page.data < number_of_pages else number_of_pages-1
+                return_list = return_list[page*per_page:(page+1)*per_page]
+            return make_response(jsonify({'number_of_pages': number_of_pages ,'result': return_list}),200)
+            
             
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
@@ -355,13 +366,13 @@ class IssueAssigneeAPI(Resource):
                     return make_response(jsonify({'error': 'User is not an active contributor currently'}), 401)
             
             try:
-                issueAssigneeSearch = IssueAssignee.query.filter(IssueAssignee.issue_id == form.issue_id.data)
+                issueAssigneeSearch = IssueAssignee.query.filter(IssueAssignee.issue_id == form.issue_id.data).all()
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
             # If there is no assignee in corresponding issue, I'll return an empty list with 200 code.
             # Since it is not some kind of an error, I thought 200 code is more appropriate.
-            if issueAssigneeSearch is []:
+            if len(issueAssigneeSearch) == 0:
                 return make_response(jsonify({'result': []}), 200)
 
             return_list = []
@@ -393,7 +404,15 @@ class IssueAssigneeAPI(Resource):
                     "assignee_institution": assignee.institution,
                     })
             
-            return make_response(jsonify({'result': return_list}),200)
+            # Pagination functionality
+            number_of_pages = 1
+            if form.page.data is not None and form.per_page.data is not None:
+                per_page = form.per_page.data
+                number_of_pages = math.ceil(len(followings_list) / per_page)
+                # Assign the page index to the maximum if it exceeds the max index
+                page = form.page.data if form.page.data < number_of_pages else number_of_pages-1
+                return_list = return_list[page*per_page:(page+1)*per_page]
+            return make_response(jsonify({'number_of_pages': number_of_pages ,'result': return_list}),200)
             
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
@@ -512,18 +531,17 @@ class IssueCommentAPI(Resource):
                     return make_response(jsonify({'error': 'User is not an active contributor currently'}), 401)
             
             try:
-                issueCommentSearch = IssueComment.query.filter(IssueComment.issue_id == form.issue_id.data)
+                issueCommentSearch = IssueComment.query.filter(IssueComment.issue_id == form.issue_id.data).all()
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
+            # If there is no comment in corresponding issue, I'll return an empty list with 200 code.
+            # Since it is not some kind of an error, I thought 200 code is more appropriate.
+            if len(issueCommentSearch)==0:
+                return make_response(jsonify({'result': []}), 200)
 
             return_list = []
             for issue_comment in issueCommentSearch:
-
-                # If there is no comment in corresponding issue, I'll return an empty list with 206 code.
-                # Since it is not some kind of an error, I thought 206 code is more appropriate.
-                if issue_comment is None:
-                    return make_response(jsonify({'result': []}), 206)
 
                 try:
                     commenter = User.query.filter(User.id == issue_comment.commenter_id).first()
@@ -551,9 +569,15 @@ class IssueCommentAPI(Resource):
                     "owner_rate": commenter.rate,
                     })
             
-            # If there is no comment in corresponding issue, I'll return an empty list with 200 code.
-            # Since it is not some kind of an error, I thought 200 code is more appropriate.
-            return make_response(jsonify({'result': return_list}),200)
+            # Pagination functionality
+            number_of_pages = 1
+            if form.page.data is not None and form.per_page.data is not None:
+                per_page = form.per_page.data
+                number_of_pages = math.ceil(len(followings_list) / per_page)
+                # Assign the page index to the maximum if it exceeds the max index
+                page = form.page.data if form.page.data < number_of_pages else number_of_pages-1
+                return_list = return_list[page*per_page:(page+1)*per_page]
+            return make_response(jsonify({'number_of_pages': number_of_pages ,'result': return_list}),200)
             
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)

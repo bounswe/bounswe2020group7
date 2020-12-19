@@ -53,7 +53,8 @@ class IssuesTest(BaseTest):
         workspaces = [
             Workspace(1, 0, "coronovirus study", 1), # public workspace by Umut on state 1
             Workspace(2, 1, "SWE difficulties", 1), # private workspace by Can on state 1
-            Workspace(4, 1, "honeybadger", 1) # private workspace by Hilal on state 1
+            Workspace(4, 1, "honeybadger", 1), # private workspace by Hilal on state 1
+            Workspace(3, 0, "bos", 1) # public workspace by Alperen on state 1
         ]
 
         for workspace in workspaces:
@@ -67,7 +68,8 @@ class IssuesTest(BaseTest):
             Contribution(2, 3, 1),  # alperen will be active in SWE difficulties
             Contribution(3, 2, 0), # can will be inactive in honey badger study
             Contribution(3, 4, 1), # hilal will be active in honey badger study
-            Contribution(3, 1, 1) # umut will be active in honey badger study
+            Contribution(3, 1, 1), # umut will be active in honey badger study
+            Contribution(4, 3, 1) # alperen will be active in bos
         ]
 
         for contribution in contributions:
@@ -105,11 +107,20 @@ class IssuesTest(BaseTest):
         
     def test_get_issues(self):
 
+        # Can will try to get the issues of a public workspace in which there is no issue.
+        valid_token = generate_token(2, datetime.timedelta(minutes=10))
+
+        data = {'workspace_id': 4}
+        actual_response = self.client.get('/api/workspaces/issue', query_string=data,
+                                          headers={'auth_token': valid_token})
+
+        self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
+
         # Can(2) will try to get the issues of a public workspace. It should be successful.
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
 
         data = {'workspace_id': 1}
-        actual_response = self.client.get('/api/workspace/issue', query_string=data,
+        actual_response = self.client.get('/api/workspaces/issue', query_string=data,
                                           headers={'auth_token': valid_token})
 
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
@@ -118,7 +129,7 @@ class IssuesTest(BaseTest):
         valid_token = generate_token(1, datetime.timedelta(minutes=10))
 
         data = {'workspace_id': 2}
-        actual_response = self.client.get('/api/workspace/issue', query_string=data,
+        actual_response = self.client.get('/api/workspaces/issue', query_string=data,
                                           headers={'auth_token': valid_token})
 
         self.assertEqual(actual_response.status_code, 401, 'Incorrect HTTP Response Code')
@@ -128,7 +139,7 @@ class IssuesTest(BaseTest):
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
 
         data = {'workspace_id': 2}
-        actual_response = self.client.get('/api/workspace/issue', query_string=data,
+        actual_response = self.client.get('/api/workspaces/issue', query_string=data,
                                           headers={'auth_token': valid_token})
 
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
@@ -139,7 +150,7 @@ class IssuesTest(BaseTest):
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
 
         data = {'workspace_id': 3}
-        actual_response = self.client.get('/api/workspace/issue', query_string=data,
+        actual_response = self.client.get('/api/workspaces/issue', query_string=data,
                                           headers={'auth_token': valid_token})
 
         self.assertEqual(actual_response.status_code, 401, 'Incorrect HTTP Response Code')
@@ -149,7 +160,7 @@ class IssuesTest(BaseTest):
         # Can(2) will try to post an issue into an workspace in which he is a contributor. Success.
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
         data = {'workspace_id': 2, 'title': "vlog idea", 'description': "why not vlogging the diffs?", 'deadline': datetime.datetime(2020, 12, 30)}
-        actual_response = self.client.post('/api/workspace/issue', data=data,
+        actual_response = self.client.post('/api/workspaces/issue', data=data,
                                           headers={'auth_token': valid_token})
 
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
@@ -158,7 +169,7 @@ class IssuesTest(BaseTest):
         # Can(2) will try to post an issue into an workspace in which he is not a contributor. Fail.
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
         data = {'workspace_id': 1, 'title': "vlog idea", 'description': "why not vlogging the diffs?", 'deadline': datetime.datetime(2020, 12, 30)}
-        actual_response = self.client.post('/api/workspace/issue', data=data,
+        actual_response = self.client.post('/api/workspaces/issue', data=data,
                                           headers={'auth_token': valid_token})
 
         # 404 is used, because active_contribution_required decorator returns 404.
@@ -169,7 +180,7 @@ class IssuesTest(BaseTest):
         # Can(2) will try to update an issue at an workspace in which he is a contributor. Success.
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
         data = {'workspace_id': 2, 'issue_id': 2, 'description': "hi alperen", 'deadline': datetime.datetime(2020, 12, 30), 'is_open': False}
-        actual_response = self.client.put('/api/workspace/issue', data=data,
+        actual_response = self.client.put('/api/workspaces/issue', data=data,
                                           headers={'auth_token': valid_token})
 
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
@@ -177,7 +188,7 @@ class IssuesTest(BaseTest):
         # Can(2) will try to update an issue at an workspace in which he is not a contributor. Fail.
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
         data = {'workspace_id': 1, 'issue_id': 2, 'title': "alperen related issue 2", 'description': "hi alperen", 'deadline': datetime.datetime(2020, 12, 30), 'is_open': True}
-        actual_response = self.client.put('/api/workspace/issue', data=data,
+        actual_response = self.client.put('/api/workspaces/issue', data=data,
                                           headers={'auth_token': valid_token})
         
         # 404 is used, because active_contribution_required decorator returns 404.
@@ -188,7 +199,7 @@ class IssuesTest(BaseTest):
         # Can(2) will try to delete an issue at an workspace in which he is a contributor. Success.
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
         data = {'workspace_id': 2, 'issue_id': 2}
-        actual_response = self.client.delete('/api/workspace/issue', data=data,
+        actual_response = self.client.delete('/api/workspaces/issue', data=data,
                                           headers={'auth_token': valid_token})
 
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
@@ -196,7 +207,7 @@ class IssuesTest(BaseTest):
         # Can(2) will try to delete an issue at an workspace in which he is not a contributor. Fail.
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
         data = {'workspace_id': 1, 'issue_id': 1}
-        actual_response = self.client.delete('/api/workspace/issue', data=data,
+        actual_response = self.client.delete('/api/workspaces/issue', data=data,
                                           headers={'auth_token': valid_token})
 
         # 404 is used, because active_contribution_required decorator returns 404.
@@ -204,11 +215,21 @@ class IssuesTest(BaseTest):
 
     def test_get_issue_assignees(self):
 
+        # Hilal(4) will try to get the issue assignees of a public workspace in which there is no issue assignee.
+        # Success
+        valid_token = generate_token(4, datetime.timedelta(minutes=10))
+
+        data = {'workspace_id': 3, 'issue_id': 3}
+        actual_response = self.client.get('/api/workspaces/issue/assignee', query_string=data,
+                                          headers={'auth_token': valid_token})
+
+        self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
+
         # Can(2) will try to get the issue assignees at a public workspace. Success.
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
 
         data = {'workspace_id': 1, 'issue_id': 1}
-        actual_response = self.client.get('/api/workspace/issue/assignee', query_string=data,
+        actual_response = self.client.get('/api/workspaces/issue/assignee', query_string=data,
                                           headers={'auth_token': valid_token})
 
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
@@ -217,7 +238,7 @@ class IssuesTest(BaseTest):
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
 
         data = {'workspace_id': 3, 'issue_id': 3}
-        actual_response = self.client.get('/api/workspace/issue/assignee', query_string=data,
+        actual_response = self.client.get('/api/workspaces/issue/assignee', query_string=data,
                                           headers={'auth_token': valid_token})
 
         self.assertEqual(actual_response.status_code, 401, 'Incorrect HTTP Response Code')
@@ -227,7 +248,7 @@ class IssuesTest(BaseTest):
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
 
         data = {'workspace_id': 2, 'issue_id':2}
-        actual_response = self.client.get('/api/workspace/issue/assignee', query_string=data,
+        actual_response = self.client.get('/api/workspaces/issue/assignee', query_string=data,
                                           headers={'auth_token': valid_token})
 
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
@@ -239,7 +260,7 @@ class IssuesTest(BaseTest):
         # Success.
         valid_token = generate_token(4, datetime.timedelta(minutes=10))
         data = {'workspace_id': 3, 'issue_id': 3, 'assignee_id': 1}
-        actual_response = self.client.post('/api/workspace/issue/assignee', data=data,
+        actual_response = self.client.post('/api/workspaces/issue/assignee', data=data,
                                           headers={'auth_token': valid_token})
 
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
@@ -249,7 +270,7 @@ class IssuesTest(BaseTest):
         # Fail.
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
         data = {'workspace_id': 2, 'issue_id': 2, 'assignee_id': 4}
-        actual_response = self.client.post('/api/workspace/issue/assignee', data=data,
+        actual_response = self.client.post('/api/workspaces/issue/assignee', data=data,
                                           headers={'auth_token': valid_token})
 
         self.assertEqual(actual_response.status_code, 404, 'Incorrect HTTP Response Code')
@@ -257,7 +278,7 @@ class IssuesTest(BaseTest):
         # Can(2) will try to post issue assignee at an workspace in which he is not a contributor. Fail.
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
         data = {'workspace_id': 1, 'issue_id': 1, 'assignee_id': 4}
-        actual_response = self.client.post('/api/workspace/issue/assignee', data=data,
+        actual_response = self.client.post('/api/workspaces/issue/assignee', data=data,
                                           headers={'auth_token': valid_token})
 
         self.assertEqual(actual_response.status_code, 404, 'Incorrect HTTP Response Code')
@@ -267,7 +288,7 @@ class IssuesTest(BaseTest):
         # Fail.
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
         data = {'workspace_id': 2, 'issue_id': 2, 'assignee_id': 3}
-        actual_response = self.client.post('/api/workspace/issue/assignee', data=data,
+        actual_response = self.client.post('/api/workspaces/issue/assignee', data=data,
                                           headers={'auth_token': valid_token})
 
         self.assertEqual(actual_response.status_code, 403, 'Incorrect HTTP Response Code')
@@ -277,7 +298,7 @@ class IssuesTest(BaseTest):
         # Can(2) will try to remove issue assignee at an workspace in which he is a contributor. Success.
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
         data = {'workspace_id': 2, 'issue_id': 2, 'assignee_id': 3}
-        actual_response = self.client.delete('/api/workspace/issue/assignee', data=data,
+        actual_response = self.client.delete('/api/workspaces/issue/assignee', data=data,
                                           headers={'auth_token': valid_token})
         
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
@@ -285,7 +306,7 @@ class IssuesTest(BaseTest):
         # Can(2) will try to remove issue assignee at an workspace in which he is not a contributor. Fail.
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
         data = {'workspace_id': 1, 'issue_id': 1, 'assignee_id': 1}
-        actual_response = self.client.delete('/api/workspace/issue/assignee', data=data,
+        actual_response = self.client.delete('/api/workspaces/issue/assignee', data=data,
                                           headers={'auth_token': valid_token})
         
         self.assertEqual(actual_response.status_code, 404, 'Incorrect HTTP Response Code')
@@ -297,7 +318,7 @@ class IssuesTest(BaseTest):
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
 
         data = {'workspace_id': 1, 'issue_id': 1}
-        actual_response = self.client.get('/api/workspace/issue/comment', query_string=data,
+        actual_response = self.client.get('/api/workspaces/issue/comment', query_string=data,
                                           headers={'auth_token': valid_token})
 
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
@@ -306,7 +327,7 @@ class IssuesTest(BaseTest):
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
 
         data = {'workspace_id': 3, 'issue_id': 3}
-        actual_response = self.client.get('/api/workspace/issue/comment', query_string=data,
+        actual_response = self.client.get('/api/workspaces/issue/comment', query_string=data,
                                           headers={'auth_token': valid_token})
 
         self.assertEqual(actual_response.status_code, 401, 'Incorrect HTTP Response Code')
@@ -316,7 +337,7 @@ class IssuesTest(BaseTest):
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
 
         data = {'workspace_id': 2, 'issue_id': 2}
-        actual_response = self.client.get('/api/workspace/issue/comment', query_string=data,
+        actual_response = self.client.get('/api/workspaces/issue/comment', query_string=data,
                                           headers={'auth_token': valid_token})
 
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
@@ -326,7 +347,7 @@ class IssuesTest(BaseTest):
         # Can(2) will try to post issue comment at an workspace in which he is a contributor. Success.
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
         data = {'workspace_id': 2, 'issue_id': 2, 'comment': "GREAAAT"}
-        actual_response = self.client.post('/api/workspace/issue/comment', data=data,
+        actual_response = self.client.post('/api/workspaces/issue/comment', data=data,
                                           headers={'auth_token': valid_token})
 
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
@@ -334,7 +355,7 @@ class IssuesTest(BaseTest):
         # Can(2) will try to post issue comment at an workspace in which he is not a contributor. Fail.
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
         data = {'workspace_id': 1, 'issue_id': 1, 'comment': "BADDDD"}
-        actual_response = self.client.post('/api/workspace/issue/comment', data=data,
+        actual_response = self.client.post('/api/workspaces/issue/comment', data=data,
                                           headers={'auth_token': valid_token})
 
         self.assertEqual(actual_response.status_code, 404, 'Incorrect HTTP Response Code')
@@ -346,7 +367,7 @@ class IssuesTest(BaseTest):
         # Success.
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
         data = {'workspace_id': 2, 'issue_id': 2, 'comment_id': 1}
-        actual_response = self.client.delete('/api/workspace/issue/comment', data=data,
+        actual_response = self.client.delete('/api/workspaces/issue/comment', data=data,
                                           headers={'auth_token': valid_token})
 
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
@@ -356,7 +377,7 @@ class IssuesTest(BaseTest):
         # Fail.
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
         data = {'workspace_id': 2, 'issue_id': 2, 'comment_id': 2}
-        actual_response = self.client.delete('/api/workspace/issue/comment', data=data,
+        actual_response = self.client.delete('/api/workspaces/issue/comment', data=data,
                                           headers={'auth_token': valid_token})
 
         self.assertEqual(actual_response.status_code, 401, 'Incorrect HTTP Response Code')
@@ -364,7 +385,7 @@ class IssuesTest(BaseTest):
         # Can(2) will try to remove issue comment at an workspace in which he is not a contributor. Fail.
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
         data = {'workspace_id': 3, 'issue_id': 3, 'comment_id': 3}
-        actual_response = self.client.delete('/api/workspace/issue/comment', data=data,
+        actual_response = self.client.delete('/api/workspaces/issue/comment', data=data,
                                           headers={'auth_token': valid_token})
 
         self.assertEqual(actual_response.status_code, 404, 'Incorrect HTTP Response Code')

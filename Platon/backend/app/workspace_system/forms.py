@@ -57,13 +57,18 @@ update_workspace_parser.add_argument("auth_token",required=True, type=str, help=
 class DeleteWorkspaceForm(Form):
 	workspace_id = IntegerField("ID of the workspace to be deleted", validators=[validators.DataRequired()])
 delete_workspace_parser = reqparse.RequestParser()
-delete_workspace_parser.add_argument("workspace_id",required=True,type=int,help="ID of the requested workspace", location="args") # location should be form, right?
+delete_workspace_parser.add_argument("workspace_id",required=True,type=int,help="ID of the requested workspace", location="form")
 delete_workspace_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
 
 class GetIssuesForm(Form):
 	workspace_id = IntegerField('workspace_id', validators=[validators.DataRequired()])
+	page = IntegerField("page")
+	per_page = IntegerField("per_page")
+
 get_issue_parser = reqparse.RequestParser()
 get_issue_parser.add_argument("workspace_id",required=True,type=int,help="ID of the requested workspace", location="args")
+get_issue_parser.add_argument('page',type=int,help="Page index that you want(Starts from 0)",location='args')
+get_issue_parser.add_argument('per_page',type=int,help="Number of items in a page",location='args')
 get_issue_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
 
 class PostIssuesForm(Form):
@@ -104,9 +109,14 @@ delete_issue_parser.add_argument("auth_token",required=True, type=str, help="Aut
 class GetIssueAssigneeForm(Form):
 	workspace_id = IntegerField('workspace_id', validators=[validators.DataRequired()])
 	issue_id = IntegerField('issue_id', validators=[validators.DataRequired()])
+	page = IntegerField("page")
+	per_page = IntegerField("per_page")
+
 get_issue_assignee_parser = reqparse.RequestParser()
 get_issue_assignee_parser.add_argument("workspace_id",required=True,type=int,help="ID of the requested workspace", location="args")
 get_issue_assignee_parser.add_argument("issue_id",required=True,type=int,help="ID of the issue", location="args")
+get_issue_assignee_parser.add_argument('page',type=int,help="Page index that you want(Starts from 0)",location='args')
+get_issue_assignee_parser.add_argument('per_page',type=int,help="Number of items in a page",location='args')
 get_issue_assignee_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
 
 class PostIssueAssigneeForm(Form):
@@ -132,9 +142,14 @@ delete_issue_assignee_parser.add_argument("auth_token",required=True, type=str, 
 class GetIssueCommentForm(Form):
 	workspace_id = IntegerField('workspace_id', validators=[validators.DataRequired()])
 	issue_id = IntegerField('issue_id', validators=[validators.DataRequired()])
+	page = IntegerField("page")
+	per_page = IntegerField("per_page")
+
 get_issue_comment_parser = reqparse.RequestParser()
 get_issue_comment_parser.add_argument("workspace_id",required=True,type=int,help="ID of the requested workspace", location="args")
 get_issue_comment_parser.add_argument("issue_id",required=True,type=int,help="ID of the issue", location="args")
+get_issue_comment_parser.add_argument('page',type=int,help="Page index that you want(Starts from 0)",location='args')
+get_issue_comment_parser.add_argument('per_page',type=int,help="Number of items in a page",location='args')
 get_issue_comment_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
 
 class PostIssueCommentForm(Form):
