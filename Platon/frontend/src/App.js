@@ -12,8 +12,9 @@ import EditProfile from './components/EditProfile/EditProfile';
 import Activation from './components/Activation/Activation';
 import WorkspaceCreate from './components/Workspace/WorkspaceCreate/WorkspaceCreate';
 import WorkspaceList from './components/Workspace/WorkspaceList/WorkspaceList';
+import WorkspaceView from './components/Workspace/WorkspaceView/WorkspaceView';
+import WorkspaceEdit from './components/Workspace/WorkspaceEdit/WorkspaceEdit';
 import { setAuthorizationToken } from './helpers/setAuthorizationToken';
-
 
 class App extends Component {
   constructor(props) {
@@ -62,7 +63,8 @@ class App extends Component {
       <Route path='/:profileId(\d+)/edit' exact component={!this.state.isAuthenticated ? Landing : EditProfile}/>
       <Route path='/:profileId(\d+)/workspace' exact component={WorkspaceList}/>
       <Route path='/:profileId(\d+)/workspace/new' exact component={WorkspaceCreate}/>
-
+      <Route path='/:profileId(\d+)/workspace/workspaceid' exact component={WorkspaceView}/>
+      <Route path='/:profileId(\d+)/workspace/workspaceid/edit' exact component={WorkspaceEdit}/>
       <Route path='/login' exact component={() => <Login isAuthenticated={this.state.isAuthenticated} handlerSuccessfulLogin={this.handlerSuccessfulLogin} />}/>
       <Route path='/register' exact  component={Register}/>
       <Route path='/forgotpassword' exact component={ForgotPassword}/>
