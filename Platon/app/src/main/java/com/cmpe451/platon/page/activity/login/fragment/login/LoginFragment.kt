@@ -48,6 +48,13 @@ class LoginFragment : Fragment() {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setListeners()
+        setObservers()
+        doAutoLogin()
+    }
+
     private fun doAutoLogin(){
         val mail = sharedPreferences.getString("mail", null)
         val pass = sharedPreferences.getString("pass", null)
@@ -59,17 +66,9 @@ class LoginFragment : Fragment() {
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setListeners()
-        doAutoLogin()
-    }
-
-
     private fun setListeners() {
         setFieldListeners()
         setButtonListeners()
-        setObservers()
     }
 
     private fun setFieldListeners(){

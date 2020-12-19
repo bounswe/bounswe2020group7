@@ -156,6 +156,7 @@ interface Webservice {
                    @Query("per_page") perPage:Int?):Call<UserSearch?>
 
 
+
     @GET("api/upcoming_events")
     fun getUpcomingEvents(
             @Query("page")  page: Int?,
@@ -164,7 +165,7 @@ interface Webservice {
 
     @GET("api/workspaces/trending_projects")
     fun getTrendingProjects(
-            @Query("number_of_workspaces") number :Int
+            @Query("number_of_workspaces") number_of_workspaces :Int
     ):Call<TrendingProjects?>
 
 }

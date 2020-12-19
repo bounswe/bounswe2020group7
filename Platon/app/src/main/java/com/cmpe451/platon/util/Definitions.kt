@@ -18,13 +18,7 @@ import java.util.*
 class Definitions {
 
     companion object {
-        val API_URL="http://18.185.75.161:5000/"
-        val API_PORT ="5000"
-        val FORGOT_PASS_ADDRESS = ""
-        val LOGIN_ADDRESS = ""
-        val REGISTER_ADDRESS = ""
-        val TRENDING_PROJECT_GUESTS_ADDRESS = ""
-        val UPCOMING_EVENTS_ADDRESS = ""
+        const val API_URL="http://18.185.75.161:5000/"
     }
 
     //class User(val id: Int, val name: String, val surname: String, val rating: Double, val bio: String)

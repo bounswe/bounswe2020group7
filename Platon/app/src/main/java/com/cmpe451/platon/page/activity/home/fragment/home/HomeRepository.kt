@@ -45,6 +45,7 @@ class HomeRepository{
     }
 
     fun fetchUpcomingEvents(page: Int?, pageSize: Int?){
+
         val service = RetrofitClient.getService()
         val call = service.getUpcomingEvents(page, pageSize)
 

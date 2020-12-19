@@ -49,29 +49,30 @@ class LandingFragment : Fragment(),TrendingProjectsAdapter.TrendingProjectButton
         binding = FragmentLandingBinding.inflate(layoutInflater)
         setHasOptionsMenu(true)
         sharedPreferences = activity?.getSharedPreferences("token_file", Context.MODE_PRIVATE)!!
-        doAutoLogin()
         return binding.root
-    }
-
-    private fun doAutoLogin(){
-        val mail = sharedPreferences.getString("mail", null)
-        val pass = sharedPreferences.getString("pass", null)
-        if(mail != null && pass != null){
-            findNavController().navigate(LandingFragmentDirections.actionLandingFragmentToLoginFragment())
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViews()
-        setListeners()
-
-        setObservers()
-        mHomeViewModel.getTrendingProjects(10)
-        mHomeViewModel.getUpcomingEvents(0, 5)
-
+        if(!doAutoLogin()){
+            initViews()
+            setListeners()
+            setObservers()
+            mHomeViewModel.getTrendingProjects(10)
+            mHomeViewModel.getUpcomingEvents(0, 5)
+        }
     }
 
+    private fun doAutoLogin():Boolean{
+        val mail = sharedPreferences.getString("mail", null)
+        val pass = sharedPreferences.getString("pass", null)
+        if(mail != null && pass != null){
+            findNavController().navigate(LandingFragmentDirections.actionLandingFragmentToLoginFragment())
+            return true
+        }
+        return false
+    }
+    
     private fun setObservers(){
         mHomeViewModel.getTrendingProjectsResourceResponse.observe(viewLifecycleOwner, {t->
             when(t.javaClass){

@@ -29,8 +29,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility = "8"
+        targetCompatibility = "8"
     }
     kotlinOptions {
         jvmTarget = '1.8'
@@ -40,13 +40,6 @@ android {
 }
 
 dependencies {
-    // optional - Kotlin Extensions and Coroutines support for Room
-    def room_version = "2.2.5"
-    implementation "androidx.room:room-ktx:$room_version"
-
-    // optional - Test helpers
-    testImplementation "androidx.room:room-testing:$room_version"
-
     // Lifecycle components
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
     implementation "androidx.lifecycle:lifecycle-common-java8:2.2.0"
@@ -61,11 +54,11 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
 
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.1'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.3.1'
-    implementation 'androidx.navigation:navigation-dynamic-features-fragment:2.3.1'
-    implementation 'androidx.navigation:navigation-testing:2.3.1'
-    implementation 'androidx.navigation:navigation-compose:1.0.0-alpha02'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.2'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.3.2'
+    implementation 'androidx.navigation:navigation-dynamic-features-fragment:2.3.2'
+    implementation 'androidx.navigation:navigation-testing:2.3.2'
+    implementation 'androidx.navigation:navigation-compose:1.0.0-alpha04'
 
     // for images
     implementation 'com.github.bumptech.glide:glide:4.11.0'
@@ -73,8 +66,6 @@ dependencies {
 
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'io.reactivex.rxjava3:rxkotlin:3.0.1'
-    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava3:2.9.0'
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
