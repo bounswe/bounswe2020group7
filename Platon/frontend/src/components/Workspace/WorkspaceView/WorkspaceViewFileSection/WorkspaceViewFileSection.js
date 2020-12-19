@@ -55,7 +55,7 @@ class WorkspaceViewFileSection extends Component {
     const token = localStorage.getItem("jwtToken");
     axios.defaults.headers.common["auth_token"] = `${token}`;
     const url = config.BASE_URL
-    let c_workspace_id = 2
+    let c_workspace_id = this.props.workspaceId
     axios.get(url+'/api/file_system/folder', {
       params: {
         path: this.state.route,
@@ -91,7 +91,7 @@ class WorkspaceViewFileSection extends Component {
                 {this.state.folders.map((element) => (
                   <ListItem>
                     <ListItemAvatar>
-                      <Avatar>
+                      <Avatar style={{backgroundColor:colors.primary}} >
                         <FolderIcon style={{color:colors.secondary}} />
                       </Avatar>
                     </ListItemAvatar>
@@ -109,7 +109,7 @@ class WorkspaceViewFileSection extends Component {
                 {this.state.files.map((element) => (
                   <ListItem>
                     <ListItemAvatar>
-                      <Avatar>
+                      <Avatar  style={{backgroundColor:colors.primary}} >
                         <InsertDriveFileIcon style={{color:colors.secondary}}/>
                       </Avatar>
                     </ListItemAvatar>
@@ -120,11 +120,6 @@ class WorkspaceViewFileSection extends Component {
                       <IconButton edge="end" aria-label="delete">
                         <DeleteIcon />
                       </IconButton>
-                      <IconButton edge="end" aria-label="delete">
-                        <DeleteIcon />
-                      </IconButton>
-
-
                     </ListItemSecondaryAction>
                   </ListItem>
                 ))}

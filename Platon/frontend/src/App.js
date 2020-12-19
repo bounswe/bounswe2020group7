@@ -63,8 +63,8 @@ class App extends Component {
       <Route path='/:profileId(\d+)/edit' exact component={!this.state.isAuthenticated ? Landing : EditProfile}/>
       <Route path='/:profileId(\d+)/workspace' exact component={WorkspaceList}/>
       <Route path='/:profileId(\d+)/workspace/new' exact component={WorkspaceCreate}/>
-      <Route path='/:profileId(\d+)/workspace/:workspaceid(\d+)' exact component={WorkspaceView}/>
-      <Route path='/:profileId(\d+)/workspace/workspaceid/edit' exact component={WorkspaceEdit}/>
+      <Route path='/:profileId(\d+)/workspace/:workspaceId(\d+)' exact component={WorkspaceView}/>
+      <Route path='/:profileId(\d+)/workspace/workspaceId(\d+)/edit' exact component={WorkspaceEdit}/>
       <Route path='/login' exact component={() => <Login isAuthenticated={this.state.isAuthenticated} handlerSuccessfulLogin={this.handlerSuccessfulLogin} />}/>
       <Route path='/register' exact  component={Register}/>
       <Route path='/forgotpassword' exact component={ForgotPassword}/>
