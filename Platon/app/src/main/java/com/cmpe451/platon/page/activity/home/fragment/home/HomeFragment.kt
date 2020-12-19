@@ -22,6 +22,7 @@ import com.cmpe451.platon.databinding.ActivityStreamCellBinding
 import com.cmpe451.platon.databinding.FragmentHomeBinding
 import com.cmpe451.platon.databinding.TrendProjectCellBinding
 import com.cmpe451.platon.databinding.UpcomingEventCellBinding
+import com.cmpe451.platon.listener.PaginationListener
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.ActivityStreamElement
 import com.cmpe451.platon.network.models.TrendingProject
@@ -34,6 +35,8 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
 
     private lateinit var binding: FragmentHomeBinding
     private val mHomeViewModel: HomeViewModel by activityViewModels()
+
+    private var maxPageNumberUpcoming:Int=0;
 
     private lateinit var dialog:AlertDialog
 
@@ -81,8 +84,9 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
         mHomeViewModel.getUpcomingEventsResourceResponse.observe(viewLifecycleOwner, {t->
             when(t.javaClass){
                 Resource.Success::class.java ->{
-                    binding.homeUpcomingEventsRecyclerView.adapter =
-                            UpcomingEventsAdapter(t.data!!.upcoming_events as ArrayList<UpcomingEvent>, requireContext(), this)
+                    maxPageNumberUpcoming = t.data!!.number_of_pages
+                    (binding.homeUpcomingEventsRecyclerView.adapter as UpcomingEventsAdapter).submitList(
+                        t.data!!.upcoming_events!! as ArrayList<UpcomingEvent>)
 
                 }
                 Resource.Error::class.java ->{
@@ -107,15 +111,34 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
 
         binding.homeTrendingProjectsRecyclerView.layoutManager = layoutManagerTrending
         binding.homeUpcomingEventsRecyclerView.layoutManager = layoutManageUpcoming
+        binding.homeUpcomingEventsRecyclerView.adapter = UpcomingEventsAdapter(ArrayList(),requireContext(), this)
+        binding.homeUpcomingEventsRecyclerView.addOnScrollListener(object: PaginationListener(layoutManageUpcoming){
+            override fun loadMoreItems() {
+                if(maxPageNumberUpcoming-1 > currentPage){
+                    currentPage++
+                    mHomeViewModel.getUpcomingEvents(currentPage, 5)
+                    Toast.makeText(requireContext(), "Next page", Toast.LENGTH_LONG).show()
+                }
+            }
+
+            override var isLastPage: Boolean = false
+            override var isLoading: Boolean = false
+            override var currentPage: Int = 0
+        })
+
+
+
         binding.homeActivityStreamRecyclerView.layoutManager = layoutManageActivity
 
 
         binding.homeActivityStreamRecyclerView.layoutParams = LinearLayout.LayoutParams(width, (height/2))
-        //binding.homeUpcomingEventsRecyclerView.layoutParams = LinearLayout.LayoutParams(width/2, height/2)
+//        binding.homeUpcomingEventsRecyclerView.layoutParams = LinearLayout.LayoutParams(width/2, height/2)
         binding.homeTrendingProjectsRecyclerView.layoutParams = LinearLayout.LayoutParams(width, (height/2))
 
 
         binding.homeActivityStreamRecyclerView.adapter = ActivityStreamAdapter(myActivities, requireContext(), this)
+
+
 
     }
 
@@ -148,13 +171,13 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
     }
 
     override fun onUpcomingButtonClicked(binding: UpcomingEventCellBinding, position: Int) {
-        if (binding.upcomingEventDesc.visibility == View.GONE){
-            binding.upcomingEventDesc.visibility = View.VISIBLE
+        if (binding.expandLl.visibility == View.GONE){
+            binding.expandLl.visibility = View.VISIBLE
         }else{
-            binding.upcomingEventDesc.visibility = View.GONE
+            binding.expandLl.visibility = View.GONE
         }
 
-        binding.upcomingEventDesc.refreshDrawableState()
+        binding.expandLl.refreshDrawableState()
 
         Definitions().vibrate(50, activity as BaseActivity)
     }

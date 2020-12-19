@@ -124,13 +124,13 @@ class LandingFragment : Fragment(),TrendingProjectsAdapter.TrendingProjectButton
     }
 
     override fun onUpcomingButtonClicked(binding: UpcomingEventCellBinding, position:Int) {
-        if (binding.upcomingEventDesc.visibility == View.GONE){
-            binding.upcomingEventDesc.visibility = View.VISIBLE
+        if (binding.expandLl.visibility == View.GONE){
+            binding.expandLl.visibility = View.VISIBLE
         }else{
-            binding.upcomingEventDesc.visibility = View.GONE
+            binding.expandLl.visibility = View.GONE
         }
 
-        binding.upcomingEventDesc.refreshDrawableState()
+        binding.expandLl.refreshDrawableState()
 
         Definitions().vibrate(50, activity as BaseActivity)
     }

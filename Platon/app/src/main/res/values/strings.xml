@@ -107,4 +107,6 @@
     <string name="delete_workspace_str">Delete Workspace</string>
     <string name="deadline_str">Deadline</string>
     <string name="collaborators">Collaborators</string>
+    <string name="link_str">Link</string>
+    <string name="location_str">Location</string>
 </resources>
