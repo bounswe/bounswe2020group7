@@ -3,16 +3,16 @@ from flask_restplus import reqparse
 import datetime
 
 date_regex = "^(20|21)\\d\\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$"
-list_regex = "^\\[((\"|')?\\w+(\"|')?)(,\\s*(\"|')?\\w+(\"|')?)*\\]$"
+list_regex = "^\\[((\"|')?\\w+(\"|')?)*(,\\s*(\"|')?\\w+(\"|')?)*\\]$"
 
 class CreateWorkspaceForm(Form):
 	title = StringField("Title of the new workspace", validators=[validators.DataRequired(), validators.Length(max=256)])
 	description = StringField("Description of the new workspace", validators=[validators.DataRequired(), validators.Length(max=2000)])
 	is_private = IntegerField("Privacy status of the new workspace", validators=[validators.optional(), validators.NumberRange(min=0, max=1)])
 	max_collaborators = IntegerField("Maximum number of collaborators of the new workspace", validators=[validators.optional(), validators.NumberRange(min=1)])
-	deadline = StringField("Deadline of the new workspace", validators=[validators.optional(), validators.Regexp(regex=date_regex)])
-	requirements = StringField("The list of the requirements to be able to join the new workspace", validators=[validators.optional(), validators.Regexp(regex=list_regex)])
-	skills = StringField("The list of the skills required to be able to join the new workspace", validators=[validators.optional(), validators.Regexp(regex=list_regex)])
+	deadline = StringField("Deadline of the new workspace", validators=[validators.optional(), validators.Regexp(regex=date_regex)], filters = [lambda x: x or None])
+	requirements = StringField("The list of the requirements to be able to join the new workspace", validators=[validators.optional(), validators.Regexp(regex=list_regex)], default="None")
+	skills = StringField("The list of the skills required to be able to join the new workspace", validators=[validators.optional(), validators.Regexp(regex=list_regex)], default="None")
 create_workspace_parser = reqparse.RequestParser()
 create_workspace_parser.add_argument("title", required=True, type=str, help="Title of the new workspace", location="form")
 create_workspace_parser.add_argument("description", required=True, type=str, help="Description of the new workspace", location="form")
@@ -25,9 +25,9 @@ create_workspace_parser.add_argument("auth_token",required=True, type=str, help=
 
 
 class ReadWorkspaceForm(Form):
-	workspace_id = IntegerField("ID of the requested workspace", validators=[validators.optional()])
+	workspace_id = IntegerField("ID of the requested workspace", validators=[validators.DataRequired()])
 read_workspace_parser = reqparse.RequestParser()
-read_workspace_parser.add_argument("workspace_id",required=False,type=int,help="ID of the requested workspace", location="args")
+read_workspace_parser.add_argument("workspace_id",required=True,type=int,help="ID of the requested workspace", location="args")
 read_workspace_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
 
 
@@ -59,7 +59,6 @@ class DeleteWorkspaceForm(Form):
 delete_workspace_parser = reqparse.RequestParser()
 delete_workspace_parser.add_argument("workspace_id",required=True,type=int,help="ID of the requested workspace", location="args") # location should be form, right?
 delete_workspace_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
-
 
 class GetIssuesForm(Form):
 	workspace_id = IntegerField('workspace_id', validators=[validators.DataRequired()])
@@ -157,3 +156,12 @@ delete_issue_comment_parser.add_argument("workspace_id",required=True,type=int,h
 delete_issue_comment_parser.add_argument("issue_id",required=True,type=int,help="ID of the issue", location="form")
 delete_issue_comment_parser.add_argument("comment_id", required=True, type=int, help="ID of the comment", location="form")
 delete_issue_comment_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
+
+class TrendingProjectsForm(Form):
+	number_of_workspaces = IntegerField("number_of_workspaces",validators=[validators.DataRequired()])
+
+trending_project_parser = reqparse.RequestParser()
+trending_project_parser.add_argument("number_of_workspaces",required=True,type=int,help="Number of Workspaces", location="args")
+
+get_self_parser = reqparse.RequestParser()
+get_self_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")

@@ -20,7 +20,7 @@ from app.profile_management.models import Jobs, Skills, UserSkills
 from app.follow_system.models import Follow, FollowRequests
 from app.auth_system.helpers import generate_token,send_email,login_required, hashed, allowed_file
 from app.profile_management.helpers import ResearchInfoFetch
-from app.follow_system.helpers import follow_required
+from app.follow_system.helpers import follow_required_user
 
 from hashlib import sha256
 import datetime
@@ -188,11 +188,12 @@ class UserAPI(Resource):
     @api.doc(responses={
                 400: "Missing data fields or invalid data.",
                 404: "The user is not found.",
-                500: "The server is not connected to the database."
+                500: "The server is not connected to the database.",
+                206:"Partial Content"
             })
     @api.response(200, "User has been found.", account_information_model)
     @login_required
-    @follow_required(param_loc = 'args', requested_user_id_key='user_id')
+    @follow_required_user(param_loc = 'args', requested_user_id_key='user_id')
     def get(requester_id, self):
         '''
         Returns the profile information of the requested user.
@@ -255,7 +256,8 @@ class UserAPI(Resource):
                 400: "Missing data fields or invalid data.",
                 409: "User with the given e-mail address already exists.",
                 500: "The server is not connected to the database.",
-                503: "The server could not send the account activation e-mail."
+                503: "The server could not send the account activation e-mail.",
+                206:"Partial Content"
             })
     def post(self):
         # Parses the form data.
@@ -342,7 +344,8 @@ class UserAPI(Resource):
                 202: "Server has received the request but there was no information to be updated.",
                 400: "Missing data fields or invalid data.",
                 404: "The user is not found.",
-                500: "The server is not connected to the database."
+                500: "The server is not connected to the database.",
+                206:"Partial Content"
             })
     @login_required
     def put(requester_id, self):
@@ -445,7 +448,8 @@ class UserAPI(Resource):
                 400: "Missing data fields or invalid data.",
                 401: "Wrong password.",
                 404: "The user is not found.",
-                500: "The server is not connected to the database."
+                500: "The server is not connected to the database.",
+                206:"Partial Content"
             })
     @login_required
     def delete(requester_id, self):
@@ -496,10 +500,10 @@ class UserSkillAPI(Resource):
 
     @api.doc(
         responses={200: 'Skills are Successfully Returned', 404: 'Skills are empty', 400: 'Input Format Error',
-                   500: 'Database Connection'})
+                   500: 'Database Connection',206:"Partial Content"})
     @api.expect(get_userskill_parser)
     @login_required
-    @follow_required(param_loc = 'args', requested_user_id_key='user_id')
+    @follow_required_user(param_loc = 'args', requested_user_id_key='user_id')
     def get(user_id,self):
         '''
             Returns a list of user's skills with id and name
@@ -596,6 +600,9 @@ class UserSkillAPI(Resource):
 @auth_system_ns.route("/profile_photo")
 class ProfilePhotoAPI(Resource):
 
+    @api.doc(
+        responses={200: 'Valid Response', 400: 'Input Format Error',
+                   500: 'Database Connection Error', 404: 'Profile Photo is not Found'})
     @api.expect(profile_photo_parser)
     def get(self):
         form = ProfilePhotoForm(request.args)
@@ -611,15 +618,15 @@ class ProfilePhotoAPI(Resource):
             profile_photo_path = user.profile_photo
             
             if profile_photo_path is None or profile_photo_path == '':
-                return  make_response(jsonify({'error': 'Profile Photo is Not Found'}), 401)
+                return  make_response(jsonify({'error': 'Profile Photo is Not Found'}), 404)
 
             profile_photo_full_path =  app.config['PROFILE_PHOTO_PATH'] + os.path.sep + profile_photo_path
             if os.path.isfile(profile_photo_full_path):
                 return send_from_directory(directory=app.config["PROFILE_PHOTO_PATH"], filename=profile_photo_path)
             else:
-                return  make_response(jsonify({'error': 'Profile Photo is Not Found'}), 401)
+                return  make_response(jsonify({'error': 'Profile Photo is Not Found'}), 404)
         else:
-            return  make_response(jsonify({'error': 'Please give user id'}), 401)
+            return  make_response(jsonify({'error': 'Please give user id'}), 400)
 
 def register_resources(api):
     api.add_namespace(auth_system_ns)
