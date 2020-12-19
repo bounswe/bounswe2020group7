@@ -4,7 +4,7 @@ from flask import make_response,jsonify,request
 import atexit
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from app.workspace_system.models import WorkspaceSkill, WorkspaceRequirement, Contribution, Requirement
+from app.workspace_system.models import Workspace,WorkspaceSkill, WorkspaceRequirement, Contribution, Requirement
 from app.profile_management.models import Skills
 from app.auth_system.models import User
 
@@ -85,7 +85,7 @@ def workspace_exists(param_loc,workspace_id_key):
                 except:
                     return make_response(jsonify({'error':'Wrong input format'}),400)
             try:
-                workspace = Workspace.query.filter((Workspace.id == workspace_id)).first()
+                workspace = Workspace.query.get(workspace_id)
             except:
                 return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
             if workspace is None:
