@@ -12,16 +12,78 @@ from app.workspace_system.models import Issue, IssueAssignee, IssueComment, Work
 from app.profile_management.models import Jobs
 from app.workspace_system.forms import GetIssuesForm, GetIssueCommentForm, GetIssueAssigneeForm, PostIssueAssigneeForm, PostIssueCommentForm, PostIssuesForm, PutIssuesForm, DeleteIssueAssigneeForm, DeleteIssueCommentForm, DeleteIssuesForm
 from app.workspace_system.helpers import workspace_exists,active_contribution_required
+from app.workspace_system.forms import get_issue_parser, get_issue_comment_parser, get_issue_assignee_parser, post_issue_assignee_parser, post_issue_comment_parser, post_issue_parser, put_issue_parser, delete_issue_assignee_parser, delete_issue_comment_parser, delete_issue_parser
 
 workspace_system_ns = Namespace("Workspace System",
                              description="Workspace System Endpoints",
                              path="/workspace")
                     
 
+issue_model = api.model('Issue', {
+	"issue_id": fields.Integer, 
+	"workspace_id": fields.Integer, 
+	"title": fields.String,
+	"description": fields.String,
+	"deadline": fields.DateTime,
+	"is_open": fields.Boolean,
+	"creator_id": fields.Integer,
+	"creator_name": fields.String,
+	"creator_surname": fields.String,
+	"creator_e-mail": fields.String,
+	"creator_rate": fields.Float,
+	"creator_job_name": fields.String,
+	"creator_institution": fields.String,
+	"creator_is_private": fields.Boolean
+    })
+
+issue_list_model = api.model('Issues List', {
+    'number_of_pages': fields.Integer,
+    'result': fields.List(
+        fields.Nested(issue_model)
+    )
+})
+
+issue_assignee_model = api.model('Issue Assignee', {
+    "assignee_id": fields.Integer,
+	"assignee_name": fields.String,
+	"assignee_surname": fields.String,
+	"assignee_e-mail": fields.String,
+	"assignee_rate": fields.Float,
+	"assignee_job_name": fields.String,
+	"assignee_institution": fields.String
+})
+
+issue_assignee_list_model = api.model('Issue Assignees List', {
+    'number_of_pages': fields.Integer,
+    'result': fields.List(
+        fields.Nested(issue_assignee_model)
+    )
+})
+
+issue_comment_model = api.model('Issue Assignee', {
+    "comment_id": fields.Integer,
+	"comment": fields.String,
+	"owner_id": fields.Integer,
+	"owner_name": fields.String,
+	"owner_surname": fields.String,
+	"owner_e-mail": fields.String,
+	"owner_rate": fields.Float
+})
+
+issue_comment_list_model = api.model('Issue Comments List', {
+    'number_of_pages': fields.Integer,
+    'result': fields.List(
+        fields.Nested(issue_comment_model)
+    )
+})
+
 @workspace_system_ns.route("/issue")
 class IssueAPI(Resource):
 
     # pagination will be added later.
+    @api.doc(responses={401 : 'Account Problems', 400 : 'Input Format Error' ,500 : ' Database Connection Error', 404: 'Not found'})
+    @api.response(200, 'Success', issue_list_model)
+    @api.expect(get_issue_parser)
     @login_required
     @workspace_exists(param_loc='args',workspace_id_key='workspace_id')
     def get(user_id, self):
@@ -99,6 +161,8 @@ class IssueAPI(Resource):
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
 
+    @api.doc(responses={401 : 'Account Problems', 400 : 'Input Format Error' ,500 : ' Database Connection Error', 404: 'Not found'})
+    @api.expect(post_issue_parser)
     @login_required
     @workspace_exists(param_loc='form',workspace_id_key='workspace_id')
     @active_contribution_required(param_loc='form',workspace_id_key='workspace_id')
@@ -126,6 +190,8 @@ class IssueAPI(Resource):
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
 
+    @api.doc(responses={401 : 'Account Problems', 400 : 'Input Format Error' ,500 : ' Database Connection Error', 404: 'Not found'})
+    @api.expect(put_issue_parser)
     @login_required
     @workspace_exists(param_loc='form',workspace_id_key='workspace_id')
     @active_contribution_required(param_loc='form',workspace_id_key='workspace_id')
@@ -175,6 +241,8 @@ class IssueAPI(Resource):
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
 
+    @api.doc(responses={401 : 'Account Problems', 400 : 'Input Format Error' ,500 : ' Database Connection Error', 404: 'Not found'})
+    @api.expect(delete_issue_parser)
     @login_required
     @workspace_exists(param_loc='form',workspace_id_key='workspace_id')
     @active_contribution_required(param_loc='form',workspace_id_key='workspace_id')
@@ -206,6 +274,9 @@ class IssueAPI(Resource):
 class IssueAssigneeAPI(Resource):
 
     # pagination will be added later.
+    @api.doc(responses={401 : 'Account Problems', 400 : 'Input Format Error' ,500 : ' Database Connection Error', 404: 'Not found'})
+    @api.response(200, 'Success', issue_assignee_list_model)
+    @api.expect(get_issue_assignee_parser)
     @login_required
     @workspace_exists(param_loc='args',workspace_id_key='workspace_id')
     def get(user_id, self):
@@ -279,6 +350,8 @@ class IssueAssigneeAPI(Resource):
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
 
+    @api.doc(responses={401 : 'Account Problems', 400 : 'Input Format Error' ,500 : ' Database Connection Error', 404: 'Not found'})
+    @api.expect(post_issue_assignee_parser)
     @login_required
     @workspace_exists(param_loc='form',workspace_id_key='workspace_id')
     @active_contribution_required(param_loc='form',workspace_id_key='workspace_id')
@@ -324,6 +397,8 @@ class IssueAssigneeAPI(Resource):
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
 
 
+    @api.doc(responses={401 : 'Account Problems', 400 : 'Input Format Error' ,500 : ' Database Connection Error', 404: 'Not found'})
+    @api.expect(delete_issue_assignee_parser)
     @login_required
     @workspace_exists(param_loc='form',workspace_id_key='workspace_id')
     @active_contribution_required(param_loc='form',workspace_id_key='workspace_id')
@@ -356,6 +431,9 @@ class IssueAssigneeAPI(Resource):
 class IssueCommentAPI(Resource):
 
     # pagination will be added later.
+    @api.doc(responses={401 : 'Account Problems', 400 : 'Input Format Error' ,500 : ' Database Connection Error', 404: 'Not found'})
+    @api.response(200, 'Success', issue_comment_list_model)
+    @api.expect(get_issue_comment_parser)
     @login_required
     @workspace_exists(param_loc='args',workspace_id_key='workspace_id')
     def get(user_id, self):
@@ -433,6 +511,8 @@ class IssueCommentAPI(Resource):
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
 
 
+    @api.doc(responses={401 : 'Account Problems', 400 : 'Input Format Error' ,500 : ' Database Connection Error', 404: 'Not found'})
+    @api.expect(post_issue_comment_parser)
     @login_required
     @workspace_exists(param_loc='form',workspace_id_key='workspace_id')
     @active_contribution_required(param_loc='form',workspace_id_key='workspace_id')
@@ -460,7 +540,8 @@ class IssueCommentAPI(Resource):
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
 
-    
+    @api.doc(responses={401 : 'Account Problems', 400 : 'Input Format Error' ,500 : ' Database Connection Error', 404: 'Not found'})
+    @api.expect(delete_issue_comment_parser)
     @login_required
     @workspace_exists(param_loc='form',workspace_id_key='workspace_id')
     @active_contribution_required(param_loc='form',workspace_id_key='workspace_id')
