@@ -1,4 +1,4 @@
-from wtforms import Form, StringField, IntegerField, FieldList, validators, DateTimeField
+from wtforms import Form, StringField, IntegerField, FieldList, validators, DateTimeField, BooleanField
 from flask_restplus import reqparse
 
 date_regex = "^(20|21)\\d\\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$"
@@ -70,31 +70,41 @@ class PostIssuesForm(Form):
 	deadline = DateTimeField("Deadline of the issue", validators=[validators.optional()])
 
 class PutIssuesForm(Form):
+	workspace_id = IntegerField('workspace_id', validators=[validators.DataRequired()])
 	issue_id = IntegerField('issue_id', validators=[validators.DataRequired()])
 	title = StringField('Updated title', validators = [validators.optional()])
 	description = StringField("Updated description of the issue", validators=[validators.optional(), validators.Length(max=2000)])
 	deadline = DateTimeField("Updated deadline of the workspace", validators=[validators.optional()])
+	is_open = BooleanField("Represents if an issue is open or not", validators=[validators.optional()])
 
 class DeleteIssuesForm(Form):
+	workspace_id = IntegerField('workspace_id', validators=[validators.DataRequired()])
 	issue_id = IntegerField('issue_id', validators=[validators.DataRequired()])
 
 class GetIssueAssigneeForm(Form):
 	workspace_id = IntegerField('workspace_id', validators=[validators.DataRequired()])
+	issue_id = IntegerField('issue_id', validators=[validators.DataRequired()])
 
 class PostIssueAssigneeForm(Form):
+	workspace_id = IntegerField('workspace_id', validators=[validators.DataRequired()])
 	issue_id = IntegerField('issue_id', validators=[validators.DataRequired()])
 	assignee_id = IntegerField('assignee_id', validators=[validators.DataRequired()])
 
 class DeleteIssueAssigneeForm(Form):
+	workspace_id = IntegerField('workspace_id', validators=[validators.DataRequired()])
 	issue_id = IntegerField('issue_id', validators=[validators.DataRequired()])
 	assignee_id = IntegerField('assignee_id', validators=[validators.DataRequired()])
 
 class GetIssueCommentForm(Form):
+	workspace_id = IntegerField('workspace_id', validators=[validators.DataRequired()])
 	issue_id = IntegerField('issue_id', validators=[validators.DataRequired()])
 
 class PostIssueCommentForm(Form):
+	workspace_id = IntegerField('workspace_id', validators=[validators.DataRequired()])
 	issue_id = IntegerField('issue_id', validators=[validators.DataRequired()])
 	comment = StringField('comment', validators=[validators.DataRequired()])
 
 class DeleteIssueCommentForm(Form):
+	workspace_id = IntegerField('workspace_id', validators=[validators.DataRequired()])
+	issue_id = IntegerField('issue_id', validators=[validators.DataRequired()])
 	comment_id = IntegerField('comment_id', validators=[validators.DataRequired()])
