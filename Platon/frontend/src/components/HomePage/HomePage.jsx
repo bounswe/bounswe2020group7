@@ -49,7 +49,11 @@ class HomePage extends React.Component {
             <Header className="site-layout-background" style={{ padding: 0 }} />
             <Layout><InfiniteScroller />
             </Layout>
+<<<<<<< HEAD
           </Layout>
+=======
+            <Footer style={{ textAlign: 'center',position:'fixed',marginLeft:200 }}>Platon</Footer>
+>>>>>>> 9b1fc7ff560f824a3260b19adae32dbb2a921418
         </Layout>
         <Footer style={{ textAlign: 'center', position: 'fixed', marginLeft: 200 }}>Ant Design ©2018
           Created by Ant UED</Footer>

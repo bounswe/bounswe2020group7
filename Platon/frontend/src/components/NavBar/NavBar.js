@@ -8,7 +8,7 @@ import { fade, makeStyles, withStyles} from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
 import Logo from '../Logo/Logo';
 import colors from '../../utils/colors';
-import {Link, Redirect} from 'react-router-dom'
+import {Link} from 'react-router-dom'
 import authService from "../../services/authService";
 import jwt_decode from "jwt-decode";
 

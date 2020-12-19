@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom'
 import requestService from '../../services/requestService'
 import jwt_decode from 'jwt-decode'
 
-
 const { SubMenu } = Menu
 
 
@@ -17,18 +16,19 @@ class Sider extends React.Component {
       notifications: null,
       profileId: null,
       notificationNum: 0,
-
     }
   }
 
-  componentDidMount() {
+  handleClick = (e) => {
+    console.log('click ')
+  }
 
+  componentDidMount() {
     const token = localStorage.getItem('jwtToken')
     const decoded = jwt_decode(token)
     this.setState({
       profileId: decoded.id,
     })
-
 
     requestService.getNotifications(1).then((response) => {
       console.log(response)
@@ -43,8 +43,10 @@ class Sider extends React.Component {
   render() {
     return (
       <Menu
+        onClick={this.handleClick}
         style={{ width: 256, color: colors.tertiary, overflowy: 'hidden' }}
         defaultSelectedKeys={['1']}
+        defaultOpenKeys={['sub1']}
         mode="inline"
         theme={'dark'}
       >
@@ -79,7 +81,7 @@ class Sider extends React.Component {
         </SubMenu>
 
         <Menu.Item key="5">
-          <Link to={`/${this.state.profileId}`}>
+          <Link to={`/${this.state.profileId}/workspace`}>
             <span>My Projects</span>
           </Link>
         </Menu.Item>
@@ -89,7 +91,6 @@ class Sider extends React.Component {
             <span>Settings</span>
           </Link>
         </Menu.Item>
-
       </Menu>
     )
   }

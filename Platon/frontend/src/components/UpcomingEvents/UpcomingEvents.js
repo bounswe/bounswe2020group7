@@ -10,7 +10,7 @@ import { withStyles } from '@material-ui/core/styles'
 const BASE_URL = 'http://18.185.75.161:5000/api/upcoming_events'
 const ITEMS_PER_PAGE = 5
 
-const useStyles = (theme) => ({
+const useStyles = () => ({
   typography: {
     color: colors.secondaryDark,
   },
