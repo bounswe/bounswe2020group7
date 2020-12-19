@@ -80,7 +80,7 @@ class UpcomingEventsManager():
                 
 def schedule_regularly():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(func=UpcomingEventsManager.update_upcoming_events, trigger="interval",seconds=1)
+    scheduler.add_job(func=UpcomingEventsManager.update_upcoming_events, trigger="interval",seconds=60*60*24)
     scheduler.start()
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())   
