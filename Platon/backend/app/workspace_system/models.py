@@ -11,7 +11,6 @@ class Workspace(db.Model):
     description = db.Column(db.String(2000))
     deadline = db.Column(db.DateTime,nullable=True)
     max_collaborators = db.Column(db.SmallInteger,default=10)
-    has_any_file = db.Column(db.Boolean)
     trending_score = db.Column(db.Float, default = 0.0)
     view_count = db.Column(db.Integer,default=0)
 
