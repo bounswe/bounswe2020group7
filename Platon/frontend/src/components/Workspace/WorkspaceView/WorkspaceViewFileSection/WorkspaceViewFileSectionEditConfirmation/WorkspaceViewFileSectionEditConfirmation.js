@@ -34,9 +34,6 @@ export default function WorkspaceViewFileSectionEditConfirmation(props) {
   }, []);
 
   const handleEditFile = () => {
-    if (body === "") {
-      return;
-    }
     props.handleEditFileDialogClose(props.index);
     props.editFile(props.element, body);
   };
