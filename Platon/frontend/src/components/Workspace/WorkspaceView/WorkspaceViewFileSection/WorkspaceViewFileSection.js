@@ -1,29 +1,26 @@
 import React, { Component } from "react";
 import { withStyles } from "@material-ui/core/styles";
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import ListItemText from '@material-ui/core/ListItemText';
-import Avatar from '@material-ui/core/Avatar';
-import IconButton from '@material-ui/core/IconButton';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import FolderIcon from '@material-ui/icons/Folder';
-import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
-import DeleteIcon from '@material-ui/icons/Delete';
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import ListItemText from "@material-ui/core/ListItemText";
+import Avatar from "@material-ui/core/Avatar";
+import IconButton from "@material-ui/core/IconButton";
+import FolderIcon from "@material-ui/icons/Folder";
+import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
+import DeleteIcon from "@material-ui/icons/Delete";
+import TextFieldsIcon from '@material-ui/icons/TextFields';
 import axios from "axios";
-import jwt_decode from "jwt-decode";
-import config from '../../../../utils/config';
-import colors from '../../../../utils/colors';
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
+import WorkspaceViewFileSectionDeleteConfirmation from "./WorkspaceViewFileSectionDeleteConfirmation/WorkspaceViewFileSectionDeleteConfirmation";
+import config from "../../../../utils/config";
+import colors from "../../../../utils/colors";
 const useStyles = (theme) => ({
   root: {
     flexGrow: 1,
-    maxWidth: 752,
+    width: 752,
   },
   demo: {
     backgroundColor: colors.secondary,
@@ -33,103 +30,325 @@ const useStyles = (theme) => ({
   },
 });
 
-function generate(element) {
-  return [0, 1, 2].map((value) =>
-    React.cloneElement(element, {
-      key: value,
-    }),
-  );
-}
-
 class WorkspaceViewFileSection extends Component {
   constructor(props) {
     super(props);
     this.state = {
       cwd: ".",
-      route: ".",
       folders: [],
-      files: []
+      files: [],
+      folderName: "",
+      deleteFileDialogArray: [],
+      deleteFolderDialogArray: [],
     };
   }
-  componentDidMount(){
+  fetchFileStructure = () => {
     const token = localStorage.getItem("jwtToken");
     axios.defaults.headers.common["auth_token"] = `${token}`;
-    const url = config.BASE_URL
-    let c_workspace_id = this.props.workspaceId
-    axios.get(url+'/api/file_system/folder', {
-      params: {
-        path: this.state.route,
-        workspace_id: c_workspace_id
-      }
-    }).then((response) => {
-      console.log(response)
-      if (response.status === 200) {
-        this.setState({
-          files: response.data.files,
-          folders: response.data.folders,
-
-        });
-      }
-    })
-    .catch((err) => {
-      /*this.setState({
+    const url = config.BASE_URL;
+    let c_workspace_id = this.props.workspaceId;
+    axios
+      .get(url + "/api/file_system/folder", {
+        params: {
+          path: this.state.cwd,
+          workspace_id: c_workspace_id,
+        },
+      })
+      .then((response) => {
+        console.log(response);
+        if (response.status === 200) {
+          this.setState({
+            files: response.data.files,
+            folders: response.data.folders,
+            cwd: response.data.cwd,
+            deleteFileDialogArray: Array(response.data.files.length).fill(
+              false
+            ),
+            deleteFolderDialogArray: Array(response.data.folders.length).fill(
+              false
+            ),
+          });
+        }
+      })
+      .catch((err) => {
+        /*this.setState({
         isSending: false,
         error: "Error occured. " + err.message,
       });*/
-      console.log(err);
-    });
+        console.log(err);
+      });
+  };
+  componentDidMount() {
+    this.fetchFileStructure();
   }
+  handleOnDoubleClick = () => {
+    console.log("double click");
+  };
+  moveUp = (element) => {
+    const token = localStorage.getItem("jwtToken");
+    axios.defaults.headers.common["auth_token"] = `${token}`;
+    const url = config.BASE_URL;
+    let c_workspace_id = this.props.workspaceId;
+    const changePath = this.state.cwd.split("/").slice(0, -1).join("/");
+    console.log("asd", changePath, this.state.cwd);
+    axios
+      .get(url + "/api/file_system/folder", {
+        params: {
+          path: changePath,
+          workspace_id: c_workspace_id,
+        },
+      })
+      .then((response) => {
+        console.log(response);
+        if (response.status === 200) {
+          this.setState({
+            files: response.data.files,
+            folders: response.data.folders,
+            cwd: response.data.cwd,
+          });
+        }
+      })
+      .catch((err) => {
+        /*this.setState({
+        isSending: false,
+        error: "Error occured. " + err.message,
+      });*/
+        console.log(err);
+      });
+  };
+  moveDown = (element) => {
+    const token = localStorage.getItem("jwtToken");
+    axios.defaults.headers.common["auth_token"] = `${token}`;
+    const url = config.BASE_URL;
+    let c_workspace_id = this.props.workspaceId;
+    const changePath = this.state.cwd + "/" + element;
+
+    axios
+      .get(url + "/api/file_system/folder", {
+        params: {
+          path: changePath,
+          workspace_id: c_workspace_id,
+        },
+      })
+      .then((response) => {
+        console.log(response);
+        if (response.status === 200) {
+          this.setState({
+            files: response.data.files,
+            folders: response.data.folders,
+            cwd: response.data.cwd,
+          });
+        }
+      })
+      .catch((err) => {
+        /*this.setState({
+        isSending: false,
+        error: "Error occured. " + err.message,
+      });*/
+        console.log(err);
+      });
+  };
+  createFolder = () => {
+    if (this.state.folderName !== "") {
+      for (var key in this.state.fileStructure) {
+        if (this.state.folderName === this.state.fileStructure[key].name) {
+          console.log("File name exists!");
+          return;
+        }
+      }
+      const token = localStorage.getItem("jwtToken");
+      axios.defaults.headers.common["auth_token"] = `${token}`;
+      const url = config.BASE_URL;
+      let c_workspace_id = this.props.workspaceId;
+      let formData = new FormData();
+      formData.append("new_folder_name", this.state.folderName);
+      formData.append("path", this.state.cwd);
+      formData.append("workspace_id", c_workspace_id);
+      axios
+        .post(url + "/api/file_system/folder", formData)
+        .then((response) => {
+          if (response.status === 201) {
+            this.fetchFileStructure();
+          }
+        })
+        .catch((err) => {
+          /*this.setState({
+            showError: "Error occured. Check your credientials.",
+          });*/
+          console.log(err);
+        });
+    }
+  };
+  renameFolder = (element) => {
+
+  }
+  deleteFolder = (element) => {
+    const token = localStorage.getItem("jwtToken");
+
+    const url = config.BASE_URL;
+
+    const changePath = this.state.cwd + "/" + element;
+    let formData = new FormData();
+    formData.append("workspace_id", this.props.workspaceId);
+    formData.append("path", changePath);
+    axios
+      .delete(url + "/api/file_system/folder", {
+        headers: {
+          auth_token: token, //the token is a variable which holds the token
+        },
+        data: formData,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          this.fetchFileStructure();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  handleDeleteFileDialogOpen = () => {
+    this.setState({ deleteFileDialog: true });
+  };
+  handleDeleteFileDialogClose = () => {
+    this.setState({ deleteFileDialog: false });
+  };
+  handleDeleteFolderDialogOpen = (index) => {
+    let prevState = this.state.deleteFolderDialogArray;
+    prevState[index] = true;
+    this.setState({ deleteFolderDialogArray: prevState });
+  };
+  handleDeleteFolderDialogClose = (index) => {
+    let prevState = this.state.deleteFolderDialogArray;
+    prevState[index] = false;
+    this.setState({ deleteFolderDialogArray: prevState });
+  };
   render() {
-    const {classes} = this.props
+    const { classes } = this.props;
+
+    const nothingToShow =
+      this.state.folders.length === 0 && this.state.files.length === 0;
     return (
       <div className={classes.root}>
+        <div className={classes.demo}>
+          <List>
+            {this.state.folders.map((element, index) => (
+              <ListItem>
+                <ListItemAvatar>
+                  <Avatar style={{ backgroundColor: colors.primary }}>
+                    <FolderIcon style={{ color: colors.tertiary }} />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  style={{ color: colors.primary }}
+                  primary={element}
+                />
+                <ListItemSecondaryAction>
+                  {console.log("element", element)}
+                  {this.state.cwd !== "." ? (
+                    <IconButton
+                      onClick={() => this.moveUp(element)}
+                      edge="end"
+                      aria-label="moveup"
+                    >
+                      <ArrowBackIcon />
+                    </IconButton>
+                  ) : null}
+                  <IconButton
+                    onClick={() => this.moveDown(element)}
+                    edge="end"
+                    aria-label="movedown"
+                  >
+                    <ArrowForwardIcon />
+                  </IconButton>
+                  <IconButton
 
-
-
-            <div className={classes.demo}>
-              <List >
-                {this.state.folders.map((element) => (
-                  <ListItem>
-                    <ListItemAvatar>
-                      <Avatar style={{backgroundColor:colors.primary}} >
-                        <FolderIcon style={{color:colors.secondary}} />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                     style={{color: colors.primary}}
-                      primary={element}
+                    edge="end"
+                    aria-label="renameFolder"
+                  >
+                    <TextFieldsIcon />
+                  </IconButton>
+                  <IconButton edge="end" aria-label="delete">
+                    <DeleteIcon
+                      style={{ color: colors.quinary }}
+                      onClick={() => this.handleDeleteFolderDialogOpen(index)}
                     />
-                    <ListItemSecondaryAction>
-                      <IconButton edge="end" aria-label="delete">
-                        <DeleteIcon />
-                      </IconButton>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                ))}
-                {this.state.files.map((element) => (
-                  <ListItem>
-                    <ListItemAvatar>
-                      <Avatar  style={{backgroundColor:colors.primary}} >
-                        <InsertDriveFileIcon style={{color:colors.secondary}}/>
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={element}
+                    <WorkspaceViewFileSectionDeleteConfirmation
+                      type="folder"
+                      element={element}
+                      deleteFolder={this.deleteFolder}
+                      deleteDialog={this.state.deleteFolderDialogArray[index]}
+                      handleDeleteDialogClose={
+                        this.handleDeleteFolderDialogClose
+                      }
+                      index={index}
                     />
-                    <ListItemSecondaryAction>
-                      <IconButton edge="end" aria-label="delete">
-                        <DeleteIcon />
-                      </IconButton>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                ))}
-              </List>
-            </div>
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+            ))}
+            {this.state.files.map((element, index) => (
+              <ListItem>
+                <ListItemAvatar>
+                  <Avatar style={{ backgroundColor: colors.primary }}>
+                    <InsertDriveFileIcon style={{ color: colors.quaternary }} />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  style={{ color: colors.primary }}
+                  primary={element}
+                />
+                <ListItemSecondaryAction>
+                  <IconButton edge="end" aria-label="delete">
+                    <DeleteIcon
+                      style={{ color: colors.quinary }}
+                      onClick={() => this.handleDeleteFileDialogOpen(index)}
+                    />
+                    <WorkspaceViewFileSectionDeleteConfirmation
+                      type="file"
+                      deleteDialog={this.state.deleteFileDialogArray[index]}
+                      handleDeleteDialogClose={this.handleDeleteFileDialogClose}
+                      element={element}
+                      index={index}
+                    />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+            ))}
 
+            {nothingToShow ? (
+              <div>
+                <IconButton
+                  onClick={this.moveUp}
+                  edge="end"
+                  aria-label="moveup"
+                >
+                  <ArrowBackIcon />
+                </IconButton>
+                <span style={{ marginLeft: "20px", color: colors.primary }}>
+                  Nothing to show
+                </span>
+              </div>
+            ) : null}
+          </List>
+          <hr />
+          <input
+            onChange={(e) => this.setState({ folderName: e.target.value })}
+            name="folderName"
+            label="FolderName"
+          />
+          <button onClick={this.createFolder}>Create folder</button>
+          <input
+            type="file"
+            onChange={(e) => this.setState({ fileName: e.target.value })}
+            name="fileName"
+            label="fileName"
+          />
+          <button onClick={() => this.createFile()}>Create File</button>
+        </div>
       </div>
     );
   }
 }
 
 export default withStyles(useStyles)(WorkspaceViewFileSection);
-
