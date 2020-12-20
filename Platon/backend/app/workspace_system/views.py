@@ -1,7 +1,7 @@
 from flask import make_response, jsonify, request
 from flask_restplus import Resource, Namespace, fields
 from flask import current_app as app
-import math
+import math, json
 
 from app import api, db
 
@@ -665,8 +665,8 @@ class WorkspacesAPI(Resource):
         form = CreateWorkspaceForm(request.form)
         if form.validate():
             new_workspace_information = {**form.data}
-            new_workspace_skills = eval(new_workspace_information.pop("skills", "None"))
-            new_workspace_requirements = eval(new_workspace_information.pop("requirements", "None"))
+            new_workspace_skills = json.loads(new_workspace_information.pop("skills"))
+            new_workspace_requirements = json.loads(new_workspace_information.pop("requirements"))
 
             new_workspace = Workspace(creator_id=requester_id, **new_workspace_information)
             try:
