@@ -53,9 +53,9 @@ class WorkspaceFragment : Fragment() {
                     binding.isPrivateTv.text = mWorkspaceViewModel.isPrivateString
                     binding.maxCollabTv.text = it.data?.max_collaborators.toString()
                     binding.deadlineTv.text = it.data?.deadline
-                    binding.requrementsTv.text = it.data?.requirements
+//                    binding.requrementsTv.text = it.data?.requirements
                     binding.stateTv.text = mWorkspaceViewModel.workspaceStateString
-                    skillsAdapter.submitElements(it.data?.skills!!)
+//                    skillsAdapter.submitElements(it.data?.skills!!)
                 }
             }
 

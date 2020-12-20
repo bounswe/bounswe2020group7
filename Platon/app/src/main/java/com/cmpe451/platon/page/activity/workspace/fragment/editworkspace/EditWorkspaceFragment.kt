@@ -50,7 +50,7 @@ class EditWorkspaceFragment :Fragment() {
         (binding.spState.adapter as ArrayAdapter<String>).add("Ongoing")
         (binding.spState.adapter as ArrayAdapter<String>).add("Finished")
 //        binding.deadlineTv.text = it.data?.deadline
-        binding.wsRequirementsEt.setText(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.requirements)
+//        binding.wsRequirementsEt.setText(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.requirements)
 
     }
 

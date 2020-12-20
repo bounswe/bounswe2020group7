@@ -54,18 +54,18 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
         binding.workspaceListRv.layoutManager = layoutManager
         binding.workspaceListRv.adapter = workspaceListAdapter
 
-        binding.workspaceListRv.addOnScrollListener(object: PaginationListener(layoutManager){
-            override fun loadMoreItems() {
-                //isLoading = true;
-                currentPage++;
-                mWorkspaceListViewModel.getWorkspaces((activity as HomeActivity).userId!!, (activity as HomeActivity).token!!)
-            }
-
-            override var isLastPage: Boolean = false
-            override var isLoading: Boolean = false
-            override var currentPage: Int = PAGE_START
-
-        })
+//        binding.workspaceListRv.addOnScrollListener(object: PaginationListener(layoutManager){
+//            override fun loadMoreItems() {
+//                //isLoading = true;
+//                currentPage++;
+//
+//            }
+//
+//            override var isLastPage: Boolean = false
+//            override var isLoading: Boolean = false
+//            override var currentPage: Int = PAGE_START
+//
+//        })
     }
 
     private fun setObservers(){
@@ -74,14 +74,14 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
             when(it.javaClass){
                 Resource.Success::class.java -> {
                     dialog.dismiss()
-                    workspaceListAdapter.submitElements(it.data!!)
+                    workspaceListAdapter.submitElements(it.data!!.workspaces)
                 }
             }
         })
     }
 
     private fun fetchWorkspaces(){
-        mWorkspaceListViewModel.getWorkspaces((activity as HomeActivity).userId!!, (activity as HomeActivity).token!!)
+        mWorkspaceListViewModel.getWorkspaces((activity as HomeActivity).token!!)
     }
 
 

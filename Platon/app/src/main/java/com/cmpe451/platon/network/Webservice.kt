@@ -11,10 +11,14 @@ interface Webservice {
 
     @GET("api/follow/followers")
     fun getFollowers(@Query("following_id") followingId: Int,
+                     @Query("page") page: Int,
+                     @Query("per_page") per_page: Int,
                      @Header("auth_token") auth_token: String ) : Call<Followers?>
 
     @GET("api/follow/followings")
     fun getFollowing(@Query("follower_id") followingId: Int,
+                     @Query("page") page: Int,
+                     @Query("per_page") per_page: Int,
                      @Header("auth_token") auth_token: String ) : Call<Following?>
 
     @FormUrlEncoded
@@ -167,5 +171,11 @@ interface Webservice {
     fun getTrendingProjects(
             @Query("number_of_workspaces") number_of_workspaces :Int
     ):Call<TrendingProjects?>
+
+    @GET("api/workspaces/self")
+    fun getPersonalWorkspacesList(
+        @Header("auth_token") auth_token: String
+    ) : Call<WorkspaceListItems?>
+
 
 }

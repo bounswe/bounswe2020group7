@@ -54,10 +54,12 @@ class UpcomingEventsAdapter(private val data: ArrayList<UpcomingEvent>, private 
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
-        holder.binding.upcomingEventTitle.text = data[position].title
+        holder.binding.upcomingEventTitle.text = data[position].acronym
         holder.binding.upcomingEventDate.text = data[position].date
-        holder.binding.upcomingEventDesc.text = data[position].location
-        holder.binding.upcomingEventType.text = data[position].date
+        holder.binding.upcomingEventDesc.text = data[position].title
+        holder.binding.upcomingEventDeadline.text = "Deadline: " + data[position].deadline
+        holder.binding.upcomingEventLink.text = data[position].link
+        holder.binding.upcomingEventLocation.text = "Location: " + data[position].location
 
         holder.bindData(position, upcomingEventsButtonClickListener)
     }
@@ -89,6 +91,11 @@ class UpcomingEventsAdapter(private val data: ArrayList<UpcomingEvent>, private 
      */
     fun clearElements(){
         data.clear()
+        this.notifyDataSetChanged()
+    }
+    fun submitList(list:ArrayList<UpcomingEvent>){
+//        data.clear()
+        data.addAll(list)
         this.notifyDataSetChanged()
     }
 

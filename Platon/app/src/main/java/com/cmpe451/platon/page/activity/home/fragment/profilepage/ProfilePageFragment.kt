@@ -39,7 +39,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     private val mActivityViewModel: HomeActivityViewModel by activityViewModels()
 
     private lateinit var dialog:AlertDialog
-    private var maxPageNumberResearch:Int=0;
+    private var maxPageNumberResearch:Int=0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
