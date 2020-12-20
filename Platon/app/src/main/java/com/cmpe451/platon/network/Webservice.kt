@@ -172,4 +172,10 @@ interface Webservice {
             @Query("number_of_workspaces") number_of_workspaces :Int
     ):Call<TrendingProjects?>
 
+    @GET("api/workspaces/self")
+    fun getPersonalWorkspacesList(
+        @Header("auth_token") auth_token: String
+    ) : Call<WorkspaceListItems?>
+
+
 }
