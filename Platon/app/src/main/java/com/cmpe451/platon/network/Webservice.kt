@@ -67,9 +67,9 @@ interface Webservice {
                      @Field("google_scholar_name") google_scholar_name:String?,
                      @Field("researchgate_name") researchgate_name:String?,
                      @Header("auth_token") auth_token :String) : Call<JsonObject?>
-    @Multipart
+
     @PUT("api/auth_system/user")
-    fun uploadPhoto(@Part("image") image: RequestBody,
+    fun uploadPhoto(@Body image: RequestBody,
                     @Header("auth_token") auth_token :String): Call<JsonObject?>
 
     @FormUrlEncoded

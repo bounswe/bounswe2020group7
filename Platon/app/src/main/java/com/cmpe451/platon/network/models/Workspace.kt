@@ -7,7 +7,7 @@ data class WorkspaceListItems(
 data class WorkspaceListItem (
         val id: Int,
         val title: String,
-        val is_private:Boolean?,
+        val is_private:Int?,
         val description: String,
         val creation_time:String,
         val deadline:String,

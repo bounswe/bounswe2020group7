@@ -171,6 +171,40 @@
 
         </LinearLayout>
 
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/skills_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:fontFamily="@font/dm_sans_bold"
+                android:gravity="center_horizontal"
+                android:padding="@dimen/x_small"
+                android:shadowColor="@color/primary_dark"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2"
+                android:text="@string/skills"
+                android:textColor="@color/secondary_blue"
+                android:textSize="@dimen/project_title_text_size" />
+            <ImageView
+                android:id="@+id/addSkillIv"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/baseline_add_white_24dp"
+                />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_profile_page_skills"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/recycler_view_height_medium"
+            android:layout_margin="@dimen/profile_page_margin" />
+
         <LinearLayout
 
             android:layout_width="match_parent"
@@ -213,43 +247,6 @@
             app:layout_constraintVertical_bias="0.6" />
 
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:id="@+id/skills_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:fontFamily="@font/dm_sans_bold"
-                android:gravity="center_horizontal"
-                android:padding="@dimen/x_small"
-                android:shadowColor="@color/primary_dark"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="2"
-                android:text="@string/skills"
-                android:textColor="@color/secondary_blue"
-                android:textSize="@dimen/project_title_text_size" />
-            <ImageView
-                android:id="@+id/addSkillIv"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:src="@drawable/baseline_add_white_24dp"
-                />
-        </LinearLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_profile_page_skills"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/recycler_view_height_medium"
-            android:layout_margin="@dimen/profile_page_margin"
-            app:layout_constraintBottom_toTopOf="@id/projects_title"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/info_title"
-            app:layout_constraintVertical_bias="0.6" />
 
     </LinearLayout>
 

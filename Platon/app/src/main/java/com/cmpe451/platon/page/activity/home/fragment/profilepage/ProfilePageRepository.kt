@@ -144,8 +144,8 @@ class ProfilePageRepository() {
                 when {
                     response.isSuccessful && response.body() != null -> uploadPhotoResourceResponse.value = Resource.Success(response.body()!!)
                     response.errorBody() != null ->  {
-                        Log.i("ERORR",response.errorBody()!!.string().toString())
-                        val obj = JSONObject(response.errorBody()!!.string().toString())
+                        Log.i("ERORR",response.errorBody()!!.string())
+                        val obj = JSONObject(response.errorBody()!!.string())
                         if (obj.has("error"))
                             uploadPhotoResourceResponse.value = Resource.Error(obj.getString("error"))
                         else uploadPhotoResourceResponse.value = Resource.Error("Unknown error!")

@@ -22,6 +22,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.signature.MediaStoreSignature
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.SkillsAdapter
 import com.cmpe451.platon.adapter.UserProjectsAdapter
@@ -34,10 +36,14 @@ import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.activity.home.HomeActivityViewModel
 import com.cmpe451.platon.util.Definitions
+import com.google.android.play.core.splitinstall.c
 import okhttp3.MediaType
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
-import java.io.InputStream
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonClickListener{
@@ -147,9 +153,20 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                         binding.ratingBar.rating = user.rate.toFloat()
                     }
 
+                    val df = SimpleDateFormat("hmsS", Locale.getDefault())
+                    val formattedDate =  df.format(Date()).toLong()
+
                     Glide.with(this)
                         .load(Definitions.API_URL + "api" + user.profile_photo)
                         .placeholder(R.drawable.ic_o_logo)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .signature(
+                            MediaStoreSignature(
+                                "image/png",
+                                formattedDate,
+                                0
+                            )
+                        )
                         .into(binding.profilePhoto)
                 }
                 Resource.Error::class.java -> Toast.makeText(
@@ -199,7 +216,10 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
         val someActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult())
         {
             if(it.resultCode == Activity.RESULT_OK && it.data != null && it.data!!.data != null) {
-                Glide.with(this).load(it.data!!.data).into(binding.profilePhoto)
+                Glide.with(this)
+                    .load(it.data!!.data)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .into(binding.profilePhoto)
                 uploadProfilePhoto(it.data!!.data)
             }
         }
@@ -243,8 +263,10 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
 
     private fun uploadProfilePhoto(data: Uri?) {
         if(data != null){
-            ActivityCompat.requestPermissions(activity as HomeActivity,
-                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1);
+            ActivityCompat.requestPermissions(
+                activity as HomeActivity,
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1
+            );
 
             if((activity as HomeActivity).checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
                 val file = File(Definitions().getRealPathFromUri(requireContext(), data))
@@ -253,7 +275,12 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                     file
                 )
 
-                mProfilePageViewModel.uploadPhoto(fBody, (activity as HomeActivity).token!!)
+                val body = MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("profile_photo", file.name, fBody)
+                    .build()
+
+                mProfilePageViewModel.uploadPhoto(body, (activity as HomeActivity).token!!)
             }else{
                 Toast.makeText(
                     requireContext(),

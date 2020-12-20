@@ -13,6 +13,7 @@ import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.SkillsAdapter
 import com.cmpe451.platon.databinding.FragmentPersonalWorkspaceBinding
 import com.cmpe451.platon.network.Resource
+import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.util.Definitions
 
 class WorkspaceFragment : Fragment() {
@@ -29,10 +30,13 @@ class WorkspaceFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        initializeAdapters()
-        setObservers()
-        setView()
-        setListeners()
+        if((activity as WorkspaceActivity).addClicked != null && !(activity as WorkspaceActivity).addClicked!!){
+            initializeAdapters()
+            setObservers()
+            setView()
+            setListeners()
+        }
+
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -60,6 +64,8 @@ class WorkspaceFragment : Fragment() {
             }
 
         })
+
+
     }
     fun setView(){
         mWorkspaceViewModel.fetchWorkspace()

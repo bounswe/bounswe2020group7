@@ -16,7 +16,7 @@ class WorkspaceViewModel : ViewModel() {
     }
     private fun setFields(){
         if(getWorkspaceResponse.value?.data!=null){
-            isPrivateString = if(getWorkspaceResponse.value!!.data!!.is_private!!) "Private Workspace" else "Public Workspace"
+            isPrivateString = if(getWorkspaceResponse.value!!.data!!.is_private!! ==1 ) "Private Workspace" else "Public Workspace"
             workspaceStateString = when(getWorkspaceResponse.value!!.data!!.state){
                 0-> "Search for Collaborators State"
                 1-> "Ongoing State"

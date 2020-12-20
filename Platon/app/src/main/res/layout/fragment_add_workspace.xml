@@ -78,6 +78,7 @@
             android:textColorHighlight="@color/secondary_blue"
             android:textColorHint="@color/secondary_blue"
             android:textColorLink="@color/secondary_blue" />
+
         <EditText
             android:id="@+id/ws_deadline_et"
             android:layout_width="match_parent"

@@ -40,7 +40,7 @@ class EditWorkspaceFragment :Fragment() {
     private fun setView() {
         binding.wsTitleEt.setText(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.title)
         binding.wsDescriptionEt.setText(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.description)
-        binding.privateSwitch.isChecked = mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.is_private!!
+        binding.privateSwitch.isChecked = mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.is_private!! == 1
         binding.wsMaxCollabNumberEt.setText(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.max_collaborators.toString())
         val x  = ArrayAdapter(requireContext(), R.layout.spinner_item, mutableListOf("Loading..."))
         x.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)

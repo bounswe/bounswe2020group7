@@ -37,7 +37,7 @@ class FollowFragment:Fragment() {
     private val mProfilePageViewModel: ProfilePageViewModel by activityViewModels()
 
     private var maxNumOfPages:Int=0
-    private val per_page:Int=10
+    private val per_page:Int = 10
 
     private val args: FollowFragmentArgs by navArgs()
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

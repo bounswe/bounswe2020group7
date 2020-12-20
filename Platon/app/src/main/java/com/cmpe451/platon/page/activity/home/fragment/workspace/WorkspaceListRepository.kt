@@ -22,7 +22,6 @@ class WorkspaceListRepository() {
                 when {
                     response.isSuccessful && response.body() != null -> {
                         workspaces.value = Resource.Success(response.body()!!)
-                        var o =5
                     }
                     response.errorBody() != null -> workspaces.value = Resource.Error(
                         JSONObject(response.errorBody()!!.string()).get("error").toString())
