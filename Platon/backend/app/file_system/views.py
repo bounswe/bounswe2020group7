@@ -48,7 +48,7 @@ class FileSystemAPI(Resource):
             file_path = path + os.path.sep + form.filename.data
             if not FileSystem.is_file_exists(file_path):
                 return make_response(jsonify({"err":"There is no such file"}),400) 
-            return send_from_directory(path,form.filename.data,as_attachment=True)
+            return send_from_directory(path,form.filename.data,as_attachment=True,cache_timeout=10)
         else:
             return make_response(jsonify({"err":"Invalid Input"}),400)
 
