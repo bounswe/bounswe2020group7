@@ -23,7 +23,7 @@ const handleDeleteFolder = () =>{
         <DialogTitle id="alert-dialog-title">{"Are you sure?"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            This {props.type} will be deleted permanently! {props.element}
+            {props.element} {props.type} will be deleted permanently!
           </DialogContentText>
         </DialogContent>
         <DialogActions>

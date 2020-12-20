@@ -15,6 +15,7 @@ import axios from "axios";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import WorkspaceViewFileSectionDeleteConfirmation from "./WorkspaceViewFileSectionDeleteConfirmation/WorkspaceViewFileSectionDeleteConfirmation";
+import WorkspaceViewFileSectionRenameConfirmation from "./WorkspaceViewFileSectionRenameConfirmation/WorkspaceViewFileSectionRenameConfirmation";
 import config from "../../../../utils/config";
 import colors from "../../../../utils/colors";
 const useStyles = (theme) => ({
@@ -40,6 +41,8 @@ class WorkspaceViewFileSection extends Component {
       folderName: "",
       deleteFileDialogArray: [],
       deleteFolderDialogArray: [],
+      renameFileDialogArray: [],
+      renameFolderDialogArray: [],
     };
   }
   fetchFileStructure = () => {
@@ -55,7 +58,7 @@ class WorkspaceViewFileSection extends Component {
         },
       })
       .then((response) => {
-        console.log(response);
+
         if (response.status === 200) {
           this.setState({
             files: response.data.files,
@@ -65,6 +68,12 @@ class WorkspaceViewFileSection extends Component {
               false
             ),
             deleteFolderDialogArray: Array(response.data.folders.length).fill(
+              false
+            ),
+            renameFileDialogArray: Array(response.data.files.length).fill(
+              false
+            ),
+            renameFolderDialogArray: Array(response.data.folders.length).fill(
               false
             ),
           });
@@ -81,16 +90,13 @@ class WorkspaceViewFileSection extends Component {
   componentDidMount() {
     this.fetchFileStructure();
   }
-  handleOnDoubleClick = () => {
-    console.log("double click");
-  };
+
   moveUp = (element) => {
     const token = localStorage.getItem("jwtToken");
     axios.defaults.headers.common["auth_token"] = `${token}`;
     const url = config.BASE_URL;
     let c_workspace_id = this.props.workspaceId;
     const changePath = this.state.cwd.split("/").slice(0, -1).join("/");
-    console.log("asd", changePath, this.state.cwd);
     axios
       .get(url + "/api/file_system/folder", {
         params: {
@@ -99,7 +105,6 @@ class WorkspaceViewFileSection extends Component {
         },
       })
       .then((response) => {
-        console.log(response);
         if (response.status === 200) {
           this.setState({
             files: response.data.files,
@@ -131,7 +136,6 @@ class WorkspaceViewFileSection extends Component {
         },
       })
       .then((response) => {
-        console.log(response);
         if (response.status === 200) {
           this.setState({
             files: response.data.files,
@@ -159,7 +163,7 @@ class WorkspaceViewFileSection extends Component {
       const token = localStorage.getItem("jwtToken");
       axios.defaults.headers.common["auth_token"] = `${token}`;
       const url = config.BASE_URL;
-      let c_workspace_id = this.props.workspaceId;
+      const c_workspace_id = this.props.workspaceId;
       let formData = new FormData();
       formData.append("new_folder_name", this.state.folderName);
       formData.append("path", this.state.cwd);
@@ -179,8 +183,30 @@ class WorkspaceViewFileSection extends Component {
         });
     }
   };
-  renameFolder = (element) => {
+  renameFolder = (element, rename) => {
+    const token = localStorage.getItem("jwtToken");
+    const url = config.BASE_URL;
+    const c_workspace_id = this.props.workspaceId;
+    const changePath = this.state.cwd + "/" + element;
+    let formData = new FormData();
+    formData.append("workspace_id", c_workspace_id);
+    formData.append("path", changePath);
+    formData.append("new_folder_name", rename);
 
+    axios.put(url + "/api/file_system/folder", formData, {
+      headers: {
+        'auth_token': token, //the token is a variable which holds the token
+      },
+    })
+    .then((response) => {
+      if (response.status === 200) {
+        this.fetchFileStructure();
+      }
+
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   }
   deleteFolder = (element) => {
     const token = localStorage.getItem("jwtToken");
@@ -223,6 +249,24 @@ class WorkspaceViewFileSection extends Component {
     prevState[index] = false;
     this.setState({ deleteFolderDialogArray: prevState });
   };
+
+  handleRenameFileDialogOpen = () => {
+    this.setState({ deleteFileDialog: true });
+  };
+  handleRenameFileDialogClose = () => {
+    this.setState({ deleteFileDialog: false });
+  };
+  handleRenameFolderDialogOpen = (index) => {
+    let prevState = this.state.renameFolderDialogArray;
+    prevState[index] = true;
+    this.setState({ renameFolderDialogArray: prevState });
+  };
+  handleRenameFolderDialogClose = (index) => {
+    let prevState = this.state.renameFolderDialogArray;
+    prevState[index] = false;
+    this.setState({ renameFolderDialogArray: prevState });
+  };
+
   render() {
     const { classes } = this.props;
 
@@ -244,7 +288,6 @@ class WorkspaceViewFileSection extends Component {
                   primary={element}
                 />
                 <ListItemSecondaryAction>
-                  {console.log("element", element)}
                   {this.state.cwd !== "." ? (
                     <IconButton
                       onClick={() => this.moveUp(element)}
@@ -266,7 +309,19 @@ class WorkspaceViewFileSection extends Component {
                     edge="end"
                     aria-label="renameFolder"
                   >
-                    <TextFieldsIcon />
+                    <TextFieldsIcon
+                    style={{ color: colors.quaternary }}
+                    onClick={() => this.handleRenameFolderDialogOpen(index)}/>
+                    <WorkspaceViewFileSectionRenameConfirmation
+                    type="folder"
+                    element={element}
+                    renameFolder={this.renameFolder}
+                    renameDialog={this.state.renameFolderDialogArray[index]}
+                    handleRenameDialogClose={
+                      this.handleRenameFolderDialogClose
+                    }
+                    index={index}
+                    />
                   </IconButton>
                   <IconButton edge="end" aria-label="delete">
                     <DeleteIcon
