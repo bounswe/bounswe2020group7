@@ -110,4 +110,9 @@
     <string name="link_str">Link</string>
     <string name="location_str">Location</string>
     <string name="researches_STR">Researches</string>
+    <string name="private_ws_str">Private Workspace</string>
+    <string name="public_ws_str">Public Workspace</string>
+    <string name="state_search_for_collab_str">Search For Collaborators State</string>
+    <string name="state_ongoing_str">Ongoing State</string>
+    <string name="state_finished_str">Finished</string>
 </resources>

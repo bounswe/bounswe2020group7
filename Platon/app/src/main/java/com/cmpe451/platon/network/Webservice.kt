@@ -182,5 +182,9 @@ interface Webservice {
         @Header("auth_token") auth_token: String
     ) : Call<WorkspaceListItems?>
 
-
+    @GET("api/workspaces")
+    fun getWorkspace(
+        @Query("workspace_id") workspace_id:Int,
+        @Header("auth_token") auth_token: String
+    ) : Call<Workspace?>
 }
