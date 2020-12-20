@@ -8,7 +8,6 @@ import { withStyles } from '@material-ui/core/styles'
 import Pagination from '@material-ui/lab/Pagination'
 
 const TRENDING_PROJECTS_URL = 'http://18.185.75.161:5000/api/workspaces/trending_projects?number_of_workspaces=100000'
-const ITEMS_PER_PAGE = 5
 
 const StyledPagination = withStyles({
   root: {
@@ -16,7 +15,7 @@ const StyledPagination = withStyles({
   },
 }, { name: 'MuiPaginationItem' })(Pagination)
 
-const TrendingProjects = () => {
+const TrendingProjects = ({ itemsPerPage = 5, width= '500px' }) => {
   const [rawData, setRawData] = useState([])
   const [fetching, setFetching] = useState(false)
   const [page, setPage] = useState(1)
@@ -36,8 +35,8 @@ const TrendingProjects = () => {
   }, [])
 
   const getPageData = () => {
-    const dataStartIndex = (page - 1) * ITEMS_PER_PAGE
-    const dataEndIndex = (page * ITEMS_PER_PAGE)
+    const dataStartIndex = (page - 1) * itemsPerPage
+    const dataEndIndex = (page * itemsPerPage)
     return rawData.slice(dataStartIndex, dataEndIndex)
   }
 
@@ -62,7 +61,7 @@ const TrendingProjects = () => {
         </div>
       )}
       {pageData && (
-        <div className="TrendingProjectsItems">
+        <div className="TrendingProjectsItems" style={{width: width}}>
           {pageData.map((item, index) => (
             <TrendingProjectsItem
               id={index}
@@ -74,7 +73,7 @@ const TrendingProjects = () => {
           ))}
           <div className='paginationContainerTrending'>
             <StyledPagination
-              count={Math.floor(rawData.length / ITEMS_PER_PAGE)}
+              count={Math.floor(rawData.length / itemsPerPage)}
               onChange={handlePageChange}
               page={page}
             />

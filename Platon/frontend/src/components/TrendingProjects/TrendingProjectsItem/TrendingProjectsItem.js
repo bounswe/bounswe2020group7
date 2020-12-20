@@ -86,7 +86,7 @@ const TrendingProjectsItem = ({ id, title, description, contributors }) => {
 
   return (
     <List className={classes.root}>
-      <ListItem>
+      <ListItem disableGutters>
         <Accordion
           square
           expanded={expanded === 'panel' + id}
