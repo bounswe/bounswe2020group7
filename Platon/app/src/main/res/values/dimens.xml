@@ -28,7 +28,11 @@
     <dimen name="xxxxx_large">30dp</dimen>
 
 
+    <dimen name="large_photo">64dp</dimen>
+    <dimen name="medium_photo">32dp</dimen>
+    <dimen name="small_photo">24dp</dimen>
 
+    <dimen name="recycler_view_height_medium">156dp</dimen>
 
     <dimen name="inner_frame_layout_padding_2">10dp</dimen>
     <dimen name="title_logo_padding">10dp</dimen>
@@ -42,4 +46,5 @@
     <dimen name="project_title_text_size">20sp</dimen>
     <dimen name="desc_text_size">12sp</dimen>
     <dimen name="subtitle_text_size">10sp</dimen>
+    <dimen name="details_text_size">16sp</dimen>
 </resources>

@@ -6,15 +6,24 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.cmpe451.platon.page.fragment.home.view.HomeFragment"
+        android:name="com.cmpe451.platon.page.activity.home.fragment.home.HomeFragment"
         android:label="Home" >
         <action
             android:id="@+id/action_homeFragment_to_profilePageFragment"
-            app:destination="@id/profilePageFragment" />
+            app:destination="@id/profilePageFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_homeFragment_to_otherProfileFragment"
+            app:destination="@id/otherProfileFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_homeFragment_to_workspaceListFragment2"
+            app:destination="@id/workspaceListFragment"
+            app:popUpToInclusive="false" />
     </fragment>
     <fragment
         android:id="@+id/profilePageFragment"
-        android:name="com.cmpe451.platon.page.fragment.profilepage.view.ProfilePageFragment"
+        android:name="com.cmpe451.platon.page.activity.home.fragment.profilepage.ProfilePageFragment"
         android:label="Your Profile" >
         <action
             android:id="@+id/action_profilePageFragment_to_editProfileFragment"
@@ -23,56 +32,62 @@
             android:id="@+id/action_profilePageFragment_to_followFragment"
             app:destination="@id/followFragment" />
         <action
-            android:id="@+id/action_profilePageFragment_to_followerFragment"
-            app:destination="@id/followerFragment" />
+            android:id="@+id/action_profilePageFragment_to_addResearchInfoFragment"
+            app:destination="@id/addResearchInfoFragment" />
+        <action
+            android:id="@+id/action_profilePageFragment_to_editResearchInfoFragment"
+            app:destination="@id/editResearchInfoFragment" />
     </fragment>
     <fragment
         android:id="@+id/editProfileFragment"
-        android:name="com.cmpe451.platon.page.fragment.editprofile.view.EditProfileFragment"
-        android:label="Edit" >
-        <argument
-            android:name="name"
-            app:argType="string" />
-        <argument
-            android:name="surname"
-            app:argType="string" />
-        <argument
-            android:name="job"
-            app:argType="string" />
-        <argument
-            android:name="isPrivate"
-            app:argType="boolean" />
-        <argument android:name="profilePhoto"
-            app:argType="string" />
-        <argument
-            android:name="googleScholar"
-            app:argType="string" />
-        <argument
-            android:name="researchGate"
-            app:argType="string" />
-    </fragment>
+        android:name="com.cmpe451.platon.page.activity.home.fragment.editprofile.EditProfileFragment"
+        android:label="Update" />
     <fragment
         android:id="@+id/followFragment"
-        android:name="com.cmpe451.platon.page.fragment.follow.view.FollowFragment"
-        android:label="Following">
+        android:name="com.cmpe451.platon.page.activity.home.fragment.follow.FollowFragment"
+        android:label="Details">
         <action
             android:id="@+id/action_followFragment_to_otherProfileFragment"
             app:destination="@id/otherProfileFragment" />
+        <argument
+            android:name="follow"
+            app:argType="string" />
+        <argument
+            android:name="userId"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <action
+            android:id="@+id/action_followFragment_to_profilePageFragment"
+            app:destination="@id/profilePageFragment" />
     </fragment>
     <fragment
         android:id="@+id/otherProfileFragment"
-        android:name="com.cmpe451.platon.page.fragment.otherprofile.view.OtherProfileFragment"
+        android:name="com.cmpe451.platon.page.activity.home.fragment.otherprofile.OtherProfileFragment"
         android:label="Profile">
         <action
             android:id="@+id/action_otherProfileFragment_to_followFragment2"
             app:destination="@id/followFragment" />
+        <argument
+            android:name="userId"
+            app:argType="integer" />
     </fragment>
     <fragment
-        android:id="@+id/followerFragment"
-        android:name="com.cmpe451.platon.page.fragment.follow.view.FollowerFragment"
-        android:label="Followers">
+        android:id="@+id/addResearchInfoFragment"
+        android:name="com.cmpe451.platon.page.activity.home.fragment.researchInfo.AddResearchInfoFragment"
+        android:label="Add" />
+    <fragment
+        android:id="@+id/editResearchInfoFragment"
+        android:name="com.cmpe451.platon.page.activity.home.fragment.researchInfo.EditResearchInfoFragment"
+        android:label="Update" />
+    <fragment
+        android:id="@+id/workspaceListFragment"
+        android:name="com.cmpe451.platon.page.activity.home.fragment.workspace.WorkspaceListFragment"
+        android:label="Workspaces">
         <action
-            android:id="@+id/action_followerFragment_to_otherProfileFragment"
+            android:id="@+id/action_workspaceListFragment_to_otherProfileFragment"
             app:destination="@id/otherProfileFragment" />
+        <action
+            android:id="@+id/action_workspaceListFragment_to_profilePageFragment"
+            app:destination="@id/profilePageFragment" />
     </fragment>
 </navigation>

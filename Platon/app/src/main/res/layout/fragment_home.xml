@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primary_dark"
     android:fillViewport="true"
-    tools:context=".page.activity.HomeActivity">
+    tools:context=".page.activity.home.HomeActivity">
 
 
     <LinearLayout
@@ -60,11 +60,11 @@
 
 
         <androidx.recyclerview.widget.RecyclerView
-            android:paddingHorizontal="@dimen/medium"
             android:id="@+id/home_upcoming_events_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/xx_small" />
+            android:layout_marginTop="@dimen/xx_small"
+            android:paddingHorizontal="@dimen/medium" />
 
         <TextView
             android:id="@+id/textView3"
@@ -86,12 +86,12 @@
             android:textSize="@dimen/project_title_text_size" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:paddingHorizontal="@dimen/medium"
-            android:fontFamily="@font/dm_sans_bold"
             android:id="@+id/home_activity_stream_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/xx_small">
+            android:layout_marginTop="@dimen/xx_small"
+            android:fontFamily="@font/dm_sans_bold"
+            android:paddingHorizontal="@dimen/medium">
 
         </androidx.recyclerview.widget.RecyclerView>
 
@@ -113,16 +113,16 @@
             android:textSize="@dimen/project_title_text_size" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:paddingHorizontal="@dimen/medium"
-            android:fontFamily="@font/dm_sans_bold"
             android:id="@+id/home_trending_projects_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/xx_small">
+            android:layout_marginTop="@dimen/xx_small"
+            android:fontFamily="@font/dm_sans_bold"
+            android:paddingHorizontal="@dimen/medium">
 
         </androidx.recyclerview.widget.RecyclerView>
 
 
     </LinearLayout>
 
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

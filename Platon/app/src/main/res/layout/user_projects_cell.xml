@@ -11,43 +11,65 @@
     android:layout_height = "wrap_content">
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/title_trend_project_tv"
-            android:layout_width="wrap_content"
+        android:id="@+id/firstRelative"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <RelativeLayout
+            android:id="@+id/expand_rl"
+            android:animateLayoutChanges="true"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:maxLines="1"
-            android:text="@string/project_title_str"
-            android:textColor="@color/primary_dark"
-            android:textSize="@dimen/project_title_text_size"
-            card_view:drawableLeftCompat="@drawable/ic_profile_24px" />
+            android:layout_toStartOf="@id/edit_iv">
 
-        <TextView
-            android:background="@drawable/view_back"
-            android:id="@+id/desc_trend_project_tv"
+            <TextView
+                android:id="@+id/title_trend_project_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:maxLines="1"
+                android:text="@string/project_title_str"
+                android:textColor="@color/primary_dark"
+                android:textSize="@dimen/project_title_text_size"/>
+
+            <TextView
+                android:background="@drawable/view_back"
+                android:id="@+id/desc_trend_project_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@id/title_trend_project_tv"
+                android:padding="@dimen/medium"
+                android:text="@string/desc_str"
+                android:textColor="@color/primary_light"
+                android:textSize="@dimen/desc_text_size"
+                android:visibility="gone" />
+
+            <TextView
+                android:layout_alignParentEnd="true"
+                android:id="@+id/project_year_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/project_year_str"
+                android:layout_below="@id/desc_trend_project_tv"
+                android:textColor="@color/primary_dark"
+                android:textSize="@dimen/subtitle_text_size" />
+
+
+
+
+        </RelativeLayout>
+        <ImageView
+            android:id="@+id/edit_iv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_below="@id/title_trend_project_tv"
-            android:padding="@dimen/medium"
-            android:text="@string/desc_str"
-            android:textColor="@color/primary_light"
-            android:textSize="@dimen/desc_text_size"
-            android:visibility="gone" />
-
-        <TextView
             android:layout_alignParentEnd="true"
-            android:id="@+id/why_trend_project_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/why_str"
-            android:layout_below="@id/desc_trend_project_tv"
-            android:textColor="@color/primary_dark"
-            android:textSize="@dimen/subtitle_text_size" />
 
+            android:src="@drawable/baseline_create_white_24dp"/>
     </RelativeLayout>
+
 </androidx.cardview.widget.CardView>

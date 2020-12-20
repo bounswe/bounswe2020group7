@@ -7,46 +7,110 @@
     android:layout_height="match_parent"
     android:background="@drawable/home_background"
     android:orientation="vertical"
-    tools:context=".page.activity.HomeActivity">
+    tools:context=".page.activity.home.HomeActivity">
 
     <include layout="@layout/toolbar" />
 
+
     <RadioGroup
-        android:id="@+id/search_among_rb"
+        android:id="@+id/rg_searchAmong"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/primary_dark_darker"
-        android:checkedButton="@id/workspace_rb"
         android:orientation="horizontal"
         android:paddingHorizontal="@dimen/medium"
         android:visibility="gone">
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/tv_searchAmong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Search among:"
+            android:text="@string/search_among_str"
             android:textColor="@color/primary_light" />
 
         <RadioButton
-            android:id="@+id/workspace_rb"
+            android:id="@+id/rb_searchWorkspace"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/workspaces_str"
             android:textColor="@color/primary_light" />
 
         <RadioButton
-            android:id="@+id/user_rb"
+            android:id="@+id/rb_searchUser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/users_str"
             android:textColor="@color/primary_light" />
+
+        <RadioButton
+            android:id="@+id/rb_searchUpcoming"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/events_str"
+            android:textColor="@color/primary_light" />
     </RadioGroup>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/search_element_recycler_view"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:padding="@dimen/large"
+        android:id="@+id/lay_jobQuery"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:background="@color/primary_dark_darker"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/title_text_size"
+            android:textColor="@color/primary_light"
+            android:text="@string/filter_by_job_str"
+            />
+    <Spinner
+        android:id="@+id/sp_jobQuery"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColorHint="@color/primary_light"
+        android:textColor="@color/primary_light" />
+    </LinearLayout>
+
+    <RadioGroup
+        android:id="@+id/notification_rg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary_dark_darker"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/medium"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/see_ntf_tw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/see_notifications_for_str"
+            android:textColor="@color/primary_light" />
+
+        <RadioButton
+            android:id="@+id/general_ntf_rb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/general_str"
+            android:textColor="@color/primary_light" />
+
+        <RadioButton
+            android:id="@+id/personal_ntf_rb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/personal_str"
+            android:textColor="@color/primary_light" />
+    </RadioGroup>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/toolbar_recyclerview"
+        android:layout_width="wrap_content"
+        android:visibility="gone"
+        android:layout_height="match_parent"
         android:background="@color/primary_dark_darker">
 
     </androidx.recyclerview.widget.RecyclerView>

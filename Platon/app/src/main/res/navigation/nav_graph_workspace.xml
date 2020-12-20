@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph_workspace"
+    app:startDestination="@id/workspaceFragment">
+    <fragment
+        android:id="@+id/workspaceFragment"
+        android:name="com.cmpe451.platon.page.activity.workspace.fragment.workspace.WorkspaceFragment"
+        android:label="Workspace" >
+        <action
+            android:id="@+id/action_workspaceFragment_to_addWorkspaceFragment"
+            app:destination="@id/addWorkspaceFragment" />
+        <action
+            android:id="@+id/action_workspaceFragment_to_editWorkspaceFragment"
+            app:destination="@id/editWorkspaceFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addWorkspaceFragment"
+        android:name="com.cmpe451.platon.page.activity.workspace.fragment.addworkspace.AddWorkspaceFragment"
+        android:label="Add Workspace" />
+    <fragment
+        android:id="@+id/editWorkspaceFragment"
+        android:name="com.cmpe451.platon.page.activity.workspace.fragment.editworkspace.EditWorkspaceFragment"
+        android:label="EditWorkspaceFragment" />
+</navigation>

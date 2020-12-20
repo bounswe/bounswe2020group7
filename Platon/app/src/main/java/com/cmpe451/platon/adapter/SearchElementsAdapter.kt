@@ -5,32 +5,36 @@ package com.cmpe451.platon.adapter
  */
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.cmpe451.platon.R
+import com.cmpe451.platon.databinding.SearchElementCellBinding
+import com.cmpe451.platon.network.models.SearchElement
+import com.cmpe451.platon.util.Definitions
 
 
-class SearchElementsAdapter(private val data: ArrayList<String>, private val context: Context, private val searchButtonClickListener: SearchButtonClickListener) :
+class SearchElementsAdapter(private val data: ArrayList<SearchElement>, private val context: Context, private val searchButtonClickListener: SearchButtonClickListener) :
 
-        RecyclerView.Adapter<SearchElementsAdapter.MyViewHolder>() {
+        RecyclerView.Adapter<SearchElementsAdapter.MyViewHolder>(),ToolbarElementsAdapter {
 
     interface SearchButtonClickListener{
-        fun onSearchButtonClicked(buttonName: String)
+        fun onSearchButtonClicked(element: SearchElement, position: Int)
     }
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder.
     // Each data item is just a string in this case that is shown in a TextView.
-    class MyViewHolder(val myView: View) : RecyclerView.ViewHolder(myView){
-        var myTextView = myView.findViewById(R.id.title_trend_project_tv) as TextView
-
-        fun bindData(buttonName: String, buttonClickListener: SearchButtonClickListener) {
-            myView.setOnClickListener{
-                buttonClickListener.onSearchButtonClicked(buttonName)
+    class MyViewHolder(val binding: SearchElementCellBinding) : RecyclerView.ViewHolder(binding.root){
+        fun bindData(element:SearchElement, position: Int, buttonClickListener: SearchButtonClickListener) {
+            binding.rlSearchElement.setOnClickListener{
+                buttonClickListener.onSearchButtonClicked(element ,position)
             }
         }
     }
@@ -39,47 +43,52 @@ class SearchElementsAdapter(private val data: ArrayList<String>, private val con
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         // create a new view
-        val textView = MyViewHolder(LayoutInflater.from(parent.context)
-                .inflate(R.layout.search_element_cell, parent, false))
         // set the view's size, margins, paddings and layout parameters
-        return textView
+        return MyViewHolder(SearchElementCellBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.myTextView.text = "Searched: " + data[position].toString()
-        holder.bindData(data[position].toString(), searchButtonClickListener)
+        Log.i("Photo", data[position].profile_photo)
+        Glide.with(context).load(Definitions.API_URL + "api" + data[position].profile_photo).diskCacheStrategy(DiskCacheStrategy.NONE).into(holder.binding.iwSearchImage)
+        holder.binding.tvSearchElement.text = data[position].name + " " + data[position].surname
+        holder.bindData(data[position], position,searchButtonClickListener)
     }
 
 
     /**
      * Adds element to given position
      */
-    fun addElement(position: Int, element:String){
+    fun addElement(position: Int, element:SearchElement){
         data.add(position, element)
         this.notifyItemInserted(position)
+    }
+
+    fun submitElements(elements: List<SearchElement>){
+        data.addAll(elements)
+        this.notifyDataSetChanged()
     }
 
     /**
      * Removes element at given position
      */
-    fun removeElement(position: Int){
+    override fun removeElement(position: Int){
         data.removeAt(position)
-        this.notifyItemRemoved(position)
+        this.notifyDataSetChanged()
     }
     /**
      * Updates element at given position
      */
-    fun updateElement(position: Int, element: String){
+    fun updateElement(position: Int, element: SearchElement){
         data[position] = element
         this.notifyItemChanged(position)
     }
     /**
      * Clear all elements
      */
-    fun clearElements(){
+    override fun clearElements(){
         data.clear()
         this.notifyDataSetChanged()
     }
