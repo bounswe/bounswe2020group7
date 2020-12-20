@@ -414,6 +414,8 @@ class UserAPI(Resource):
                             profile_photo.save(fullpath)
                             if existing_user_record.profile_photo != photo_path:
                                 new_attributes["profile_photo"] = photo_path
+                            else:
+                                del new_attributes["profile_photo"]
                     try:            
                         if new_attributes:
                             # Updates the attributes of the user in the database.
