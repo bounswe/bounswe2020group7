@@ -5,6 +5,10 @@ import shutil
 class FileSystem():
 
     @staticmethod
+    def is_path_forbidden(workspace_path,requested_path):
+        return os.path.abspath(workspace_path) not in os.path.abspath(requested_path)
+
+    @staticmethod
     def initialize_ws(workspace_id):
         """
             !!!! CALL THIS FUNCTION IN CREATE WORKSPACE !!!!
