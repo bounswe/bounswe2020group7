@@ -13,6 +13,7 @@ from app.auth_system.models import User
 from app.auth_system.views import login_required
 from app.follow_system.helpers import follow_required
 from app.profile_management.helpers import NotificationManager
+from app.auth_system.helpers import profile_photo_link
 
 follow_system_ns = Namespace("Follow System",
                              description="Follow System Endpoints",
@@ -79,7 +80,9 @@ class GetFollowingsAPI(Resource):
             followings_list = [
                 {'id': following_user.id, 'name': following_user.name, 'surname': following_user.surname,
                  'e_mail': following_user.e_mail, 'rate': following_user.rate,
-                 'is_private': following_user.is_private} for following_user in following_users]
+                 'is_private': following_user.is_private,
+                 'profile_photo': profile_photo_link(following_user.profile_photo,following_user.id) 
+                 } for following_user in following_users]
 
             # Pagination functionality
             number_of_pages = 1
@@ -159,7 +162,9 @@ class GetFollowersAPI(Resource):
             followers_list = [
                 {'id': follower_user.id, 'name': follower_user.name, 'surname': follower_user.surname,
                  'e_mail': follower_user.e_mail, 'rate': follower_user.rate,
-                 'is_private': follower_user.is_private} for follower_user in follower_users]
+                 'is_private': follower_user.is_private,
+                 'profile_photo': profile_photo_link(follower_user.profile_photo,follower_user.id) 
+                 } for follower_user in follower_users]
 
             # Pagination functionality
             number_of_pages = 1
@@ -211,7 +216,9 @@ class FollowRequestAPI(Resource):
             follow_request_senders_list = [
                 {'id': follower_user.id, 'name': follower_user.name, 'surname': follower_user.surname,
                  'e_mail': follower_user.e_mail, 'rate': follower_user.rate,
-                 'is_private': follower_user.is_private} for follower_user in follower_users]
+                 'is_private': follower_user.is_private,
+                 'profile_photo': profile_photo_link(follower_user.profile_photo,follower_user.id)} 
+                 for follower_user in follower_users]
 
             # Pagination functionality
             number_of_pages = 1
