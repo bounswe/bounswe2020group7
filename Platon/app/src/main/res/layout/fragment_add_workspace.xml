@@ -79,6 +79,7 @@
             android:textColorHint="@color/secondary_blue"
             android:textColorLink="@color/secondary_blue" />
 
+
         <EditText
             android:id="@+id/ws_deadline_et"
             android:layout_width="match_parent"
@@ -109,6 +110,7 @@
                 android:layout_marginStart="@dimen/x_small"
                 />
             <ImageView
+                android:id="@+id/add_skill_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/baseline_add_white_24dp"/>

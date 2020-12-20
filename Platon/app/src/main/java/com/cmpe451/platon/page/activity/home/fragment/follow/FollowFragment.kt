@@ -134,4 +134,14 @@ class FollowFragment:Fragment() {
             override var currentPage: Int = 0
         })
     }
+
+    override fun onPause() {
+        adapter.clearElements()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        adapter.clearElements()
+        super.onResume()
+    }
 }

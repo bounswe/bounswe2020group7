@@ -44,5 +44,12 @@ class FollowerFollowingAdapter(private val dataSet: ArrayList<FollowPerson>, val
         holder.bind(dataSet[position], holder.view, clickCallback)
 
     }
+    /**
+     * Clear all elements
+     */
+    fun clearElements(){
+        dataSet.clear()
+        this.notifyDataSetChanged()
+    }
 
 }
