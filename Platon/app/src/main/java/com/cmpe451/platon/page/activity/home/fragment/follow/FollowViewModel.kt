@@ -19,14 +19,14 @@ class FollowViewModel: ViewModel() {
         getFollowingResource = repository.followingResource
     }
 
-    fun fetchFollowing(id:Int?, token:String?){
+    fun fetchFollowing(id:Int?, token:String?, page:Int, per_page:Int){
         if(token != null && id != null){
-            repository.getFollowing(id, token)
+            repository.getFollowing(id, token, page, per_page)
         }
     }
-    fun fetchFollowers(id:Int?, token:String?){
+    fun fetchFollowers(id:Int?, token:String?, page:Int, per_page:Int){
         if(token != null && id != null){
-            repository.getFollowers(id, token)
+            repository.getFollowers(id, token, page, per_page)
         }
     }
 

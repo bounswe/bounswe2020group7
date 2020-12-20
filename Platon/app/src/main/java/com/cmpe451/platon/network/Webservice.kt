@@ -3,6 +3,7 @@ package com.cmpe451.platon.network
 import com.cmpe451.platon.network.models.*
 import com.google.gson.JsonObject
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -11,10 +12,14 @@ interface Webservice {
 
     @GET("api/follow/followers")
     fun getFollowers(@Query("following_id") followingId: Int,
+                     @Query("page") page: Int,
+                     @Query("per_page") per_page: Int,
                      @Header("auth_token") auth_token: String ) : Call<Followers?>
 
     @GET("api/follow/followings")
     fun getFollowing(@Query("follower_id") followingId: Int,
+                     @Query("page") page: Int,
+                     @Query("per_page") per_page: Int,
                      @Header("auth_token") auth_token: String ) : Call<Following?>
 
     @FormUrlEncoded
@@ -51,7 +56,7 @@ interface Webservice {
                       @Query("page") page:Int?,
                       @Query("per_page") perPage:Int? ) : Call<Researches?>
 
-    //@Multipart
+    //-
     @FormUrlEncoded
     @PUT("api/auth_system/user")
     fun editUserInfo(@Field("name") name:String?,
@@ -61,8 +66,12 @@ interface Webservice {
                      @Field("is_private") is_private:Int?,
                      @Field("google_scholar_name") google_scholar_name:String?,
                      @Field("researchgate_name") researchgate_name:String?,
-                     //@Part("image") image:MultipartBody.Part?,
                      @Header("auth_token") auth_token :String) : Call<JsonObject?>
+
+    @PUT("api/auth_system/user")
+    fun uploadPhoto(@Body image: RequestBody,
+                    @Header("auth_token") auth_token :String): Call<JsonObject?>
+
     @FormUrlEncoded
     @POST("api/profile/research_information")
     fun addResearchProject(@Field("research_title") research_title:String,
@@ -155,4 +164,27 @@ interface Webservice {
                    @Query("page") page:Int?,
                    @Query("per_page") perPage:Int?):Call<UserSearch?>
 
+
+
+    @GET("api/upcoming_events")
+    fun getUpcomingEvents(
+            @Query("page")  page: Int?,
+            @Query("per_page") pageSize:Int?
+    ):Call<UpcomingEvents?>
+
+    @GET("api/workspaces/trending_projects")
+    fun getTrendingProjects(
+            @Query("number_of_workspaces") number_of_workspaces :Int
+    ):Call<TrendingProjects?>
+
+    @GET("api/workspaces/self")
+    fun getPersonalWorkspacesList(
+        @Header("auth_token") auth_token: String
+    ) : Call<WorkspaceListItems?>
+
+    @GET("api/workspaces")
+    fun getWorkspace(
+        @Query("workspace_id") workspace_id:Int,
+        @Header("auth_token") auth_token: String
+    ) : Call<Workspace?>
 }

@@ -56,175 +56,173 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:layout_margin="@dimen/xx_large"
             android:orientation="vertical">
-            <TextView
-                android:id="@+id/desc_title_tv"
+            <LinearLayout
+                android:id="@+id/desc_expand_ll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:fontFamily="@font/dm_sans_bold"
-                android:padding="@dimen/x_small"
-                android:paddingHorizontal="@dimen/title_logo_padding"
-                android:shadowColor="@color/primary_dark"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="2"
-                android:text="@string/desc_str"
-                android:textColor="@color/secondary_orange_transparent"
-                android:textSize="18sp"
-                />
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/desc_title_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:fontFamily="@font/dm_sans_bold"
+                    android:padding="@dimen/x_small"
+                    android:paddingHorizontal="@dimen/title_logo_padding"
+                    android:shadowColor="@color/primary_dark"
+                    android:shadowDx="1"
+                    android:shadowDy="1"
+                    android:shadowRadius="2"
+                    android:text="@string/desc_str"
+                    android:textColor="@color/secondary_orange_transparent"
+                    android:textSize="18sp"
+                    />
+                <ImageView
+                    android:id="@+id/desc_expand_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_expand_more_white_24dp"
+                    android:layout_gravity="center"
+                    />
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/description_tv"
-                android:textAlignment="center"
-                android:layout_marginStart="@dimen/xx_small"
-                android:layout_marginEnd="@dimen/xx_small"
-                android:background="@drawable/view_back_darker"
-                android:textColor="@color/primary_light"
-                android:textSize="@dimen/details_text_size"
+            <LinearLayout
+                android:id="@+id/project_info_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/desc_str"
-                />
-            <TextView
-                android:id="@+id/isPrivate_tv"
-                android:layout_marginStart="@dimen/xx_small"
-                android:layout_marginEnd="@dimen/xx_small"
-                android:textAlignment="center"
                 android:background="@drawable/view_back_darker"
-                android:textColor="@color/primary_light"
-                android:textSize="@dimen/details_text_size"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Is Private"
-                />
-            <TextView
-                android:id="@+id/max_num_title_tv"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/description_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/xx_small"
+                    android:text="@string/desc_str"
+                    android:textAlignment="center"
+                    android:textColor="@color/primary_light"
+                    android:textSize="@dimen/details_text_size" />
+
+                <TextView
+                    android:id="@+id/isPrivate_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/xx_small"
+                    android:text="Is Private"
+                    android:textAlignment="center"
+                    android:textColor="@color/primary_light"
+                    android:textSize="@dimen/details_text_size" />
+
+                <TextView
+                    android:id="@+id/maxCollab_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/xx_small"
+                    android:text="@string/max_collab_str"
+                    android:textAlignment="center"
+                    android:textColor="@color/primary_light"
+                    android:textSize="@dimen/details_text_size" />
+
+                <TextView
+                    android:id="@+id/deadline_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/xx_small"
+                    android:text="@string/deadline_str"
+                    android:textAlignment="center"
+                    android:textColor="@color/primary_light"
+                    android:textSize="@dimen/details_text_size" />
+
+                <TextView
+                    android:id="@+id/state_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/xx_small"
+                    android:text="@string/workspace_state_str"
+                    android:textAlignment="center"
+                    android:textColor="@color/primary_light"
+                    android:textSize="@dimen/details_text_size" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/req_expand_ll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:fontFamily="@font/dm_sans_bold"
-                android:padding="@dimen/x_small"
-                android:paddingHorizontal="@dimen/title_logo_padding"
-                android:shadowColor="@color/primary_dark"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="2"
-                android:text="@string/max_collab_str"
-                android:textColor="@color/secondary_orange_transparent"
-                android:textSize="18sp"
-                />
-            <TextView
-                android:id="@+id/maxCollab_tv"
-                android:layout_margin="@dimen/xx_small"
-                android:textAlignment="center"
-                android:textColor="@color/primary_light"
-                android:textSize="@dimen/details_text_size"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/requirements_title_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:fontFamily="@font/dm_sans_bold"
+                    android:padding="@dimen/x_small"
+                    android:paddingHorizontal="@dimen/title_logo_padding"
+                    android:shadowColor="@color/primary_dark"
+                    android:shadowDx="1"
+                    android:shadowDy="1"
+                    android:shadowRadius="2"
+                    android:text="@string/requirements_str"
+                    android:textColor="@color/secondary_orange_transparent"
+                    android:textSize="18sp"
+                    />
+                <ImageView
+                    android:id="@+id/req_expand_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_expand_more_white_24dp"
+                    android:layout_gravity="center"
+                    />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_workspace_requirements"
                 android:layout_width="match_parent"
+                android:layout_height="@dimen/recycler_view_height_medium"
+                android:layout_margin="@dimen/profile_page_margin"
                 android:background="@drawable/view_back_darker"
-                android:layout_height="wrap_content"
-                android:text="Max Collaborators"
-                />
-            <TextView
-                android:id="@+id/deadline_title_tv"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@id/projects_title"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/info_title"
+                app:layout_constraintVertical_bias="0.6" />
+
+            <LinearLayout
+                android:id="@+id/skills_expand_ll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:fontFamily="@font/dm_sans_bold"
-                android:padding="@dimen/x_small"
-                android:paddingHorizontal="@dimen/title_logo_padding"
-                android:shadowColor="@color/primary_dark"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="2"
-                android:text="@string/deadline_str"
-                android:textColor="@color/secondary_orange_transparent"
-                android:textSize="18sp"
-                />
-            <TextView
-                android:id="@+id/deadline_tv"
-                android:layout_margin="@dimen/xx_small"
-                android:textAlignment="center"
-                android:textColor="@color/primary_light"
-                android:background="@drawable/view_back_darker"
-                android:textSize="@dimen/details_text_size"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/deadline_str"
-                />
-            <TextView
-                android:id="@+id/req_title_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:fontFamily="@font/dm_sans_bold"
-                android:padding="@dimen/x_small"
-                android:paddingHorizontal="@dimen/title_logo_padding"
-                android:shadowColor="@color/primary_dark"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="2"
-                android:text="@string/requirements_str"
-                android:textColor="@color/secondary_orange_transparent"
-                android:textSize="18sp"
-                />
-            <TextView
-                android:id="@+id/requrements_tv"
-                android:layout_margin="@dimen/xx_small"
-                android:textAlignment="center"
-                android:textColor="@color/primary_light"
-                android:background="@drawable/view_back_darker"
-                android:textSize="@dimen/details_text_size"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/requirements_str"
-                />
-            <TextView
-                android:id="@+id/state_title_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:fontFamily="@font/dm_sans_bold"
-                android:padding="@dimen/x_small"
-                android:paddingHorizontal="@dimen/title_logo_padding"
-                android:shadowColor="@color/primary_dark"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="2"
-                android:text="@string/workspace_state_str"
-                android:textColor="@color/secondary_orange_transparent"
-                android:textSize="18sp"
-                />
-            <TextView
-                android:id="@+id/state_tv"
-                android:layout_margin="@dimen/xx_small"
-                android:textAlignment="center"
-                android:textColor="@color/primary_light"
-                android:background="@drawable/view_back_darker"
-                android:textSize="@dimen/details_text_size"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/workspace_state_str"
-                />
-            <TextView
-                android:id="@+id/skills_title_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:fontFamily="@font/dm_sans_bold"
-                android:padding="@dimen/x_small"
-                android:paddingHorizontal="@dimen/title_logo_padding"
-                android:shadowColor="@color/primary_dark"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="2"
-                android:text="@string/skills"
-                android:textColor="@color/secondary_orange_transparent"
-                android:textSize="18sp"
-                />
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/skills_title_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:fontFamily="@font/dm_sans_bold"
+                    android:padding="@dimen/x_small"
+                    android:paddingHorizontal="@dimen/title_logo_padding"
+                    android:shadowColor="@color/primary_dark"
+                    android:shadowDx="1"
+                    android:shadowDy="1"
+                    android:shadowRadius="2"
+                    android:text="@string/skills"
+                    android:textColor="@color/secondary_orange_transparent"
+                    android:textSize="18sp"
+                    />
+                <ImageView
+                    android:id="@+id/skills_expand_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_expand_more_white_24dp"
+                    android:layout_gravity="center"
+                    />
+            </LinearLayout>
+
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_workspace_skills"
@@ -235,6 +233,7 @@
                 app:layout_constraintBottom_toTopOf="@id/projects_title"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
+                android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/info_title"
                 app:layout_constraintVertical_bias="0.6" />
 
@@ -271,7 +270,7 @@
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_profile_page_projects"
+            android:id="@+id/collaborators_rv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/profile_page_margin"

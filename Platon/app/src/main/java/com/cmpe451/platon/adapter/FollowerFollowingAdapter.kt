@@ -3,6 +3,7 @@ package com.cmpe451.platon.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
@@ -30,7 +31,7 @@ class FollowerFollowingAdapter(private val dataSet: ArrayList<FollowPerson>, val
         return ViewHolder(view)
     }
     fun submitList(list:ArrayList<FollowPerson>){
-        this.dataSet.clear()
+//        this.dataSet.clear()
         this.dataSet.addAll(list)
         notifyDataSetChanged()
     }
@@ -42,6 +43,13 @@ class FollowerFollowingAdapter(private val dataSet: ArrayList<FollowPerson>, val
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(dataSet[position], holder.view, clickCallback)
 
+    }
+    /**
+     * Clear all elements
+     */
+    fun clearElements(){
+        dataSet.clear()
+        this.notifyDataSetChanged()
     }
 
 }

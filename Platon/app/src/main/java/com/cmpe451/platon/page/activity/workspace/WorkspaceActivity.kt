@@ -59,9 +59,9 @@ class WorkspaceActivity : BaseActivity() {
     private fun initViews() {
         if(addClicked == true){
             navController.navigate(WorkspaceFragmentDirections.actionWorkspaceFragmentToAddWorkspaceFragment())
+        }else{
+            initListeners()
         }
-
-        initListeners()
     }
 
     private fun initListeners() {

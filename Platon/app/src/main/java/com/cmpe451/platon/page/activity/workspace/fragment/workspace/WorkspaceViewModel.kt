@@ -7,22 +7,10 @@ class WorkspaceViewModel : ViewModel() {
 
     private val repository = WorkspaceRepository()
     var getWorkspaceResponse = repository.getWorkspaceResponse
-    lateinit var isPrivateString:String
-    lateinit var workspaceStateString:String
 
-    fun fetchWorkspace(){
-        repository.fetchWorkspace()
-        setFields()
+    fun fetchWorkspace(workspace_id:Int, token:String){
+        repository.fetchWorkspace(workspace_id, token)
     }
-    private fun setFields(){
-        if(getWorkspaceResponse.value?.data!=null){
-            isPrivateString = if(getWorkspaceResponse.value!!.data!!.is_private!!) "Private Workspace" else "Public Workspace"
-            workspaceStateString = when(getWorkspaceResponse.value!!.data!!.state){
-                0-> "Search for Collaborators State"
-                1-> "Ongoing State"
-                else -> "Finished"
-            }
-        }
-    }
+
 
 }

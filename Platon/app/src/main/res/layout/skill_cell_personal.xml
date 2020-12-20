@@ -4,13 +4,14 @@
     xmlns:card_view = "http://schemas.android.com/apk/res-auto"
     card_view:cardCornerRadius = "@dimen/medium"
     card_view:cardElevation="@dimen/xxx_small"
-    android:layout_margin="@dimen/small"
-    card_view:contentPadding="@dimen/medium"
+    android:layout_margin="@dimen/xx_small"
+    card_view:contentPadding="@dimen/small"
     card_view:cardBackgroundColor="@color/secondary_blue_transparent"
     android:layout_width = "match_parent"
     android:layout_height = "wrap_content">
 
     <RelativeLayout
+        android:animateLayoutChanges="true"
         android:id="@+id/firstRelative"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,7 +25,7 @@
             android:maxLines="1"
             android:text="@string/skills"
             android:textColor="@color/primary_dark"
-            android:textSize="@dimen/project_title_text_size"/>
+            android:textSize="@dimen/desc_text_size"/>
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

@@ -9,9 +9,9 @@ import android.widget.RelativeLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
 import com.cmpe451.platon.databinding.WorkspaceCellBinding
-import com.cmpe451.platon.network.models.Workspace
+import com.cmpe451.platon.network.models.WorkspaceListItem
 
-class WorkspaceListAdapter(private val data: ArrayList<Workspace>, private val context: Context, private val workspaceListButtonClickListener: WorkspaceListButtonClickListener) :
+class WorkspaceListAdapter(private val data: ArrayList<WorkspaceListItem>, private val context: Context, private val workspaceListButtonClickListener: WorkspaceListButtonClickListener) :
 
     RecyclerView.Adapter<WorkspaceListAdapter.WorkspaceListViewHolder>() {
 
@@ -58,7 +58,7 @@ class WorkspaceListAdapter(private val data: ArrayList<Workspace>, private val c
     /**
      * Adds element to given position
      */
-    fun addElement(position: Int, element: Workspace){
+    fun addElement(position: Int, element: WorkspaceListItem){
         data.add(position, element)
         this.notifyItemInserted(position)
     }
@@ -73,7 +73,7 @@ class WorkspaceListAdapter(private val data: ArrayList<Workspace>, private val c
     /**
      * Updates element at given position
      */
-    fun updateElement(position: Int, element: Workspace){
+    fun updateElement(position: Int, element: WorkspaceListItem){
         data[position] = element
         this.notifyItemChanged(position)
     }
@@ -84,7 +84,7 @@ class WorkspaceListAdapter(private val data: ArrayList<Workspace>, private val c
         data.clear()
         this.notifyDataSetChanged()
     }
-    fun submitElements(list: List<Workspace>){
+    fun submitElements(list: List<WorkspaceListItem>){
         data.addAll(list)
         notifyDataSetChanged()
     }

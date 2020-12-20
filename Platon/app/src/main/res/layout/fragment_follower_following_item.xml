@@ -1,32 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/cl_follower_item"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/profile_list_height"
-    android:background="@drawable/item_background_border">
-
-    <ImageView
-        android:id="@+id/profile_page_icon"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="@dimen/profile_margin_half"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_launcher_foreground" />
-
-    <TextView
-        android:id="@+id/text_profile_page_info_title"
-        android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_margin="@dimen/xx_small"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/profile_page_margin"
-        android:layout_marginEnd="@dimen/profile_page_margin"
-        android:text="Name Surname"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/profile_page_icon"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="horizontal"
+        android:background="@drawable/view_back_darker">
+        <ImageView
+            android:id="@+id/profile_page_icon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="@dimen/profile_margin_half"
+            app:srcCompat="@drawable/ic_launcher_foreground" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/text_profile_page_info_title"
+            android:padding="@dimen/small"
+            android:layout_margin="@dimen/small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/profile_page_margin"
+            android:layout_marginEnd="@dimen/profile_page_margin"
+            android:text="Name Surname"
+            android:textSize="@dimen/title_text_size"
+            android:textColor="@color/primary_light" />
+    </LinearLayout>
+
+
+</LinearLayout>
