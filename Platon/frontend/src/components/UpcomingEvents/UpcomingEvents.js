@@ -25,9 +25,6 @@ const UpcomingEvents = (props) => {
     root: {
       color: colors.secondary,
     },
-    selected: {
-      backgroundColor: colors.quaternaryDark + '!important',
-    },
   }, { name: 'MuiPaginationItem' })(Pagination)
 
   useEffect(() => {
@@ -41,6 +38,7 @@ const UpcomingEvents = (props) => {
       })
       .catch((error) => {
         console.error('Error:', error)
+        setFetching(false)
       })
   }, [page])
 
@@ -71,7 +69,7 @@ const UpcomingEvents = (props) => {
               key={index}
             />
           ))}
-          <div className='paginationContainer'>
+          <div className='paginationContainerUpcoming'>
             <StyledPagination
               count={data.number_of_pages}
               onChange={handlePageChange}
