@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.LayoutAnimationController
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
@@ -176,7 +177,6 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
         }else{
             binding.expandLl.visibility = View.GONE
         }
-
         binding.expandLl.refreshDrawableState()
 
         Definitions().vibrate(50, activity as BaseActivity)

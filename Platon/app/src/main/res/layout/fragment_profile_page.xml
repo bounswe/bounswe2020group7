@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
+
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical">
@@ -223,7 +224,7 @@
                 android:shadowDx="1"
                 android:shadowDy="1"
                 android:shadowRadius="2"
-                android:text="@string/projects"
+                android:text="@string/researches_STR"
                 android:textAllCaps="false"
                 android:textColor="@color/secondary_purple"
                 android:textSize="@dimen/project_title_text_size" />
@@ -236,6 +237,7 @@
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
+
             android:id="@+id/rv_profile_page_projects"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
