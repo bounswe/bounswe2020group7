@@ -14,6 +14,7 @@ from app.auth_system.views import generate_token
 from app import db
 import datetime
 import json
+from app.workspace_system.helpers import WorkspaceState
 
 class MilestoneTest(BaseTest):
     """
@@ -49,10 +50,10 @@ class MilestoneTest(BaseTest):
         db.session.commit()
 
         workspaces = [
-            Workspace(1, 0, "coronovirus study", 1), # public workspace by Umut on state 1
-            Workspace(2, 1, "SWE difficulties", 1), # private workspace by Can on state 1
-            Workspace(4, 1, "honeybadger", 1), # private workspace by Hilal on state 1
-            Workspace(3, 0, "bos", 1) # public workspace by Alperen on state 1
+            Workspace(1, 0, "coronovirus study", WorkspaceState.search_for_collaborator.value), # public workspace by Umut on state 1
+            Workspace(2, 1, "SWE difficulties", WorkspaceState.search_for_collaborator.value), # private workspace by Can on state 1
+            Workspace(4, 1, "honeybadger", WorkspaceState.search_for_collaborator.value), # private workspace by Hilal on state 1
+            Workspace(3, 0, "bos", WorkspaceState.search_for_collaborator.value) # public workspace by Alperen on state 1
         ]
 
         for workspace in workspaces:
