@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -10,41 +10,38 @@ import TextField from "@material-ui/core/TextField";
 import config from "../../../../../utils/config";
 import axios from "axios";
 export default function WorkspaceViewFileSectionEditConfirmation(props) {
-    const [name, setName] = useState(props.element);
-    const [body, setBody] = useState(props.element);
-    useEffect(() => {
-        const token = localStorage.getItem("jwtToken");
-        axios.defaults.headers.common["auth_token"] = `${token}`;
-        const url = config.BASE_URL;
-        axios
-          .get(url + "/api/file_system/file", {
-            params: {
-              path: props.cwd,
-              workspace_id: props.c_workspace_id,
-              filename: props.element,
-            },
-          }).then((response) => {
-            if (response.status === 200) {
-                setBody(response.data)
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      }, []);
+  const [body, setBody] = useState(props.element);
+  useEffect(() => {
+    const token = localStorage.getItem("jwtToken");
+    axios.defaults.headers.common["auth_token"] = `${token}`;
+    const url = config.BASE_URL;
+    axios
+      .get(url + "/api/file_system/file", {
+        params: {
+          path: props.cwd,
+          workspace_id: props.c_workspace_id,
+          filename: props.element,
+        },
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          setBody(response.data);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   const handleEditFile = () => {
-    if(name==="" || body===""){
-        return;
-    }
     props.handleEditFileDialogClose(props.index);
-    props.editFile(name, body);
+    props.editFile(props.element, body);
   };
   return (
     <div>
       <Dialog
-fullWidth
-                    maxWidth = {'lg'}
+        fullWidth
+        maxWidth={"lg"}
         open={props.editDialog}
         onClose={props.handleEditFileDialogClose}
         aria-labelledby="alert-dialog-title"
@@ -55,25 +52,22 @@ fullWidth
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-              <div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
-            <TextField
-            variant="outlined"
-            label="File Name"
-            fullWidth
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-            <hr/>
-             <TextField
-            variant="outlined"
-            label="File Body"
-              value={body}
-              multiline
-              fullWidth
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <TextField
+                variant="outlined"
+                label="File Body"
+                value={body}
+                multiline
+                fullWidth
                 rows={15}
-              onChange={(e) => setBody(e.target.value)}
-
-            />
+                onChange={(e) => setBody(e.target.value)}
+              />
             </div>
           </DialogContentText>
         </DialogContent>
@@ -86,7 +80,7 @@ fullWidth
             Cancel
           </Button>
           <Button
-          onClick={handleEditFile}
+            onClick={handleEditFile}
             style={{
               color: colors.secondaryLight,
               backgroundColor: colors.quaternary,
