@@ -4,9 +4,12 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Context
+import android.database.Cursor
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.provider.MediaStore
 import android.widget.Toast
 import com.cmpe451.platon.R
 import java.util.*
@@ -28,6 +31,16 @@ class Definitions {
         FOLLOWING, NOT_FOLLOWING, REQUESTED
     }
 
+    fun getRealPathFromUri( context:Context,  contentUri: Uri):String {
+        var cursor:Cursor? = null;
+        try {
+            cursor = context.contentResolver.query(contentUri, arrayOf(MediaStore.Images.Media.DATA), null, null, null);
+            cursor!!.moveToFirst();
+            return cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA));
+        } finally {
+            cursor?.close()
+        }
+    }
 
     fun vibrate(ms: Long = 50, activity: Activity){
         val vib = activity.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator

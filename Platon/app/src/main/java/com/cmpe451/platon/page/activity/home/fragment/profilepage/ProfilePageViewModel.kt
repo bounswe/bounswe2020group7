@@ -6,17 +6,20 @@ import androidx.lifecycle.ViewModel
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.*
 import com.google.gson.JsonObject
+import okhttp3.RequestBody
 
 class ProfilePageViewModel: ViewModel() {
 
 
     var userSkills: MutableLiveData<Resource<Skills>> = MutableLiveData()
     var currentResearch: MutableLiveData<Research> = MutableLiveData()
-    val getResearchesResourceResponse: LiveData<Resource<Researches>>
+    val getResearchesResourceResponse: MutableLiveData<Resource<Researches>>
 
-    val getAddDeleteSkillResourceResponse: LiveData<Resource<JsonObject>>
+    val getAddDeleteSkillResourceResponse: MutableLiveData<Resource<JsonObject>>
 
     var allSkills: MutableLiveData<Resource<List<String>>> = MutableLiveData()
+
+    var getUploadPhotoResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
 
     private var repository: ProfilePageRepository = ProfilePageRepository()
 
@@ -25,6 +28,7 @@ class ProfilePageViewModel: ViewModel() {
         allSkills = repository.allSkills
         userSkills = repository.userSkills
         getAddDeleteSkillResourceResponse = repository.addDeleteSkillResourceResponse
+        getUploadPhotoResourceResponse = repository.uploadPhotoResourceResponse
     }
 
     fun setCurrentResearch(research:Research){
@@ -51,5 +55,9 @@ class ProfilePageViewModel: ViewModel() {
 
     fun deleteSkillFromUser(s: String, token: String) {
         repository.deleteSkillFromUser(s, token)
+    }
+
+    fun uploadPhoto(fBody: RequestBody, token: String) {
+        repository.uploadPhoto(fBody, token)
     }
 }

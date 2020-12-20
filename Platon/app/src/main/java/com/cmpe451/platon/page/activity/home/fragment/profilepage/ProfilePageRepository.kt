@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.RetrofitClient
 import com.cmpe451.platon.network.models.*
-import com.google.gson.Gson
 import com.google.gson.JsonObject
+import okhttp3.RequestBody
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -18,7 +18,7 @@ class ProfilePageRepository() {
     val allSkills:MutableLiveData<Resource<List<String>>> = MutableLiveData()
     val userSkills:MutableLiveData<Resource<Skills>> = MutableLiveData()
     val addDeleteSkillResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
-
+    val uploadPhotoResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
 
     fun getResearches( userId: Int, authToken: String, page:Int?, perPage:Int?){
         val service = RetrofitClient.getService()
@@ -126,6 +126,31 @@ class ProfilePageRepository() {
                         else addDeleteSkillResourceResponse.value = Resource.Error("Unknown error!")
                     }
                     else -> addDeleteSkillResourceResponse.value = Resource.Error("Unknown error!")
+                }
+            }
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+
+    fun uploadPhoto(fBody: RequestBody, token: String) {
+        val service = RetrofitClient.getService()
+        val call = service.uploadPhoto(fBody, token)
+        uploadPhotoResourceResponse.value = Resource.Loading()
+        call.enqueue(object: Callback<JsonObject?>{
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when {
+                    response.isSuccessful && response.body() != null -> uploadPhotoResourceResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null ->  {
+                        Log.i("ERORR",response.errorBody()!!.string().toString())
+                        val obj = JSONObject(response.errorBody()!!.string().toString())
+                        if (obj.has("error"))
+                            uploadPhotoResourceResponse.value = Resource.Error(obj.getString("error"))
+                        else uploadPhotoResourceResponse.value = Resource.Error("Unknown error!")
+                    }
+                    else -> uploadPhotoResourceResponse.value = Resource.Error("Unknown error!")
                 }
             }
             override fun onFailure(call: Call<JsonObject?>, t: Throwable) {

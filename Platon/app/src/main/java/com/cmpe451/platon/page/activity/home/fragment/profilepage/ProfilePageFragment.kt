@@ -1,8 +1,11 @@
 package com.cmpe451.platon.page.activity.home.fragment.profilepage
 
+import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -11,7 +14,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.widget.SearchView
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -31,6 +34,11 @@ import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.activity.home.HomeActivityViewModel
 import com.cmpe451.platon.util.Definitions
+import okhttp3.MediaType
+import okhttp3.RequestBody
+import java.io.File
+import java.io.InputStream
+
 
 class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonClickListener{
 
@@ -41,8 +49,10 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     private lateinit var dialog:AlertDialog
     private var maxPageNumberResearch:Int=0
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         // Inflate the layout for this fragment
         binding = FragmentProfilePageBinding.inflate(inflater)
         setHasOptionsMenu(true)
@@ -61,16 +71,26 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
 
         val layoutManager = LinearLayoutManager(this.activity)
 
-        binding.rvProfilePageProjects.adapter = UserProjectsAdapter(ArrayList(), requireContext(), this)
+        binding.rvProfilePageProjects.adapter = UserProjectsAdapter(
+            ArrayList(),
+            requireContext(),
+            this
+        )
         binding.rvProfilePageProjects.layoutManager = layoutManager
 
-        binding.rvProfilePageProjects.layoutParams = LinearLayout.LayoutParams(width,height/3)
+        binding.rvProfilePageProjects.layoutParams = LinearLayout.LayoutParams(width, height / 3)
 
-        binding.rvProfilePageProjects.addOnScrollListener(object:PaginationListener(layoutManager){
+        binding.rvProfilePageProjects.addOnScrollListener(object :
+            PaginationListener(layoutManager) {
             override fun loadMoreItems() {
-                if(maxPageNumberResearch-1 > currentPage){
+                if (maxPageNumberResearch - 1 > currentPage) {
                     currentPage++
-                    mProfilePageViewModel.fetchResearch((activity as HomeActivity).token, (activity as HomeActivity).userId, currentPage, 5)
+                    mProfilePageViewModel.fetchResearch(
+                        (activity as HomeActivity).token,
+                        (activity as HomeActivity).userId,
+                        currentPage,
+                        5
+                    )
                 }
             }
 
@@ -98,7 +118,8 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                 Resource.Success::class.java -> {
                     val user = t.data!!
                     binding.tvEmail.text = user.e_mail
-                    binding.tvInstitution.text = if (user.institution != "") user.institution else "Institution not specified!"
+                    binding.tvInstitution.text =
+                        if (user.institution != "") user.institution else "Institution not specified!"
                     binding.tvJob.text = user.job
                     val naming = user.name + " " + user.surname
                     binding.textNameSurname.text = naming
@@ -106,8 +127,16 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                     (binding.rvProfilePageProjects.adapter as UserProjectsAdapter).clearElements()
 
 
-                    mProfilePageViewModel.fetchResearch((activity as HomeActivity).token, user.id, 0, 5)
-                    mProfilePageViewModel.getUserSkills((activity as HomeActivity).userId!!, (activity as HomeActivity).token!!)
+                    mProfilePageViewModel.fetchResearch(
+                        (activity as HomeActivity).token,
+                        user.id,
+                        0,
+                        5
+                    )
+                    mProfilePageViewModel.getUserSkills(
+                        (activity as HomeActivity).userId!!,
+                        (activity as HomeActivity).token!!
+                    )
 
                     if (user.rate == -1.0) {
                         binding.ratingBar.visibility = View.GONE
@@ -119,26 +148,38 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                     }
 
                     Glide.with(this)
-                            .load(user.profile_photo)
-                            .placeholder(R.drawable.ic_o_logo)
-                            .into(binding.profilePhoto)
+                        .load(Definitions.API_URL + "api" + user.profile_photo)
+                        .placeholder(R.drawable.ic_o_logo)
+                        .into(binding.profilePhoto)
                 }
-                Resource.Error::class.java -> Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+                Resource.Error::class.java -> Toast.makeText(
+                    activity,
+                    t.message,
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         })
     }
 
 
     private fun setObservers() {
-        mProfilePageViewModel.getResearchesResourceResponse.observe(viewLifecycleOwner, Observer { t ->
-            when (t.javaClass) {
-                Resource.Success::class.java -> {
-                    maxPageNumberResearch = t.data!!.number_of_pages
-                    (binding.rvProfilePageProjects.adapter as UserProjectsAdapter).submitElements(t.data!!.research_info!!)
+        mProfilePageViewModel.getResearchesResourceResponse.observe(
+            viewLifecycleOwner,
+            Observer { t ->
+                when (t.javaClass) {
+                    Resource.Success::class.java -> {
+                        maxPageNumberResearch = t.data!!.number_of_pages
+                        (binding.rvProfilePageProjects.adapter as UserProjectsAdapter).submitElements(
+                            t.data!!.research_info!!
+                        )
+                    }
+                    Resource.Error::class.java -> Toast.makeText(
+                        activity,
+                        t.message,
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
-                Resource.Error::class.java -> Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
-            }
-        })
+            })
 
         mProfilePageViewModel.userSkills.observe(viewLifecycleOwner, Observer { t ->
             when (t.javaClass) {
@@ -159,6 +200,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
         {
             if(it.resultCode == Activity.RESULT_OK && it.data != null && it.data!!.data != null) {
                 Glide.with(this).load(it.data!!.data).into(binding.profilePhoto)
+                uploadProfilePhoto(it.data!!.data)
             }
         }
 
@@ -169,11 +211,19 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
         }
 
         binding.buttonFollowers.setOnClickListener {
-            findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToFollowFragment("follower"))
+            findNavController().navigate(
+                ProfilePageFragmentDirections.actionProfilePageFragmentToFollowFragment(
+                    "follower"
+                )
+            )
         }
 
         binding.buttonFollowing.setOnClickListener {
-            findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToFollowFragment("following"))
+            findNavController().navigate(
+                ProfilePageFragmentDirections.actionProfilePageFragmentToFollowFragment(
+                    "following"
+                )
+            )
         }
 
         binding.buttonEditProfile.setOnClickListener {
@@ -189,39 +239,114 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
 
     }
 
+
+
+    private fun uploadProfilePhoto(data: Uri?) {
+        if(data != null){
+            ActivityCompat.requestPermissions(activity as HomeActivity,
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1);
+
+            if((activity as HomeActivity).checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+                val file = File(Definitions().getRealPathFromUri(requireContext(), data))
+                val fBody = RequestBody.create(
+                    MediaType.parse("image/*"),
+                    file
+                )
+
+                mProfilePageViewModel.uploadPhoto(fBody, (activity as HomeActivity).token!!)
+            }else{
+                Toast.makeText(
+                    requireContext(),
+                    "Please give read permissions!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+
+
+        }
+        mProfilePageViewModel.getUploadPhotoResourceResponse.observe(viewLifecycleOwner, { t ->
+            when (t.javaClass) {
+                Resource.Success::class.java -> {
+                    dialog.dismiss()
+                    Toast.makeText(
+                        requireContext(),
+                        "Update profile photo is successful!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    mProfilePageViewModel.getUploadPhotoResourceResponse.removeObservers(
+                        viewLifecycleOwner
+                    )
+                }
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Error::class.java -> {
+                    dialog.dismiss()
+                    Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                    mProfilePageViewModel.getUploadPhotoResourceResponse.removeObservers(
+                        viewLifecycleOwner
+                    )
+                }
+            }
+
+
+        })
+        
+
+    }
+
     private fun onAddDeleteSkillClicked(){
         mProfilePageViewModel.allSkills.observe(viewLifecycleOwner, Observer { t ->
             when (t.javaClass) {
                 Resource.Success::class.java -> {
-                    val skillNameList = (binding.rvProfilePageSkills.adapter as SkillsAdapter).getAllElements()
+                    val skillNameList =
+                        (binding.rvProfilePageSkills.adapter as SkillsAdapter).getAllElements()
                     val bArray = t.data!!.map { skillNameList.contains(it) }.toBooleanArray()
                     AlertDialog.Builder(context)
-                            .setCancelable(false)
-                            .setNeutralButton("Add Nonexistent Skill") { _, _ ->
-                                val tmpBinding = AddSkillBinding.inflate(layoutInflater, requireView().parent as ViewGroup, false)
-                                AlertDialog.Builder(context).setView(tmpBinding.root)
-                                        .setCancelable(false)
-                                        .setNegativeButton("Completed") { _, _ ->
-                                            mProfilePageViewModel.getAddDeleteSkillResourceResponse.removeObservers(viewLifecycleOwner)
-                                        }
-                                        .create().show()
-                                tmpBinding.btnAddSkill.setOnClickListener{
-                                    if (!tmpBinding.etNewSkill.text.isNullOrEmpty()) {
-                                        mProfilePageViewModel.addSkillToUser(tmpBinding.etNewSkill.text.toString().trim(), (activity as HomeActivity).token!!)
-                                    }
+                        .setCancelable(false)
+                        .setNeutralButton("Add Nonexistent Skill") { _, _ ->
+                            val tmpBinding = AddSkillBinding.inflate(
+                                layoutInflater,
+                                requireView().parent as ViewGroup,
+                                false
+                            )
+                            AlertDialog.Builder(context).setView(tmpBinding.root)
+                                .setCancelable(false)
+                                .setNegativeButton("Completed") { _, _ ->
+                                    mProfilePageViewModel.getAddDeleteSkillResourceResponse.removeObservers(
+                                        viewLifecycleOwner
+                                    )
+                                }
+                                .create().show()
+                            tmpBinding.btnAddSkill.setOnClickListener {
+                                if (!tmpBinding.etNewSkill.text.isNullOrEmpty()) {
+                                    mProfilePageViewModel.addSkillToUser(
+                                        tmpBinding.etNewSkill.text.toString().trim(),
+                                        (activity as HomeActivity).token!!
+                                    )
                                 }
                             }
-                            .setNegativeButton("Completed") { _, _ ->
-                                mProfilePageViewModel.getAddDeleteSkillResourceResponse.removeObservers(viewLifecycleOwner)
+                        }
+                        .setNegativeButton("Completed") { _, _ ->
+                            mProfilePageViewModel.getAddDeleteSkillResourceResponse.removeObservers(
+                                viewLifecycleOwner
+                            )
+                        }
+                        .setMultiChoiceItems(
+                            t.data!!.toTypedArray(),
+                            bArray
+                        ) { _, which, isChecked ->
+                            if (isChecked) {
+                                mProfilePageViewModel.addSkillToUser(
+                                    t.data!![which],
+                                    (activity as HomeActivity).token!!
+                                )
+                            } else {
+                                mProfilePageViewModel.deleteSkillFromUser(
+                                    t.data!![which],
+                                    (activity as HomeActivity).token!!
+                                )
                             }
-                            .setMultiChoiceItems(t.data!!.toTypedArray(), bArray) { _, which, isChecked ->
-                                if (isChecked) {
-                                    mProfilePageViewModel.addSkillToUser(t.data!![which], (activity as HomeActivity).token!!)
-                                } else {
-                                    mProfilePageViewModel.deleteSkillFromUser(t.data!![which], (activity as HomeActivity).token!!)
-                                }
-                            }
-                            .create().show()
+                        }
+                        .create().show()
                     dialog.dismiss()
                     mProfilePageViewModel.allSkills.removeObservers(viewLifecycleOwner)
                 }
@@ -240,7 +365,10 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
             when (t.javaClass) {
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java -> {
-                    mProfilePageViewModel.getUserSkills((activity as HomeActivity).userId!!, (activity as HomeActivity).token!!)
+                    mProfilePageViewModel.getUserSkills(
+                        (activity as HomeActivity).userId!!,
+                        (activity as HomeActivity).token!!
+                    )
                     dialog.dismiss()
                 }
                 Resource.Error::class.java -> {
