@@ -163,8 +163,7 @@ class WorkspaceView extends Component {
 
                   State: {this.state.workspace ? (this.state.workspace.state !== null ? (this.state.workspace.state === 0 ? "Search For Collaborators": (this.state.workspace.state === 1 ? "Ongoing" : "Published"))  : "Not specified") : "Loading..."}
                 </Typography>
-              </div>
-              <div>
+
                 <Typography
                   style={{ color: colors.secondary, marginBottom: "20px" }}
                   component="h1"
