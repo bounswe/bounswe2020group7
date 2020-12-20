@@ -54,13 +54,13 @@ def add_workspace_contribution(workspace_id, user_id):
 def get_workspace_skills_text(workspace_id):
 	# Skill list of the requested workspace is retrieved from the database.
 	requested_workspace_skills = WorkspaceSkill.query.filter_by(workspace_id=workspace_id)
-	return str([Skills.query.filter_by(id=workspace_skill.skill_id).first().name for workspace_skill in requested_workspace_skills])
+	return [Skills.query.filter_by(id=workspace_skill.skill_id).first().name for workspace_skill in requested_workspace_skills]
 
 
 def get_workspace_requirements_text(workspace_id):
 	# Requirements list of the requested workspace is retrieved from the database.
 	requested_workspace_requirements = WorkspaceRequirement.query.filter_by(workspace_id=workspace_id)
-	return str([Requirement.query.filter_by(id=workspace_requirement.requirement_id).first().text for workspace_requirement in requested_workspace_requirements])
+	return [Requirement.query.filter_by(id=workspace_requirement.requirement_id).first().text for workspace_requirement in requested_workspace_requirements]
 
 
 def workspace_exists(param_loc,workspace_id_key):

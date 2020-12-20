@@ -184,7 +184,7 @@ class FolderSystemAPI(Resource):
                     file_list.append(element)
                 elif FileSystem.is_directory_exists(folder_path + os.path.sep + element):
                     folder_list.append(element)
-            return make_response(jsonify({"files":file_list,"folders":folder_list,"cwd":form.path.data}),200)            
+            return make_response(jsonify({"files":file_list,"folders":folder_list,"cwd":os.path.abspath(form.path.data)}),200)            
         else:
             return make_response(jsonify({"err":"Invalid Input"}),400)
 
