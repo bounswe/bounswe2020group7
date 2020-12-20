@@ -12,9 +12,13 @@
     align-items: center;
 }
 
-.paginationContainer {
+.paginationContainerUpcoming {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+.paginationContainerUpcoming .Mui-selected {
+    background-color: #7B9904!important;
 }

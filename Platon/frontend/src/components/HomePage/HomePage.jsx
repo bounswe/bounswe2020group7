@@ -7,8 +7,10 @@ import { Layout } from 'antd'
 import Sider from './Sider'
 import colors from '../../utils/colors'
 import NavBar from '../NavBar/NavBar'
+import UpcomingEvents from '../UpcomingEvents/UpcomingEvents'
+import TrendingProjects from '../TrendingProjects/TrendingProjects'
 
-const { Header, Footer } = Layout
+const { Footer } = Layout
 
 moment.locale('zh-cn')
 
@@ -32,9 +34,6 @@ class HomePage extends React.Component {
         }}
       >
         <Layout>
-          <NavBar />
-        </Layout>
-        <Layout>
           <Layout
             style={{
               overflow: 'auto',
@@ -45,13 +44,44 @@ class HomePage extends React.Component {
           >
             <Sider />
           </Layout>
-          <Layout className="site-layout" style={{ marginLeft: '400px', marginTop: '20px' }}>
-            <Header className="site-layout-background" style={{ padding: 0 }} />
-            <Layout><InfiniteScroller />
+          <Layout
+            style={{
+              position: 'fixed',
+              right: 16,
+              top: 80,
+            }}
+          >
+            <div style={{ overflow: 'scroll', height: 'calc(100vh - 100px)' }}>
+              <div><TrendingProjects itemsPerPage={3} width='400px' /></div>
+              <div style={{ marginTop: '16px' }}><UpcomingEvents itemsPerPage={3} width='400px' />
+              </div>
+            </div>
+
+          </Layout>
+          <Layout
+            style={{
+              position: 'fixed',
+              top: 0,
+              width: '100%',
+              zIndex: 100,
+            }}
+          >
+            <NavBar />
+          </Layout>
+          <Layout
+            className="site-layout"
+            style={{ marginLeft: '400px', marginTop: '64px', marginRight: '516px' }}
+          >
+            <Layout>
+              <div>
+                <div>
+                  <InfiniteScroller />
+                </div>
+              </div>
             </Layout>
           </Layout>
         </Layout>
-        <Footer style={{ textAlign: 'center',position:'fixed',marginLeft:200 }}>Platon</Footer>
+        <Footer style={{ textAlign: 'center', position: 'fixed', marginLeft: 200 }}>Platon</Footer>
       </Layout>
 
 

@@ -8,10 +8,8 @@ import colors from '../../../utils/colors'
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
-    maxWidth: 500,
     paddingTop: '8px',
     paddingBottom: '8px',
-
   },
   primary: {
     color: colors.secondary,

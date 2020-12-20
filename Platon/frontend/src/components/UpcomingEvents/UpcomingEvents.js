@@ -8,7 +8,6 @@ import Pagination from '@material-ui/lab/Pagination'
 import { withStyles } from '@material-ui/core/styles'
 
 const BASE_URL = 'http://18.185.75.161:5000/api/upcoming_events'
-const ITEMS_PER_PAGE = 5
 
 const useStyles = () => ({
   typography: {
@@ -16,7 +15,7 @@ const useStyles = () => ({
   },
 })
 
-const UpcomingEvents = (props) => {
+const UpcomingEvents = ({itemsPerPage= 5, classes, width= '500px'}) => {
   const [data, setData] = useState({})
   const [fetching, setFetching] = useState(false)
   const [page, setPage] = useState(1)
@@ -25,13 +24,10 @@ const UpcomingEvents = (props) => {
     root: {
       color: colors.secondary,
     },
-    selected: {
-      backgroundColor: colors.quaternaryDark + '!important',
-    },
   }, { name: 'MuiPaginationItem' })(Pagination)
 
   useEffect(() => {
-    const endPoint = `${BASE_URL}?page=${page - 1}&per_page=${ITEMS_PER_PAGE}`
+    const endPoint = `${BASE_URL}?page=${page - 1}&per_page=${itemsPerPage}`
     setFetching(true)
     fetch(endPoint)
       .then((response) => response.json())
@@ -41,6 +37,7 @@ const UpcomingEvents = (props) => {
       })
       .catch((error) => {
         console.error('Error:', error)
+        setFetching(false)
       })
   }, [page])
 
@@ -64,14 +61,14 @@ const UpcomingEvents = (props) => {
         </div>
       )}
       {data && data.upcoming_events && (
-        <div className="UpcomingEventsItems">
+        <div className="UpcomingEventsItems" style={{width: width}}>
           {data.upcoming_events.map((event, index) => (
             <UpcomingEventsItem
               event={event}
               key={index}
             />
           ))}
-          <div className='paginationContainer'>
+          <div className='paginationContainerUpcoming'>
             <StyledPagination
               count={data.number_of_pages}
               onChange={handlePageChange}
@@ -81,7 +78,7 @@ const UpcomingEvents = (props) => {
               <Typography
                 component="body2"
                 variant="body2"
-                className={props.classes.typography}
+                className={classes.typography}
               >
                 Disclaimer: Data is provided by <a href='http://www.wikicfp.com/cfp/'>CFP API</a>.
               </Typography>

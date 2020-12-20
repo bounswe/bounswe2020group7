@@ -43,7 +43,6 @@ class WorkspaceView extends Component {
         workspace_id: workspaceId
       }
     }).then((response) => {
-      console.log(response.data)
       if (response.status === 200) {
         this.setState({
           workspace: response.data,
