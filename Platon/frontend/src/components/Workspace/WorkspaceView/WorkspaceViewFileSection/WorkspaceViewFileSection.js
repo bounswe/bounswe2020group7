@@ -42,6 +42,7 @@ class WorkspaceViewFileSection extends Component {
       cwd: ".",
       folders: [],
       files: [],
+      fileName: "",
       folderName: "",
       selectedFile: null,
       deleteFileDialogArray: [],
@@ -157,7 +158,7 @@ class WorkspaceViewFileSection extends Component {
       });
   };
   uploadFile = () => {
-    if (this.state.selectedFile === null) {
+    if (this.state.selectedFile === null || this.state.fileName === "") {
       return;
     }
     const token = localStorage.getItem("jwtToken");
@@ -166,13 +167,14 @@ class WorkspaceViewFileSection extends Component {
     const c_workspace_id = this.props.workspaceId;
     let formData = new FormData();
     formData.append("new_file", this.state.selectedFile);
-    formData.append("filename", this.state.selectedFile.name);
+    formData.append("filename", this.state.fileName);
     formData.append("path", this.state.cwd);
     formData.append("workspace_id", c_workspace_id);
     axios
       .post(url + "/api/file_system/file", formData)
       .then((response) => {
         if (response.status === 201) {
+          this.setState({fileName: "", selectedFile: null})
           this.fetchFileStructure();
         }
       })
@@ -574,11 +576,22 @@ class WorkspaceViewFileSection extends Component {
                 alignItems: "center",
               }}
             >
+                <input
+                type="text"
+                placeholder="Rename"
+                disabled={this.state.selectedFile===null}
+                value = {this.state.fileName}
+                onChange={(e) =>
+                  this.setState({ fileName: e.target.value })
+                }
+                name="fileuploadedrename"
+                label="fileuploadedrename"
+              />
               <input
                 type="file"
-                onClick={(e) => (e.target.value = null)}
+                onClick={(e) => {(e.target.value = null); this.setState({ selectedFile: null, fileName: ""})}}
                 onChange={(e) =>
-                  this.setState({ selectedFile: e.target.files[0] })
+                  this.setState({ selectedFile: e.target.files[0], fileName: e.target.files[0].name})
                 }
                 name="fileuploaded"
                 label="fileuploaded"

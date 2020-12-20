@@ -7,6 +7,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import colors from "../../../../../utils/colors";
 import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
 import config from "../../../../../utils/config";
 import axios from "axios";
 export default function WorkspaceViewFileSectionEditConfirmation(props) {
