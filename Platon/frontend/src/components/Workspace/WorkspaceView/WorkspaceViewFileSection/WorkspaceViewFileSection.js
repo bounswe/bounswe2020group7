@@ -16,13 +16,16 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import WorkspaceViewFileSectionDeleteConfirmation from "./WorkspaceViewFileSectionDeleteConfirmation/WorkspaceViewFileSectionDeleteConfirmation";
 import WorkspaceViewFileSectionRenameConfirmation from "./WorkspaceViewFileSectionRenameConfirmation/WorkspaceViewFileSectionRenameConfirmation";
+import WorkspaceViewFileSectionEditConfirmation from "./WorkspaceViewFileSectionEditConfirmation/WorkspaceViewFileSectionEditConfirmation.js";
 import config from "../../../../utils/config";
 import colors from "../../../../utils/colors";
+import GetAppIcon from "@material-ui/icons/GetApp";
+import EditIcon from "@material-ui/icons/Edit";
 const useStyles = (theme) => ({
   root: {
     flexGrow: 1,
     width: 752,
-    margin: theme.spacing(3)
+    margin: theme.spacing(3),
   },
   demo: {
     backgroundColor: colors.secondary,
@@ -43,8 +46,8 @@ class WorkspaceViewFileSection extends Component {
       selectedFile: null,
       deleteFileDialogArray: [],
       deleteFolderDialogArray: [],
-      renameFileDialogArray: [],
       renameFolderDialogArray: [],
+      editFileDialogArray: [],
     };
   }
   fetchFileStructure = () => {
@@ -154,7 +157,7 @@ class WorkspaceViewFileSection extends Component {
       });
   };
   uploadFile = () => {
-    if(this.state.selectedFile===null){
+    if (this.state.selectedFile === null) {
       return;
     }
     const token = localStorage.getItem("jwtToken");
@@ -164,49 +167,48 @@ class WorkspaceViewFileSection extends Component {
     let formData = new FormData();
     formData.append("new_file", this.state.selectedFile);
     formData.append("filename", this.state.selectedFile.name);
-      formData.append("path", this.state.cwd);
-      formData.append("workspace_id", c_workspace_id);
-      axios
-        .post(url + "/api/file_system/file", formData)
-        .then((response) => {
-          if (response.status === 201) {
-
-            this.fetchFileStructure();
-          }
-        })
-        .catch((err) => {
-          /*this.setState({
+    formData.append("path", this.state.cwd);
+    formData.append("workspace_id", c_workspace_id);
+    axios
+      .post(url + "/api/file_system/file", formData)
+      .then((response) => {
+        if (response.status === 201) {
+          this.fetchFileStructure();
+        }
+      })
+      .catch((err) => {
+        /*this.setState({
             showError: "Error occured. Check your credientials.",
           });*/
-          console.log(err);
-        });
+        console.log(err);
+      });
   };
   createFolder = () => {
     if (this.state.folderName === "") {
       return;
     }
     const token = localStorage.getItem("jwtToken");
-      axios.defaults.headers.common["auth_token"] = `${token}`;
-      const url = config.BASE_URL;
-      const c_workspace_id = this.props.workspaceId;
-      let formData = new FormData();
-      formData.append("new_folder_name", this.state.folderName);
-      formData.append("path", this.state.cwd);
-      formData.append("workspace_id", c_workspace_id);
-      axios
-        .post(url + "/api/file_system/folder", formData)
-        .then((response) => {
-          if (response.status === 201) {
-            this.setState({ folderName: "" });
-            this.fetchFileStructure();
-          }
-        })
-        .catch((err) => {
-          /*this.setState({
+    axios.defaults.headers.common["auth_token"] = `${token}`;
+    const url = config.BASE_URL;
+    const c_workspace_id = this.props.workspaceId;
+    let formData = new FormData();
+    formData.append("new_folder_name", this.state.folderName);
+    formData.append("path", this.state.cwd);
+    formData.append("workspace_id", c_workspace_id);
+    axios
+      .post(url + "/api/file_system/folder", formData)
+      .then((response) => {
+        if (response.status === 201) {
+          this.setState({ folderName: "" });
+          this.fetchFileStructure();
+        }
+      })
+      .catch((err) => {
+        /*this.setState({
             showError: "Error occured. Check your credientials.",
           });*/
-          console.log(err);
-        });
+        console.log(err);
+      });
   };
   renameFolder = (element, rename) => {
     const token = localStorage.getItem("jwtToken");
@@ -248,6 +250,87 @@ class WorkspaceViewFileSection extends Component {
           auth_token: token, //the token is a variable which holds the token
         },
         data: formData,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          this.fetchFileStructure();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  downloadFile = (element) => {
+    const token = localStorage.getItem("jwtToken");
+    axios.defaults.headers.common["auth_token"] = `${token}`;
+    const url = config.BASE_URL;
+    let c_workspace_id = this.props.workspaceId;
+
+    axios
+      .get(url + "/api/file_system/file", {
+        params: {
+          path: this.state.cwd,
+          workspace_id: c_workspace_id,
+          filename: element,
+        },
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          const downloadUrl = window.URL.createObjectURL(
+            new Blob([response.data])
+          );
+          const link = document.createElement("a");
+          link.href = downloadUrl;
+          link.setAttribute("download", element);
+          document.body.appendChild(link);
+          link.click();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  editFile = (name, body) => {
+    const token = localStorage.getItem("jwtToken");
+    axios.defaults.headers.common["auth_token"] = `${token}`;
+    const url = config.BASE_URL;
+    const c_workspace_id = this.props.workspaceId;
+    let new_file = new File(body.split("\n"), "filename");
+    let formData = new FormData();
+    formData.append("filename", name);
+    formData.append("new_file", new_file);
+    formData.append("path", this.state.cwd);
+    formData.append("workspace_id", c_workspace_id);
+    axios
+      .put(url + "/api/file_system/file", formData, {
+        headers: {
+          auth_token: token, //the token is a variable which holds the token
+        },
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          this.fetchFileStructure();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  renameFolder = (element, rename) => {
+    const token = localStorage.getItem("jwtToken");
+    const url = config.BASE_URL;
+    const c_workspace_id = this.props.workspaceId;
+    const changePath = this.state.cwd + "/" + element;
+    let formData = new FormData();
+    formData.append("workspace_id", c_workspace_id);
+    formData.append("path", changePath);
+    formData.append("new_folder_name", rename);
+
+    axios
+      .put(url + "/api/file_system/folder", formData, {
+        headers: {
+          auth_token: token, //the token is a variable which holds the token
+        },
       })
       .then((response) => {
         if (response.status === 200) {
@@ -305,11 +388,15 @@ class WorkspaceViewFileSection extends Component {
     this.setState({ deleteFolderDialogArray: prevState });
   };
 
-  handleRenameFileDialogOpen = () => {
-    this.setState({ deleteFileDialog: true });
+  handleEditFileDialogOpen = (index) => {
+    let prevState = this.state.editFileDialogArray;
+    prevState[index] = true;
+    this.setState({ editFileDialogArray: prevState });
   };
-  handleRenameFileDialogClose = () => {
-    this.setState({ deleteFileDialog: false });
+  handleEditFileDialogClose = (index) => {
+    let prevState = this.state.editFileDialogArray;
+    prevState[index] = false;
+    this.setState({ editFileDialogArray: prevState });
   };
   handleRenameFolderDialogOpen = (index) => {
     let prevState = this.state.renameFolderDialogArray;
@@ -331,7 +418,7 @@ class WorkspaceViewFileSection extends Component {
       <div className={classes.root}>
         <div className={classes.demo}>
           <List>
-          {(this.state.cwd!== ".") ? (
+            {this.state.cwd !== "." ? (
               <div>
                 <IconButton
                   onClick={this.moveUp}
@@ -340,7 +427,6 @@ class WorkspaceViewFileSection extends Component {
                 >
                   <ArrowBackIcon />
                 </IconButton>
-
               </div>
             ) : null}
             {this.state.folders.map((element, index) => (
@@ -375,6 +461,7 @@ class WorkspaceViewFileSection extends Component {
                       handleRenameDialogClose={
                         this.handleRenameFolderDialogClose
                       }
+
                       index={index}
                     />
                   </IconButton>
@@ -410,6 +497,25 @@ class WorkspaceViewFileSection extends Component {
                   primary={element}
                 />
                 <ListItemSecondaryAction>
+                  <IconButton edge="end" aria-label="download">
+                    <GetAppIcon onClick={() => this.downloadFile(element)} />
+                  </IconButton>
+                  <IconButton edge="end" aria-label="download">
+                    <EditIcon
+                      style={{ color: colors.tertiary }}
+                      onClick={() => this.handleEditFileDialogOpen(index)}
+                    />
+                    <WorkspaceViewFileSectionEditConfirmation
+                      type="file"
+                      element={element}
+                      editFile={this.editFile}
+                      editDialog={this.state.editFileDialogArray[index]}
+                      handleEditFileDialogClose={this.handleEditFileDialogClose}
+                      index={index}
+                      cwd={this.state.cwd}
+                      c_workspace_id={this.props.workspaceId}
+                    />
+                  </IconButton>
                   <IconButton edge="end" aria-label="delete">
                     <DeleteIcon
                       style={{ color: colors.quinary }}
@@ -429,38 +535,57 @@ class WorkspaceViewFileSection extends Component {
             ))}
 
             {nothingToShow ? (
-              <div style={{display: "flex", justifyContent: "space-around", alignItems: "center", color: colors.primary }}>
-
-                  Nothing to show
-
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-around",
+                  alignItems: "center",
+                  color: colors.primary,
+                }}
+              >
+                Nothing to show
               </div>
             ) : null}
           </List>
           <hr />
-          <div >
-          <div style={{display: "flex", justifyContent:"center", alignItems: "center"}}>
-                  <input
-            value={this.state.folderName}
-            onChange={(e) => this.setState({ folderName: e.target.value })}
-            name="folderName"
-            label="FolderName"
-          />
+          <div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <input
+                value={this.state.folderName}
+                onChange={(e) => this.setState({ folderName: e.target.value })}
+                name="folderName"
+                label="FolderName"
+              />
 
-          <button onClick={this.createFolder}>Create folder</button>
-          </div>
-          <hr />
+              <button onClick={this.createFolder}>Create folder</button>
+            </div>
+            <hr />
 
-          <div style={{display: "flex", justifyContent:"center", alignItems: "center"}}>
-          <input
-            type="file"
-            onClick={e => (e.target.value = null)}
-            onChange={(e) => this.setState({ selectedFile: e.target.files[0] })}
-            name="fileuploaded"
-            label="fileuploaded"
-          />
-          <button onClick={this.uploadFile}>Upload File</button>
-          </div>
-          <hr />
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <input
+                type="file"
+                onClick={(e) => (e.target.value = null)}
+                onChange={(e) =>
+                  this.setState({ selectedFile: e.target.files[0] })
+                }
+                name="fileuploaded"
+                label="fileuploaded"
+              />
+              <button onClick={this.uploadFile}>Upload File</button>
+            </div>
+            <hr />
           </div>
         </div>
       </div>
