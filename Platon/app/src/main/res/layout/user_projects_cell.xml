@@ -11,13 +11,14 @@
     android:layout_height = "wrap_content">
 
     <RelativeLayout
-        android:animateLayoutChanges="true"
+
         android:id="@+id/firstRelative"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <RelativeLayout
             android:id="@+id/expand_rl"
+            android:animateLayoutChanges="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
