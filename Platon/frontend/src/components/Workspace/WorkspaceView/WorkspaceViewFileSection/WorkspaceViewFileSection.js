@@ -172,6 +172,7 @@ class WorkspaceViewFileSection extends Component {
         .post(url + "/api/file_system/folder", formData)
         .then((response) => {
           if (response.status === 201) {
+            this.setState({folderName:""})
             this.fetchFileStructure();
           }
         })
@@ -233,11 +234,41 @@ class WorkspaceViewFileSection extends Component {
         console.log(err);
       });
   };
-  handleDeleteFileDialogOpen = () => {
-    this.setState({ deleteFileDialog: true });
+  deleteFile = (element) => {
+    const token = localStorage.getItem("jwtToken");
+
+    const url = config.BASE_URL;
+
+    const changePath = this.state.cwd;
+    let formData = new FormData();
+    formData.append("workspace_id", this.props.workspaceId);
+    formData.append("path", changePath);
+    formData.append("filename", element);
+    axios
+      .delete(url + "/api/file_system/file", {
+        headers: {
+          auth_token: token, //the token is a variable which holds the token
+        },
+        data: formData,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          this.fetchFileStructure();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
-  handleDeleteFileDialogClose = () => {
-    this.setState({ deleteFileDialog: false });
+  handleDeleteFileDialogOpen = (index) => {
+    let prevState = this.state.deleteFileDialogArray;
+    prevState[index] = true;
+    this.setState({ deleteFileDialogArray: prevState });
+  };
+  handleDeleteFileDialogClose = (index) => {
+    let prevState = this.state.deleteFileDialogArray;
+    prevState[index] = false;
+    this.setState({ deleteFileDialogArray: prevState });
   };
   handleDeleteFolderDialogOpen = (index) => {
     let prevState = this.state.deleteFolderDialogArray;
@@ -365,6 +396,8 @@ class WorkspaceViewFileSection extends Component {
                       handleDeleteDialogClose={this.handleDeleteFileDialogClose}
                       element={element}
                       index={index}
+                      deleteFile={this.deleteFile}
+
                     />
                   </IconButton>
                 </ListItemSecondaryAction>
@@ -388,6 +421,7 @@ class WorkspaceViewFileSection extends Component {
           </List>
           <hr />
           <input
+          value={this.state.folderName}
             onChange={(e) => this.setState({ folderName: e.target.value })}
             name="folderName"
             label="FolderName"

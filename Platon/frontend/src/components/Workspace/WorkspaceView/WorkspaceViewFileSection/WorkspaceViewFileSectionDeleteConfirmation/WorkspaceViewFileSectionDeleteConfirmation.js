@@ -12,6 +12,12 @@ const handleDeleteFolder = () =>{
     props.handleDeleteDialogClose(props.index);
     props.deleteFolder(props.element);
 }
+
+const handleDeleteFile = () =>{
+  console.log("içerde")
+  props.handleDeleteDialogClose(props.index);
+  props.deleteFile(props.element);
+}
   return (
     <div>
       <Dialog
@@ -31,7 +37,7 @@ const handleDeleteFolder = () =>{
           <Button style={{color: colors.primary}} onClick={() => props.handleDeleteDialogClose(props.index)} color="primary">
             Cancel
           </Button>
-          <Button style={{color: colors.secondaryLight, backgroundColor: colors.quinary}} onClick={handleDeleteFolder} color="primary" autoFocus>
+          <Button style={{color: colors.secondaryLight, backgroundColor: colors.quinary}} onClick={props.type === "folder" ? handleDeleteFolder: handleDeleteFile} color="primary" autoFocus>
             Delete
           </Button>
         </DialogActions>
