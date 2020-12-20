@@ -1,5 +1,6 @@
 import unittest
 
+from tests.milestone_test import MilestoneTest
 from tests.issues_test import IssuesTest
 from tests.auth_system_test import LoginTest,ResetPasswordTest
 from tests.follow_test import FollowTest

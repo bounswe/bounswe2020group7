@@ -78,9 +78,9 @@ class PostIssuesForm(Form):
 	deadline = DateTimeField("Deadline of the issue", validators=[validators.optional()])
 post_issue_parser = reqparse.RequestParser()
 post_issue_parser.add_argument("workspace_id",required=True,type=int,help="ID of the requested workspace", location="form")
-post_issue_parser.add_argument("title", required=True, type=str, help="Title of the new workspace", location="form")
-post_issue_parser.add_argument("description", required=True, type=str, help="Description of the new workspace", location="form")
-post_issue_parser.add_argument("deadline", required=False, type=datetime.datetime, help="Deadline of the new workspace", location="form")
+post_issue_parser.add_argument("title", required=True, type=str, help="Title of the new issue", location="form")
+post_issue_parser.add_argument("description", required=True, type=str, help="Description of the new issue", location="form")
+post_issue_parser.add_argument("deadline", required=False, type=datetime.datetime, help="Deadline of the new issue", location="form")
 post_issue_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
 
 class PutIssuesForm(Form):
@@ -93,9 +93,9 @@ class PutIssuesForm(Form):
 put_issue_parser = reqparse.RequestParser()
 put_issue_parser.add_argument("workspace_id",required=True,type=int,help="ID of the requested workspace", location="form")
 put_issue_parser.add_argument("issue_id",required=True,type=int,help="ID of the issue", location="form")
-put_issue_parser.add_argument("title", required=False, type=str, help="Title of the new workspace", location="form")
-put_issue_parser.add_argument("description", required=False, type=str, help="Description of the new workspace", location="form")
-put_issue_parser.add_argument("deadline", required=False, type=datetime.datetime, help="Updated deadline of the new workspace", location="form")
+put_issue_parser.add_argument("title", required=False, type=str, help="Title of the updated issue", location="form")
+put_issue_parser.add_argument("description", required=False, type=str, help="Description of the updated issue", location="form")
+put_issue_parser.add_argument("deadline", required=False, type=datetime.datetime, help="Updated deadline of the new issue", location="form")
 put_issue_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
 
 class DeleteIssuesForm(Form):
@@ -180,3 +180,48 @@ trending_project_parser.add_argument("number_of_workspaces",required=True,type=i
 
 get_self_parser = reqparse.RequestParser()
 get_self_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
+
+class GetMilestoneForm(Form):
+	workspace_id = IntegerField('workspace_id', validators=[validators.DataRequired()])
+	page = IntegerField("page")
+	per_page = IntegerField("per_page")
+
+get_milestone_parser = reqparse.RequestParser()
+get_milestone_parser.add_argument("workspace_id",required=True,type=int,help="ID of the requested workspace", location="args")
+get_milestone_parser.add_argument('page',type=int,help="Page index that you want(Starts from 0)",location='args')
+get_milestone_parser.add_argument('per_page',type=int,help="Number of items in a page",location='args')
+get_milestone_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
+
+class PostMilestoneForm(Form):
+	workspace_id = IntegerField('workspace_id', validators=[validators.DataRequired()])
+	title = StringField("Title of the milestone", validators=[validators.DataRequired(), validators.Length(max=256)])
+	description = StringField("Description of the milestone", validators=[validators.DataRequired(), validators.Length(max=2000)])
+	deadline = DateTimeField("Deadline of the milestone", validators=[validators.DataRequired()])
+post_milestone_parser = reqparse.RequestParser()
+post_milestone_parser.add_argument("workspace_id",required=True,type=int,help="ID of the requested workspace", location="form")
+post_milestone_parser.add_argument("title", required=True, type=str, help="Title of the new milestone", location="form")
+post_milestone_parser.add_argument("description", required=True, type=str, help="Description of the new milestone", location="form")
+post_milestone_parser.add_argument("deadline", required=True, type=datetime.datetime, help="Deadline of the new Milestone", location="form")
+post_milestone_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
+
+class PutMilestoneForm(Form):
+	workspace_id = IntegerField('workspace_id', validators=[validators.DataRequired()])
+	milestone_id = IntegerField('milestone_id', validators=[validators.DataRequired()])
+	title = StringField('Updated title', validators = [validators.optional()])
+	description = StringField("Updated description of the milestone", validators=[validators.optional(), validators.Length(max=2000)])
+	deadline = DateTimeField("Updated deadline of the milestone", validators=[validators.optional()])
+put_milestone_parser = reqparse.RequestParser()
+put_milestone_parser.add_argument("workspace_id",required=True,type=int,help="ID of the requested workspace", location="form")
+put_milestone_parser.add_argument("milestone_id",required=True,type=int,help="ID of the issue", location="form")
+put_milestone_parser.add_argument("title", required=False, type=str, help="Title of the updated milestone", location="form")
+put_milestone_parser.add_argument("description", required=False, type=str, help="Description of the updated milestone", location="form")
+put_milestone_parser.add_argument("deadline", required=False, type=datetime.datetime, help="Updated deadline of the milestone", location="form")
+put_milestone_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
+
+class DeleteMilestoneForm(Form):
+	workspace_id = IntegerField('workspace_id', validators=[validators.DataRequired()])
+	milestone_id = IntegerField('milestone_id', validators=[validators.DataRequired()])
+delete_milestone_parser = reqparse.RequestParser()
+delete_milestone_parser.add_argument("workspace_id",required=True,type=int,help="ID of the requested workspace", location="form")
+delete_milestone_parser.add_argument("milestone_id",required=True,type=int,help="ID of the milestone", location="form")
+delete_milestone_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")

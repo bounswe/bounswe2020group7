@@ -8,7 +8,7 @@ from app import api, db
 from app.auth_system.models import User
 from app.follow_system.models import Follow, FollowRequests
 from app.profile_management.models import Jobs, Skills
-from app.workspace_system.models import Issue, IssueAssignee, IssueComment, Workspace, Contribution, Workspace, WorkspaceSkill, WorkspaceRequirement, Contribution, Requirement
+from app.workspace_system.models import Issue, IssueAssignee, IssueComment, Workspace, Contribution, Workspace, WorkspaceSkill, WorkspaceRequirement, Contribution, Requirement, Milestone
 
 from app.workspace_system.forms import *
 
@@ -91,6 +91,29 @@ issue_list_model = api.model('Issues List', {
     )
 })
 
+milestone_model = api.model('Milestone', {
+    "milestone_id": fields.Integer, 
+    "workspace_id": fields.Integer,
+    "title": fields.String,
+    "description": fields.String,
+    "deadline": fields.DateTime,  
+    "creator_id": fields.Integer,
+	"creator_name": fields.String,
+	"creator_surname": fields.String,
+	"creator_e-mail": fields.String,
+	"creator_rate": fields.Float,
+	"creator_job_name": fields.String,
+	"creator_institution": fields.String,
+	"creator_is_private": fields.Boolean
+    })
+
+milestone_list_model = api.model('Milestones List', {
+    'number_of_pages': fields.Integer,
+    'result': fields.List(
+        fields.Nested(milestone_model)
+    )
+})
+
 issue_assignee_model = api.model('Issue Assignee', {
     "assignee_id": fields.Integer,
 	"assignee_name": fields.String,
@@ -136,7 +159,7 @@ class IssueAPI(Resource):
     @workspace_exists(param_loc='args',workspace_id_key='workspace_id')
     def get(user_id, self):
         '''
-            Let's return Issues.
+            Get Issues.
         '''
         form = GetIssuesForm(request.args)
         if form.validate():
@@ -644,6 +667,209 @@ class IssueCommentAPI(Resource):
 
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
+
+@workspace_system_ns.route("/milestone")
+class MilestoneAPI(Resource):
+    
+    @api.doc(responses={401 : 'Account Problems', 400 : 'Input Format Error' ,500 : ' Database Connection Error', 404: 'Not found'})
+    @api.response(200, 'Success', milestone_list_model)
+    @api.expect(get_milestone_parser)
+    @login_required
+    @workspace_exists(param_loc='args',workspace_id_key='workspace_id')
+    def get(user_id, self):
+        '''
+            Get Milestones.
+        '''
+        form = GetMilestoneForm(request.args)
+        if form.validate():
+            workspace_id = form.workspace_id.data
+
+            # check if the workspace is public or not.
+            try:
+                workspaceSearch = Workspace.query.filter(Workspace.id == workspace_id).first()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+            if workspaceSearch.is_private:
+                # check if current user is an active contributor.
+                try:
+                    contributionSearch = Contribution.query.filter((Contribution.workspace_id == workspace_id)&(Contribution.user_id == user_id)).first()
+                except:
+                    return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+                if contributionSearch is None:
+                    return make_response(jsonify({'error': 'User is not a contributor'}), 401)
+
+                if not contributionSearch.is_active:
+                    return make_response(jsonify({'error': 'User is not an active contributor currently'}), 401)
+            
+            try:
+                milestoneSearch = Milestone.query.filter(Milestone.workspace_id == workspace_id).all()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+            # If there is no milestone in corresponding workspace, I'll return an empty list with 200 code.
+            # Since it is not some kind of an error, I thought 200 code is more appropriate.
+            if len(milestoneSearch) == 0:
+                return make_response(jsonify({'result': []}), 200)
+
+            return_list = []
+            for milestone in milestoneSearch:
+
+                try:
+                    creator_user = User.query.filter(User.id == milestone.creator_id).first()
+                except:
+                    return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+                if creator_user is None:
+                    return make_response(jsonify({'error': 'Creator user not found'}), 404)
+
+                try:
+                    job_name = Jobs.query.filter(Jobs.id == creator_user.job_id).first()
+                except:
+                    return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+                if job_name is None:
+                    return make_response(jsonify({'error': 'Corresponding job name not found'}), 404)
+
+                return_list.append({
+                    'milestone_id': milestone.id,
+                    'workspace_id': milestone.workspace_id,
+                    'title': milestone.title,
+                    'description': milestone.description,
+                    'deadline': milestone.deadline,
+                    'creator_id': creator_user.id, 
+                    'creator_name': creator_user.name, 
+                    'creator_surname': creator_user.surname, 
+                    'creator_e-mail': creator_user.e_mail, 
+                    'creator_rate': creator_user.rate, 
+                    'creator_job_name': job_name.name,
+                    'creator_institution': creator_user.institution,
+                    'creator_is_private': creator_user.is_private
+                    })
+            
+            # Pagination functionality
+            number_of_pages = 1
+            if form.page.data is not None and form.per_page.data is not None:
+                per_page = form.per_page.data
+                number_of_pages = math.ceil(len(followings_list) / per_page)
+                # Assign the page index to the maximum if it exceeds the max index
+                page = form.page.data if form.page.data < number_of_pages else number_of_pages-1
+                return_list = return_list[page*per_page:(page+1)*per_page]
+            return make_response(jsonify({'number_of_pages': number_of_pages ,'result': return_list}),200)
+            
+            
+        else:
+            return make_response(jsonify({'error': 'Input Format Error'}), 400)
+
+    @api.doc(responses={401 : 'Account Problems', 400 : 'Input Format Error' ,500 : ' Database Connection Error', 404: 'Not found'})
+    @api.expect(post_milestone_parser)
+    @login_required
+    @workspace_exists(param_loc='form',workspace_id_key='workspace_id')
+    @active_contribution_required(param_loc='form',workspace_id_key='workspace_id')
+    def post(user_id, self):
+        '''
+            Creates milestone
+        '''
+        form = PostMilestoneForm(request.form)
+        if form.validate():
+            
+            try: 
+                # Create milestone record
+                milestone = Milestone(user_id, form.workspace_id.data, form.title.data, form.description.data, form.deadline.data)
+            except:
+                return make_response(jsonify({'error': 'milestone record is not created'}), 500)
+
+            try:
+                db.session.add(milestone)
+                db.session.commit()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+            return make_response(jsonify({'msg': 'milestone is successfully created'}), 200)
+
+        else:
+            return make_response(jsonify({'error': 'Input Format Error'}), 400)
+
+    @api.doc(responses={401 : 'Account Problems', 400 : 'Input Format Error' ,500 : ' Database Connection Error', 404: 'Not found'})
+    @api.expect(put_milestone_parser)
+    @login_required
+    @workspace_exists(param_loc='form',workspace_id_key='workspace_id')
+    @active_contribution_required(param_loc='form',workspace_id_key='workspace_id')
+    def put(user_id, self):
+        '''
+            Updates a milestone
+        '''
+        form = PutMilestoneForm(request.form)
+        if form.validate():
+            
+            try:
+                # Gets the parameters from the form data.
+                new_attributes = {}
+                for key, value in form.data.items():
+                    if value or (value == 0):
+                        # these attributes shouldn't be changed
+                        if key == 'milestone_id' or key == 'workspace_id':
+                            continue
+                        new_attributes[key] = value
+            except:
+                return make_response(jsonify({'error': 'Form data usage is incorrect'}), 500)
+
+            try:
+                milestone = Milestone.query.filter(Milestone.id == form.milestone_id.data).first()
+
+                if milestone is None:
+                    return make_response(jsonify({'error': 'milestone not found'}), 404)
+
+                if new_attributes:
+                    # Updates the attributes of the milestone in the database.
+                    for key, value in new_attributes.items():
+                        if key == 'title':
+                            milestone.title = value
+                        elif key == 'description':
+                            milestone.description = value
+                        elif key == 'deadline':
+                            milestone.deadline = value
+                        else:
+                            return make_response(jsonify({'error': 'Attribute name {} is incorrect'.format(key)}), 500)
+                    db.session.commit()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+            return make_response(jsonify({'msg': 'milestone is successfully updated'}), 200)
+
+        else:
+            return make_response(jsonify({'error': 'Input Format Error'}), 400)
+
+    @api.doc(responses={401 : 'Account Problems', 400 : 'Input Format Error' ,500 : ' Database Connection Error', 404: 'Not found'})
+    @api.expect(delete_milestone_parser)
+    @login_required
+    @workspace_exists(param_loc='form',workspace_id_key='workspace_id')
+    @active_contribution_required(param_loc='form',workspace_id_key='workspace_id')
+    def delete(user_id, self):
+        '''
+            Deletes a milestone
+        '''
+        form = DeleteMilestoneForm(request.form)
+        if form.validate():
+            
+            try: 
+                # Find milestone record
+                milestone = Milestone.query.filter(Milestone.id == form.milestone_id.data).first()
+
+                if milestone is None:
+                    return make_response(jsonify({'error': 'milestone not found'}), 404)
+
+                db.session.delete(milestone)
+                db.session.commit()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+            return make_response(jsonify({'msg': 'milestone is successfully deleted'}), 200)
+
+        else:
+            return make_response(jsonify({'error': 'Input Format Error'}), 400)
+
 
 
 @workspace_system_ns.route("")
