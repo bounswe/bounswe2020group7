@@ -10,7 +10,7 @@ import IconButton from "@material-ui/core/IconButton";
 import FolderIcon from "@material-ui/icons/Folder";
 import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
 import DeleteIcon from "@material-ui/icons/Delete";
-import TextFieldsIcon from '@material-ui/icons/TextFields';
+import TextFieldsIcon from "@material-ui/icons/TextFields";
 import axios from "axios";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
@@ -39,6 +39,7 @@ class WorkspaceViewFileSection extends Component {
       folders: [],
       files: [],
       folderName: "",
+      selectedFile: null,
       deleteFileDialogArray: [],
       deleteFolderDialogArray: [],
       renameFileDialogArray: [],
@@ -58,7 +59,6 @@ class WorkspaceViewFileSection extends Component {
         },
       })
       .then((response) => {
-
         if (response.status === 200) {
           this.setState({
             files: response.data.files,
@@ -152,15 +152,39 @@ class WorkspaceViewFileSection extends Component {
         console.log(err);
       });
   };
+  uploadFile = () => {
+    if(this.state.selectedFile===null){
+      return;
+    }
+    const token = localStorage.getItem("jwtToken");
+    axios.defaults.headers.common["auth_token"] = `${token}`;
+    const url = config.BASE_URL;
+    const c_workspace_id = this.props.workspaceId;
+    let formData = new FormData();
+    formData.append("new_file", this.state.selectedFile);
+    formData.append("filename", this.state.selectedFile.name);
+      formData.append("path", this.state.cwd);
+      formData.append("workspace_id", c_workspace_id);
+      axios
+        .post(url + "/api/file_system/file", formData)
+        .then((response) => {
+          if (response.status === 201) {
+
+            this.fetchFileStructure();
+          }
+        })
+        .catch((err) => {
+          /*this.setState({
+            showError: "Error occured. Check your credientials.",
+          });*/
+          console.log(err);
+        });
+  };
   createFolder = () => {
-    if (this.state.folderName !== "") {
-      for (var key in this.state.fileStructure) {
-        if (this.state.folderName === this.state.fileStructure[key].name) {
-          console.log("File name exists!");
-          return;
-        }
-      }
-      const token = localStorage.getItem("jwtToken");
+    if (this.state.folderName === "") {
+      return;
+    }
+    const token = localStorage.getItem("jwtToken");
       axios.defaults.headers.common["auth_token"] = `${token}`;
       const url = config.BASE_URL;
       const c_workspace_id = this.props.workspaceId;
@@ -172,7 +196,7 @@ class WorkspaceViewFileSection extends Component {
         .post(url + "/api/file_system/folder", formData)
         .then((response) => {
           if (response.status === 201) {
-            this.setState({folderName:""})
+            this.setState({ folderName: "" });
             this.fetchFileStructure();
           }
         })
@@ -182,7 +206,6 @@ class WorkspaceViewFileSection extends Component {
           });*/
           console.log(err);
         });
-    }
   };
   renameFolder = (element, rename) => {
     const token = localStorage.getItem("jwtToken");
@@ -194,21 +217,21 @@ class WorkspaceViewFileSection extends Component {
     formData.append("path", changePath);
     formData.append("new_folder_name", rename);
 
-    axios.put(url + "/api/file_system/folder", formData, {
-      headers: {
-        'auth_token': token, //the token is a variable which holds the token
-      },
-    })
-    .then((response) => {
-      if (response.status === 200) {
-        this.fetchFileStructure();
-      }
-
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-  }
+    axios
+      .put(url + "/api/file_system/folder", formData, {
+        headers: {
+          auth_token: token, //the token is a variable which holds the token
+        },
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          this.fetchFileStructure();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   deleteFolder = (element) => {
     const token = localStorage.getItem("jwtToken");
 
@@ -335,23 +358,20 @@ class WorkspaceViewFileSection extends Component {
                   >
                     <ArrowForwardIcon />
                   </IconButton>
-                  <IconButton
-
-                    edge="end"
-                    aria-label="renameFolder"
-                  >
+                  <IconButton edge="end" aria-label="renameFolder">
                     <TextFieldsIcon
-                    style={{ color: colors.quaternary }}
-                    onClick={() => this.handleRenameFolderDialogOpen(index)}/>
+                      style={{ color: colors.quaternary }}
+                      onClick={() => this.handleRenameFolderDialogOpen(index)}
+                    />
                     <WorkspaceViewFileSectionRenameConfirmation
-                    type="folder"
-                    element={element}
-                    renameFolder={this.renameFolder}
-                    renameDialog={this.state.renameFolderDialogArray[index]}
-                    handleRenameDialogClose={
-                      this.handleRenameFolderDialogClose
-                    }
-                    index={index}
+                      type="folder"
+                      element={element}
+                      renameFolder={this.renameFolder}
+                      renameDialog={this.state.renameFolderDialogArray[index]}
+                      handleRenameDialogClose={
+                        this.handleRenameFolderDialogClose
+                      }
+                      index={index}
                     />
                   </IconButton>
                   <IconButton edge="end" aria-label="delete">
@@ -397,7 +417,6 @@ class WorkspaceViewFileSection extends Component {
                       element={element}
                       index={index}
                       deleteFile={this.deleteFile}
-
                     />
                   </IconButton>
                 </ListItemSecondaryAction>
@@ -421,7 +440,7 @@ class WorkspaceViewFileSection extends Component {
           </List>
           <hr />
           <input
-          value={this.state.folderName}
+            value={this.state.folderName}
             onChange={(e) => this.setState({ folderName: e.target.value })}
             name="folderName"
             label="FolderName"
@@ -429,11 +448,12 @@ class WorkspaceViewFileSection extends Component {
           <button onClick={this.createFolder}>Create folder</button>
           <input
             type="file"
-            onChange={(e) => this.setState({ fileName: e.target.value })}
-            name="fileName"
-            label="fileName"
+            onClick={e => (e.target.value = null)}
+            onChange={(e) => this.setState({ selectedFile: e.target.files[0] })}
+            name="fileuploaded"
+            label="fileuploaded"
           />
-          <button onClick={() => this.createFile()}>Create File</button>
+          <button onClick={this.uploadFile}>Upload File</button>
         </div>
       </div>
     );
