@@ -22,6 +22,7 @@ const useStyles = (theme) => ({
   root: {
     flexGrow: 1,
     width: 752,
+    margin: theme.spacing(3)
   },
   demo: {
     backgroundColor: colors.secondary,
@@ -330,6 +331,18 @@ class WorkspaceViewFileSection extends Component {
       <div className={classes.root}>
         <div className={classes.demo}>
           <List>
+          {(this.state.cwd!== ".") ? (
+              <div>
+                <IconButton
+                  onClick={this.moveUp}
+                  edge="end"
+                  aria-label="moveup"
+                >
+                  <ArrowBackIcon />
+                </IconButton>
+
+              </div>
+            ) : null}
             {this.state.folders.map((element, index) => (
               <ListItem>
                 <ListItemAvatar>
@@ -342,15 +355,6 @@ class WorkspaceViewFileSection extends Component {
                   primary={element}
                 />
                 <ListItemSecondaryAction>
-                  {this.state.cwd !== "." ? (
-                    <IconButton
-                      onClick={() => this.moveUp(element)}
-                      edge="end"
-                      aria-label="moveup"
-                    >
-                      <ArrowBackIcon />
-                    </IconButton>
-                  ) : null}
                   <IconButton
                     onClick={() => this.moveDown(element)}
                     edge="end"
@@ -393,6 +397,7 @@ class WorkspaceViewFileSection extends Component {
                 </ListItemSecondaryAction>
               </ListItem>
             ))}
+
             {this.state.files.map((element, index) => (
               <ListItem>
                 <ListItemAvatar>
@@ -424,28 +429,28 @@ class WorkspaceViewFileSection extends Component {
             ))}
 
             {nothingToShow ? (
-              <div>
-                <IconButton
-                  onClick={this.moveUp}
-                  edge="end"
-                  aria-label="moveup"
-                >
-                  <ArrowBackIcon />
-                </IconButton>
-                <span style={{ marginLeft: "20px", color: colors.primary }}>
+              <div style={{display: "flex", justifyContent: "space-around", alignItems: "center", color: colors.primary }}>
+
                   Nothing to show
-                </span>
+
               </div>
             ) : null}
           </List>
           <hr />
-          <input
+          <div >
+          <div style={{display: "flex", justifyContent:"center", alignItems: "center"}}>
+                  <input
             value={this.state.folderName}
             onChange={(e) => this.setState({ folderName: e.target.value })}
             name="folderName"
             label="FolderName"
           />
+
           <button onClick={this.createFolder}>Create folder</button>
+          </div>
+          <hr />
+
+          <div style={{display: "flex", justifyContent:"center", alignItems: "center"}}>
           <input
             type="file"
             onClick={e => (e.target.value = null)}
@@ -454,6 +459,9 @@ class WorkspaceViewFileSection extends Component {
             label="fileuploaded"
           />
           <button onClick={this.uploadFile}>Upload File</button>
+          </div>
+          <hr />
+          </div>
         </div>
       </div>
     );

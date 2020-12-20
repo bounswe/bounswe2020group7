@@ -14,7 +14,6 @@ const handleDeleteFolder = () =>{
 }
 
 const handleDeleteFile = () =>{
-  console.log("içerde")
   props.handleDeleteDialogClose(props.index);
   props.deleteFile(props.element);
 }
