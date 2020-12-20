@@ -620,7 +620,7 @@ class ProfilePhotoAPI(Resource):
 
             profile_photo_full_path =  app.config['PROFILE_PHOTO_PATH'] + os.path.sep + profile_photo_path
             if os.path.isfile(profile_photo_full_path):
-                return send_from_directory(directory=app.config["PROFILE_PHOTO_PATH"], filename=profile_photo_path)
+                return send_from_directory(directory=app.config["PROFILE_PHOTO_PATH"], filename=profile_photo_path,cache_timeout=0)
             else:
                 return  make_response(jsonify({'error': 'Profile Photo is Not Found'}), 404)
         else:
