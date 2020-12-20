@@ -8,6 +8,7 @@ import { Layout } from 'antd';
 import Sider from './Sider'
 import colors from "../../utils/colors";
 import NavBar from '../NavBar/NavBar';
+import Issue from '../Issue/Issue'
 
 const { Header,Footer } = Layout;
 
@@ -23,9 +24,9 @@ class HomePage extends React.Component {
         console.log(value.format('YYYY-MM-DD'), mode);
     }
 
-    render(){
-    return (
-        <Layout  style={{
+/*
+
+  <Layout  style={{
             background : colors.primaryDark
         }}>
             <Layout>
@@ -51,6 +52,11 @@ class HomePage extends React.Component {
             <Footer style={{ textAlign: 'center',position:'fixed',marginLeft:200 }}>Ant Design ©2018 Created by Ant UED</Footer>
         </Layout>
 
+*/
+    render(){
+    return (
+
+<div><Issue /></div>
 
             );
     }

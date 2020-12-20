@@ -43,10 +43,9 @@ class InfiniteScroller extends Component {
         this.state.tracks.map((track, i) => {
             items.push(
                 <Commentt
-                    title={track.message}
-                    actions={this.actions}
-                    author={<a>{track.message}</a>}
-                    avatar={track.artwork_url}
+                    message={track.message}
+                    author={<a>{track.author}</a>}
+                    avatar={track.avatar}
                 />
             );
         });
