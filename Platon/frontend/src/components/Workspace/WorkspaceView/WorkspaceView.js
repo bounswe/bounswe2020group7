@@ -18,6 +18,7 @@ import config from "../../../utils/config";
 import axios from "axios";
 import WorkspaceViewStateTimeline from "./WorkspaceViewStateTimeline/WorkspaceViewStateTimeline";
 import Tabs from "@material-ui/core/Tabs";
+import {Link} from 'react-router-dom'
 
 
 function TabPanel(props) {
@@ -147,6 +148,7 @@ class WorkspaceView extends Component {
             <Tab style={{backgroundColor:colors.secondary, borderRadius: "5px 5px 0px 0px"}} label="Details" {...a11yProps(0)} />
             <Tab style={{backgroundColor:colors.secondary, borderRadius: "5px 5px 0px 0px"}} label="Files" {...a11yProps(1)} />
             <Tab style={{backgroundColor:colors.secondary, borderRadius: "5px 5px 0px 0px"}} label="Issues" {...a11yProps(2)} />
+            <Tab style={{backgroundColor:colors.secondary, borderRadius: "5px 5px 0px 0px"}} label="Milestones" {...a11yProps(3)} />
           </Tabs>
           <div
           className="container"
@@ -236,7 +238,7 @@ class WorkspaceView extends Component {
                       Collaborators
                     </Typography>
                     <div>
-                      {this.state.workspace.colloborator_list.map((element) => (
+                      {this.state.workspace.active_contributors.map((element) => (
                         <div>
                           {element.name} {element.surname}
                         </div>
@@ -251,7 +253,9 @@ class WorkspaceView extends Component {
                   </div>
 
                   <div className={classes.section3}>
+                  <Link to = {`/${this.state.profileId}/workspace/${this.props.match.params.workspaceId}/edit`} style={{textDecoration: "none"}}>
                     <Button color="primary">Edit Workspace</Button>
+                    </Link>
                   </div>
                 </div>
               </TabPanel>
@@ -261,7 +265,10 @@ class WorkspaceView extends Component {
                 />
               </TabPanel>
               <TabPanel value={this.state.value} index={2}>
-                {/*<Issues workspaceId={this.props.match.params.workspaceId} members={this.state.workspace.colloborator_list} />*/}
+                Issues{/*<Issues workspaceId={this.props.match.params.workspaceId} members={this.state.workspace.active_contributors} />*/}
+              </TabPanel>
+              <TabPanel value={this.state.value} index={3}>
+                Milestones{/*<Milestone workspaceId={this.props.match.params.workspaceId} members={this.state.workspace.active_contributors} />*/}
               </TabPanel>
             </div>
           ) : (
