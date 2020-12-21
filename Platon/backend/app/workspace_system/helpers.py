@@ -1,7 +1,7 @@
 from app import app, db
 from functools import wraps
 from flask import make_response,jsonify,request
-import atexit
+import atexit, json
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from app.workspace_system.models import Workspace,WorkspaceSkill, WorkspaceRequirement, Contribution, Requirement
@@ -51,16 +51,48 @@ def add_workspace_contribution(workspace_id, user_id):
 	db.session.commit()
 
 
-def get_workspace_skills_text(workspace_id):
-	# Skill list of the requested workspace is retrieved from the database.
-	requested_workspace_skills = WorkspaceSkill.query.filter_by(workspace_id=workspace_id)
-	return [Skills.query.filter_by(id=workspace_skill.skill_id).first().name for workspace_skill in requested_workspace_skills]
+def get_workspace_skills_json(workspace_id):
+    # Skill list of the requested workspace is retrieved from the database.
+    requested_workspace_skills = WorkspaceSkill.query.filter_by(workspace_id=workspace_id)
+
+    # After the list is retrieved, the name of each skill of that workspace is retrieved from the database
+    # and gets appended to "workspace_skill_names"
+    workspace_skill_names = list()
+    for workspace_skill in requested_workspace_skills:
+        skill_name = (Skills.query.filter_by(id=workspace_skill.skill_id).first()).name
+        workspace_skill_names.append(skill_name)
+    # The list of the names of the skills are converted to a JSON string and returned.
+    return json.dumps(workspace_skill_names)
 
 
-def get_workspace_requirements_text(workspace_id):
-	# Requirements list of the requested workspace is retrieved from the database.
-	requested_workspace_requirements = WorkspaceRequirement.query.filter_by(workspace_id=workspace_id)
-	return [Requirement.query.filter_by(id=workspace_requirement.requirement_id).first().text for workspace_requirement in requested_workspace_requirements]
+def get_workspace_requirements_json(workspace_id):
+    # Requirement list of the requested workspace is retrieved from the database.
+    requested_workspace_requirements = WorkspaceRequirement.query.filter_by(workspace_id=workspace_id)
+    
+    # After the list is retrieved, the text of each requirement of that workspace is retrieved from the database
+    # and gets appended to "workspace_requirement_texts"
+    workspace_requirement_texts = list()
+    for workspace_requirement in requested_workspace_requirements:
+        requirement_text = (Requirement.query.filter_by(id=workspace_requirement.requirement_id).first()).text
+        workspace_requirement_texts.append(requirement_text)
+    return json.dumps(workspace_requirement_texts)
+
+
+def get_workspace_active_contributors_json(workspace_id):
+    # Contributor list of the requested workspace is retrieved from the database.
+    requested_workspace_contributors = Contribution.query.filter_by(workspace_id=workspace_id, is_active=True)
+    
+    # After the list is retrieved, the data of each contributor of that workspace is retrieved from the database
+    # and gets appended to "workspace_contributors_data"
+    workspace_contributors_data = list()
+    for workspace_contributor in requested_workspace_contributors:
+        contributor_data = User.query.filter_by(id=workspace_contributor.user_id).first()
+        workspace_contributors_data.append({
+                                                "id": contributor_data.id,
+                                                "name": contributor_data.name,
+                                                "surname": contributor_data.surname
+                                            })
+    return json.dumps(workspace_contributors_data)
 
 
 def workspace_exists(param_loc,workspace_id_key):

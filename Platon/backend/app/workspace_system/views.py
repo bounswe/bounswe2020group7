@@ -730,21 +730,6 @@ class WorkspacesAPI(Resource):
                     (Contribution.query.filter_by(workspace_id=form.workspace_id.data, user_id=requester_id, is_active=True).first() is None):
                         return make_response(jsonify({"error" : "The user is not allowed to view this workspace."}), 401)
                     else:
-                        try:
-                            contributors = Contribution.query.filter(Contribution.workspace_id == form.workspace_id.data).all()
-                        except:
-                            return make_response(jsonify({"err": "Database Connection Error"}),500)
-                        contributor_list = []
-                        for contributor in contributors:
-                            try:
-                                user = User.query.get(contributor.user_id)
-                            except:
-                                return make_response(jsonify({"err": "Database Connection Error"}),500)
-                            contributor_list.append({
-                                    "id": user.id,
-                                    "name": user.name,
-                                    "surname": user.surname
-                            })
                         workspace_information = {
                                                     "id": requested_workspace.id,
                                                     "creator_id": requested_workspace.creator_id,
@@ -755,9 +740,9 @@ class WorkspacesAPI(Resource):
                                                     "description": requested_workspace.description,
                                                     "deadline": requested_workspace.deadline,
                                                     "max_collaborators": requested_workspace.max_collaborators,
-                                                    "skills": get_workspace_skills_text(form.workspace_id.data),
-                                                    "requirements": get_workspace_requirements_text(form.workspace_id.data),
-                                                    "colloborator_list": contributor_list
+                                                    "skills": get_workspace_skills_json(form.workspace_id.data),
+                                                    "requirements": get_workspace_requirements_json(form.workspace_id.data),
+                                                    "active_contributors": get_workspace_active_contributors_json(form.workspace_id.data)
                                                 }
 
                         # Workspace information is returned.
