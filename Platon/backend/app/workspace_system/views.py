@@ -77,7 +77,7 @@ issue_model = api.model('Issue', {
 	"creator_id": fields.Integer,
 	"creator_name": fields.String,
 	"creator_surname": fields.String,
-	"creator_e-mail": fields.String,
+	"creator_e_mail": fields.String,
 	"creator_rate": fields.Float,
 	"creator_job_name": fields.String,
 	"creator_institution": fields.String,
@@ -100,7 +100,7 @@ milestone_model = api.model('Milestone', {
     "creator_id": fields.Integer,
 	"creator_name": fields.String,
 	"creator_surname": fields.String,
-	"creator_e-mail": fields.String,
+	"creator_e_mail": fields.String,
 	"creator_rate": fields.Float,
 	"creator_job_name": fields.String,
 	"creator_institution": fields.String,
@@ -118,7 +118,7 @@ issue_assignee_model = api.model('Issue Assignee', {
     "assignee_id": fields.Integer,
 	"assignee_name": fields.String,
 	"assignee_surname": fields.String,
-	"assignee_e-mail": fields.String,
+	"assignee_e_mail": fields.String,
 	"assignee_rate": fields.Float,
 	"assignee_job_name": fields.String,
 	"assignee_institution": fields.String
@@ -137,7 +137,7 @@ issue_comment_model = api.model('Issue Assignee', {
 	"owner_id": fields.Integer,
 	"owner_name": fields.String,
 	"owner_surname": fields.String,
-	"owner_e-mail": fields.String,
+	"owner_e_mail": fields.String,
 	"owner_rate": fields.Float
 })
 
@@ -223,7 +223,7 @@ class IssueAPI(Resource):
                     'creator_id': creator_user.id, 
                     'creator_name': creator_user.name, 
                     'creator_surname': creator_user.surname, 
-                    'creator_e-mail': creator_user.e_mail, 
+                    'creator_e_mail': creator_user.e_mail, 
                     'creator_rate': creator_user.rate, 
                     'creator_job_name': job_name.name,
                     'creator_is_private': creator_user.is_private
@@ -233,7 +233,7 @@ class IssueAPI(Resource):
             number_of_pages = 1
             if form.page.data is not None and form.per_page.data is not None:
                 per_page = form.per_page.data
-                number_of_pages = math.ceil(len(followings_list) / per_page)
+                number_of_pages = math.ceil(len(return_list) / per_page)
                 # Assign the page index to the maximum if it exceeds the max index
                 page = form.page.data if form.page.data < number_of_pages else number_of_pages-1
                 return_list = return_list[page*per_page:(page+1)*per_page]
@@ -421,7 +421,7 @@ class IssueAssigneeAPI(Resource):
                     "assignee_id": assignee.id,
 	                "assignee_name": assignee.name,
                     "assignee_surname": assignee.surname,
-                    "assignee_e-mail": assignee.e_mail,
+                    "assignee_e_mail": assignee.e_mail,
                     "assignee_rate": assignee.rate,
                     "assignee_job_name": job.name,
                     "assignee_institution": assignee.institution,
@@ -431,7 +431,7 @@ class IssueAssigneeAPI(Resource):
             number_of_pages = 1
             if form.page.data is not None and form.per_page.data is not None:
                 per_page = form.per_page.data
-                number_of_pages = math.ceil(len(followings_list) / per_page)
+                number_of_pages = math.ceil(len(return_list) / per_page)
                 # Assign the page index to the maximum if it exceeds the max index
                 page = form.page.data if form.page.data < number_of_pages else number_of_pages-1
                 return_list = return_list[page*per_page:(page+1)*per_page]
@@ -588,7 +588,7 @@ class IssueCommentAPI(Resource):
                     "owner_id": issue_comment.commenter_id,
                     "owner_name": commenter.name,
                     "owner_surname": commenter.surname,
-                    "owner_e-mail": commenter.e_mail,
+                    "owner_e_mail": commenter.e_mail,
                     "owner_rate": commenter.rate,
                     })
             
@@ -596,7 +596,7 @@ class IssueCommentAPI(Resource):
             number_of_pages = 1
             if form.page.data is not None and form.per_page.data is not None:
                 per_page = form.per_page.data
-                number_of_pages = math.ceil(len(followings_list) / per_page)
+                number_of_pages = math.ceil(len(return_list) / per_page)
                 # Assign the page index to the maximum if it exceeds the max index
                 page = form.page.data if form.page.data < number_of_pages else number_of_pages-1
                 return_list = return_list[page*per_page:(page+1)*per_page]
@@ -730,7 +730,7 @@ class MilestoneAPI(Resource):
                     'creator_id': None, 
                     'creator_name': None, 
                     'creator_surname': None, 
-                    'creator_e-mail': None, 
+                    'creator_e_mail': None, 
                     'creator_rate': None, 
                     'creator_job_name': None,
                     'creator_institution': None,
@@ -756,7 +756,7 @@ class MilestoneAPI(Resource):
                     'creator_id': creator_user.id, 
                     'creator_name': creator_user.name, 
                     'creator_surname': creator_user.surname, 
-                    'creator_e-mail': creator_user.e_mail, 
+                    'creator_e_mail': creator_user.e_mail, 
                     'creator_rate': creator_user.rate, 
                     'creator_job_name': None,
                     'creator_institution': creator_user.institution,
@@ -773,7 +773,7 @@ class MilestoneAPI(Resource):
                     'creator_id': creator_user.id, 
                     'creator_name': creator_user.name, 
                     'creator_surname': creator_user.surname, 
-                    'creator_e-mail': creator_user.e_mail, 
+                    'creator_e_mail': creator_user.e_mail, 
                     'creator_rate': creator_user.rate, 
                     'creator_job_name': job_name.name,
                     'creator_institution': creator_user.institution,
@@ -784,7 +784,7 @@ class MilestoneAPI(Resource):
             number_of_pages = 1
             if form.page.data is not None and form.per_page.data is not None:
                 per_page = form.per_page.data
-                number_of_pages = math.ceil(len(followings_list) / per_page)
+                number_of_pages = math.ceil(len(return_list) / per_page)
                 # Assign the page index to the maximum if it exceeds the max index
                 page = form.page.data if form.page.data < number_of_pages else number_of_pages-1
                 return_list = return_list[page*per_page:(page+1)*per_page]

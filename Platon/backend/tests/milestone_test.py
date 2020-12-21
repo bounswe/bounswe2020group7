@@ -50,10 +50,10 @@ class MilestoneTest(BaseTest):
         db.session.commit()
 
         workspaces = [
-            Workspace(1, 0, "coronovirus study", WorkspaceState.search_for_collaborator.value), # public workspace by Umut on state 1
-            Workspace(2, 1, "SWE difficulties", WorkspaceState.search_for_collaborator.value), # private workspace by Can on state 1
-            Workspace(4, 1, "honeybadger", WorkspaceState.search_for_collaborator.value), # private workspace by Hilal on state 1
-            Workspace(3, 0, "bos", WorkspaceState.search_for_collaborator.value) # public workspace by Alperen on state 1
+            Workspace(creator_id = 1, is_private = 0, title = "coronovirus study", state = WorkspaceState.search_for_collaborator.value), # public workspace by Umut on state 1
+            Workspace(creator_id = 2, is_private = 1, title = "SWE difficulties", state = WorkspaceState.search_for_collaborator.value), # private workspace by Can on state 1
+            Workspace(creator_id = 4, is_private = 1, title = "honeybadger", state = WorkspaceState.search_for_collaborator.value), # private workspace by Hilal on state 1
+            Workspace(creator_id = 3, is_private = 0, title = "bos", state = WorkspaceState.search_for_collaborator.value) # public workspace by Alperen on state 1
         ]
 
         for workspace in workspaces:
@@ -62,13 +62,13 @@ class MilestoneTest(BaseTest):
         db.session.commit()
 
         contributions = [
-            Contribution(1, 1, 1), # Umut will be active in coronovirus study
-            Contribution(2, 2, 1), # can will be active in SWE difficulties
-            Contribution(2, 3, 1),  # alperen will be active in SWE difficulties
-            Contribution(3, 2, 0), # can will be inactive in honey badger study
-            Contribution(3, 4, 1), # hilal will be active in honey badger study
-            Contribution(3, 1, 1), # umut will be active in honey badger study
-            Contribution(4, 3, 1) # alperen will be active in bos
+            Contribution(workspace_id = 1, user_id = 1, is_active = 1), # Umut will be active in coronovirus study
+            Contribution(workspace_id = 2, user_id = 2, is_active = 1), # can will be active in SWE difficulties
+            Contribution(workspace_id = 2, user_id = 3, is_active = 1),  # alperen will be active in SWE difficulties
+            Contribution(workspace_id = 3, user_id = 2, is_active = 0), # can will be inactive in honey badger study
+            Contribution(workspace_id = 3, user_id = 4, is_active = 1), # hilal will be active in honey badger study
+            Contribution(workspace_id = 3, user_id = 1, is_active = 1), # umut will be active in honey badger study
+            Contribution(workspace_id = 4, user_id = 3, is_active = 1) # alperen will be active in bos
         ]
 
         for contribution in contributions:
@@ -85,38 +85,6 @@ class MilestoneTest(BaseTest):
             db.session.add(milestone)
         db.session.commit()
 
-
-
-        '''
-        issues = [
-            Issue(1, 1, "cure of coronovirus", "eat more sarimsak daily"),
-            Issue(2, 2, "alperen's assigned issue", "denemeeee"),
-            Issue(4, 3, "bravest animal is honeybadger", "really")
-        ]
-
-        for issue in issues:
-            db.session.add(issue)
-        db.session.commit()
-
-        issue_assignees = [
-            IssueAssignee(2, 3), # alperen is assigned on issue which has issue id 2.
-            IssueAssignee(1, 1) # umut is assigned on issue wihch has issue id 1.
-        ]
-
-        for issue_assignee in issue_assignees:
-            db.session.add(issue_assignee)
-        db.session.commit()
-
-        issue_comments = [
-            IssueComment(2, 2, "makes sense"), # Can makes comment on an issue
-            IssueComment(2, 3, "what is this?"), # Alperen makes comment on an issue
-            IssueComment(3, 4, "hello world") # Hilal makes comment on an issue
-        ]
-
-        for issue_comment in issue_comments:
-            db.session.add(issue_comment)
-        db.session.commit()
-        '''
         
     def test_get_milestones(self):
 
