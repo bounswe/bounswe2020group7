@@ -30,6 +30,11 @@ class Contribution(db.Model):
     user_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"),primary_key=True)
     is_active = db.Column(db.Boolean,nullable=False)
 
+class Collaboration(db.Model):
+    __tablename__ = "collaborations"
+    user_1_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"),primary_key=True)
+    user_2_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"),primary_key=True)
+
 class CollaborationInvitation(db.Model):
     __tablename__ = "collaboration_invitations"
     workspace_id = db.Column(db.Integer,db.ForeignKey('workspaces.id',ondelete="CASCADE"),primary_key=True)
