@@ -38,8 +38,7 @@ const StyledTextField = withStyles({
 export default function Affinities(props) {
   const handleKeyDown = event => {
     switch (event.key) {
-      case ",":
-      case " ": {
+      case ",": {
         event.preventDefault();
         event.stopPropagation();
         if (event.target.value.length > 0) {
