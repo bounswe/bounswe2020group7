@@ -8,7 +8,7 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
-import com.cmpe451.platon.databinding.UserProjectsCellBinding
+import com.cmpe451.platon.databinding.ResearchesCellBinding
 import com.cmpe451.platon.network.models.Research
 
 class OtherUserProjectsAdapter(private val data: ArrayList<Research>, private val context: Context, private val userProjectsButtonClickListener: OtherUserProjectButtonClickListener) :
@@ -19,9 +19,9 @@ class OtherUserProjectsAdapter(private val data: ArrayList<Research>, private va
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder.
     // Each data item is just a string in this case that is shown in a TextView.
-    class OtherUserProjectsViewHolder(private val view: View, var binding: UserProjectsCellBinding) : RecyclerView.ViewHolder(view){
+    class OtherUserProjectsViewHolder(private val view: View, var binding: ResearchesCellBinding) : RecyclerView.ViewHolder(view){
 
-        fun bindData(binding: UserProjectsCellBinding, position: Int, buttonClickListener: OtherUserProjectButtonClickListener) {
+        fun bindData(binding: ResearchesCellBinding, position: Int, buttonClickListener: OtherUserProjectButtonClickListener) {
             val expandRl : RelativeLayout = view.findViewById(R.id.expand_rl)
             val editImg : ImageView = view.findViewById(R.id.edit_iv)
             editImg.visibility = View.GONE
@@ -33,13 +33,13 @@ class OtherUserProjectsAdapter(private val data: ArrayList<Research>, private va
     }
 
     interface OtherUserProjectButtonClickListener{
-        fun onUserProjectButtonClicked(binding: UserProjectsCellBinding, position: Int)
+        fun onUserProjectButtonClicked(binding: ResearchesCellBinding, position: Int)
     }
 
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OtherUserProjectsViewHolder {
         // create a new view
-        val binding = UserProjectsCellBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ResearchesCellBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
         return OtherUserProjectsViewHolder(binding.root, binding)
     }

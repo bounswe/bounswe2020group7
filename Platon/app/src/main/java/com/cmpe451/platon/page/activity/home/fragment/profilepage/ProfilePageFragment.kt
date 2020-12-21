@@ -30,7 +30,7 @@ import com.cmpe451.platon.adapter.UserProjectsAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.AddSkillBinding
 import com.cmpe451.platon.databinding.FragmentProfilePageBinding
-import com.cmpe451.platon.databinding.UserProjectsCellBinding
+import com.cmpe451.platon.databinding.ResearchesCellBinding
 import com.cmpe451.platon.listener.PaginationListener
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.page.activity.home.HomeActivity
@@ -144,14 +144,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                         (activity as HomeActivity).token!!
                     )
 
-                    if (user.rate == -1.0) {
-                        binding.ratingBar.visibility = View.GONE
-                        binding.noRatingTv.visibility = View.VISIBLE
-                    } else {
-                        binding.ratingBar.visibility = View.VISIBLE
-                        binding.noRatingTv.visibility = View.GONE
-                        binding.ratingBar.rating = user.rate.toFloat()
-                    }
+                    binding.ratingBar.rating = user.rate.toFloat()
 
                     val df = SimpleDateFormat("hmsS", Locale.getDefault())
                     val formattedDate =  df.format(Date()).toLong()
@@ -416,7 +409,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
 
 
 
-    override fun onUserProjectButtonClicked(binding: UserProjectsCellBinding, position: Int) {
+    override fun onUserProjectButtonClicked(binding: ResearchesCellBinding, position: Int) {
         if (binding.descTrendProjectTv.visibility == View.GONE){
             binding.descTrendProjectTv.visibility = View.VISIBLE
         }else{

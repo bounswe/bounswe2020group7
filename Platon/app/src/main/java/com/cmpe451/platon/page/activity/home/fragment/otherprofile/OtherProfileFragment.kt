@@ -25,7 +25,7 @@ import com.cmpe451.platon.adapter.OtherUserProjectsAdapter
 import com.cmpe451.platon.adapter.SkillsOtherProfileAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentProfilePageOthersPrivateBinding
-import com.cmpe451.platon.databinding.UserProjectsCellBinding
+import com.cmpe451.platon.databinding.ResearchesCellBinding
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.util.Definitions
@@ -307,7 +307,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
         super.onPrepareOptionsMenu(menu)
     }
 
-    override fun onUserProjectButtonClicked(binding: UserProjectsCellBinding, position: Int) {
+    override fun onUserProjectButtonClicked(binding: ResearchesCellBinding, position: Int) {
         if (binding.descTrendProjectTv.visibility == View.GONE){
             binding.descTrendProjectTv.visibility = View.VISIBLE
         }else{

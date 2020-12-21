@@ -8,63 +8,62 @@
     <LinearLayout
 
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/profile_page_margin"
         android:orientation="vertical">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/name_block"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_weight="1">
+            android:layout_height="wrap_content">
 
             <ImageView
+                android:background="@drawable/view_back_darker"
                 android:id="@+id/profile_photo"
                 android:layout_width="@dimen/large_photo"
                 android:layout_height="@dimen/large_photo"
-                android:layout_margin="@dimen/profile_page_margin"
                 android:src="@drawable/ic_o_logo_100"
                 app:layout_constraintStart_toStartOf="@id/name_block"
-                app:layout_constraintTop_toTopOf="@id/name_block" />
+                app:layout_constraintTop_toTopOf="@id/name_block"
+                android:contentDescription="TODO" />
 
             <TextView
                 android:id="@+id/text_name_surname"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/profile_page_margin"
                 android:text="@string/loading_str"
                 android:textColor="@color/primary_light"
-                android:textSize="20sp"
-                android:gravity="center_horizontal"
+                android:textSize="@dimen/title_text_size"
+                android:gravity="center"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/profile_photo"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <Button
                 android:id="@+id/button_following"
                 android:layout_width="0dp"
+                android:textColor="@color/primary_light"
                 android:layout_height="wrap_content"
-                android:background="@drawable/item_background_border"
+                android:background="@drawable/view_back_darker"
                 android:text="@string/text_following"
                 app:layout_constraintEnd_toStartOf="@+id/button_followers"
                 android:layout_margin="@dimen/profile_page_margin"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/profile_photo"
-                tools:layout_editor_absoluteY="100dp" />
+                app:layout_constraintTop_toBottomOf="@id/profile_photo" />
 
             <Button
                 android:id="@+id/button_followers"
                 android:layout_width="0dp"
+                android:textColor="@color/primary_light"
                 android:layout_height="wrap_content"
-                android:background="@drawable/item_background_border"
+                android:background="@drawable/view_back_darker"
                 android:text="@string/text_follower"
                 android:layout_margin="@dimen/profile_page_margin"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/button_following"
-                app:layout_constraintTop_toBottomOf="@id/profile_photo"
-                tools:layout_editor_absoluteY="100dp" />
+                app:layout_constraintTop_toBottomOf="@id/profile_photo" />
 
             <RatingBar
                 android:id="@+id/ratingBar"
@@ -73,38 +72,21 @@
                 app:layout_constraintBottom_toTopOf="@+id/button_following"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_margin="@dimen/xx_small"
-                app:layout_constraintStart_toEndOf="@+id/profile_photo"
                 android:isIndicator="true"
                 android:stepSize="0.1"
-                android:scaleX=".5"
-                android:scaleY=".5"
+                app:layout_constraintStart_toEndOf="@id/profile_photo"
+                android:scaleX="0.4"
+                android:scaleY="0.4"
                 android:numStars="5"
                 app:layout_constraintTop_toBottomOf="@+id/text_name_surname"
-                android:visibility="gone"/>
-
-            <TextView
-                android:id="@+id/no_rating_tv"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/xx_small"
-                android:gravity="center_horizontal"
-                android:text="@string/no_rate_str"
-                android:textColor="@color/primary_light"
-                android:textSize="@dimen/desc_text_size"
-                app:layout_constraintBottom_toTopOf="@+id/button_following"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/profile_photo"
-                app:layout_constraintTop_toBottomOf="@+id/text_name_surname"  />
-
+                android:visibility="visible"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/info_title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
             android:fontFamily="@font/dm_sans_bold"
             android:padding="@dimen/x_small"
             android:paddingHorizontal="@dimen/title_logo_padding"
@@ -116,44 +98,43 @@
             android:textColor="@color/secondary_green"
             android:textSize="@dimen/project_title_text_size"
             android:drawablePadding="@dimen/x_small"
-            app:drawableRightCompat="@drawable/baseline_create_white_24dp" />
+            app:drawableRightCompat="@drawable/ic_editprofile_24px" />
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_margin="@dimen/xx_large"
+            android:padding="@dimen/xx_small"
             android:background="@drawable/view_back_darker"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tv_email"
                 android:layout_margin="@dimen/xx_small"
-                android:textAlignment="center"
+                android:gravity="start"
                 android:textColor="@color/primary_light"
-                android:textSize="@dimen/title_text_size"
+                android:textSize="@dimen/title_text_size_smaller"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Email"
+                android:text="@string/prompt_email"
                 />
             <TextView
                 android:id="@+id/tv_job"
                 android:layout_margin="@dimen/xx_small"
-                android:textAlignment="center"
+                android:gravity="start"
                 android:textColor="@color/primary_light"
-                android:textSize="@dimen/title_text_size"
+                android:textSize="@dimen/title_text_size_smaller"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Job"
+                android:text="@string/job_str"
                 />
 
             <TextView
                 android:id="@+id/tv_institution"
                 android:layout_margin="@dimen/xx_small"
-                android:textAlignment="center"
+                android:gravity="start"
                 android:textColor="@color/primary_light"
-                android:textSize="@dimen/title_text_size"
+                android:textSize="@dimen/title_text_size_smaller"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/institution_str"
@@ -163,11 +144,10 @@
 
         <TextView
             android:id="@+id/skills_title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
             android:fontFamily="@font/dm_sans_bold"
-            android:gravity="center_horizontal"
+            android:gravity="start"
             android:padding="@dimen/x_small"
             android:shadowColor="@color/primary_dark"
             android:shadowDx="1"
@@ -177,7 +157,7 @@
             android:textColor="@color/secondary_blue"
             android:textSize="@dimen/project_title_text_size"
             android:drawablePadding="@dimen/x_small"
-            app:drawableRightCompat="@drawable/baseline_add_white_24dp" />
+            app:drawableRightCompat="@drawable/ic_add_24dp" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_profile_page_skills"
@@ -186,11 +166,10 @@
 
         <TextView
             android:id="@+id/projects_title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
             android:fontFamily="@font/dm_sans_bold"
-            android:gravity="center_horizontal"
+            android:gravity="start"
             android:padding="@dimen/x_small"
             android:shadowColor="@color/primary_dark"
             android:shadowDx="1"
@@ -201,16 +180,12 @@
             android:textColor="@color/secondary_purple"
             android:textSize="@dimen/project_title_text_size"
             android:drawablePadding="@dimen/x_small"
-            app:drawableRightCompat="@drawable/baseline_add_white_24dp" />
+            app:drawableRightCompat="@drawable/ic_add_24dp" />
 
         <androidx.recyclerview.widget.RecyclerView
-
             android:id="@+id/rv_profile_page_projects"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-
-
-
     </LinearLayout>
 
 </ScrollView>

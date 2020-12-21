@@ -115,12 +115,11 @@
             android:id="@+id/private_page_warning_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:textColor="@color/primary_light"
             android:layout_gravity="center_horizontal"
-            android:textSize="@dimen/project_title_text_size"
             android:text="@string/private_page_warning_str"
-            />
+            android:textColor="@color/primary_light"
+            android:textSize="@dimen/project_title_text_size"
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/project_info_ll"
@@ -149,42 +148,40 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:layout_margin="@dimen/xx_large"
+                android:layout_weight="1"
                 android:background="@drawable/view_back_darker"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/tv_email"
-                    android:layout_margin="@dimen/xx_small"
-                    android:textAlignment="center"
-                    android:textColor="@color/primary_light"
-                    android:textSize="@dimen/title_text_size"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/xx_small"
                     android:text="Email"
-                    />
+                    android:textAlignment="center"
+                    android:textColor="@color/primary_light"
+                    android:textSize="@dimen/title_text_size" />
+
                 <TextView
                     android:id="@+id/tv_job"
-                    android:layout_margin="@dimen/xx_small"
-                    android:textAlignment="center"
-                    android:textColor="@color/primary_light"
-                    android:textSize="@dimen/title_text_size"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/xx_small"
                     android:text="Job"
-                    />
+                    android:textAlignment="center"
+                    android:textColor="@color/primary_light"
+                    android:textSize="@dimen/title_text_size" />
 
                 <TextView
                     android:id="@+id/tv_institution"
-                    android:layout_margin="@dimen/xx_small"
-                    android:textAlignment="center"
-                    android:textColor="@color/primary_light"
-                    android:textSize="@dimen/title_text_size"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/xx_small"
                     android:text="Institution"
-                    />
+                    android:textAlignment="center"
+                    android:textColor="@color/primary_light"
+                    android:textSize="@dimen/title_text_size" />
 
             </LinearLayout>
 
@@ -218,6 +215,7 @@
                 app:layout_constraintVertical_bias="0.6">
 
             </androidx.recyclerview.widget.RecyclerView>
+
             <TextView
                 android:id="@+id/skills_title"
                 android:layout_width="wrap_content"

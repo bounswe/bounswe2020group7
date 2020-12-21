@@ -28,7 +28,7 @@
     <item
         android:id="@+id/add_workspace_btn"
         android:title="@string/add_sorkspace_str"
-        android:icon="@drawable/baseline_add_white_24dp"
+        android:icon="@drawable/ic_add_24dp"
         android:visible="false"
         app:showAsAction="ifRoom" />
 </menu>

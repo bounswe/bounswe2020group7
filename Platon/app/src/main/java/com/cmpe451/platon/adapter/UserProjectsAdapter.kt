@@ -8,7 +8,7 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
-import com.cmpe451.platon.databinding.UserProjectsCellBinding
+import com.cmpe451.platon.databinding.ResearchesCellBinding
 import com.cmpe451.platon.network.models.Research
 
 class UserProjectsAdapter(private val data: ArrayList<Research>, private val context: Context, private val userProjectsButtonClickListener: UserProjectButtonClickListener) :
@@ -19,9 +19,9 @@ class UserProjectsAdapter(private val data: ArrayList<Research>, private val con
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder.
     // Each data item is just a string in this case that is shown in a TextView.
-    class UserProjectsViewHolder(private val view: View, var binding: UserProjectsCellBinding) : RecyclerView.ViewHolder(view){
+    class UserProjectsViewHolder(private val view: View, var binding: ResearchesCellBinding) : RecyclerView.ViewHolder(view){
 
-        fun bindData(binding: UserProjectsCellBinding, position: Int,buttonClickListener: UserProjectButtonClickListener) {
+        fun bindData(binding: ResearchesCellBinding, position: Int,buttonClickListener: UserProjectButtonClickListener) {
             val expandRl :RelativeLayout = view.findViewById(R.id.expand_rl)
             val editImg : ImageView = view.findViewById(R.id.edit_iv)
             expandRl.setOnClickListener{
@@ -34,14 +34,14 @@ class UserProjectsAdapter(private val data: ArrayList<Research>, private val con
     }
 
     interface UserProjectButtonClickListener{
-        fun onUserProjectButtonClicked(binding: UserProjectsCellBinding, position: Int)
+        fun onUserProjectButtonClicked(binding: ResearchesCellBinding, position: Int)
         fun onUserProjectEditClicked(position: Int)
     }
 
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(parent: ViewGroup,viewType: Int): UserProjectsViewHolder {
         // create a new view
-        val binding = UserProjectsCellBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ResearchesCellBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
         return UserProjectsViewHolder(binding.root, binding)
     }
