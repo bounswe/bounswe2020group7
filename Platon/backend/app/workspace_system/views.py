@@ -744,7 +744,8 @@ class WorkspacesAPI(Resource):
                                                     "requirements": get_workspace_requirements_json(form.workspace_id.data),
                                                     "active_contributors": get_workspace_active_contributors_json(form.workspace_id.data)
                                                 }
-
+                        requested_workspace.view_count = requested_workspace.view_count + 1
+                        db.session.commit()
                         # Workspace information is returned.
                         return make_response(jsonify(workspace_information), 200)
         else:
