@@ -11,6 +11,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
@@ -70,10 +71,17 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
 
     private fun initViews() {
         // init layout manager of toolbar recycler view
-        val layoutMan = LinearLayoutManager(this)
-        binding.toolbarRecyclerview.layoutManager = layoutMan
+        val height = resources.displayMetrics.heightPixels
+        val width = resources.displayMetrics.widthPixels
 
-        binding.toolbarRecyclerview.addOnScrollListener(object: PaginationListener(layoutMan){
+        //linear layout params
+        binding.toolbarRecyclerview.layoutParams =  LinearLayout.LayoutParams((width), height/3)
+
+        val layoutManager = LinearLayoutManager(this)
+        // init layout manager of toolbar recycler view
+        binding.toolbarRecyclerview.layoutManager = layoutManager
+
+        binding.toolbarRecyclerview.addOnScrollListener(object: PaginationListener(layoutManager){
             override fun loadMoreItems() {
                 if(maxPageNumberSearch-1 > currentPage){
                     currentPage++
@@ -141,7 +149,7 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
 
                 // make radio group visible
                 binding.rgSearchAmong.visibility = View.VISIBLE
-
+                binding.toolbarRecyclerview.visibility = View.VISIBLE
                 // listener for search user results
                 mActivityViewModel.getSearchUserResourceResponse.observe(this, { t ->
                     when (t.javaClass) {
@@ -217,6 +225,7 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
 
         binding.layJobQuery.visibility=View.GONE
         binding.rgSearchAmong.visibility = View.GONE
+        binding.toolbarRecyclerview.visibility = View.GONE
 
         binding.rgSearchAmong.setOnCheckedChangeListener(null)
 
