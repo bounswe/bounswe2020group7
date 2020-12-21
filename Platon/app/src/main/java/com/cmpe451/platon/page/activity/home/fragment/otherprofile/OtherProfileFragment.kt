@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
@@ -22,10 +23,13 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.OtherUserProjectsAdapter
+import com.cmpe451.platon.adapter.SkillsAdapter
 import com.cmpe451.platon.adapter.SkillsOtherProfileAdapter
+import com.cmpe451.platon.adapter.UserProjectsAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentProfilePageOthersBinding
 import com.cmpe451.platon.databinding.ResearchesCellBinding
+import com.cmpe451.platon.listener.PaginationListener
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.util.Definitions
@@ -41,14 +45,11 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
     private lateinit var dialog:AlertDialog
 
     private val mOtherProfileViewModel: OtherProfileViewModel by viewModels()
+    private var maxPageNumberResearch:Int=0
 
-    private lateinit var userProjectsRecyclerView: RecyclerView
-    private lateinit var userProjectsAdapter: OtherUserProjectsAdapter
-    private lateinit var skillsRecyclerView: RecyclerView
-    private lateinit var skillsAdapter: SkillsOtherProfileAdapter
-
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater,
+                              container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         binding = FragmentProfilePageOthersBinding.inflate(inflater)
         details = ArrayList()
@@ -64,15 +65,41 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
     }
 
     private fun initializeAdapters() {
-        userProjectsRecyclerView = binding.rvProfilePageProjects
-        userProjectsAdapter = OtherUserProjectsAdapter(ArrayList(), requireContext(), this)
-        userProjectsRecyclerView.adapter = userProjectsAdapter
-        userProjectsRecyclerView.layoutManager = LinearLayoutManager(this.activity)
+        val height = resources.displayMetrics.heightPixels
+        val layoutManager = LinearLayoutManager(this.activity)
 
-        skillsRecyclerView = binding.rvProfilePageSkills
-        skillsAdapter = SkillsOtherProfileAdapter(ArrayList(), requireContext())
-        skillsRecyclerView.adapter = skillsAdapter
-        skillsRecyclerView.layoutManager = GridLayoutManager(this.activity, 3)
+        binding.rvProfilePageProjects.adapter = OtherUserProjectsAdapter(
+                ArrayList(),
+                requireContext(),
+                this
+        )
+        binding.rvProfilePageProjects.layoutManager = layoutManager
+
+
+        binding.rvProfilePageProjects.layoutParams =
+                LinearLayout.LayoutParams(binding.rvProfilePageProjects.layoutParams.width, height / 3)
+
+        binding.rvProfilePageProjects.addOnScrollListener(object :
+                PaginationListener(layoutManager) {
+            override fun loadMoreItems() {
+                if (maxPageNumberResearch - 1 > currentPage) {
+                    currentPage++
+                    mOtherProfileViewModel.fetchResearch(
+                            (activity as HomeActivity).token!!,
+                            userId!!,
+                            currentPage,
+                            5
+                    )
+                }
+            }
+
+            override var isLastPage: Boolean = false
+            override var isLoading: Boolean = false
+            override var currentPage: Int = 0
+        })
+
+        binding.rvProfilePageSkills.adapter = SkillsAdapter(ArrayList(), requireContext())
+        binding.rvProfilePageSkills.layoutManager = GridLayoutManager(this.activity, 3)
 
         dialog = Definitions().createProgressBar(requireContext())
     }
@@ -116,7 +143,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
 
                     if(i.data != null && i.data!!.research_info != null){
                         val researches = i.data!!.research_info!!
-                        userProjectsAdapter.submitElements(researches)
+                        (binding.rvProfilePageProjects.adapter as OtherUserProjectsAdapter).submitElements(researches)
                     }
 
                     dialog.dismiss()
@@ -165,7 +192,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                 Resource.Success::class.java -> {
                     dialog.dismiss()
                     if(t.data != null && t.data!!.skills != null){
-                        skillsAdapter.submitElements(t.data!!.skills!!.map { it.name })
+                        (binding.rvProfilePageSkills.adapter as SkillsAdapter).submitElements(t.data!!.skills!!.map { it.name })
                     }
 
                 }

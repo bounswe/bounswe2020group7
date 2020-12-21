@@ -144,8 +144,8 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="-79" />
-                            <option name="y" value="76" />
+                            <option name="x" value="223" />
+                            <option name="y" value="239" />
                           </Point>
                         </option>
                         <option name="myPositions">
@@ -170,8 +170,8 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="-1406" />
-                            <option name="y" value="-539" />
+                            <option name="x" value="-1355" />
+                            <option name="y" value="-619" />
                           </Point>
                         </option>
                         <option name="myPositions">
@@ -222,8 +222,8 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="-932" />
-                            <option name="y" value="-433" />
+                            <option name="x" value="-854" />
+                            <option name="y" value="-341" />
                           </Point>
                         </option>
                         <option name="myPositions">
@@ -258,13 +258,18 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="-1227" />
-                            <option name="y" value="-3" />
+                            <option name="x" value="-1305" />
+                            <option name="y" value="-56" />
                           </Point>
                         </option>
                         <option name="myPositions">
                           <map>
                             <entry key="action_workspaceListFragment_to_otherProfileFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_workspaceListFragment_to_profilePageFragment">
                               <value>
                                 <LayoutPositions />
                               </value>

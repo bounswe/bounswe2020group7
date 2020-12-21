@@ -73,7 +73,6 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
 
     private fun initializeAdapters() {
         val height = resources.displayMetrics.heightPixels
-        val width = resources.displayMetrics.widthPixels
 
         val layoutManager = LinearLayoutManager(this.activity)
 
@@ -84,7 +83,8 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
         )
         binding.rvProfilePageProjects.layoutManager = layoutManager
 
-        binding.rvProfilePageProjects.layoutParams = LinearLayout.LayoutParams(width, height / 3)
+        binding.rvProfilePageProjects.layoutParams =
+                LinearLayout.LayoutParams(binding.rvProfilePageProjects.layoutParams.width, height / 3)
 
         binding.rvProfilePageProjects.addOnScrollListener(object :
             PaginationListener(layoutManager) {

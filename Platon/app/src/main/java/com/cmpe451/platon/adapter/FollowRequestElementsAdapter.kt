@@ -44,7 +44,7 @@ class FollowRequestElementsAdapter(private val data: ArrayList<FollowRequest>, p
             binding.acceptIcon.setOnClickListener{
                 buttonClickListener.onFollowRequestAcceptClicked(request, position)
             }
-            binding.acceptIcon.setOnClickListener{
+            binding.rejectIcon.setOnClickListener{
                 buttonClickListener.onFollowRequestRejectClicked(request, position)
             }
         }

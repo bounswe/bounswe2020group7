@@ -527,16 +527,12 @@ class HomeActivity : BaseActivity(),
     }
 
     override fun onFollowRequestAcceptClicked(request: FollowRequest, position: Int) {
-        if(mActivityViewModel.getUserResourceResponse.value!=null && token!=null){
-            mActivityViewModel.acceptFollowRequest(request.id, mActivityViewModel.getUserResourceResponse.value?.data?.id!!, token!!)
-        }
+        mActivityViewModel.acceptFollowRequest(request.id, userId!!, token!!)
         this.handledFollowRequestPosition = position
     }
 
     override fun onFollowRequestRejectClicked(request: FollowRequest, position: Int) {
-        if(mActivityViewModel.getUserResourceResponse.value!=null && token!=null){
-            mActivityViewModel.deleteFollowRequest(request.id, mActivityViewModel.getUserResourceResponse.value?.data?.id!!, token!!)
-        }
+        mActivityViewModel.deleteFollowRequest(request.id, userId!!, token!!)
         this.handledFollowRequestPosition = position
     }
 
