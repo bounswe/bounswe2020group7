@@ -693,15 +693,12 @@ class MilestoneAPI(Resource):
             if workspaceSearch.is_private:
                 # check if current user is an active contributor.
                 try:
-                    contributionSearch = Contribution.query.filter((Contribution.workspace_id == workspace_id)&(Contribution.user_id == user_id)).first()
+                    contributionSearch = Contribution.query.filter((Contribution.workspace_id == workspace_id)&(Contribution.user_id == user_id)&(Contribution.is_active == True)).first()
                 except:
                     return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
                 if contributionSearch is None:
                     return make_response(jsonify({'error': 'User is not a contributor'}), 401)
-
-                if not contributionSearch.is_active:
-                    return make_response(jsonify({'error': 'User is not an active contributor currently'}), 401)
             
             try:
                 milestoneSearch = Milestone.query.filter(Milestone.workspace_id == workspace_id).all()
@@ -722,7 +719,25 @@ class MilestoneAPI(Resource):
                     return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
                 if creator_user is None:
-                    return make_response(jsonify({'error': 'Creator user not found'}), 404)
+                    # I decided to return None to the creator user infos.
+                    # This may cause some problems. However it is rare situation.
+                    return_list.append({
+                    'milestone_id': milestone.id,
+                    'workspace_id': milestone.workspace_id,
+                    'title': milestone.title,
+                    'description': milestone.description,
+                    'deadline': milestone.deadline,
+                    'creator_id': None, 
+                    'creator_name': None, 
+                    'creator_surname': None, 
+                    'creator_e-mail': None, 
+                    'creator_rate': None, 
+                    'creator_job_name': None,
+                    'creator_institution': None,
+                    'creator_is_private': None
+                    })
+                    continue
+                    
 
                 try:
                     job_name = Jobs.query.filter(Jobs.id == creator_user.job_id).first()
@@ -730,7 +745,24 @@ class MilestoneAPI(Resource):
                     return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
                 if job_name is None:
-                    return make_response(jsonify({'error': 'Corresponding job name not found'}), 404)
+                    # I decided to return None for job_name.
+                    # This may cause some problems. However it is rare situation.
+                    return_list.append({
+                    'milestone_id': milestone.id,
+                    'workspace_id': milestone.workspace_id,
+                    'title': milestone.title,
+                    'description': milestone.description,
+                    'deadline': milestone.deadline,
+                    'creator_id': creator_user.id, 
+                    'creator_name': creator_user.name, 
+                    'creator_surname': creator_user.surname, 
+                    'creator_e-mail': creator_user.e_mail, 
+                    'creator_rate': creator_user.rate, 
+                    'creator_job_name': None,
+                    'creator_institution': creator_user.institution,
+                    'creator_is_private': creator_user.is_private
+                    })
+                    continue
 
                 return_list.append({
                     'milestone_id': milestone.id,
@@ -816,7 +848,7 @@ class MilestoneAPI(Resource):
                 return make_response(jsonify({'error': 'Form data usage is incorrect'}), 500)
 
             try:
-                milestone = Milestone.query.filter(Milestone.id == form.milestone_id.data).first()
+                milestone = Milestone.query.filter((Milestone.id == form.milestone_id.data)&(Milestone.workspace_id == form.workspace_id.data)).first()
 
                 if milestone is None:
                     return make_response(jsonify({'error': 'milestone not found'}), 404)
@@ -830,8 +862,6 @@ class MilestoneAPI(Resource):
                             milestone.description = value
                         elif key == 'deadline':
                             milestone.deadline = value
-                        else:
-                            return make_response(jsonify({'error': 'Attribute name {} is incorrect'.format(key)}), 500)
                     db.session.commit()
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
