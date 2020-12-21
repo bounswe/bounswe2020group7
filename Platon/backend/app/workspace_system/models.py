@@ -14,7 +14,6 @@ class Workspace(db.Model):
     trending_score = db.Column(db.Float, default = 0.0)
     view_count = db.Column(db.Integer,default=0)
 
-
 class WorkspaceSkill(db.Model):
     __tablename__ = "workspace_skills"
     workspace_id = db.Column(db.Integer,db.ForeignKey('workspaces.id',ondelete="CASCADE"),primary_key=True)
@@ -50,6 +49,13 @@ class Milestone(db.Model):
     title = db.Column(db.String(100),nullable=False)
     description = db.Column(db.String(500),nullable=False)
     deadline = db.Column(db.DateTime, nullable=False)
+
+    def __init__(self, creator_id_, workspace_id_, title_, description_, deadline_):
+        self.creator_id = creator_id_
+        self.workspace_id = workspace_id_
+        self.title = title_
+        self.description = description_
+        self.deadline = deadline_
 
 class Issue(db.Model):
     __tablename__ = "issues"

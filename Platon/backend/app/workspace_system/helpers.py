@@ -7,7 +7,12 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from app.workspace_system.models import Workspace,WorkspaceSkill, WorkspaceRequirement, Contribution, Requirement
 from app.profile_management.models import Skills
 from app.auth_system.models import User
+from enum import IntEnum
 
+class WorkspaceState(IntEnum):
+    search_for_collaborator = 0
+    ongoing = 1
+    published = 2
 
 def add_workspace_skills(workspace_id, workspace_skills_list):
 	'''

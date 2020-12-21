@@ -18,6 +18,7 @@ from app.auth_system.views import generate_token
 from app import db
 import datetime
 import json
+from app.workspace_system.helpers import WorkspaceState
 
 class IssuesTest(BaseTest):
     """
@@ -51,10 +52,10 @@ class IssuesTest(BaseTest):
         db.session.commit()
 
         workspaces = [
-            Workspace(1, 0, "coronovirus study", 1), # public workspace by Umut on state 1
-            Workspace(2, 1, "SWE difficulties", 1), # private workspace by Can on state 1
-            Workspace(4, 1, "honeybadger", 1), # private workspace by Hilal on state 1
-            Workspace(3, 0, "bos", 1) # public workspace by Alperen on state 1
+            Workspace(creator_id = 1, is_private = 0, title = "coronovirus study", description = "deneme", state = WorkspaceState.search_for_collaborator.value), # public workspace by Umut on state 1
+            Workspace(creator_id = 2, is_private = 1, title = "SWE difficulties", description = "deneme", state = WorkspaceState.search_for_collaborator.value), # private workspace by Can on state 1
+            Workspace(creator_id = 4, is_private = 1, title = "honeybadger", description = "deneme", state = WorkspaceState.search_for_collaborator.value), # private workspace by Hilal on state 1
+            Workspace(creator_id = 3, is_private = 0, title = "bos", description = "deneme", state = WorkspaceState.search_for_collaborator.value) # public workspace by Alperen on state 1
         ]
 
         for workspace in workspaces:
@@ -63,13 +64,13 @@ class IssuesTest(BaseTest):
         db.session.commit()
 
         contributions = [
-            Contribution(1, 1, 1), # Umut will be active in coronovirus study
-            Contribution(2, 2, 1), # can will be active in SWE difficulties
-            Contribution(2, 3, 1),  # alperen will be active in SWE difficulties
-            Contribution(3, 2, 0), # can will be inactive in honey badger study
-            Contribution(3, 4, 1), # hilal will be active in honey badger study
-            Contribution(3, 1, 1), # umut will be active in honey badger study
-            Contribution(4, 3, 1) # alperen will be active in bos
+            Contribution(workspace_id = 1, user_id = 1, is_active = 1), # Umut will be active in coronovirus study
+            Contribution(workspace_id = 2, user_id = 2, is_active = 1), # can will be active in SWE difficulties
+            Contribution(workspace_id = 2, user_id = 3, is_active = 1),  # alperen will be active in SWE difficulties
+            Contribution(workspace_id = 3, user_id = 2, is_active = 0), # can will be inactive in honey badger study
+            Contribution(workspace_id = 3, user_id = 4, is_active = 1), # hilal will be active in honey badger study
+            Contribution(workspace_id = 3, user_id = 1, is_active = 1), # umut will be active in honey badger study
+            Contribution(workspace_id = 4, user_id = 3, is_active = 1) # alperen will be active in bos
         ]
 
         for contribution in contributions:
