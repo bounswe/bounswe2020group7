@@ -83,6 +83,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+
     <TextView
             android:id="@+id/info_title"
             android:layout_width="match_parent"

@@ -38,7 +38,7 @@
     <dimen name="title_logo_padding">10dp</dimen>
     <dimen name="title_height">36dp</dimen>
     <dimen name="nav_bar_height">50dp</dimen>
-    <dimen name="profile_page_margin">16dp</dimen>
+    <dimen name="profile_page_margin">20dp</dimen>
     <dimen name="profile_margin_half">8dp</dimen>
     <dimen name="profile_list_height">80dp</dimen>
     <item name="profile_page_name_section_height" type="dimen">20%</item>
