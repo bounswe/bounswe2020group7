@@ -52,10 +52,10 @@ class IssuesTest(BaseTest):
         db.session.commit()
 
         workspaces = [
-            Workspace(creator_id = 1, is_private = 0, title = "coronovirus study", state = WorkspaceState.search_for_collaborator.value), # public workspace by Umut on state 1
-            Workspace(creator_id = 2, is_private = 1, title = "SWE difficulties", state = WorkspaceState.search_for_collaborator.value), # private workspace by Can on state 1
-            Workspace(creator_id = 4, is_private = 1, title = "honeybadger", state = WorkspaceState.search_for_collaborator.value), # private workspace by Hilal on state 1
-            Workspace(creator_id = 3, is_private = 0, title = "bos", state = WorkspaceState.search_for_collaborator.value) # public workspace by Alperen on state 1
+            Workspace(creator_id = 1, is_private = 0, title = "coronovirus study", description = "deneme", state = WorkspaceState.search_for_collaborator.value), # public workspace by Umut on state 1
+            Workspace(creator_id = 2, is_private = 1, title = "SWE difficulties", description = "deneme", state = WorkspaceState.search_for_collaborator.value), # private workspace by Can on state 1
+            Workspace(creator_id = 4, is_private = 1, title = "honeybadger", description = "deneme", state = WorkspaceState.search_for_collaborator.value), # private workspace by Hilal on state 1
+            Workspace(creator_id = 3, is_private = 0, title = "bos", description = "deneme", state = WorkspaceState.search_for_collaborator.value) # public workspace by Alperen on state 1
         ]
 
         for workspace in workspaces:
