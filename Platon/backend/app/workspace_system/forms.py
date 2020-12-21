@@ -233,3 +233,10 @@ delete_milestone_parser = reqparse.RequestParser()
 delete_milestone_parser.add_argument("workspace_id",required=True,type=int,help="ID of the requested workspace", location="form")
 delete_milestone_parser.add_argument("milestone_id",required=True,type=int,help="ID of the milestone", location="form")
 delete_milestone_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
+
+class GetUserWorkspacesForm(Form):
+	user_id = IntegerField('user_id', validators=[validators.DataRequired()])
+
+get_users_workspaces = reqparse.RequestParser()
+get_users_workspaces.add_argument("user_id",required=True,type=int,help="ID of the user", location="args")
+get_users_workspaces.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
