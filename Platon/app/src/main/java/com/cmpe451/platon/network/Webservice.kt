@@ -187,4 +187,16 @@ interface Webservice {
         @Query("workspace_id") workspace_id:Int,
         @Header("auth_token") auth_token: String
     ) : Call<Workspace?>
+    @FormUrlEncoded
+    @POST("api/workspaces")
+    fun addWorkspace(
+        @Field("title") title:String,
+        @Field("description") description:String,
+        @Field("is_private") is_private:Int?,
+        @Field("max_collaborators") max_collaborators:Int?,
+        @Field("deadline") deadline:String?,
+        @Field("requirements") requirements:String?,
+        @Field("skills") skills:String?,
+        @Header("auth_token") auth_token: String
+    ) : Call<JsonObject?>
 }

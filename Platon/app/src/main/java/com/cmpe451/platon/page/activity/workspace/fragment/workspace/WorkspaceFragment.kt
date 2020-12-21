@@ -40,7 +40,6 @@ class WorkspaceFragment : Fragment(){
         if((activity as WorkspaceActivity).addClicked != null && !(activity as WorkspaceActivity).addClicked!!){
             initializeAdapters()
             setObservers()
-
             setListeners()
             mWorkspaceViewModel.fetchWorkspace((activity as WorkspaceActivity).workspace_id!!, (activity as WorkspaceActivity).token!!)
         }
@@ -89,8 +88,14 @@ class WorkspaceFragment : Fragment(){
                     binding.workspaceTitleTv.text = it.data?.title
                     binding.descriptionTv.text = it.data?.description
                     binding.isPrivateTv.text = if(it.data?.is_private!!) getString(R.string.private_ws_str) else getString(R.string.public_ws_str)
-                    binding.maxCollabTv.text = getString(R.string.max_collab_str) + " " + it.data?.max_collaborators.toString()
-                    binding.deadlineTv.text = "Due "  + it.data?.deadline
+                    if(it.data?.max_collaborators == null)
+                        binding.maxCollabTv.visibility = View.GONE
+                    else
+                        binding.maxCollabTv.text = getString(R.string.max_collab_str) + " " + it.data?.max_collaborators.toString()
+                    if(it.data?.deadline==null)
+                        binding.deadlineTv.visibility = View.GONE
+                    else
+                        binding.deadlineTv.text = "Due "  + it.data?.deadline
 
                     skillsAdapter.submitElements(it.data?.skills ?: ArrayList())
                     reqAdapter.submitElements(it.data?.requirements ?: ArrayList())
@@ -99,7 +104,7 @@ class WorkspaceFragment : Fragment(){
                         1-> getString(R.string.state_ongoing_str)
                         else -> getString(R.string.state_finished_str)
                     }
-                    (binding.collaboratorsRv.adapter as CollaboratorAdapter).submitElements(it.data?.colloborator_list ?:ArrayList())
+                    (binding.collaboratorsRv.adapter as CollaboratorAdapter).submitElements(it.data?.active_contributors ?:ArrayList())
 
                 }
                 Resource.Error::class.java ->{

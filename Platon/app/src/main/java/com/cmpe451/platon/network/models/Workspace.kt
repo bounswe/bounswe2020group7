@@ -17,7 +17,7 @@ data class WorkspaceListItem (
 )
 data class Workspace(
         val id: Int,
-        val colloborator_list: List<Contributor>,
+        val active_contributors: List<Contributor>,
         val creator_id:Int,
         val deadline:String,
         val description: String,
