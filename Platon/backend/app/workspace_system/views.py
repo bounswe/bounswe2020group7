@@ -1116,10 +1116,12 @@ class WorkspacesAPI(Resource):
                     # Checks whether the requester user is the creator of the requested workspace.
                     # If yes, the workspace gets deleted.
                     # If not, an error gets raised.
+                    worksapce_id = requested_workspace.id
                     if requested_workspace.creator_id == requester_id:
                         try:
                             db.session.delete(requested_workspace)
                             db.session.commit()
+                            FileSystem.delete_ws_files(worksapce_id)
                         except:
                             return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
                         else:
