@@ -18,6 +18,9 @@ import TermsConditions from './TermsConditions/TermsConditions'
 import "./Register.css";
 import config from "../../utils/config";
 import axios from 'axios'
+import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
+
+const filter = createFilterOptions();
 
 const StyledTextField = withStyles({
   root: {
@@ -131,8 +134,31 @@ class Register extends Component {
       showError: false,
       showSuccess: false,
       fieldEmptyError: false,
+      jobList:[]
     };
   }
+  componentDidMount(){
+    const url = config.BASE_URL;
+    axios
+      .get(url + "/api/profile/jobs")
+      .then((response) => {
+        if (response) {
+          let jobArray =[]
+          for(var key in response.data){
+            jobArray.push(response.data[key].name)
+          }
+          this.setState({
+            jobList: jobArray,
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+  handleKeyDown = event => {
+    this.handleJob(event.target.value);
+  };
   handleCheck = (event) => {
     this.setState({ checkbox: event.target.checked });
   };
@@ -159,7 +185,11 @@ class Register extends Component {
 
     this.setState({ showSuccess: false });
   };
-
+  handleJob = (value) => {
+    this.setState({
+      job: value,
+    });
+  };
   handleSubmit = () => {
     if (
       this.state.firstName === "" ||
@@ -190,7 +220,6 @@ class Register extends Component {
 
     axios.post(url+ "/api/auth_system/user", formData)
       .then((response) => {
-        console.log(response)
         if (response.status === 201) {
           this.setState({
             showSuccess: "Successfully registered. Please login to continue.",
@@ -215,7 +244,9 @@ class Register extends Component {
 
 
   render() {
+
     const { classes } = this.props;
+    console.log("job:", this.state.job)
     return (
       <div className="RegisterPage">
         <AppBar />
@@ -287,6 +318,7 @@ class Register extends Component {
                 value={this.state.password}
                 onChange={(e) => this.setState({ password: e.target.value })}
               />
+              {/*
               <StyledTextField
                 variant="outlined"
                 required
@@ -298,7 +330,32 @@ class Register extends Component {
                 id="job"
                 value={this.state.job}
                 onChange={(e) => this.setState({ job: e.target.value })}
-              />
+              />*/}
+              <Autocomplete
+
+        freeSolo
+        id="tags-outlined"
+        options={this.state.jobList}
+        getOptionLabel={option => option}
+        value={this.state.job}
+        onChange={(event, newValue) => this.handleJob(newValue)}
+        filterSelectedOptions
+        renderInput={params => {
+          params.inputProps.onChange = this.handleKeyDown
+          return (
+            <StyledTextField
+              {...params}
+              variant="outlined"
+              required
+              name="affinities"
+              label="Job"
+              id="job"
+              ffullWidth
+              margin="normal"
+            />
+          );
+        }}
+      />
             </Grid>
 
             <StyledFormControlLabel
@@ -315,6 +372,7 @@ class Register extends Component {
 
             <StyledButton
               type="submit"
+
               fullWidth
               variant="contained"
               color="primary"
