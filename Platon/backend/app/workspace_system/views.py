@@ -1133,6 +1133,61 @@ class WorkspacesAPI(Resource):
         else:
             return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
 
+@workspace_system_ns.route("/user")
+class GetUserWorkspaces(Resource):
+    
+    @api.doc(responses={401:'Authantication Problem',500:'Database Connection Problem',400:'Invalid Input',403: "Private Profile"})
+    @api.response(200,'Valid Response',workspace_list_model)
+    @api.expect(get_users_workspaces)
+    @login_required
+    @follow_required(param_loc = 'args', requested_user_id_key='user_id')
+    def get(user_id,self):
+        form = GetUserWorkspacesForm(request.args)
+        if form.validate():
+            try:
+                contributions = Contribution.query.filter(Contribution.user_id==form.user_id.data).all()
+            except:
+                return make_response(jsonify({"err": "Database Connection Error"}),500)
+            workspaces = []
+            for contribution in contributions:
+                if contribution.is_active == 0:
+                    continue
+                try:
+                    ws = Workspace.query.filter((Workspace.id == contribution.workspace_id)&(Workspace.is_private == False)).first()
+                except:
+                    return make_response(jsonify({"err": "Database Connection Error"}),500)
+                if ws is None:
+                    continue
+                try:
+                    contributors = Contribution.query.filter(Contribution.workspace_id == ws.id).all()
+                except:
+                    return make_response(jsonify({"err": "Database Connection Error"}),500)
+                contributor_list = []
+                for contributor in contributors:
+                    try:
+                        user = User.query.get(contributor.user_id)
+                    except:
+                        return make_response(jsonify({"err": "Database Connection Error"}),500)
+                    contributor_list.append({
+                            "id": user.id,
+                            "name": user.name,
+                            "surname": user.surname
+                    })
+                ws_dict = {
+                    "id": ws.id,
+                    "is_private": int(ws.is_private),
+                    "title": ws.title,
+                    "state": ws.state,
+                    "creation_time": ws.timestamp,
+                    "description": ws.description,
+                    "deadline": ws.deadline,
+                    "max_collaborators": ws.max_collaborators,
+                    "contributors": contributor_list
+                }
+                workspaces.append(ws_dict)
+            return make_response(jsonify({"workspaces": workspaces}),200)
+        else:
+            return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
 
           
 @workspace_system_ns.route("/self")
