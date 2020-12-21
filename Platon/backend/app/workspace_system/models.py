@@ -3,7 +3,7 @@ from app import db
 class Workspace(db.Model):
     __tablename__ = "workspaces"
     id = db.Column(db.Integer,primary_key=True,autoincrement=True)
-    creator_id = db.Column(db.Integer,db.ForeignKey('users.id'))
+    creator_id = db.Column(db.Integer,db.ForeignKey('users.id', ondelete="SET NULL"))
     is_private = db.Column(db.Boolean,default=False,nullable=False)
     title = db.Column(db.String(256),nullable=False)
     state = db.Column(db.SmallInteger,default=0,nullable=False)
@@ -14,11 +14,6 @@ class Workspace(db.Model):
     trending_score = db.Column(db.Float, default = 0.0)
     view_count = db.Column(db.Integer,default=0)
 
-    def __init__(self, creator_id_, is_private_, title_, state_):
-        self.creator_id = creator_id_
-        self.is_private = is_private_
-        self.title = title_
-        self.state = state_
 
 class WorkspaceSkill(db.Model):
     __tablename__ = "workspace_skills"
@@ -32,14 +27,9 @@ class WorkspaceRequirement(db.Model):
 
 class Contribution(db.Model):
     __tablename__ = "contributions"
-    workspace_id = db.Column(db.Integer,db.ForeignKey('workspaces.id'),primary_key=True)
+    workspace_id = db.Column(db.Integer,db.ForeignKey('workspaces.id', ondelete="CASCADE"),primary_key=True)
     user_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"),primary_key=True)
     is_active = db.Column(db.Boolean,nullable=False)
-    
-    def __init__(self, workspace_id_, user_id_, is_active_):
-        self.workspace_id = workspace_id_
-        self.user_id = user_id_
-        self.is_active = is_active_
 
 class CollaborationInvitation(db.Model):
     __tablename__ = "collaboration_invitations"
