@@ -75,3 +75,8 @@
 
 
 }
+
+.RightSideButtons{
+    position: absolute;
+    right: 0;
+}

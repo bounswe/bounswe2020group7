@@ -1,5 +1,6 @@
 import axios from 'axios';
 import config from '../utils/config';
+import jwt_decode from "jwt-decode";
 
 const followings = (id) => {
     const url = config.BASE_URL;
@@ -10,16 +11,9 @@ const followings = (id) => {
     axios.defaults.headers.common["auth_token"] = `${token}`;
     return axios.get(url + "/api/follow/followings", {params})
         .then(response => {
-            //eğer kullanıcı bulunursa (user.data.status = true)
-            if (response) {
-                console.log(response);
-
-
-            }
             return response;
         })
         .catch(err => {
-            console.log(err)
             return err.response;
         });
 }
@@ -33,13 +27,9 @@ const followers = (id) => {
     axios.defaults.headers.common["auth_token"] = `${token}`;
     return axios.get(url + "/api/follow/followers", {params})
         .then(response => {
-            //eğer kullanıcı bulunursa (user.data.status = true)
-            if (response) {
-            }
             return response;
         })
         .catch(err => {
-            console.log(err)
             return err.response;
         });
 
@@ -54,13 +44,9 @@ const getUser = (id) => {
     axios.defaults.headers.common["auth_token"] = `${token}`;
     return axios.get(url + "/api/auth_system/user", {params})
         .then(response => {
-            //eğer kullanıcı bulunursa (user.data.status = true)
-            if (response) {
-            }
             return response;
         })
         .catch(err => {
-            console.log(err)
             return err.response;
         });
 
@@ -74,13 +60,9 @@ const getResearchs = (id) => {
     axios.defaults.headers.common["auth_token"] = `${token}`;
     return axios.get(url + "/api/profile/research_information", {params})
         .then(response => {
-            //eğer kullanıcı bulunursa (user.data.status = true)
-            if (response) {
-            }
             return response;
         })
         .catch(err => {
-            console.log(err)
             return err.response;
         });
 
@@ -91,13 +73,9 @@ const getNotifications = (page) => {
     axios.defaults.headers.common["auth_token"] = `${token}`;
     return axios.get(url + "/api/profile/notifications",{ params: { per_page:1, page:page} } )
         .then(response => {
-            if (response) {
-            console.log('NEKIBURASI')
-            }
             return response;
         })
         .catch(err => {
-            console.log(err)
             return err.response;
         });
 
@@ -109,15 +87,93 @@ const getFeed = () => {
     axios.defaults.headers.common["auth_token"] = `${token}`;
     return axios.get(url + "/api/profile/front_page" )
         .then(response => {
-            if (response) {
-            }
             return response;
         })
         .catch(err => {
-            console.log(err)
             return err.response;
         });
 
 }
-export default { followings, followers, getUser, getResearchs,getNotifications,getFeed };
+
+const postFollowRequest = (follower_id, following_id) => {
+    const url = config.BASE_URL;
+
+    const token = localStorage.getItem("jwtToken");
+    axios.defaults.headers.common["auth_token"] = `${token}`;
+
+    let formData = new FormData();
+    formData.append("follower_id", follower_id);
+    formData.append("following_id", following_id);
+
+    return axios.post(url + "/api/follow/follow_requests", formData)
+        .then(response => {
+            return response;
+        })
+        .catch(err => {
+            return err.response;
+        });
+
+}
+
+const getSearchUser = (searchQuery) => {
+    const url = config.BASE_URL;
+
+    const token = localStorage.getItem("jwtToken");
+    axios.defaults.headers.common["auth_token"] = `${token}`;
+
+    return axios.get(url + "/api/search_engine/user?search_query="+searchQuery)
+        .then(response => {
+            return response;
+        })
+        .catch(err => {
+            return err.response;
+        });
+
+}
+
+const getFollowRequests = () => {
+    const url = config.BASE_URL;
+    const token = localStorage.getItem("jwtToken");
+    const decoded = jwt_decode(token);
+    const params = {
+        following_id: decoded.id,
+    };
+    
+    axios.defaults.headers.common["auth_token"] = `${token}`;
+
+    return axios.get(url + "/api/follow/follow_requests",{params})
+        .then(response => {
+            console.log(response);
+            return response;
+        })
+        .catch(err => {
+            return err.response;
+        });
+
+}
+
+const deleteFollowRequests = (follower_id, state) => {
+    const url = config.BASE_URL;
+    const token = localStorage.getItem("jwtToken");
+    const decoded = jwt_decode(token);
+    const params = {
+        follower_id: follower_id,
+        following_id: decoded.id,
+        state: state,
+    };
+    
+    axios.defaults.headers.common["auth_token"] = `${token}`;
+
+    return axios.delete(url + "/api/follow/follow_requests",{params})
+        .then(response => {
+            console.log(response);
+            return response;
+        })
+        .catch(err => {
+            return err.response;
+        });
+
+}
+
+export default { followings, followers, getUser, getResearchs, getNotifications, getFeed, postFollowRequest, getSearchUser, getFollowRequests, deleteFollowRequests };
 
