@@ -261,7 +261,7 @@ class WorkspaceView extends Component {
                 />
               </TabPanel>
               <TabPanel value={this.state.value} index={2}>
-                Issues
+                {/*<Issues workspaceId={this.props.match.params.workspaceId} members={this.state.workspace.colloborator_list} />*/}
               </TabPanel>
             </div>
           ) : (
