@@ -57,9 +57,7 @@ class WorkspaceInput extends Component {
     };
   }
 
-  handleWorkspacePrivacy = (event) => {
-    this.setState({ is_private: event.target.value === "public" ? 0 : 1 });
-  };
+
   render() {
 
     return (
