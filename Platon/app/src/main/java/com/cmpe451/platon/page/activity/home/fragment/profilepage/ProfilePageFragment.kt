@@ -160,6 +160,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                         .load(Definitions.API_URL + "api" + user.profile_photo)
                         .placeholder(R.drawable.ic_o_logo)
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .circleCrop()
                         .signature(
                             MediaStoreSignature(
                                 "image/png",
@@ -219,6 +220,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                 Glide.with(this)
                     .load(it.data!!.data)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .circleCrop()
                     .into(binding.profilePhoto)
                 uploadProfilePhoto(it.data!!.data)
             }

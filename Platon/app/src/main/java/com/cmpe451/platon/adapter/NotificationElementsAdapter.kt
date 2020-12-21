@@ -47,7 +47,7 @@ class NotificationElementsAdapter(private val data: ArrayList<Notification>, pri
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         holder.binding.tvSearchElement.text = data[position].text
-        Glide.with(context).load(data[position].link).into(holder.binding.iwSearchImage)
+        Glide.with(context).load(data[position].link).circleCrop().into(holder.binding.iwSearchImage)
         holder.bindData(data[position], notificationButtonClickListener, position)
     }
 

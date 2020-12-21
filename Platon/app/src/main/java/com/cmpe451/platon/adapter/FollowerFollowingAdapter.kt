@@ -23,6 +23,7 @@ class FollowerFollowingAdapter(private val dataSet: ArrayList<FollowPerson>,
             Glide.with(context)
                     .load(Definitions.API_URL + "api" + model.profile_photo)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .circleCrop()
                     .into(binding.profilePageIcon)
 
             binding.profilePageIcon

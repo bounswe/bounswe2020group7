@@ -87,6 +87,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                     Glide.with(this)
                         .load(Definitions.API_URL + "api" + user.profile_photo)
                             .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .circleCrop()
                         .placeholder(R.drawable.ic_o_logo)
                         .into(binding.profilePhoto);
                     Log.i("Addr", Definitions.API_URL + "api" + user.profile_photo)

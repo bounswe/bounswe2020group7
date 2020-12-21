@@ -46,7 +46,7 @@ class ActivityStreamAdapter(private val data: ArrayList<ActivityStreamElement>, 
         // - replace the contents of the view with that element
 
         holder.binding.titleActivityStreamCell.text = data[position].message
-        Glide.with(context).load(data[position].image).into(holder.binding.activityImg)
+        Glide.with(context).load(data[position].image).circleCrop().into(holder.binding.activityImg)
         holder.bindData(holder.binding, position, activityStreamButtonClickListener)
     }
 
