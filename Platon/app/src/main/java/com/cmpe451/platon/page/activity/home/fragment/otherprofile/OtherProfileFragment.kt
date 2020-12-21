@@ -24,7 +24,7 @@ import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.OtherUserProjectsAdapter
 import com.cmpe451.platon.adapter.SkillsOtherProfileAdapter
 import com.cmpe451.platon.core.BaseActivity
-import com.cmpe451.platon.databinding.FragmentProfilePageOthersPrivateBinding
+import com.cmpe451.platon.databinding.FragmentProfilePageOthersBinding
 import com.cmpe451.platon.databinding.ResearchesCellBinding
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.page.activity.home.HomeActivity
@@ -34,7 +34,7 @@ import com.cmpe451.platon.util.Definitions.USERSTATUS
 class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjectButtonClickListener {
 
 
-    private lateinit var binding: FragmentProfilePageOthersPrivateBinding
+    private lateinit var binding: FragmentProfilePageOthersBinding
     private lateinit var details: ArrayList<MutableMap<String,String>>
     private var userId :Int? = null
     private val args: OtherProfileFragmentArgs by navArgs()
@@ -50,7 +50,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = FragmentProfilePageOthersPrivateBinding.inflate(inflater)
+        binding = FragmentProfilePageOthersBinding.inflate(inflater)
         details = ArrayList()
         setHasOptionsMenu(true)
         return binding.root

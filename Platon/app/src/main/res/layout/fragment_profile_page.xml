@@ -83,7 +83,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <TextView
+    <TextView
             android:id="@+id/info_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -187,5 +187,4 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
-
 </ScrollView>

@@ -19,15 +19,13 @@ class UserProjectsAdapter(private val data: ArrayList<Research>, private val con
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder.
     // Each data item is just a string in this case that is shown in a TextView.
-    class UserProjectsViewHolder(private val view: View, var binding: ResearchesCellBinding) : RecyclerView.ViewHolder(view){
+    class UserProjectsViewHolder(val binding: ResearchesCellBinding) : RecyclerView.ViewHolder(binding.root){
 
         fun bindData(binding: ResearchesCellBinding, position: Int,buttonClickListener: UserProjectButtonClickListener) {
-            val expandRl :RelativeLayout = view.findViewById(R.id.expand_rl)
-            val editImg : ImageView = view.findViewById(R.id.edit_iv)
-            expandRl.setOnClickListener{
+            binding.expandRl.setOnClickListener{
                 buttonClickListener.onUserProjectButtonClicked(binding,position)
             }
-            editImg.setOnClickListener{
+            binding.editIv.setOnClickListener{
                 buttonClickListener.onUserProjectEditClicked(position)
             }
         }
@@ -40,10 +38,7 @@ class UserProjectsAdapter(private val data: ArrayList<Research>, private val con
 
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(parent: ViewGroup,viewType: Int): UserProjectsViewHolder {
-        // create a new view
-        val binding = ResearchesCellBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-
-        return UserProjectsViewHolder(binding.root, binding)
+        return UserProjectsViewHolder( ResearchesCellBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     // Replace the contents of a view (invoked by the layout manager)
@@ -54,7 +49,6 @@ class UserProjectsAdapter(private val data: ArrayList<Research>, private val con
         //drawable?.setBounds(0,0,drawable.intrinsicWidth,drawable.intrinsicHeight)
         holder.binding.descTrendProjectTv.text = data[position].description
         holder.binding.titleTrendProjectTv.text = data[position].title
-        //holder.binding.titleTrendProjectTv.setCompoundDrawables(drawable, null, null, null)
         holder.binding.projectYearTv.text = data[position].year.toString()
 
         holder.bindData(holder.binding, position, userProjectsButtonClickListener)
