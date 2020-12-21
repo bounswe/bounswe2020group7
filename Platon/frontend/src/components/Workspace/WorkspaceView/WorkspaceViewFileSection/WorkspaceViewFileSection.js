@@ -21,11 +21,11 @@ import config from "../../../../utils/config";
 import colors from "../../../../utils/colors";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import EditIcon from "@material-ui/icons/Edit";
+
 const useStyles = (theme) => ({
   root: {
-    flexGrow: 1,
-    width: 752,
-    margin: theme.spacing(3),
+    width: "auto",
+    marginBottom: theme.spacing(3),
   },
   demo: {
     backgroundColor: colors.secondary,
@@ -417,7 +417,7 @@ class WorkspaceViewFileSection extends Component {
     const nothingToShow =
       this.state.folders.length === 0 && this.state.files.length === 0;
     return (
-      <div className={classes.root}>
+      <div className={classes.root} >
         <div className={classes.demo}>
           <List>
             {this.state.cwd !== "." ? (

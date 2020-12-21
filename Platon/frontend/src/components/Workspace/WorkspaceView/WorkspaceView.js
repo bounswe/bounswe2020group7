@@ -1,16 +1,66 @@
 import React, { Component } from "react";
 import Navbar from "../../NavBar/NavBar";
+import { withStyles } from "@material-ui/core/styles";
+import Chip from "@material-ui/core/Chip";
+import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
+import Divider from "@material-ui/core/Divider";
 import colors from "../../../utils/colors";
 import Typography from "@material-ui/core/Typography";
 import jwt_decode from "jwt-decode";
 import Spinner from "../../Spinner/Spinner";
+import Tab from "@material-ui/core/Tab";
 import "./WorkspaceView.css";
 import MuiAlert from "@material-ui/lab/Alert";
 import Snackbar from "@material-ui/core/Snackbar";
 import WorkspaceViewFileSection from "./WorkspaceViewFileSection/WorkspaceViewFileSection";
-import config from "../../../utils/config"
+import config from "../../../utils/config";
 import axios from "axios";
+import WorkspaceViewStateTimeline from "./WorkspaceViewStateTimeline/WorkspaceViewStateTimeline";
+import Tabs from "@material-ui/core/Tabs";
 
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && <div>{children}</div>}
+    </div>
+  );
+}
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
+}
+const useStyles = (theme) => ({
+  root: {
+    backgroundColor: colors.secondary
+  },
+  chip: {
+    color: colors.primary,
+    backgroundColor: colors.tertiary,
+    margin: theme.spacing(0.5),
+  },
+  section1: {
+    margin: theme.spacing(0, 2),
+  },
+  section2: {
+    margin: theme.spacing(2),
+  },
+  section3: {
+    margin: theme.spacing(3, 1, 1),
+  },
+});
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
@@ -20,165 +70,206 @@ class WorkspaceView extends Component {
     this.state = {
       success: false,
       error: false,
-      loaded: true,
+      loaded: false,
       profileId: null,
       workspaceId: null,
-      workspace: {}
+      value: 0,
+      workspace: {},
     };
   }
   componentDidMount() {
     const token = localStorage.getItem("jwtToken");
     const decoded = jwt_decode(token);
-    const workspaceId = this.props.match.params.workspaceId
+    const workspaceId = this.props.match.params.workspaceId;
     this.setState({
       profileId: decoded.id,
-      workspaceId: workspaceId
+      workspaceId: workspaceId,
     });
 
     axios.defaults.headers.common["auth_token"] = `${token}`;
-    const url = config.BASE_URL
+    const url = config.BASE_URL;
 
-    axios.get(url+'/api/workspaces', {
-      params: {
-        workspace_id: workspaceId
-      }
-    }).then((response) => {
-      if (response.status === 200) {
-        this.setState({
-          workspace: response.data,
-        });
-      }
-    })
-    .catch((err) => {
-      /*this.setState({
+    axios
+      .get(url + "/api/workspaces", {
+        params: {
+          workspace_id: workspaceId,
+        },
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          this.setState({
+            workspace: response.data,
+            loaded: true,
+          });
+        }
+      })
+      .catch((err) => {
+        /*this.setState({
         isSending: false,
         error: "Error occured. " + err.message,
       });*/
-      console.log(err);
-    });
+        console.log(err);
+      });
   }
+  handleChange = (event, newValue) => {
+    this.setState({
+      value: newValue,
+    });
+  };
   render() {
     const { classes } = this.props;
     return (
-      <div className="WorkspaceViewContainer">
+      <div className="WorkspaceViewContainer" style={{ backgroundColor: colors.secondary,}}>
         <Navbar />
-        <div
+
+        <Typography
+          style={{ backgroundColor: colors.primary, color: colors.secondary, padding: "20px 0" }}
+          component="h1"
+          variant="h5"
+          align="center"
+        >
+          View Workspace
+        </Typography>
+        <div style={{display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+          }}>
+
+          <Tabs
+            value={this.state.value}
+            onChange={this.handleChange}
+            aria-label="simple tabs example"
+            style={{width: "100%"}}
+            centered
+            TabIndicatorProps={{style: {background:colors.secondary}}}
+
+          >
+            <Tab style={{backgroundColor:colors.secondary, borderRadius: "5px 5px 0px 0px"}} label="Details" {...a11yProps(0)} />
+            <Tab style={{backgroundColor:colors.secondary, borderRadius: "5px 5px 0px 0px"}} label="Files" {...a11yProps(1)} />
+            <Tab style={{backgroundColor:colors.secondary, borderRadius: "5px 5px 0px 0px"}} label="Issues" {...a11yProps(2)} />
+          </Tabs>
+          <div
           className="container"
           style={{
-            marginTop: "50px",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            backgroundColor: colors.secondary,
           }}
         >
-          <Typography
-            style={{ color: colors.secondary, marginBottom: "20px" }}
-            component="h1"
-            variant="h5"
-            align="center"
-          >
-            View Workspace
-          </Typography>
           {this.state.loaded ? (
             <div
               style={{
                 display: "flex",
-                flexDirection: "row",
                 justifyContent: "space-around",
+                alignItems: "center",
                 width: "100%",
               }}
             >
-              <div>
-                <Typography
-                  style={{ color: colors.secondary, marginBottom: "20px" }}
-                  component="h1"
-                  variant="h6"
-                  align="center"
-                >
-                  Workspace Details
-                </Typography>
-                <Typography
-                  style={{ color: colors.secondary, marginBottom: "20px" }}
-                  component="h1"
-                  variant="subtitle1"
-                  align="center"
-                >
-                  Title: {this.state.workspace ? this.state.workspace.title : "Loading..."}
-                </Typography>
-                <Typography
-                  style={{ color: colors.secondary, marginBottom: "20px" }}
-                  component="h1"
-                  variant="subtitle1"
-                  align="center"
-                >
-                  Description: {this.state.workspace ? this.state.workspace.description : "Loading..."}
-                </Typography>
-                <Typography
-                  style={{ color: colors.secondary, marginBottom: "20px" }}
-                  component="h1"
-                  variant="subtitle1"
-                  align="center"
-                >
-                  Deadline: {this.state.workspace ? (this.state.workspace.deadline ? this.state.workspace.deadline : "Not specified") : "Loading..."}
-                </Typography>
-                <Typography
-                  style={{ color: colors.secondary, marginBottom: "20px" }}
-                  component="h1"
-                  variant="subtitle1"
-                  align="center"
-                >
-                  Workspace Privacy: {this.state.workspace ? (this.state.workspace.is_private ? "Private" : "Public") : "Loading..."}
-                </Typography>
-                <Typography
-                  style={{ color: colors.secondary, marginBottom: "20px" }}
-                  component="h1"
-                  variant="subtitle1"
-                  align="center"
-                >
-                  Number of Maximum Collaborator: {this.state.workspace ? (this.state.workspace.max_collaborators ? this.state.workspace.max_collaborators : "Not specified"): "Loading..."}
-                </Typography>
-                <Typography
-                  style={{ color: colors.secondary, marginBottom: "20px" }}
-                  component="h1"
-                  variant="subtitle1"
-                  align="center"
-                >
-                  Requirements: {this.state.workspace ? (this.state.workspace.requirements ? this.state.workspace.requirements  : "Not specified") : "Loading..."}
-                </Typography>
-                <Typography
-                  style={{ color: colors.secondary, marginBottom: "20px" }}
-                  component="h1"
-                  variant="subtitle1"
-                  align="center"
-                >
-                  Skills: {this.state.workspace ? (this.state.workspace.skills ? this.state.workspace.skills : "Not specified") : "Loading..."}
-                </Typography>
-                <Typography
-                  style={{ color: colors.secondary, marginBottom: "20px" }}
-                  component="h1"
-                  variant="subtitle1"
-                  align="center"
-                >
+              <TabPanel value={this.state.value} index={0}>
+                <div className={classes.root}>
+                  <div className={classes.section1}>
+                    <Grid container alignItems="center">
+                      <Grid item xs>
+                        <Typography gutterBottom variant="h4">
+                          {this.state.workspace.title}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                    <Typography color="textSecondary" variant="h6">
+                      {this.state.workspace.description}
+                    </Typography>
+                  </div>
+                  <Divider variant="middle" />
+                  <div className={classes.section2}>
+                    <div style={{ display: "flex", justifyContent: "space-between"}}>
+                      <div>
+                        <Typography gutterBottom variant="body1">
+                          Workspace Privacy
+                        </Typography>
+                        <div>
+                          {this.state.workspace.is_private
+                            ? "Private"
+                            : "Public"}
+                        </div>
+                      </div>
+                      <div>
+                        <Typography gutterBottom variant="body1">
+                          Maximum Collaborator Number
+                        </Typography>
+                        <div>{this.state.workspace.max_collaborators}</div>
+                      </div>
+                    </div>
+                    <Typography gutterBottom variant="body1">
+                      Skills
+                    </Typography>
+                    {this.state.workspace.skills.length !== 0 ? (
+                      <div>
+                        {this.state.workspace.skills.map((element) => (
+                          <Chip className={classes.chip} label={element} />
+                        ))}
+                      </div>
+                    ) : (
+                      "Not specified"
+                    )}
+                    <Typography gutterBottom variant="body1">
+                      Requirements
+                    </Typography>
+                    {this.state.workspace.requirements ? (
+                      <div>{this.state.workspace.requirements.join(", ")}</div>
+                    ) : (
+                      "Not specified"
+                    )}
+                    <Typography gutterBottom variant="body1">
+                      Deadline
+                    </Typography>
+                    {this.state.workspace.deadline ? (
+                      <div>
+                        {new Date(this.state.workspace.deadline)
+                          .toLocaleString()
+                          .substring(0, 10)}
+                      </div>
+                    ) : (
+                      "Not specified"
+                    )}
+                    <Typography gutterBottom variant="body1">
+                      Collaborators
+                    </Typography>
+                    <div>
+                      {this.state.workspace.colloborator_list.map((element) => (
+                        <div>
+                          {element.name} {element.surname}
+                        </div>
+                      ))}
+                    </div>
+                    <Typography gutterBottom variant="body1">
+                      State
+                    </Typography>
+                    <WorkspaceViewStateTimeline
+                      state={this.state.workspace.state}
+                    />
+                  </div>
 
-                  State: {this.state.workspace ? (this.state.workspace.state !== null ? (this.state.workspace.state === 0 ? "Search For Collaborators": (this.state.workspace.state === 1 ? "Ongoing" : "Published"))  : "Not specified") : "Loading..."}
-                </Typography>
-
-                <Typography
-                  style={{ color: colors.secondary, marginBottom: "20px" }}
-                  component="h1"
-                  variant="h6"
-                  align="center"
-                >
-                  Workspace Files
-                </Typography>
-                <WorkspaceViewFileSection workspaceId={this.props.match.params.workspaceId} />
-              </div>
+                  <div className={classes.section3}>
+                    <Button color="primary">Edit Workspace</Button>
+                  </div>
+                </div>
+              </TabPanel>
+              <TabPanel value={this.state.value} index={1}>
+                <WorkspaceViewFileSection
+                  workspaceId={this.props.match.params.workspaceId}
+                />
+              </TabPanel>
+              <TabPanel value={this.state.value} index={2}>
+                Issues
+              </TabPanel>
             </div>
           ) : (
             <div style={{ marginTop: "150px" }}>
               <Spinner />
             </div>
           )}
+        </div>
         </div>
         {this.state.error && (
           <Snackbar
@@ -215,4 +306,4 @@ class WorkspaceView extends Component {
   }
 }
 
-export default WorkspaceView;
+export default withStyles(useStyles)(WorkspaceView);
