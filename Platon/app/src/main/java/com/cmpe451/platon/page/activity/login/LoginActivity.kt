@@ -46,7 +46,13 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
     private lateinit var dialog: AlertDialog
     private val mActivityViewModel: HomeActivityViewModel by viewModels()
     private val searchPageSize = 10;
+
+
     private var maxPageNumberSearch = 0
+
+    private lateinit var toolbarLayoutManager:LinearLayoutManager
+    private lateinit var paginationListener:PaginationListener
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // default theme is splash theme to show a simple splash screen
@@ -70,9 +76,9 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
     }
 
     private fun initViews() {
-        val layoutManager = LinearLayoutManager(this)
-        // init layout manager of toolbar recycler view
-        binding.toolbarRecyclerview.layoutManager = layoutManager
+
+        toolbarLayoutManager = LinearLayoutManager(this)
+        binding.toolbarRecyclerview.layoutManager = toolbarLayoutManager
 
         initListeners()
 
@@ -84,19 +90,29 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
     private fun initListeners() {
         dialog = Definitions().createProgressBar(this as BaseActivity)
 
-        binding.rgSearchAmong.setOnCheckedChangeListener { _, id ->
-            when(id){
-                R.id.rb_searchUser -> {
-                    binding.layJobQuery.visibility = View.VISIBLE
-                    mActivityViewModel.getAllJobs()
-                }
-                R.id.rb_searchWorkspace ->{
-                    binding.layJobQuery.visibility = View.GONE
-                }
-                R.id.rb_searchUpcoming ->{
-                    binding.layJobQuery.visibility = View.GONE
-                }
+        paginationListener = object: PaginationListener(toolbarLayoutManager, searchPageSize){
+            override fun loadMoreItems() {
+                if (maxPageNumberSearch - 1 > currentPage) {
+                    currentPage++
+                    when (binding.rgSearchAmong.checkedRadioButtonId) {
+                        R.id.rb_searchUser -> {
+                            var jobQuery: Int? = null
+                            val pos = binding.spJobQuery.selectedItemPosition
+                            if (pos != 0) {
+                                jobQuery = jobIdList?.get(pos)
+                            }
+                            mActivityViewModel.searchUser(null, search.query.toString().trim(), jobQuery, currentPage, PAGE_SIZE)
+                        }
+                        R.id.rb_searchUpcoming -> {}
+                        R.id.rb_searchWorkspace -> {}
+                    }
             }}
+            override var isLastPage: Boolean = false
+            override var isLoading: Boolean = false
+            override var currentPage: Int = 0
+        }
+
+        binding.toolbarRecyclerview.addOnScrollListener(paginationListener)
     }
 
     private fun onSearchBarClicked() {
@@ -139,12 +155,19 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                 binding.rgSearchAmong.setOnCheckedChangeListener { _, id ->
                     when(id){
                         R.id.rb_searchUser -> {
+                            paginationListener.currentPage = 0
                             binding.layJobQuery.visibility = View.VISIBLE
                             mActivityViewModel.getAllJobs()
                         }
-                        R.id.rb_searchWorkspace ->binding.layJobQuery.visibility = View.GONE
+                        R.id.rb_searchWorkspace ->{
+                            paginationListener.currentPage = 0
+                            binding.layJobQuery.visibility = View.GONE
+                        }
 
-                        R.id.rb_searchUpcoming ->binding.layJobQuery.visibility = View.GONE
+                        R.id.rb_searchUpcoming ->{
+                            paginationListener.currentPage = 0
+                            binding.layJobQuery.visibility = View.GONE
+                        }
                     }}
 
                 // make radio group visible
@@ -206,6 +229,7 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                         if (pos != 0){
                             jobQuery = jobIdList?.get(pos)
                         }
+                        search.clearFocus()
                         mActivityViewModel.searchUser(null, query, jobQuery,0, searchPageSize)
                     }
                     R.id.rb_searchWorkspace ->{}
@@ -217,27 +241,35 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
      * Clears the toolbar/action bar's state.
      * Notification/search and others
      */
-    private fun destroyToolbar(flag:Boolean=true) {
+    private fun destroyToolbar(flag: Boolean = true) {
         if(flag){
             // collapse the search action view
             search.onActionViewCollapsed()
         }
 
+        //make GONE the views
+        mActivityViewModel.getSearchUserResourceResponse.removeObservers(this)
+        mActivityViewModel.getSearchHistoryResourceResponse.removeObservers(this)
+        mActivityViewModel.getJobListResourceResponse.removeObservers(this)
+
+        mActivityViewModel.getUserNotificationsResourceResponse.removeObservers(this)
+        mActivityViewModel.getUserFollowRequestsResourceResponse.removeObservers(this)
+        mActivityViewModel.acceptRequestResourceResponse.removeObservers(this)
+
         binding.layJobQuery.visibility=View.GONE
         binding.rgSearchAmong.visibility = View.GONE
         binding.toolbarRecyclerview.visibility = View.GONE
 
-        binding.rgSearchAmong.setOnCheckedChangeListener(null)
 
+        binding.rgSearchAmong.setOnCheckedChangeListener(null)
         binding.rgSearchAmong.clearCheck()
         // if adapter not null, clear it
         if (binding.toolbarRecyclerview.adapter != null){
             (binding.toolbarRecyclerview.adapter as ToolbarElementsAdapter).clearElements()
         }
-        binding.toolbarRecyclerview.clearOnScrollListeners()
-        //make GONE the views
-        mActivityViewModel.getSearchUserResourceResponse.removeObservers(this)
-        mActivityViewModel.getJobListResourceResponse.removeObservers(this)
+
+        paginationListener.currentPage = 0
+        maxPageNumberSearch = 0
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

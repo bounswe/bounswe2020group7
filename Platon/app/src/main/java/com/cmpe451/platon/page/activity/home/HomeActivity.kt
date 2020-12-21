@@ -66,10 +66,8 @@ class HomeActivity : BaseActivity(),
     private var maxPageNumberSearch= 0;
     private var maxPageNumberNotification=0;
 
-
     private lateinit var toolbarLayoutManager:LinearLayoutManager
     private lateinit var paginationListener:PaginationListener
-
 
     /**
      * Clears the toolbar/action bar's state.
@@ -80,6 +78,15 @@ class HomeActivity : BaseActivity(),
             // collapse the search action view
             search.onActionViewCollapsed()
         }
+
+        //make GONE the views
+        mActivityViewModel.getSearchUserResourceResponse.removeObservers(this)
+        mActivityViewModel.getSearchHistoryResourceResponse.removeObservers(this)
+        mActivityViewModel.getJobListResourceResponse.removeObservers(this)
+
+        mActivityViewModel.getUserNotificationsResourceResponse.removeObservers(this)
+        mActivityViewModel.getUserFollowRequestsResourceResponse.removeObservers(this)
+        mActivityViewModel.acceptRequestResourceResponse.removeObservers(this)
 
         binding.layJobQuery.visibility=View.GONE
         binding.notificationRg.visibility = View.GONE
@@ -100,17 +107,6 @@ class HomeActivity : BaseActivity(),
         paginationListener.currentPage = 0
         maxPageNumberSearch = 0
         maxPageNumberNotification = 0
-
-
-        //make GONE the views
-        mActivityViewModel.getSearchUserResourceResponse.removeObservers(this)
-        mActivityViewModel.getSearchHistoryResourceResponse.removeObservers(this)
-        mActivityViewModel.getJobListResourceResponse.removeObservers(this)
-
-        mActivityViewModel.getUserNotificationsResourceResponse.removeObservers(this)
-        mActivityViewModel.getUserFollowRequestsResourceResponse.removeObservers(this)
-        mActivityViewModel.acceptRequestResourceResponse.removeObservers(this)
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -169,7 +165,6 @@ class HomeActivity : BaseActivity(),
         paginationListener = object: PaginationListener(toolbarLayoutManager, searchPageSize){
             override fun loadMoreItems() {
                 if(maxPageNumberNotification-1 > currentPage || maxPageNumberSearch-1 > currentPage){
-                    Toast.makeText(baseContext, "Next page", Toast.LENGTH_LONG).show()
                     currentPage++
                     when(binding.rgSearchAmong.visibility){
                         View.GONE->{
@@ -183,7 +178,7 @@ class HomeActivity : BaseActivity(),
                             }
                         }
                         View.VISIBLE->{
-                            when(binding.notificationRg.checkedRadioButtonId){
+                            when(binding.rgSearchAmong.checkedRadioButtonId){
                                 R.id.rb_searchUser->{
                                     var jobQuery: Int? = null
                                     val pos = binding.spJobQuery.selectedItemPosition
@@ -233,15 +228,18 @@ class HomeActivity : BaseActivity(),
                 binding.rgSearchAmong.setOnCheckedChangeListener { _, id ->
                     when (id) {
                         R.id.rb_searchUser -> {
+                            paginationListener.currentPage = 0
                             binding.layJobQuery.visibility = View.VISIBLE
                             mActivityViewModel.fetchSearchHistory(token!!, 0)
                             mActivityViewModel.getAllJobs()
                         }
                         R.id.rb_searchWorkspace -> {
+                            paginationListener.currentPage = 0
                             binding.layJobQuery.visibility = View.GONE
                             mActivityViewModel.fetchSearchHistory(token!!, 1)
                         }
                         R.id.rb_searchUpcoming -> {
+                            paginationListener.currentPage = 0
                             binding.layJobQuery.visibility = View.GONE
                             mActivityViewModel.fetchSearchHistory(token!!, 2)
                         }
@@ -327,6 +325,7 @@ class HomeActivity : BaseActivity(),
             }
 
             override fun onSuggestionClick(position: Int): Boolean {
+
                 search.setQuery(searchHistory?.get(position)!!.query, false)
                 return true
             }
@@ -346,6 +345,7 @@ class HomeActivity : BaseActivity(),
                         if (pos != 0) {
                             jobQuery = jobIdList?.get(pos)
                         }
+                        search.clearFocus()
                         mActivityViewModel.searchUser(token!!, query, jobQuery, 0, searchPageSize)
                     }
                     R.id.rb_searchWorkspace -> {
@@ -372,9 +372,11 @@ class HomeActivity : BaseActivity(),
                 binding.notificationRg.setOnCheckedChangeListener { d, id ->
                     when (id) {
                         R.id.general_ntf_rb -> {
+                            paginationListener.currentPage = 0
                             mActivityViewModel.getNotifications(token!!, 0, searchPageSize)
                         }
                         R.id.personal_ntf_rb ->{
+                            paginationListener.currentPage = 0
                             mActivityViewModel.getFollowRequests(userId!!, token!!, 0, searchPageSize)
                         }
                     }
