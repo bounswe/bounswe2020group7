@@ -95,6 +95,32 @@ def get_workspace_active_contributors_json(workspace_id):
     return json.dumps(workspace_contributors_data)
 
 
+def update_workspace_skills(workspace_id, workspace_updated_skills_list):
+    '''
+    This method updates the required skills of a workspace.
+    '''
+    if workspace_updated_skills_list is None:
+        return
+    else:
+        workspace_skills_list = WorkspaceSkill.query.filter_by(workspace_id=workspace_id)
+        workspace_skills_list.delete()
+        db.session.commit()
+        add_workspace_skills(workspace_id, workspace_updated_skills_list)
+
+
+def update_workspace_requirements(workspace_id, workspace_updated_requirements_list):
+    '''
+    This method updates the requirements of a workspace.
+    '''
+    if workspace_updated_requirements_list is None:
+        return
+    else:
+        workspace_requirements_list = WorkspaceRequirement.query.filter_by(workspace_id=workspace_id)
+        workspace_requirements_list.delete()
+        db.session.commit()
+        add_workspace_requirements(workspace_id, workspace_updated_requirements_list)
+
+
 def workspace_exists(param_loc,workspace_id_key):
     """
         param_loc: it only can be "args" or "form" which specifies the location of the requested wokspace id in the request
