@@ -45,7 +45,7 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
     lateinit var search:SearchView
     private lateinit var dialog: AlertDialog
     private val mActivityViewModel: HomeActivityViewModel by viewModels()
-
+    private val searchPageSize = 10;
     private var maxPageNumberSearch = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,33 +70,9 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
     }
 
     private fun initViews() {
-        // init layout manager of toolbar recycler view
-        val height = resources.displayMetrics.heightPixels
-        val width = resources.displayMetrics.widthPixels
-
-        //linear layout params
-        binding.toolbarRecyclerview.layoutParams =  LinearLayout.LayoutParams((width), height/3)
-
         val layoutManager = LinearLayoutManager(this)
         // init layout manager of toolbar recycler view
         binding.toolbarRecyclerview.layoutManager = layoutManager
-
-        binding.toolbarRecyclerview.addOnScrollListener(object: PaginationListener(layoutManager){
-            override fun loadMoreItems() {
-                if(maxPageNumberSearch-1 > currentPage){
-                    currentPage++
-                    var jobQuery: Int? = null
-                    val pos = binding.spJobQuery.selectedItemPosition
-                    if (pos != 0) {
-                        jobQuery = jobIdList?.get(pos)
-                    }
-                    mActivityViewModel.searchUser(null, search.query.toString().trim(), jobQuery, currentPage, PAGE_SIZE)
-                    }
-                }
-            override var isLastPage: Boolean = false
-            override var isLoading: Boolean = false
-            override var currentPage: Int = 0
-        })
 
         initListeners()
 
@@ -134,6 +110,30 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
             View.GONE -> {
                 // destroy toolbar, but do not collapse search view
                 destroyToolbar(false)
+
+
+                val layoutManager = LinearLayoutManager(this)
+                // init layout manager of toolbar recycler view
+                binding.toolbarRecyclerview.layoutManager = layoutManager
+
+                binding.toolbarRecyclerview.addOnScrollListener(object: PaginationListener(layoutManager, searchPageSize){
+                    override fun loadMoreItems() {
+                        if(maxPageNumberSearch-1 > currentPage){
+                            currentPage++
+                            var jobQuery: Int? = null
+                            val pos = binding.spJobQuery.selectedItemPosition
+                            if (pos != 0) {
+                                jobQuery = jobIdList?.get(pos)
+                            }
+                            mActivityViewModel.searchUser(null, search.query.toString().trim(), jobQuery, currentPage, PAGE_SIZE)
+                        }
+                    }
+                    override var isLastPage: Boolean = false
+                    override var isLoading: Boolean = false
+                    override var currentPage: Int = 0
+
+                })
+
 
                 //listener for search radio group
                 binding.rgSearchAmong.setOnCheckedChangeListener { _, id ->
@@ -206,7 +206,7 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                         if (pos != 0){
                             jobQuery = jobIdList?.get(pos)
                         }
-                        mActivityViewModel.searchUser(null, query, jobQuery,null, null)
+                        mActivityViewModel.searchUser(null, query, jobQuery,0, searchPageSize)
                     }
                     R.id.rb_searchWorkspace ->{}
                     R.id.rb_searchUpcoming -> {}}

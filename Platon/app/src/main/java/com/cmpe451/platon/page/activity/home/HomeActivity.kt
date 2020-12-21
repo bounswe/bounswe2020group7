@@ -19,6 +19,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.FollowRequestElementsAdapter
 import com.cmpe451.platon.adapter.NotificationElementsAdapter
@@ -37,6 +38,7 @@ import com.cmpe451.platon.page.activity.home.fragment.workspace.WorkspaceListFra
 import com.cmpe451.platon.page.activity.login.LoginActivity
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.util.Definitions
+import com.google.android.material.snackbar.Snackbar
 
 
 class HomeActivity : BaseActivity(),
@@ -55,12 +57,19 @@ class HomeActivity : BaseActivity(),
     var token:String? = null
     var userId:Int? = null
 
+    private val searchPageSize = 10
+
     //keeper for jobs'ids
     //TODO this can be improved
     private var jobIdList:ArrayList<Int>?  = null
 
     private var maxPageNumberSearch= 0;
     private var maxPageNumberNotification=0;
+
+
+    private lateinit var toolbarLayoutManager:LinearLayoutManager
+    private lateinit var paginationListener:PaginationListener
+
 
     /**
      * Clears the toolbar/action bar's state.
@@ -88,7 +97,10 @@ class HomeActivity : BaseActivity(),
             (binding.toolbarRecyclerview.adapter as ToolbarElementsAdapter).clearElements()
         }
 
-        binding.toolbarRecyclerview.clearOnScrollListeners()
+        paginationListener.currentPage = 0
+        maxPageNumberSearch = 0
+        maxPageNumberNotification = 0
+
 
         //make GONE the views
         mActivityViewModel.getSearchUserResourceResponse.removeObservers(this)
@@ -130,47 +142,9 @@ class HomeActivity : BaseActivity(),
     }
 
     private fun initViews() {
-        val height = resources.displayMetrics.heightPixels
-        val width = resources.displayMetrics.widthPixels
 
-        //linear layout params
-        binding.toolbarRecyclerview.layoutParams =  LinearLayout.LayoutParams((width), height/3)
-
-        val layoutManager = LinearLayoutManager(this)
-        // init layout manager of toolbar recycler view
-        binding.toolbarRecyclerview.layoutManager = layoutManager
-
-        binding.toolbarRecyclerview.addOnScrollListener(object: PaginationListener(layoutManager){
-            override fun loadMoreItems() {
-                if(maxPageNumberNotification-1 > currentPage || maxPageNumberSearch-1 > currentPage){
-                    currentPage++
-                    when(binding.rgSearchAmong.visibility){
-                        View.VISIBLE->{
-                            var jobQuery: Int? = null
-                            val pos = binding.spJobQuery.selectedItemPosition
-                            if (pos != 0) {
-                                jobQuery = jobIdList?.get(pos)
-                            }
-                            mActivityViewModel.searchUser(token!!, search.query.toString().trim(), jobQuery, currentPage, PAGE_SIZE)
-                        }
-                        View.GONE->{
-                            when(binding.notificationRg.checkedRadioButtonId){
-                                R.id.personal_ntf_rb->{
-                                    mActivityViewModel.getFollowRequests(userId!!, token!!,currentPage, PAGE_SIZE)
-                                }
-                                R.id.general_ntf_rb->{
-                                    mActivityViewModel.getNotifications(token!!,currentPage, PAGE_SIZE)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            override var isLastPage: Boolean = false
-            override var isLoading: Boolean = false
-            override var currentPage: Int = 0
-
-        })
+        toolbarLayoutManager = LinearLayoutManager(this)
+        binding.toolbarRecyclerview.layoutManager = toolbarLayoutManager
 
         binding.bottomNavBar.setOnNavigationItemSelectedListener {
             // destroy the toolbar when going to another fragment using bottom navbar
@@ -187,9 +161,52 @@ class HomeActivity : BaseActivity(),
         initListeners()
     }
 
+
     private fun initListeners() {
         // create dialog, which is not singleton
         //TODO make alert dialog singleton
+
+        paginationListener = object: PaginationListener(toolbarLayoutManager, searchPageSize){
+            override fun loadMoreItems() {
+                if(maxPageNumberNotification-1 > currentPage || maxPageNumberSearch-1 > currentPage){
+                    Toast.makeText(baseContext, "Next page", Toast.LENGTH_LONG).show()
+                    currentPage++
+                    when(binding.rgSearchAmong.visibility){
+                        View.GONE->{
+                            when(binding.notificationRg.checkedRadioButtonId){
+                                R.id.personal_ntf_rb->{
+                                    mActivityViewModel.getFollowRequests(userId!!, token!!,currentPage, PAGE_SIZE)
+                                }
+                                R.id.general_ntf_rb->{
+                                    mActivityViewModel.getNotifications(token!!,currentPage, PAGE_SIZE)
+                                }
+                            }
+                        }
+                        View.VISIBLE->{
+                            when(binding.notificationRg.checkedRadioButtonId){
+                                R.id.rb_searchUser->{
+                                    var jobQuery: Int? = null
+                                    val pos = binding.spJobQuery.selectedItemPosition
+                                    if (pos != 0) {
+                                        jobQuery = jobIdList?.get(pos)
+                                    }
+                                    mActivityViewModel.searchUser(token!!, search.query.toString().trim(), jobQuery, currentPage, PAGE_SIZE)
+                                }
+                                R.id.rb_searchUpcoming->{
+                                }
+                                R.id.rb_searchWorkspace->{
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            override var isLastPage: Boolean = false
+            override var isLoading: Boolean = false
+            override var currentPage: Int = 0
+        }
+
+        binding.toolbarRecyclerview.addOnScrollListener(paginationListener)
 
         dialog = Definitions().createProgressBar(this as BaseActivity)
     }
@@ -263,8 +280,7 @@ class HomeActivity : BaseActivity(),
                         Resource.Success::class.java -> {
                             // define new adapter
                             maxPageNumberSearch = t.data!!.number_of_pages
-                            maxPageNumberNotification = 0
-                            if(binding.toolbarRecyclerview.javaClass == SearchElementsAdapter::class.java){
+                            if(binding.toolbarRecyclerview.adapter?.javaClass == SearchElementsAdapter::class.java){
                                 (binding.toolbarRecyclerview.adapter as SearchElementsAdapter).submitElements(t.data!!.result_list)
                             }else{
                                 binding.toolbarRecyclerview.adapter = SearchElementsAdapter(t.data!!.result_list as ArrayList<SearchElement>, this, this)
@@ -330,7 +346,7 @@ class HomeActivity : BaseActivity(),
                         if (pos != 0) {
                             jobQuery = jobIdList?.get(pos)
                         }
-                        mActivityViewModel.searchUser(token!!, query, jobQuery, 0, 5)
+                        mActivityViewModel.searchUser(token!!, query, jobQuery, 0, searchPageSize)
                     }
                     R.id.rb_searchWorkspace -> {
                     }
@@ -351,11 +367,16 @@ class HomeActivity : BaseActivity(),
             }
             View.GONE -> {
                 destroyToolbar()
+
                 //listener for notification radio group
                 binding.notificationRg.setOnCheckedChangeListener { d, id ->
                     when (id) {
-                        R.id.general_ntf_rb -> mActivityViewModel.getNotifications(token!!, 0, 5)
-                        R.id.personal_ntf_rb -> mActivityViewModel.getFollowRequests(userId!!, token!!, 0, 5)
+                        R.id.general_ntf_rb -> {
+                            mActivityViewModel.getNotifications(token!!, 0, searchPageSize)
+                        }
+                        R.id.personal_ntf_rb ->{
+                            mActivityViewModel.getFollowRequests(userId!!, token!!, 0, searchPageSize)
+                        }
                     }
                 }
 
@@ -366,8 +387,7 @@ class HomeActivity : BaseActivity(),
                     when (t.javaClass) {
                         Resource.Success::class.java -> {
                             maxPageNumberNotification = t.data!!.number_of_pages
-                            maxPageNumberSearch = 0
-                            if(binding.toolbarRecyclerview.javaClass == NotificationElementsAdapter::class.java){
+                            if(binding.toolbarRecyclerview.adapter?.javaClass == NotificationElementsAdapter::class.java){
                                 (binding.toolbarRecyclerview.adapter as NotificationElementsAdapter).submitElements(t.data!!.notification_list)
                             }else{
                                 binding.toolbarRecyclerview.adapter = NotificationElementsAdapter(t.data!!.notification_list as ArrayList<Notification>, this, this)
@@ -387,7 +407,6 @@ class HomeActivity : BaseActivity(),
                     when (t.javaClass) {
                         Resource.Success::class.java -> {
                             maxPageNumberNotification = t.data!!.number_of_pages
-                            maxPageNumberSearch = 0
                             if(binding.toolbarRecyclerview.javaClass == FollowRequestElementsAdapter::class.java){
                                 (binding.toolbarRecyclerview.adapter as FollowRequestElementsAdapter).submitElements(t.data!!.follow_requests)
                             }else{
