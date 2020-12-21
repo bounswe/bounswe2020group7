@@ -31,7 +31,8 @@ class FileSystemAPI(Resource):
                 200: "Valid Data",
                 400: "Invalid Input",
                 401: "Authantication Problem",
-                404: "User if not found"
+                404: "User if not found",
+                403: "Forbidden Path"
     })
     @api.expect(file_get_parser)
     @login_required
@@ -42,10 +43,12 @@ class FileSystemAPI(Resource):
         if form.validate():
             ws_path = FileSystem.workspace_base_path(form.workspace_id.data)
             path = ws_path + os.path.sep + form.path.data
+            if FileSystem.is_path_forbidden(ws_path,path):
+                return make_response(jsonify({"err":"It is forbidden to reach this path"}),403)
             file_path = path + os.path.sep + form.filename.data
             if not FileSystem.is_file_exists(file_path):
                 return make_response(jsonify({"err":"There is no such file"}),400) 
-            return send_from_directory(path,form.filename.data,as_attachment=True)
+            return send_from_directory(path,form.filename.data,as_attachment=True,cache_timeout=10)
         else:
             return make_response(jsonify({"err":"Invalid Input"}),400)
 
@@ -53,7 +56,8 @@ class FileSystemAPI(Resource):
                 201: "File Successfully Uploaded",
                 400: "Invalid Input",
                 401: "Authantication Problem",
-                404: "User if not found"
+                404: "User if not found",
+                403: "Forbidden Path"
     })
     @api.expect(file_post_parser)
     @login_required
@@ -71,7 +75,8 @@ class FileSystemAPI(Resource):
             # Control File Path
             if not FileSystem.is_directory_exists(path):
                 return make_response(jsonify({"err":"Give Appropriate Path"}),400)
-            
+            if FileSystem.is_path_forbidden(ws_path,path):
+                return make_response(jsonify({"err":"It is forbidden to reach this path"}),403)
             file_path = path + os.path.sep + form.filename.data
             # Control File Name is Unique or not
             if FileSystem.is_file_exists(file_path):
@@ -86,7 +91,8 @@ class FileSystemAPI(Resource):
                 200: "File Name Successfully Changed",
                 400: "Invalid Input",
                 401: "Authantication Problem",
-                404: "User if not found"
+                404: "User if not found",
+                403: "Forbidden Path"
     })
     @api.expect(file_post_parser)
     @login_required
@@ -102,6 +108,8 @@ class FileSystemAPI(Resource):
             path = ws_path + os.path.sep + form.path.data
             if not FileSystem.is_directory_exists(path):
                 return make_response(jsonify({"err":"Give Appropriate Path"}),400)
+            if FileSystem.is_path_forbidden(ws_path,path):
+                return make_response(jsonify({"err":"It is forbidden to reach this path"}),403)
             # Control given file exists or not
             file_path = path + os.path.sep + form.filename.data
             if not FileSystem.is_file_exists(file_path):
@@ -117,7 +125,8 @@ class FileSystemAPI(Resource):
                 200: "File Successfully Deleted",
                 400: "Invalid Input",
                 401: "Authantication Problem",
-                404: "User if not found"
+                404: "User if not found",
+                403: "Forbidden Path"
     })
     @api.expect(file_delete_parser)
     @login_required
@@ -131,6 +140,8 @@ class FileSystemAPI(Resource):
             path = ws_path + os.path.sep + form.path.data
             if not os.path.exists(path):
                 return make_response(jsonify({"err":"Give Appropriate Path"}),400)
+            if FileSystem.is_path_forbidden(ws_path,path):
+                return make_response(jsonify({"err":"It is forbidden to reach this path"}),403)
             # Control given file exists or not
             file_path = path + os.path.sep + form.filename.data
             if not os.path.isfile(file_path):
@@ -147,7 +158,8 @@ class FolderSystemAPI(Resource):
     @api.doc(responses={
                 400: "Invalid Input",
                 401: "Authantication Problem",
-                404: "User if not found"
+                404: "User if not found",
+                403: "Forbidden Path"
     })
     @api.response(200, 'Valid Folder', folder_models)
     @api.expect(folder_get_parser)
@@ -162,6 +174,8 @@ class FolderSystemAPI(Resource):
             # Control given path exits or not
             if not FileSystem.is_directory_exists(folder_path):
                 return make_response(jsonify({"err":"Give Appropriate Path"}),400)
+            if FileSystem.is_path_forbidden(ws_path,folder_path):
+                return make_response(jsonify({"err":"It is forbidden to reach this path"}),403)
             file_list = []
             folder_list = []
             # Find list of files and foldes in the given path
@@ -178,7 +192,8 @@ class FolderSystemAPI(Resource):
                 201: "Folder Successfully Created",
                 400: "Invalid Input",
                 401: "Authantication Problem",
-                404: "User if not found"
+                404: "User if not found",
+                403: "Forbidden Path"
     })
     @api.expect(folder_post_put_parser)
     @login_required
@@ -192,6 +207,8 @@ class FolderSystemAPI(Resource):
             path = ws_path + os.path.sep + form.path.data
             if not FileSystem.is_directory_exists(path):
                 return make_response(jsonify({"err":"Give Appropriate Path"}),400)
+            if FileSystem.is_path_forbidden(ws_path,path):
+                return make_response(jsonify({"err":"It is forbidden to reach this path"}),403)
             # Control new folder name is valid or not
             new_folder_path = path + os.path.sep + form.new_folder_name.data
             if FileSystem.is_directory_exists(new_folder_path):
@@ -210,7 +227,8 @@ class FolderSystemAPI(Resource):
                 200: "Folder Name Successfully Changed",
                 400: "Invalid Input",
                 401: "Authantication Problem",
-                404: "User if not found"
+                404: "User if not found",
+                403: "Forbidden Path"
     })
     @api.expect(folder_post_put_parser)
     @login_required
@@ -224,6 +242,8 @@ class FolderSystemAPI(Resource):
             path = ws_path + os.path.sep + form.path.data
             if not FileSystem.is_directory_exists(path):
                 return make_response(jsonify({"err":"Give Appropriate Path"}),400)
+            if FileSystem.is_path_forbidden(ws_path,path):
+                return make_response(jsonify({"err":"It is forbidden to reach this path"}),403)
             # Calculate new path of the folder
             new_folder_path = path.split(os.path.sep)
             new_folder_path[-1] = form.new_folder_name.data
@@ -241,7 +261,8 @@ class FolderSystemAPI(Resource):
                 200: "Folder Successfully Deleted",
                 400: "Invalid Input",
                 401: "Authantication Problem",
-                404: "User if not found"
+                404: "User if not found",
+                403: "Forbidden Path"
     })
     @api.expect(folder_delete_parser)
     @login_required
@@ -255,6 +276,8 @@ class FolderSystemAPI(Resource):
                 return make_response(jsonify({"err":"Main Folder can not be deleted"}),400)
             # Control given path exists or not
             folder_path = ws_path + os.path.sep + form.path.data
+            if FileSystem.is_path_forbidden(ws_path,folder_path):
+                return make_response(jsonify({"err":"It is forbidden to reach this path"}),403)
             if not FileSystem.is_directory_exists(folder_path):
                 return make_response(jsonify({"err":"Folder does not exist"}),400)
             # Delete all contents of the folder

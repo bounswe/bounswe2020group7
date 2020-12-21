@@ -404,8 +404,6 @@ class UserAPI(Resource):
                             fullpath = app.config["PROFILE_PHOTO_PATH"] + os.path.sep + existing_user_record.profile_photo
                             if os.path.isfile(fullpath):
                                 os.remove(fullpath)
-                            else:
-                                new_attributes["profile_photo"] = ""   
                         if allowed_file(profile_photo.filename):
                             profile_photo_change = True
                             filename, file_extension = os.path.splitext(profile_photo.filename)
@@ -420,7 +418,7 @@ class UserAPI(Resource):
                             existing_user.update(new_attributes)
                             db.session.commit()
                         elif profile_photo_change:
-                            return make_response(jsonify({"message" : "Profile photo successfully changed"}), 500)
+                            return make_response(jsonify({"message" : "Profile photo successfully changed"}), 201)
                         else:
                             return make_response(jsonify({"message" : "Server has received the request but there was no information to be updated."}), 202)    
                     except:
@@ -622,7 +620,7 @@ class ProfilePhotoAPI(Resource):
 
             profile_photo_full_path =  app.config['PROFILE_PHOTO_PATH'] + os.path.sep + profile_photo_path
             if os.path.isfile(profile_photo_full_path):
-                return send_from_directory(directory=app.config["PROFILE_PHOTO_PATH"], filename=profile_photo_path)
+                return send_from_directory(directory=app.config["PROFILE_PHOTO_PATH"], filename=profile_photo_path,cache_timeout=0)
             else:
                 return  make_response(jsonify({'error': 'Profile Photo is Not Found'}), 404)
         else:

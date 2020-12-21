@@ -3,7 +3,7 @@ from app import db
 class Workspace(db.Model):
     __tablename__ = "workspaces"
     id = db.Column(db.Integer,primary_key=True,autoincrement=True)
-    creator_id = db.Column(db.Integer,db.ForeignKey('users.id'))
+    creator_id = db.Column(db.Integer,db.ForeignKey('users.id', ondelete="SET NULL"))
     is_private = db.Column(db.Boolean,default=False,nullable=False)
     title = db.Column(db.String(256),nullable=False)
     state = db.Column(db.SmallInteger,default=0,nullable=False)
@@ -26,7 +26,7 @@ class WorkspaceRequirement(db.Model):
 
 class Contribution(db.Model):
     __tablename__ = "contributions"
-    workspace_id = db.Column(db.Integer,db.ForeignKey('workspaces.id'),primary_key=True)
+    workspace_id = db.Column(db.Integer,db.ForeignKey('workspaces.id', ondelete="CASCADE"),primary_key=True)
     user_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"),primary_key=True)
     is_active = db.Column(db.Boolean,nullable=False)
 

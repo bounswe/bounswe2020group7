@@ -919,12 +919,23 @@ class WorkspacesAPI(Resource):
 
         # Parses the form data.
         form = CreateWorkspaceForm(request.form)
+        # Checks whether the data is in valid form.
+        # If yes, starts processing the data.
+        # If not, an error is raised.
         if form.validate():
+            # Form data gets converted to a dictionary, to create a workspace.
             new_workspace_information = {**form.data}
-            new_workspace_skills = eval(new_workspace_information.pop("skills", "None"))
-            new_workspace_requirements = eval(new_workspace_information.pop("requirements", "None"))
+            # The list of skills is popped from the dictionary, as the skills will be added to the database through a separate operation.
+            new_workspace_skills = json.loads(new_workspace_information.pop("skills"))
+            # The list of requirements is popped from the dictionary, as the requirements will be added to the database through a separate operation.
+            new_workspace_requirements = json.loads(new_workspace_information.pop("requirements"))
 
+            # A new workspace with the given fields gets created.
             new_workspace = Workspace(creator_id=requester_id, **new_workspace_information)
+            # Attempts to add the newly created workspace to the database.
+            # If fails, an error gets raised.
+            # If it does not fail, the skills and the requirements of the new workspace and the contribution of the creator user gets added to the database.
+            # Also, the folder for the workspace gets created.
             try:
                 db.session.add(new_workspace)
                 db.session.commit()
@@ -996,14 +1007,130 @@ class WorkspacesAPI(Resource):
                                                     "description": requested_workspace.description,
                                                     "deadline": requested_workspace.deadline,
                                                     "max_collaborators": requested_workspace.max_collaborators,
-                                                    "skills": get_workspace_skills_text(form.workspace_id.data),
-                                                    "requirements": get_workspace_requirements_text(form.workspace_id.data)
+                                                    "skills": get_workspace_skills_list(form.workspace_id.data),
+                                                    "requirements": get_workspace_requirements_list(form.workspace_id.data),
+                                                    "active_contributors": get_workspace_active_contributors_list(form.workspace_id.data)
                                                 }
-
+                        requested_workspace.view_count = requested_workspace.view_count + 1
+                        db.session.commit()
                         # Workspace information is returned.
                         return make_response(jsonify(workspace_information), 200)
         else:
             return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
+
+    # PUT request
+    @api.expect(update_workspace_parser)
+    @api.doc(responses={
+                200: "Workspace has been successfully updated.",
+                202: "Server has received the request but there was no information to be updated.",
+                400: "Missing data fields or invalid data.",
+                401: "You are not among the active contributors of this workspace, you cannot modify it.",
+                404: "The workspace is not found.",
+                500: "The server is not connected to the database."
+            })
+    @login_required
+    def put(requester_id, self):
+        '''
+        Updates the requested workspace.
+        '''
+
+        # Parses the form data.
+        form = UpdateWorkspaceForm(request.form)
+
+        # Checks whether the sent data is in valid form.
+        # If yes, starts processing the data.
+        # If not, an error is raised.
+        if form.validate():
+            # Tries to connect to the database.
+            # If it fails, an error is raised.
+            try:
+                requested_workspace = Workspace.query.filter_by(id=form.workspace_id.data)
+            except:
+                return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+            else:
+                # Checks whether the requested workspace with the given ID exists in the database.
+                # If not, an error is raised.
+                # If yes, workspace information is updated depending on whether the requester can update the requested workspace.
+                if requested_workspace is None:
+                    return make_response(jsonify({"error" : "Requested workspace is not found."}), 404)
+                else:
+                    if Contribution.query.filter_by(workspace_id=form.workspace_id.data, user_id=requester_id, is_active=True).first() is None:
+                        return make_response(jsonify({"error" : "You are not among the active contributors of this workspace, you cannot modify it."}), 401)
+                    else:
+                        # Empty parameters get filtered out.
+                        new_attributes = {}
+                        for key, value in form.data.items():
+                            if value or (value == 0):
+                                new_attributes[key] = value
+                        # As the ID of the workspace will not be updated, it gets deleted from the dictionary of the fields.
+                        new_attributes.pop("workspace_id")
+
+                        # Checks whether the dictionary of the new attributes is empty or not.
+                        # If empty, skips the database operations.
+                        # If not, the workspace gets updated as requested.
+                        if new_attributes:
+                            update_workspace_skills(form.workspace_id.data, json.loads(new_attributes.pop("skills")))
+                            update_workspace_requirements(form.workspace_id.data, json.loads(new_attributes.pop("requirements")))
+                            requested_workspace.update(new_attributes)
+                            db.session.commit()
+                            return make_response(jsonify({"message" : "Workspace has been successfully updated."}), 200)
+                        else:
+                            return make_response(jsonify({"message" : "Server has received the request but there was no information to be updated."}), 202)
+        else:
+            return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
+
+
+    # DELETE request
+    @api.expect(delete_workspace_parser)
+    @api.doc(responses={
+                200: "Workspace has been successfully deleted.",
+                400: "Missing data fields or invalid data.",
+                401: "You are not the creator of this workspace, you cannot delete it.",
+                404: "The workspace is not found.",
+                500: "The server is not connected to the database."
+            })
+    @login_required
+    def delete(requester_id, self):
+        '''
+        Deletes the requested workspace.
+        '''
+
+        # Parses the form data.
+        form = DeleteWorkspaceForm(request.form)
+
+        # Checks whether the sent data is in valid form.
+        # If yes, starts processing the data.
+        # If not, an error is raised.
+        if form.validate():
+            # Tries to connect to the database.
+            # If it fails, an error is raised.
+            try:
+                requested_workspace = Workspace.query.filter_by(id=form.workspace_id.data).first()
+            except:
+                return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+            else:
+                # Checks whether there is an existing workspace with the given ID in the database.
+                # If yes, processing continues.
+                # If not, an error gets raised.
+                if requested_workspace is not None:
+                    # Checks whether the requester user is the creator of the requested workspace.
+                    # If yes, the workspace gets deleted.
+                    # If not, an error gets raised.
+                    if requested_workspace.creator_id == requester_id:
+                        try:
+                            db.session.delete(requested_workspace)
+                            db.session.commit()
+                        except:
+                            return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+                        else:
+                            return make_response(jsonify({"message" : "Workspace has been successfully deleted."}), 200)
+                    else:
+                        return make_response(jsonify({"error" : "You are not the creator of this workspace, you cannot delete it."}), 401)
+                else:
+                    return make_response(jsonify({"error" : "The workspace is not found."}), 404)
+        else:
+            return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
+
 
           
 @workspace_system_ns.route("/self")
@@ -1097,6 +1224,7 @@ class TrendingWorkspacesAPI(Resource):
             return make_response(jsonify({"trending_projects": workspace_response}),200)
         else:
             return make_response(jsonify({"err": "Invalid Input Format"}),400)
+
 
 
 def register_resources(api):
