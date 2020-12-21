@@ -51,7 +51,7 @@ def add_workspace_contribution(workspace_id, user_id):
 	db.session.commit()
 
 
-def get_workspace_skills_json(workspace_id):
+def get_workspace_skills_list(workspace_id):
     # Skill list of the requested workspace is retrieved from the database.
     requested_workspace_skills = WorkspaceSkill.query.filter_by(workspace_id=workspace_id)
 
@@ -62,10 +62,10 @@ def get_workspace_skills_json(workspace_id):
         skill_name = (Skills.query.filter_by(id=workspace_skill.skill_id).first()).name
         workspace_skill_names.append(skill_name)
     # The list of the names of the skills are converted to a JSON string and returned.
-    return json.dumps(workspace_skill_names)
+    return workspace_skill_names
 
 
-def get_workspace_requirements_json(workspace_id):
+def get_workspace_requirements_list(workspace_id):
     # Requirement list of the requested workspace is retrieved from the database.
     requested_workspace_requirements = WorkspaceRequirement.query.filter_by(workspace_id=workspace_id)
     
@@ -75,10 +75,10 @@ def get_workspace_requirements_json(workspace_id):
     for workspace_requirement in requested_workspace_requirements:
         requirement_text = (Requirement.query.filter_by(id=workspace_requirement.requirement_id).first()).text
         workspace_requirement_texts.append(requirement_text)
-    return json.dumps(workspace_requirement_texts)
+    return workspace_requirement_texts
 
 
-def get_workspace_active_contributors_json(workspace_id):
+def get_workspace_active_contributors_list(workspace_id):
     # Contributor list of the requested workspace is retrieved from the database.
     requested_workspace_contributors = Contribution.query.filter_by(workspace_id=workspace_id, is_active=True)
     
@@ -92,7 +92,7 @@ def get_workspace_active_contributors_json(workspace_id):
                                                 "name": contributor_data.name,
                                                 "surname": contributor_data.surname
                                             })
-    return json.dumps(workspace_contributors_data)
+    return workspace_contributors_data
 
 
 def update_workspace_skills(workspace_id, workspace_updated_skills_list):

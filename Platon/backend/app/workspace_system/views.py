@@ -751,9 +751,9 @@ class WorkspacesAPI(Resource):
                                                     "description": requested_workspace.description,
                                                     "deadline": requested_workspace.deadline,
                                                     "max_collaborators": requested_workspace.max_collaborators,
-                                                    "skills": get_workspace_skills_json(form.workspace_id.data),
-                                                    "requirements": get_workspace_requirements_json(form.workspace_id.data),
-                                                    "active_contributors": get_workspace_active_contributors_json(form.workspace_id.data)
+                                                    "skills": get_workspace_skills_list(form.workspace_id.data),
+                                                    "requirements": get_workspace_requirements_list(form.workspace_id.data),
+                                                    "active_contributors": get_workspace_active_contributors_list(form.workspace_id.data)
                                                 }
                         requested_workspace.view_count = requested_workspace.view_count + 1
                         db.session.commit()
@@ -968,6 +968,7 @@ class TrendingWorkspacesAPI(Resource):
             return make_response(jsonify({"trending_projects": workspace_response}),200)
         else:
             return make_response(jsonify({"err": "Invalid Input Format"}),400)
+
 
 
 def register_resources(api):
