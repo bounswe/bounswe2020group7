@@ -9,6 +9,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/home_background"
     android:orientation="vertical"
+    android:animateLayoutChanges="true"
     tools:context=".page.activity.login.LoginActivity">
 
         <include layout="@layout/toolbar" />
@@ -63,11 +64,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/title_text_size"
+            android:textSize="@dimen/title_text_size_smaller"
             android:textColor="@color/primary_light"
-            android:text="@string/filter_by_job_str"
-            />
+            android:text="@string/filter_by_job_str" />
         <Spinner
+            android:layout_marginStart="@dimen/medium"
             android:id="@+id/sp_jobQuery"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -81,15 +82,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/primary_dark_darker">
-
     </androidx.recyclerview.widget.RecyclerView>
 
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/login_nav_host_fragment"
-                android:name="androidx.navigation.fragment.NavHostFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:defaultNavHost="true"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar_recyclerview"
-                app:navGraph="@navigation/nav_graph" />
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/login_nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:defaultNavHost="true"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_recyclerview"
+        app:navGraph="@navigation/nav_graph" />
 </LinearLayout>

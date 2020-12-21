@@ -76,7 +76,7 @@
     <string name="gs_url_request">Google Scholar Account URL</string>
     <string name="rg_url_request">Research Gate Account URL</string>
     <string name="pp_url_request">Profile Page URL</string>
-    <string name="loading_str">Loading...</string>
+    <string name="loading_str">Loading…</string>
     <string name="project_description_str">Project Description</string>
     <string name="text_add_project">Add Project</string>
     <string name="project_year_str">Year</string>
@@ -90,7 +90,6 @@
     <string name="search_among_str">Search among:</string>
     <string name="workspace_state_str">State</string>
     <string name="workspace_title_str">Workspace Title</string>
-    <string name="instution_str">Instution</string>
     <string name="institution_str">Institution</string>
     <string name="enter_your_job_str">Enter your job</string>
     <string name="no_rate_str">No rating yet</string>
@@ -115,4 +114,5 @@
     <string name="state_search_for_collab_str">Search For Collaborators State</string>
     <string name="state_ongoing_str">Ongoing State</string>
     <string name="state_finished_str">Finished</string>
+    <string name="is_private_str">Is Private</string>
 </resources>

@@ -97,6 +97,11 @@ class FollowRequestElementsAdapter(private val data: ArrayList<FollowRequest>, p
         this.notifyDataSetChanged()
     }
 
+
+    fun submitElements(reqs:List<FollowRequest>){
+        data.addAll(reqs)
+        notifyDataSetChanged()
+    }
     
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = data.size

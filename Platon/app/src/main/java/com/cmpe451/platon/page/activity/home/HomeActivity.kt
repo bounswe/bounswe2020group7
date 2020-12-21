@@ -59,6 +59,8 @@ class HomeActivity : BaseActivity(),
     //TODO this can be improved
     private var jobIdList:ArrayList<Int>?  = null
 
+    private var maxPageNumberSearch= 0;
+    private var maxPageNumberNotification=0;
 
     /**
      * Clears the toolbar/action bar's state.
@@ -85,6 +87,8 @@ class HomeActivity : BaseActivity(),
         if (binding.toolbarRecyclerview.adapter != null){
             (binding.toolbarRecyclerview.adapter as ToolbarElementsAdapter).clearElements()
         }
+
+        binding.toolbarRecyclerview.clearOnScrollListeners()
 
         //make GONE the views
         mActivityViewModel.getSearchUserResourceResponse.removeObservers(this)
@@ -138,30 +142,30 @@ class HomeActivity : BaseActivity(),
 
         binding.toolbarRecyclerview.addOnScrollListener(object: PaginationListener(layoutManager){
             override fun loadMoreItems() {
-                currentPage++
-                var jobQuery: Int? = null
-                val pos = binding.spJobQuery.selectedItemPosition
-                if (pos != 0) {
-                    jobQuery = jobIdList?.get(pos)
-                }
-                when(binding.rgSearchAmong.visibility){
-                    View.VISIBLE->{
-                        mActivityViewModel.searchUser(token!!, search.query.toString().trim(), jobQuery, currentPage, PAGE_SIZE)
-                    }
-                    View.GONE->{
-                        when(binding.notificationRg.checkedRadioButtonId){
-                            R.id.personal_ntf_rb->{
-                                mActivityViewModel.getFollowRequests(userId!!, token!!,currentPage, PAGE_SIZE)
+                if(maxPageNumberNotification-1 > currentPage || maxPageNumberSearch-1 > currentPage){
+                    currentPage++
+                    when(binding.rgSearchAmong.visibility){
+                        View.VISIBLE->{
+                            var jobQuery: Int? = null
+                            val pos = binding.spJobQuery.selectedItemPosition
+                            if (pos != 0) {
+                                jobQuery = jobIdList?.get(pos)
                             }
-                            R.id.general_ntf_rb->{
-                                mActivityViewModel.getNotifications(token!!,currentPage, PAGE_SIZE)
+                            mActivityViewModel.searchUser(token!!, search.query.toString().trim(), jobQuery, currentPage, PAGE_SIZE)
+                        }
+                        View.GONE->{
+                            when(binding.notificationRg.checkedRadioButtonId){
+                                R.id.personal_ntf_rb->{
+                                    mActivityViewModel.getFollowRequests(userId!!, token!!,currentPage, PAGE_SIZE)
+                                }
+                                R.id.general_ntf_rb->{
+                                    mActivityViewModel.getNotifications(token!!,currentPage, PAGE_SIZE)
+                                }
                             }
                         }
-
                     }
                 }
             }
-
             override var isLastPage: Boolean = false
             override var isLoading: Boolean = false
             override var currentPage: Int = 0
@@ -258,8 +262,13 @@ class HomeActivity : BaseActivity(),
                         Resource.Loading::class.java -> dialog.show()
                         Resource.Success::class.java -> {
                             // define new adapter
-
-                            binding.toolbarRecyclerview.adapter = SearchElementsAdapter(t.data!!.result_list as ArrayList<SearchElement>, this, this)
+                            maxPageNumberSearch = t.data!!.number_of_pages
+                            maxPageNumberNotification = 0
+                            if(binding.toolbarRecyclerview.javaClass == SearchElementsAdapter::class.java){
+                                (binding.toolbarRecyclerview.adapter as SearchElementsAdapter).submitElements(t.data!!.result_list)
+                            }else{
+                                binding.toolbarRecyclerview.adapter = SearchElementsAdapter(t.data!!.result_list as ArrayList<SearchElement>, this, this)
+                            }
                             dialog.dismiss()
                         }
                         Resource.Error::class.java -> {
@@ -356,7 +365,13 @@ class HomeActivity : BaseActivity(),
                 mActivityViewModel.getUserNotificationsResourceResponse.observe(this, Observer { t ->
                     when (t.javaClass) {
                         Resource.Success::class.java -> {
-                            binding.toolbarRecyclerview.adapter = NotificationElementsAdapter(t.data!!.notification_list as ArrayList<Notification>, this, this)
+                            maxPageNumberNotification = t.data!!.number_of_pages
+                            maxPageNumberSearch = 0
+                            if(binding.toolbarRecyclerview.javaClass == NotificationElementsAdapter::class.java){
+                                (binding.toolbarRecyclerview.adapter as NotificationElementsAdapter).submitElements(t.data!!.notification_list)
+                            }else{
+                                binding.toolbarRecyclerview.adapter = NotificationElementsAdapter(t.data!!.notification_list as ArrayList<Notification>, this, this)
+                            }
                             dialog.dismiss()
                         }
                         Resource.Loading::class.java -> dialog.show()
@@ -371,6 +386,14 @@ class HomeActivity : BaseActivity(),
                 mActivityViewModel.getUserFollowRequestsResourceResponse.observe(this, Observer { t ->
                     when (t.javaClass) {
                         Resource.Success::class.java -> {
+                            maxPageNumberNotification = t.data!!.number_of_pages
+                            maxPageNumberSearch = 0
+                            if(binding.toolbarRecyclerview.javaClass == FollowRequestElementsAdapter::class.java){
+                                (binding.toolbarRecyclerview.adapter as FollowRequestElementsAdapter).submitElements(t.data!!.follow_requests)
+                            }else{
+                                binding.toolbarRecyclerview.adapter = FollowRequestElementsAdapter(t.data!!.follow_requests as ArrayList<FollowRequest>, this, this)
+                            }
+
                             binding.toolbarRecyclerview.adapter = FollowRequestElementsAdapter(t.data!!.follow_requests as ArrayList<FollowRequest>, this, this)
                             dialog.dismiss()
                         }

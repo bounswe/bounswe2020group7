@@ -6,6 +6,7 @@ card_view:cardElevation="@dimen/xxx_small"
 android:layout_marginBottom="@dimen/xx_small"
 android:layout_width = "match_parent"
 card_view:contentPadding="@dimen/medium"
+    android:layout_margin="@dimen/xx_small"
 card_view:cardBackgroundColor="@color/primary_dark_lighter"
 android:layout_height = "wrap_content">
 
@@ -30,7 +31,7 @@ android:layout_height = "wrap_content">
             android:maxLines="1"
             android:text="@string/search_str"
             android:textColor="@color/primary_light"
-            android:textSize="@dimen/project_title_text_size" />
+            android:textSize="@dimen/title_text_size_smaller" />
 
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

@@ -246,13 +246,13 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
             )
         }
 
-        binding.buttonEditProfile.setOnClickListener {
+        binding.infoTitle.setOnClickListener {
             findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToEditProfileFragment())
         }
-        binding.addProjectIv.setOnClickListener{
+        binding.projectsTitle.setOnClickListener{
             findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToAddResearchInfoFragment())
         }
-        binding.addSkillIv.setOnClickListener{
+        binding.skillsTitle.setOnClickListener{
             mProfilePageViewModel.getAllSkills()
             onAddDeleteSkillClicked()
         }

@@ -105,7 +105,7 @@ class FollowFragment:Fragment() {
     private fun setAdapter(){
         rvFollowers = binding.rvFollow
 
-        adapter = FollowerFollowingAdapter(ArrayList()) { userId:Int->
+        adapter = FollowerFollowingAdapter(ArrayList(), requireContext()) { userId:Int->
 //            Toast.makeText(activity, userId, Toast.LENGTH_LONG)
 //            (activity as HomeActivity).navController.navigate(FollowersFollowingFragmentDirections.actionFollowersFollowingFragmentToProfilePagePrivateFragment(id))
             if(userId == (activity as HomeActivity).userId){

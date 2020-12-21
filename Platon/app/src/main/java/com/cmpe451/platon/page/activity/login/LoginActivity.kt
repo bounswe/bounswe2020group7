@@ -25,6 +25,7 @@ import com.cmpe451.platon.adapter.SearchElementsAdapter
 import com.cmpe451.platon.adapter.ToolbarElementsAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.ActivityLoginBinding
+import com.cmpe451.platon.listener.PaginationListener
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.SearchElement
 import com.cmpe451.platon.network.models.SearchHistoryElement
@@ -43,6 +44,8 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
     lateinit var search:SearchView
     private lateinit var dialog: AlertDialog
     private val mActivityViewModel: HomeActivityViewModel by viewModels()
+
+    private var maxPageNumberSearch = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // default theme is splash theme to show a simple splash screen
@@ -67,8 +70,28 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
 
     private fun initViews() {
         // init layout manager of toolbar recycler view
-        binding.toolbarRecyclerview.layoutManager = LinearLayoutManager(this)
+        val layoutMan = LinearLayoutManager(this)
+        binding.toolbarRecyclerview.layoutManager = layoutMan
+
+        binding.toolbarRecyclerview.addOnScrollListener(object: PaginationListener(layoutMan){
+            override fun loadMoreItems() {
+                if(maxPageNumberSearch-1 > currentPage){
+                    currentPage++
+                    var jobQuery: Int? = null
+                    val pos = binding.spJobQuery.selectedItemPosition
+                    if (pos != 0) {
+                        jobQuery = jobIdList?.get(pos)
+                    }
+                    mActivityViewModel.searchUser(null, search.query.toString().trim(), jobQuery, currentPage, PAGE_SIZE)
+                    }
+                }
+            override var isLastPage: Boolean = false
+            override var isLoading: Boolean = false
+            override var currentPage: Int = 0
+        })
+
         initListeners()
+
     }
 
 
@@ -124,6 +147,7 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                     when (t.javaClass) {
                         Resource.Loading::class.java -> dialog.show()
                         Resource.Success::class.java -> {
+                            maxPageNumberSearch = t.data!!.number_of_pages
                             // define new adapter
                             binding.toolbarRecyclerview.adapter = SearchElementsAdapter(t.data!!.result_list as ArrayList<SearchElement>, this, this)
                             dialog.dismiss()
@@ -201,7 +225,7 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
         if (binding.toolbarRecyclerview.adapter != null){
             (binding.toolbarRecyclerview.adapter as ToolbarElementsAdapter).clearElements()
         }
-
+        binding.toolbarRecyclerview.clearOnScrollListeners()
         //make GONE the views
         mActivityViewModel.getSearchUserResourceResponse.removeObservers(this)
         mActivityViewModel.getJobListResourceResponse.removeObservers(this)

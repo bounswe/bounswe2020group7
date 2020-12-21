@@ -73,6 +73,7 @@
                 android:textColor="@color/secondary_purple" />
 
             <Spinner
+                android:layout_marginStart="@dimen/medium"
                 android:id="@+id/sp_job"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

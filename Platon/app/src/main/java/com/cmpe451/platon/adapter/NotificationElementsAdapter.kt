@@ -74,6 +74,12 @@ class NotificationElementsAdapter(private val data: ArrayList<Notification>, pri
         data[position] = element
         this.notifyItemChanged(position)
     }
+
+    fun submitElements(ntf:List<Notification>){
+        data.addAll(ntf)
+        notifyDataSetChanged()
+    }
+
     /**
      * Clear all elements
      */

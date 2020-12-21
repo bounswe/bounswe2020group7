@@ -17,6 +17,7 @@ data class FollowPerson(
         val name: String,
         val surname: String,
         val rate:Double?,
+        val profile_photo:String,
         val is_private:Boolean=false
 )
 

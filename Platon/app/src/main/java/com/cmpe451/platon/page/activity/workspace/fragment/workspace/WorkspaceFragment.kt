@@ -49,10 +49,10 @@ class WorkspaceFragment : Fragment(){
     }
 
     private fun setListeners() {
-        binding.buttonEditWorkspace.setOnClickListener{
+        binding.infoTitle.setOnClickListener{
             findNavController().navigate(WorkspaceFragmentDirections.actionWorkspaceFragmentToEditWorkspaceFragment())
         }
-        binding.descExpandLl.setOnClickListener{
+        binding.descTitleTv.setOnClickListener{
             if(binding.projectInfoLl.visibility == View.GONE){
                 binding.projectInfoLl.visibility = View.VISIBLE
             }
@@ -60,7 +60,7 @@ class WorkspaceFragment : Fragment(){
                 binding.projectInfoLl.visibility = View.GONE
             }
         }
-        binding.reqExpandLl.setOnClickListener{
+        binding.requirementsTitleTv.setOnClickListener{
             if(binding.rvWorkspaceRequirements.visibility == View.GONE){
                 binding.rvWorkspaceRequirements.visibility = View.VISIBLE
             }
@@ -68,7 +68,7 @@ class WorkspaceFragment : Fragment(){
                 binding.rvWorkspaceRequirements.visibility = View.GONE
             }
         }
-        binding.skillsExpandLl.setOnClickListener{
+        binding.skillsTitleTv.setOnClickListener{
             if(binding.rvWorkspaceSkills.visibility == View.GONE){
                 binding.rvWorkspaceSkills.visibility = View.VISIBLE
             }
