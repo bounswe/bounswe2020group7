@@ -1142,6 +1142,9 @@ class GetUserWorkspaces(Resource):
     @login_required
     @follow_required(param_loc = 'args', requested_user_id_key='user_id')
     def get(user_id,self):
+        """
+            Only returns public workspaces of the user with given ID
+        """
         form = GetUserWorkspacesForm(request.args)
         if form.validate():
             try:
@@ -1198,6 +1201,9 @@ class GetSelfWorkspaces(Resource):
     @api.expect(get_self_parser)
     @login_required
     def get(user_id,self):
+        """
+            Returns all workspaces of the user(Public and Private)
+        """
         try:
             contributions = Contribution.query.filter(Contribution.user_id==user_id).all()
         except:
