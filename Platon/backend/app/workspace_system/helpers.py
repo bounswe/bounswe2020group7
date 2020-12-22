@@ -218,11 +218,11 @@ def visibility_required(param_loc,workspace_id_key):
                 workspace = Workspace.query.get(workspace_id)
             except:
                 return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
-            if workspace.id_private:
+            if workspace.is_private:
                 return active_contribution_required(param_loc,workspace_id_key)
             else:
                 if workspace.state == int(WorkspaceState.ongoing):
-                    return make_response(jsonify({"err": "You are note allowed to see the content of this workspace"}),200)
+                    return make_response(jsonify({"err": "You are note allowed to see the content of this workspace"}),403)
             return func(*args,**kwargs)
         return visibilitiy_check
     return visibility_required_inner
