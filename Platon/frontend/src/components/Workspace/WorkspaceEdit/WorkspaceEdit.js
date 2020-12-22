@@ -64,7 +64,6 @@ class WorkspaceEdit extends Component {
     const workspaceId = this.props.match.params.workspaceId;
     this.setState({
       profileId: decoded.id,
-      workspaceId: workspaceId,
     });
     const url = config.BASE_URL;
     axios.defaults.headers.common["auth_token"] = `${token}`;
@@ -154,7 +153,7 @@ class WorkspaceEdit extends Component {
     }
 
     let formData = new FormData();
-
+    formData.append("workspace_id", this.props.match.params.workspaceId)
     formData.append("title", this.state.workspace.title);
     formData.append("description", this.state.workspace.description);
     formData.append("state", this.state.workspace.state);
@@ -178,35 +177,26 @@ class WorkspaceEdit extends Component {
 
     // deadline handler
     let deadlineEdited = this.state.workspace.deadline
+
     if(typeof this.state.workspace.deadline == 'string'){
-      deadlineEdited = new Date(this.state.workspace.deadline).toLocaleString().substring(0, 10);
+      deadlineEdited = new Date(this.state.workspace.deadline).toISOString().slice(0, 10);
     }
     formData.append("deadline", deadlineEdited);
 
-    /*
-    console.log(isPrivateEdited, requirementsEdited, deadlineEdited)
-    console.log("title", typeof this.state.workspace.title)
-    console.log("description", typeof this.state.workspace.description)
-    console.log("state", typeof this.state.workspace.state)
-    console.log("max_collaborators", typeof this.state.workspace.max_collaborators)
-    console.log("skills", typeof JSON.stringify(this.state.workspace.skills))
-    console.log("is_private", typeof isPrivateEdited)
-    console.log("requirements", typeof JSON.stringify(requirementsEdited))
-    console.log("deadline", typeof deadlineEdited)
-    */
     const url = config.BASE_URL;
     const token = localStorage.getItem("jwtToken");
     axios
       .put(url + "/api/workspaces", formData, {
         headers: {
-          auth_token: token, //the token is a variable which holds the token
+          auth_token: token,
         },
       })
       .then((response) => {
-        if (response.status === 201) {
+        if (response.status === 200 || response.status === 202) {
           this.setState({
             success: "Successfully changed.",
           });
+          this.fetchWorkspace();
         }
       })
       .catch((err) => {
