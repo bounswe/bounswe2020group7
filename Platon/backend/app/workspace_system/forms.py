@@ -258,19 +258,12 @@ read_collaboration_invitation_parser.add_argument("invitation_id",required=False
 read_collaboration_invitation_parser.add_argument("auth_token",required=True,type=str,help="Authentication token",location="headers")
 
 
-class UpdateCollaborationInvitationForm(Form):
-	invitation_id = IntegerField('invitation_id', validators=[validators.DataRequired()])
-	is_accepted = IntegerField('is_accepted', validators=[validators.DataRequired(), validators.EqualTo(1)])
-update_collaboration_invitation_parser = reqparse.RequestParser()
-update_collaboration_invitation_parser.add_argument("invitation_id",required=True,type=int,help="ID of the invitation sent",location="form")
-update_collaboration_invitation_parser.add_argument("is_accepted",required=True,type=int,help="Acceptance status of the invitation (Only 1 can be sent, to accept the invitation. To reject an invitation, use DELETE)",location="form")
-update_collaboration_invitation_parser.add_argument("auth_token",required=True,type=str,help="Authentication token",location="headers")
-
-
 class DeleteCollaborationInvitationForm(Form):
 	invitation_id = IntegerField('invitation_id', validators=[validators.DataRequired()])
+	is_accepted = IntegerField('is_accepted', validators=[validators.optional(), validators.NumberRange(min=0, max=1)])
 delete_collaboration_invitation_parser = reqparse.RequestParser()
 delete_collaboration_invitation_parser.add_argument("invitation_id",required=True,type=int,help="ID of the invitation sent",location="form")
+delete_collaboration_invitation_parser.add_argument("is_accepted",required=True,type=str,help="Acceptance status of the collaboration invitation",location="form")
 delete_collaboration_invitation_parser.add_argument("auth_token",required=True,type=str,help="Authentication token",location="headers")
 
 
@@ -290,17 +283,10 @@ read_collaboration_application_parser.add_argument("workspace_id",required=True,
 read_collaboration_application_parser.add_argument("auth_token",required=True,type=str,help="Authentication token",location="headers")
 
 
-class UpdateCollaborationApplicationForm(Form):
-	application_id = IntegerField('application_id', validators=[validators.DataRequired()])
-	is_accepted = IntegerField('is_accepted', validators=[validators.DataRequired(), validators.EqualTo(1)])
-update_collaboration_application_parser = reqparse.RequestParser()
-update_collaboration_application_parser.add_argument("application_id",required=True,type=int,help="ID of the application sent",location="form")
-update_collaboration_application_parser.add_argument("is_accepted",required=True,type=int,help="Acceptance status of the application (Only 1 can be sent, to accept the invitation. To reject an application, use DELETE)",location="form")
-update_collaboration_application_parser.add_argument("auth_token",required=True,type=str,help="Authentication token",location="headers")
-
-
 class DeleteCollaborationApplicationForm(Form):
 	application_id = IntegerField('application_id', validators=[validators.DataRequired()])
+	is_accepted = IntegerField('is_accepted', validators=[validators.optional(), validators.NumberRange(min=0, max=1)])
 delete_collaboration_application_parser = reqparse.RequestParser()
 delete_collaboration_application_parser.add_argument("application_id",required=True,type=int,help="ID of the application sent",location="form")
+delete_collaboration_application_parser.add_argument("is_accepted",required=True,type=str,help="Acceptance status of the collaboration application",location="form")
 delete_collaboration_application_parser.add_argument("auth_token",required=True,type=str,help="Authentication token",location="headers")
