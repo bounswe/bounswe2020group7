@@ -99,4 +99,10 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
         bnd.putInt("workspace_id", projectId)
         startActivity(Intent(activity, WorkspaceActivity::class.java).putExtras(bnd))
     }
+
+    override fun onResume() {
+        workspaceListAdapter.clearElements()
+        mWorkspaceListViewModel.getWorkspaces((activity as HomeActivity).token!!)
+        super.onResume()
+    }
 }

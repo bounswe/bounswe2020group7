@@ -85,6 +85,7 @@ class WorkspaceListAdapter(private val data: ArrayList<WorkspaceListItem>, priva
         this.notifyDataSetChanged()
     }
     fun submitElements(list: List<WorkspaceListItem>){
+        data.clear()
         data.addAll(list)
         notifyDataSetChanged()
     }

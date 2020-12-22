@@ -63,21 +63,7 @@
             android:textColorHighlight="@color/secondary_blue"
             android:textColorHint="@color/secondary_blue"
             android:textColorLink="@color/secondary_blue" />
-        <EditText
-            android:id="@+id/ws_requirements_et"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:autofillHints=""
-            android:ems="15"
-            android:backgroundTint="@color/secondary_blue"
-            android:hint="@string/requirements_str"
-            android:inputType="textMultiLine"
-            android:lines="5"
-            android:textColor="@color/primary_light"
-            android:textColorHighlight="@color/secondary_blue"
-            android:textColorHint="@color/secondary_blue"
-            android:textColorLink="@color/secondary_blue" />
+
         <EditText
             android:id="@+id/ws_deadline_et"
             android:layout_width="match_parent"
@@ -112,23 +98,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:spinnerMode="dialog" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="fill_horizontal"
-            android:layout_marginTop="@dimen/x_small"
-            android:layout_marginEnd="@dimen/x_small">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="@string/skills"
-                android:textColor="@color/secondary_blue"
-                android:textSize="18sp"
-                android:layout_marginStart="@dimen/x_small"
-                app:drawableRightCompat="@drawable/ic_add_24dp" />
-
         </LinearLayout>
 
 
