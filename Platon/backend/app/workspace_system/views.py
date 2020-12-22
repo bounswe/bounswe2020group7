@@ -1051,7 +1051,7 @@ class WorkspacesAPI(Resource):
                 # Checks whether the requested workspace with the given ID exists in the database.
                 # If not, an error is raised.
                 # If yes, workspace information is updated depending on whether the requester can update the requested workspace.
-                if requested_workspace is None:
+                if requested_workspace.first() is None:
                     return make_response(jsonify({"error" : "Requested workspace is not found."}), 404)
                 else:
                     if Contribution.query.filter_by(workspace_id=form.workspace_id.data, user_id=requester_id, is_active=True).first() is None:
