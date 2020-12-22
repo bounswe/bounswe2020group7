@@ -35,3 +35,14 @@ ws_search_parser.add_argument('event_filter',type=str,help="Give Acronym",locati
 ws_search_parser.add_argument('page',type=int,help="Page ID(0-Indexed)",location='args')
 ws_search_parser.add_argument('per_page',type=int,help="Number of Records in a Page",location='args')
 ws_search_parser.add_argument('auth_token', type=str,help="Authantication Token(If registered)",location='headers')
+
+class UpcomingEventsSearchForm(Form):
+    search_query = StringField("search_query",validators=[validators.DataRequired()])
+    page = IntegerField("page")
+    per_page = IntegerField("per_page")
+
+upcoming_events_search_parser = reqparse.RequestParser()
+upcoming_events_search_parser.add_argument('search_query',required=True,type=str,help="Search Query",location='args')
+upcoming_events_search_parser.add_argument('page',type=int,help="Page ID(0-Indexed)",location='args')
+upcoming_events_search_parser.add_argument('per_page',type=int,help="Number of Records in a Page",location='args')
+upcoming_events_search_parser.add_argument('auth_token', type=str,help="Authantication Token(If registered)",location='headers')

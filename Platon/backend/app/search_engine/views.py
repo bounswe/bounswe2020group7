@@ -10,6 +10,8 @@ from app.auth_system.models import User
 from app.auth_system.helpers import decode_token,login_required,allowed_file
 from app.search_engine.forms import WorkspaceSearchForm,ws_search_parser
 from app.workspace_system.models import Contribution
+from app.upcoming_events.models import UpcomingEvent
+from app.search_engine.forms import UpcomingEventsSearchForm, upcoming_events_search_parser
 
 from app import api, db
 import math
@@ -68,6 +70,23 @@ workspace_list_model = api.model('Worksapce List', {
     "number_of_pages": fields.String,
     'workspaces': fields.List(
         fields.Nested(workspace_model)
+    )
+})
+
+upcoming_event_model = api.model('Upcoming Event', {
+    "id": fields.Integer,
+    "title": fields.String,
+    "acronym": fields.String,
+    "location": fields.String,
+    "date": fields.String,
+    "deadline": fields.String,
+    "link": fields.String,
+})
+
+upcoming_event_list_model = api.model('Upcoming Events List', {
+    "number_of_pages": fields.Integer,
+    'upcoming_events': fields.List(
+        fields.Nested(upcoming_event_model)
     )
 })
 
@@ -308,7 +327,77 @@ class WorkspaceSearchAPI(Resource):
         else:
             return make_response(jsonify({"error": "Missing data fields or invalid data."}), 400)
 
+@search_engine_ns.route("/upcoming_events")
+class UpcomingEventsSearchAPI(Resource):
 
+    @api.doc(responses={401: 'Account Problems', 400: 'Input Format Error', 500: 'Database Connection Error'})
+    @api.response(200, 'Valid Search Result', upcoming_event_list_model)
+    @api.expect(upcoming_events_search_parser)
+    def get(self):
+        form = UpcomingEventsSearchForm(request.args)
+        if form.validate():
+            search_query = form.search_query.data.lower()
+            # Remove the punctuation in the search query
+            search_query = SearchEngine.remove_punctuation(search_query)
+            # Tokenize the search query
+            tokens = search_query.split()
+            # Get stopwords form the API
+            stopwords = SearchEngine.get_stopwords()
+            # Remove stopwords from the list of tokens
+            tokens = list(set(tokens) - set(stopwords))
+            # Get the semantically related list for our tokens
+            tokens = SearchEngine.semantic_related_list(tokens)
+            # List of user dictionaries that will be send as a search output
+            result_list = []
+            # Score of each user record
+            result_id_score = []
+            for token, score in tokens:
+                try:
+                    query = '(LOWER(id) REGEXP ".*{0}.*" OR LOWER(title) REGEXP ".*{0}.*" \
+                    OR LOWER(acronym) REGEXP ".*{0}.*" OR LOWER(location) REGEXP ".*{0}.*") \
+                    OR LOWER(date) REGEXP ".*{0}.*" OR LOWER(deadline) REGEXP ".*{0}.*" OR LOWER(link) REGEXP ".*{0}.*"'  \
+                    .format(token)
+                    sql_statement = "SELECT id,title,acronym,location,date,deadline,link FROM upcoming_events WHERE {}".format(query)
+                    result = db.engine.execute(sql_statement)
+                    for upcoming_event in result:
+                        id_list = [i[0] for i in result_id_score]
+                        if upcoming_event[0] not in id_list:
+                            if upcoming_event[-1] == 0:
+                                continue
+                            result_list.append({"id": upcoming_event[0], "title": upcoming_event[1], "acronym": upcoming_event[2],
+                                                "location": upcoming_event[3], "date": upcoming_event[4],
+                                                "deadline": upcoming_event[5], "link": upcoming_event[6]})
+                            result_id_score.append((upcoming_event[0], score))
+                        else:
+                            id_index = id_list.index(upcoming_event[0])
+                            result_id_score[id_index] = (upcoming_event[0], result_id_score[id_index][1] + score)
+                except:
+                    return make_response(jsonify({"error": "Database Connection Problem."}), 500)
+
+                # Sort result ids according to their scores
+                sorted_id_list = SearchEngine.sort_ids(result_id_score)
+                sorted_result_list = []
+                for upcoming_event_id, score in sorted_id_list:
+                    index = [upcoming_event["id"] for upcoming_event in result_list].index(upcoming_event_id)
+                    sorted_result_list.append(result_list[index])
+                number_of_pages = 1
+                # Apply Pagination
+                if form.page.data is not None and form.per_page.data is not None:
+                    per_page = form.per_page.data
+                    number_of_pages = math.ceil(len(sorted_id_list) / per_page)
+                    page = form.page.data if form.page.data < number_of_pages else number_of_pages - 1
+                    sorted_result_list = sorted_result_list[page * per_page:(page + 1) * per_page]
+                # Add Search History Item
+                try:
+                    auth_token = request.headers.get('auth_token')
+                    SearchEngine.add_search_history_item(decode_token(auth_token), search_query, int(SearchType.UPCOMING_EVENT))
+                except:
+                    pass
+                # Remove Non-Valid Users
+                return make_response(jsonify({"number_of_pages": number_of_pages, "result_list": sorted_result_list}))
+
+        else:
+            return make_response(jsonify({"error": "Missing data fields or invalid data."}), 400)
 
 def register_resources(api):
     api.add_namespace(search_engine_ns) 
