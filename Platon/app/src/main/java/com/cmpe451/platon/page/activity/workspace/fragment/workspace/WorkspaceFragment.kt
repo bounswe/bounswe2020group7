@@ -222,7 +222,6 @@ class WorkspaceFragment : Fragment(){
                     skillsArray.addAll(skillNameList)
                     val bArray = t.data!!.map { skillNameList.contains(it) }.toBooleanArray()
                     AlertDialog.Builder(context)
-                        .setCancelable(false)
                         .setNeutralButton("Add Nonexistent Skill") { _, _ ->
                             val tmpBinding = AddSkillBinding.inflate(
                                 layoutInflater,
@@ -230,11 +229,11 @@ class WorkspaceFragment : Fragment(){
                                 false
                             )
                             AlertDialog.Builder(context).setView(tmpBinding.root)
-                                .setCancelable(false)
                                 .setNegativeButton("Completed") { _, _ ->
-//                                    mAddWorkspaceViewModel.getAddDeleteSkillResourceResponse.removeObservers(
-//                                        viewLifecycleOwner
-//                                    )
+                                    val skillsArrayString: String = if(skillsArray.isNotEmpty()) skillsArray.map{ e-> "\"$e\""}.toString() else "[]"
+                                    mWorkspaceViewModel.updateWorkspace((activity as WorkspaceActivity).workspace_id!!,null, null,
+                                        null, null, null, null,skillsArrayString,null, (activity as WorkspaceActivity).token!!)
+                                    mAddWorkspaceViewModel.allSkills.removeObservers(viewLifecycleOwner)
                                 }
                                 .create().show()
                             tmpBinding.btnAddSkill.setOnClickListener {
@@ -246,12 +245,10 @@ class WorkspaceFragment : Fragment(){
                             }
                         }
                         .setNegativeButton("Completed") { _, _ ->
-                            val skillsArrayString:String? = if(skillsArray.isNotEmpty()) skillsArray.map{e-> "\"$e\""}.toString() else "[]"
+                            val skillsArrayString: String = if(skillsArray.isNotEmpty()) skillsArray.map{ e-> "\"$e\""}.toString() else "[]"
                             mWorkspaceViewModel.updateWorkspace((activity as WorkspaceActivity).workspace_id!!,null, null,
                                 null, null, null, null,skillsArrayString,null, (activity as WorkspaceActivity).token!!)
-//                            mWorkspaceViewModel.getUpdateResourceResponse.removeObservers(viewLifecycleOwner)
                             mAddWorkspaceViewModel.allSkills.removeObservers(viewLifecycleOwner)
-
                         }
                         .setMultiChoiceItems(
                             t.data!!.toTypedArray(),

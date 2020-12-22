@@ -52,7 +52,9 @@ class SearchElementsAdapter(private val data: ArrayList<SearchElement>, private 
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         Log.i("Photo", data[position].profile_photo)
-        Glide.with(context).load(Definitions.API_URL + "api" + data[position].profile_photo).circleCrop().diskCacheStrategy(DiskCacheStrategy.NONE).into(holder.binding.iwSearchImage)
+        Glide.with(context).load(Definitions.API_URL + "api" + data[position].profile_photo)
+            .placeholder(R.drawable.ic_o_logo)
+            .circleCrop().diskCacheStrategy(DiskCacheStrategy.NONE).into(holder.binding.iwSearchImage)
         holder.binding.tvSearchElement.text = data[position].name + " " + data[position].surname
         holder.bindData(data[position], position,searchButtonClickListener)
     }
