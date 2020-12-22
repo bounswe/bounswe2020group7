@@ -40,11 +40,13 @@ class CollaborationInvitation(db.Model):
     workspace_id = db.Column(db.Integer,db.ForeignKey('workspaces.id',ondelete="CASCADE"),primary_key=True)
     invitee_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"),primary_key=True)
     invitor_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"))
+    is_accepted = db.Column(db.Boolean)
 
 class CollaborationApplication(db.Model):
     __tablename__ = "collaboration_applications"
     workspace_id = db.Column(db.Integer,db.ForeignKey('workspaces.id',ondelete="CASCADE"),primary_key=True)
     applicant_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"),primary_key=True)
+    is_accepted = db.Column(db.Boolean)
 
 class Milestone(db.Model):
     __tablename__ = "milestones"
