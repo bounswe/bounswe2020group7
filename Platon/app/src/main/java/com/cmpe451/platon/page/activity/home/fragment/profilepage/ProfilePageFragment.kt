@@ -626,11 +626,13 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
             .show()
         editDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
+        val currResearch = (binding.rvProfilePageProjects.adapter as UserProjectsAdapter).data[position]
 
-        editBinding.projectNameTv.setText(mProfilePageViewModel.getResearchesResourceResponse.value?.data!!.research_info!![position].title)
-        editBinding.projectYearTv.setText(mProfilePageViewModel.getResearchesResourceResponse.value?.data!!.research_info!![position].year.toString())
-        if(mProfilePageViewModel.getResearchesResourceResponse.value?.data!!.research_info!![position].description.isNotEmpty()){
-            editBinding.projectDescriptionTv.setText(mProfilePageViewModel.getResearchesResourceResponse.value?.data!!.research_info!![position].description)
+
+        editBinding.projectNameTv.setText(currResearch.title)
+        editBinding.projectYearTv.setText(currResearch.year.toString())
+        if(currResearch.description.isNotEmpty()){
+            editBinding.projectDescriptionTv.setText(currResearch.description)
         }
 
         editBinding.buttonEdit.setOnClickListener {
@@ -651,7 +653,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                         if(!editBinding.projectDescriptionTv.text.isNullOrEmpty()){
                             description = editBinding.projectDescriptionTv.text.toString()
                         }
-                        mProfilePageViewModel.editResearchInfo(mProfilePageViewModel.getResearchesResourceResponse.value?.data!!.research_info!![position].id,
+                        mProfilePageViewModel.editResearchInfo(currResearch.id,
                             editBinding.projectNameTv.text.toString(), description,
                             editBinding.projectYearTv.text.toString().toInt(),
                             (activity as HomeActivity).currUserToken
@@ -664,7 +666,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
         }
 
         editBinding.buttonDelete.setOnClickListener{
-            mProfilePageViewModel.deleteResearchInfo(mProfilePageViewModel.getResearchesResourceResponse.value?.data!!.research_info!![position].id,
+            mProfilePageViewModel.deleteResearchInfo(currResearch.id,
                 (activity as HomeActivity).currUserToken)
             editDialog.dismiss()
         }

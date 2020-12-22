@@ -11,7 +11,7 @@ import com.cmpe451.platon.R
 import com.cmpe451.platon.databinding.ResearchesCellBinding
 import com.cmpe451.platon.network.models.Research
 
-class UserProjectsAdapter(private val data: ArrayList<Research>, private val context: Context, private val userProjectsButtonClickListener: UserProjectButtonClickListener) :
+class UserProjectsAdapter(val data: ArrayList<Research>, private val context: Context, private val userProjectsButtonClickListener: UserProjectButtonClickListener) :
 
         RecyclerView.Adapter<UserProjectsAdapter.UserProjectsViewHolder>() {
 
