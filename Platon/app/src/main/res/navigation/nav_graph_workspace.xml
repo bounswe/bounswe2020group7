@@ -20,6 +20,6 @@
         android:label="Add Workspace" />
     <fragment
         android:id="@+id/editWorkspaceFragment"
-        android:name="com.cmpe451.platon.page.activity.workspace.fragment.editworkspace.EditWorkspaceFragment"
+        android:name="com.cmpe451.platon.page.activity.workspace.fragment.workspace.EditWorkspaceFragment"
         android:label="EditWorkspaceFragment" />
 </navigation>

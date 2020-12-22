@@ -58,7 +58,7 @@ class AddWorkspaceFragment: Fragment() {
     }
 
     private fun setObservers() {
-        mAddWorkspaceViewModel.getAddDeleteSkillResourceResponse.observe(viewLifecycleOwner,{
+        mAddWorkspaceViewModel.getAddDeleteWorkspaceResourceResponse.observe(viewLifecycleOwner,{
             when(it.javaClass){
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java -> {

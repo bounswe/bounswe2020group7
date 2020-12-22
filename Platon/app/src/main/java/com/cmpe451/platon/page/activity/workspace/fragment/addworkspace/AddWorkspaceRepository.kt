@@ -12,7 +12,7 @@ import retrofit2.Response
 class AddWorkspaceRepository {
     val allSkills: MutableLiveData<Resource<List<String>>> = MutableLiveData()
 
-    val addDeleteSkillResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
+    val addDeleteWorkspaceResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
 
     fun getAllSkills() {
         val service = RetrofitClient.getService()
@@ -38,13 +38,13 @@ class AddWorkspaceRepository {
         val service = RetrofitClient.getService()
         val call = service.addWorkspace(title, description, private, maxCollaborators,
             deadline, requirements, skills,authToken)
-        addDeleteSkillResourceResponse.value = Resource.Loading()
+        addDeleteWorkspaceResourceResponse.value = Resource.Loading()
         call.enqueue(object: Callback<JsonObject?> {
             override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
                 when {
-                    response.isSuccessful && response.body() != null -> addDeleteSkillResourceResponse.value = Resource.Success(response.body()!!)
-                    response.errorBody() != null -> allSkills.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
-                    else -> allSkills.value = Resource.Error("Unknown error!")
+                    response.isSuccessful && response.body() != null -> addDeleteWorkspaceResourceResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> addDeleteWorkspaceResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> addDeleteWorkspaceResourceResponse.value = Resource.Error("Unknown error!")
                 }
             }
 

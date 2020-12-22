@@ -7,7 +7,7 @@ class AddWorkspaceViewModel:ViewModel() {
 
 
     var allSkills = repository.allSkills
-    var getAddDeleteSkillResourceResponse = repository.addDeleteSkillResourceResponse
+    var getAddDeleteWorkspaceResourceResponse = repository.addDeleteWorkspaceResourceResponse
 
     fun getAllSkills() {
         repository.getAllSkills()

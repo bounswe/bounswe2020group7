@@ -199,4 +199,22 @@ interface Webservice {
         @Field("skills") skills:String?,
         @Header("auth_token") auth_token: String
     ) : Call<JsonObject?>
+    @FormUrlEncoded
+    @PUT("api/workspaces")
+    fun updateWorkspace(
+        @Field("workspace_id") workspace_id:Int,
+        @Field("title") title:String?,
+        @Field("description") description:String?,
+        @Field("is_private") is_private:Int?,
+        @Field("max_collaborators") max_collaborators:Int?,
+        @Field("deadline") deadline:String?,
+        @Field("requirements") requirements:String?,
+        @Field("skills") skills:String?,
+        @Field("state") state:Int?,
+        @Header("auth_token") auth_token: String
+    ) : Call<JsonObject?>
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "api/auth_system/skills",hasBody = true)
+    fun deleteWorkspace(@Field("workspace_id") workspace_id: Int,
+                        @Header("auth_token") token: String): Call<JsonObject?>
 }

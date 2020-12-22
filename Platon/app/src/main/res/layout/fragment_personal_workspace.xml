@@ -141,7 +141,13 @@
                 android:drawablePadding="@dimen/xx_small"
                 app:drawableRightCompat="@drawable/ic_expand_more_white_24dp"
                 />
-
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/add_requirement_iv"
+                android:visibility="gone"
+                android:src="@drawable/ic_add_24dp"
+                android:layout_gravity="center_horizontal"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_workspace_requirements"
@@ -175,7 +181,13 @@
                 app:drawableRightCompat="@drawable/ic_expand_more_white_24dp"
                 />
 
-
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/add_skill_iv"
+                android:visibility="gone"
+                android:src="@drawable/ic_add_24dp"
+                android:layout_gravity="center_horizontal"/>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_workspace_skills"
                 android:background="@drawable/view_back_darker"

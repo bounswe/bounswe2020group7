@@ -1,4 +1,4 @@
-package com.cmpe451.platon.page.activity.workspace.fragment.editworkspace
+package com.cmpe451.platon.page.activity.workspace.fragment.workspace
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
@@ -19,7 +19,9 @@ import com.cmpe451.platon.databinding.AddSkillBinding
 import com.cmpe451.platon.databinding.FragmentEditWorkspaceBinding
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.page.activity.home.HomeActivity
+import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.page.activity.workspace.fragment.workspace.WorkspaceViewModel
+import com.cmpe451.platon.util.Definitions
 import java.util.*
 
 class EditWorkspaceFragment :Fragment() {
@@ -35,10 +37,16 @@ class EditWorkspaceFragment :Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        initializeAdapters()
-//        setObservers()
+        setObservers()
         setView()
+        setOnClickListeners()
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    private fun setOnClickListeners() {
+        binding.buttonWorkspaceDelete.setOnClickListener {
+            mWorkspaceViewModel.deleteWorkspace((activity as WorkspaceActivity).workspace_id!!, (activity as WorkspaceActivity).token!!)
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -66,7 +74,7 @@ class EditWorkspaceFragment :Fragment() {
                 val datePickerDialog = DatePickerDialog(
                     requireContext(),
                     { _, years, months, day ->
-                        binding.wsDeadlineEt.setText("$day/$months/$years")
+                        binding.wsDeadlineEt.setText("$years.$months.$day")
                     }, year, month, dayOfMonth
 
                 )
@@ -81,10 +89,22 @@ class EditWorkspaceFragment :Fragment() {
 
 
     private fun setObservers() {
-        TODO("Not yet implemented")
+        dialog = Definitions().createProgressBar(requireContext())
+        mWorkspaceViewModel.getDeleteResourceResponse.observe(viewLifecycleOwner, {
+            when(it.javaClass){
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    dialog.dismiss()
+                    Toast.makeText(requireContext(), "Successfully deleted", Toast.LENGTH_LONG).show()
+                    activity?.finish()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
+            }
+        })
     }
 
-    private fun initializeAdapters() {
-        TODO("Not yet implemented")
-    }
+
 }
