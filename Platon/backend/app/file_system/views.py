@@ -5,7 +5,7 @@ from flask import send_from_directory
 from app.file_system.forms import FileInfoForm, FileForm, file_post_parser, FileGetForm, file_get_parser,file_delete_parser
 from app.file_system.forms import FolderInfoForm, folder_get_parser, FolderPostPutForm, folder_post_put_parser, folder_delete_parser
 from app.file_system.helpers import FileSystem
-from app.workspace_system.helpers import workspace_exists,active_contribution_required
+from app.workspace_system.helpers import workspace_exists,active_contribution_required, visibility_required
 from app.auth_system.helpers import login_required
 from app import api, db
 import os
