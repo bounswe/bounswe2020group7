@@ -18,7 +18,7 @@ from app.auth_system.forms import ProfilePhotoForm, profile_photo_parser
 from app.auth_system.models import User
 from app.profile_management.models import Jobs, Skills, UserSkills
 from app.follow_system.models import Follow, FollowRequests
-from app.auth_system.helpers import generate_token,send_email,login_required, hashed, allowed_file
+from app.auth_system.helpers import generate_token,send_email,login_required, hashed, allowed_file, profile_photo_link
 from app.profile_management.helpers import ResearchInfoFetch
 from app.follow_system.helpers import follow_required_user
 
@@ -156,16 +156,13 @@ class GetSelfAPI(Resource):
             # If yes, user information is returned.
             # If not, an error is raised.
             if logged_in_user is not None:
-                profile_photo = ''
-                if allowed_file(logged_in_user.profile_photo):
-                    profile_photo = "/auth_system/profile_photo?user_id={}".format(logged_in_user.id)
                 account_information = {
                                         "id": logged_in_user.id,
                                         "name": logged_in_user.name,
                                         "surname": logged_in_user.surname,
                                         "is_private": logged_in_user.is_private,
                                         "rate": logged_in_user.rate,
-                                        "profile_photo": profile_photo,
+                                        "profile_photo": profile_photo_link(logged_in_user.profile_photo,logged_in_user.id),
                                         "e_mail": logged_in_user.e_mail,
                                         "google_scholar_name": logged_in_user.google_scholar_name,
                                         "researchgate_name": logged_in_user.researchgate_name,
@@ -226,9 +223,6 @@ class UserAPI(Resource):
                         following_status = -1 # Represents that the requester user does not follow the requested user and has not yet sent a request to follow them.
                     
                     user_job = Jobs.query.filter(Jobs.id == existing_user.job_id).first()
-                    profile_photo = ''
-                    if allowed_file(existing_user.profile_photo):
-                        profile_photo = "/auth_system/profile_photo?user_id={}".format(existing_user.id)
                     account_information = { 
                                         "id": existing_user.id,
                                         "name": existing_user.name,
@@ -237,7 +231,7 @@ class UserAPI(Resource):
                                         "is_private": existing_user.is_private,
                                         "following_status": following_status,
                                         "rate": existing_user.rate,
-                                        "profile_photo": profile_photo,
+                                        "profile_photo": profile_photo_link(existing_user.profile_photo,existing_user.id),
                                         "google_scholar_name": existing_user.google_scholar_name,
                                         "researchgate_name": existing_user.researchgate_name,
                                         "job": user_job.name,
@@ -625,6 +619,13 @@ class ProfilePhotoAPI(Resource):
                 return  make_response(jsonify({'error': 'Profile Photo is Not Found'}), 404)
         else:
             return  make_response(jsonify({'error': 'Please give user id'}), 400)
+
+@auth_system_ns.route("/logo")
+class DefaultProfileAPI(Resource):
+        
+    @api.doc(responses={200: 'Valid Response'})
+    def get(self):
+        return send_from_directory(directory=app.config["LOGO_PATH"], filename="platon-logo.jpeg",cache_timeout=0)
 
 def register_resources(api):
     api.add_namespace(auth_system_ns)
