@@ -11,45 +11,46 @@ import okhttp3.RequestBody
 
 class ProfilePageViewModel: ViewModel() {
 
-
-    var userSkills: MutableLiveData<Resource<Skills>> = MutableLiveData()
-    var currentResearch: MutableLiveData<Research> = MutableLiveData()
-    val getResearchesResourceResponse: MutableLiveData<Resource<Researches>>
-
-    val getAddDeleteSkillResourceResponse: MutableLiveData<Resource<JsonObject>>
-
-    var allSkills: MutableLiveData<Resource<List<String>>> = MutableLiveData()
-
-    var getUploadPhotoResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
-
     private var repository: ProfilePageRepository = ProfilePageRepository()
 
-    init {
-        getResearchesResourceResponse = repository.researchesResourceResponse
-        allSkills = repository.allSkills
-        userSkills = repository.userSkills
-        getAddDeleteSkillResourceResponse = repository.addDeleteSkillResourceResponse
-        getUploadPhotoResourceResponse = repository.uploadPhotoResourceResponse
-    }
-
-    fun setCurrentResearch(research:Research){
-        this.currentResearch.value = research
-    }
-
+    var userSkills= repository.userSkills
+    val getResearchesResourceResponse= repository.researchesResourceResponse
+    val getAddDeleteSkillResourceResponse= repository.addDeleteSkillResourceResponse
+    var allSkills = repository.allSkills
+    var getUploadPhotoResourceResponse= repository.uploadPhotoResourceResponse
     val getEditProfileResourceResponse = repository.editProfileResourceResponse
 
-    fun editProfile(firstnameTv: TextView, lastnameTv: TextView, job:String,
-                    institution:String, isPrivateUser:Boolean,
+    var getAddResearchResourceResponse= repository.addResearchResourceResponse
+    var getDeleteResearchResourceResponse= repository.deleteResearchResourceResponse
+    var getEditResearchResourceResponse = repository.editResearchResourceResponse
+
+
+    fun addResearchInfo(title:String,description:String?,
+                        year:Int,authToken: String){
+        repository.addResearch(title, description, year, authToken)
+    }
+
+
+    fun editResearchInfo(projectId:Int,title: String, description: String?, year: Int, token: String) {
+        repository.editResearch(projectId,title, description, year, token)
+    }
+
+    fun deleteResearchInfo(projectId:Int, token: String){
+        repository.deleteResearch(projectId, token)
+    }
+
+    fun editProfile(firstnameTv: TextView?, lastnameTv: TextView?, job:String?,
+                    institution:String?, isPrivateUser:Boolean?,
                     googleScholarTv: TextView?,
                     researchGateTv: TextView?, token:String?){
 
         var name:String? = null
-        if(!firstnameTv.text.isNullOrEmpty()){
-            name  = firstnameTv.text.toString()
+        if(!firstnameTv?.text.isNullOrEmpty()){
+            name  = firstnameTv?.text.toString()
         }
         var surname:String? = null
-        if(!lastnameTv.text.isNullOrEmpty()){
-            surname  = lastnameTv.text.toString()
+        if(!lastnameTv?.text.isNullOrEmpty()){
+            surname  = lastnameTv?.text.toString()
         }
         var google_scholar_name:String? = null
         if(!googleScholarTv?.text.isNullOrEmpty()){
