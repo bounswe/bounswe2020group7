@@ -626,7 +626,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
             .show()
         editDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        val currResearch = (binding.rvProfilePageProjects.adapter as UserProjectsAdapter).data[position]
+        val currResearch = (binding.rvProfilePageProjects.adapter as UserProjectsAdapter).getElement(position)
 
 
         editBinding.projectNameTv.setText(currResearch.title)
