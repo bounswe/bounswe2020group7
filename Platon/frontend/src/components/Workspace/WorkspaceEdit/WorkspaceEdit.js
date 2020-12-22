@@ -213,7 +213,7 @@ class WorkspaceEdit extends Component {
         <div
           className="container"
           style={{
-            marginTop: "50px",
+            marginTop: "40px",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
