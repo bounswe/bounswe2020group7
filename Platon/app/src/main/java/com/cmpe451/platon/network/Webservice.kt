@@ -214,7 +214,7 @@ interface Webservice {
         @Header("auth_token") auth_token: String
     ) : Call<JsonObject?>
     @FormUrlEncoded
-    @HTTP(method = "DELETE", path = "api/auth_system/skills",hasBody = true)
+    @HTTP(method = "DELETE", path = "api/workspaces",hasBody = true)
     fun deleteWorkspace(@Field("workspace_id") workspace_id: Int,
                         @Header("auth_token") token: String): Call<JsonObject?>
 }
