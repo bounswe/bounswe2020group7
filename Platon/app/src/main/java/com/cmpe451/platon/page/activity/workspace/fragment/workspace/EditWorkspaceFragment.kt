@@ -12,25 +12,22 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import com.cmpe451.platon.R
-import com.cmpe451.platon.adapter.SkillsAdapter
-import com.cmpe451.platon.databinding.AddSkillBinding
 import com.cmpe451.platon.databinding.FragmentEditWorkspaceBinding
 import com.cmpe451.platon.network.Resource
-import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
-import com.cmpe451.platon.page.activity.workspace.fragment.workspace.WorkspaceViewModel
 import com.cmpe451.platon.util.Definitions
 import java.util.*
 
-class EditWorkspaceFragment :Fragment() {
+class EditWorkspaceFragment : Fragment() {
 
     private lateinit var binding: FragmentEditWorkspaceBinding
     private lateinit var dialog: AlertDialog
     private val mWorkspaceViewModel: WorkspaceViewModel by activityViewModels()
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         binding = FragmentEditWorkspaceBinding.inflate(inflater)
         setHasOptionsMenu(true)
         return binding.root
@@ -45,7 +42,10 @@ class EditWorkspaceFragment :Fragment() {
 
     private fun setOnClickListeners() {
         binding.buttonWorkspaceDelete.setOnClickListener {
-            mWorkspaceViewModel.deleteWorkspace((activity as WorkspaceActivity).workspace_id!!, (activity as WorkspaceActivity).token!!)
+            mWorkspaceViewModel.deleteWorkspace(
+                (activity as WorkspaceActivity).workspace_id!!,
+                (activity as WorkspaceActivity).token!!
+            )
         }
     }
 
@@ -53,9 +53,10 @@ class EditWorkspaceFragment :Fragment() {
     private fun setView() {
         binding.wsTitleEt.setText(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.title)
         binding.wsDescriptionEt.setText(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.description)
-        binding.privateSwitch.isChecked = mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.is_private
+        binding.privateSwitch.isChecked =
+            mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.is_private
         binding.wsMaxCollabNumberEt.setText(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.max_collaborators.toString())
-        val x  = ArrayAdapter(requireContext(), R.layout.spinner_item, mutableListOf("Loading..."))
+        val x = ArrayAdapter(requireContext(), R.layout.spinner_item, mutableListOf("Loading..."))
         x.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spState.adapter = x
         (binding.spState.adapter as ArrayAdapter<String>).clear()
@@ -66,7 +67,7 @@ class EditWorkspaceFragment :Fragment() {
 //        binding.wsRequirementsEt.setText(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.requirements)
         binding.wsDeadlineEt.setOnTouchListener { _, event ->
 
-            if(event.action == MotionEvent.ACTION_DOWN){
+            if (event.action == MotionEvent.ACTION_DOWN) {
                 val calendar = Calendar.getInstance()
                 val year = calendar.get(Calendar.YEAR)
                 val month = calendar.get(Calendar.MONTH)
@@ -84,18 +85,54 @@ class EditWorkspaceFragment :Fragment() {
             true
 
         }
-
+        binding.buttonWorkspaceEdit.setOnClickListener {
+            if (binding.wsTitleEt.text.isNullOrEmpty()) {
+                Toast.makeText(requireContext(), "Title cannot be left empty", Toast.LENGTH_LONG)
+                    .show()
+            } else {
+                if (binding.wsDescriptionEt.text.isNullOrEmpty()) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Description cannot be left empty",
+                        Toast.LENGTH_LONG
+                    ).show()
+                } else {
+                    val title: String = binding.wsTitleEt.text.toString().trim()
+                    val description: String = binding.wsDescriptionEt.text.toString().trim()
+                    val isPrivate: Int = if (binding.privateSwitch.isChecked) 1 else 0
+                    val max_collaborators =
+                        if (binding.wsMaxCollabNumberEt.text.isNullOrEmpty()) null else binding.wsMaxCollabNumberEt.text.toString()
+                            .toInt()
+                    val deadline =
+                        if (binding.wsDeadlineEt.text.isNullOrEmpty()) null else binding.wsDeadlineEt.text.toString()
+                    val state = binding.spState.selectedItemPosition
+                    mWorkspaceViewModel.updateWorkspace(
+                        (activity as WorkspaceActivity).workspace_id!!,
+                        title,
+                        description,
+                        isPrivate,
+                        max_collaborators,
+                        deadline,
+                        null,
+                        null,
+                        state,
+                        (activity as WorkspaceActivity).token!!
+                    )
+                }
+            }
+        }
     }
 
 
     private fun setObservers() {
         dialog = Definitions().createProgressBar(requireContext())
         mWorkspaceViewModel.getDeleteResourceResponse.observe(viewLifecycleOwner, {
-            when(it.javaClass){
+            when (it.javaClass) {
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java -> {
                     dialog.dismiss()
-                    Toast.makeText(requireContext(), "Successfully deleted", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), "Successfully deleted", Toast.LENGTH_LONG)
+                        .show()
                     activity?.finish()
                 }
                 Resource.Error::class.java -> {
