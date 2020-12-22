@@ -191,6 +191,42 @@ def active_contribution_required(param_loc,workspace_id_key):
         return contribution_check
     return active_contribution_required_inner
 
+def visibility_required(param_loc,workspace_id_key):
+    """
+        param_loc: it only can be "args" or "form" which specifies the location of the requested wokspace id in the request
+        workspace_id_key: key of the parameter that represents the requested wokspace id in the request
+        If a Workspace is visible, it must be public and in SFC or PS
+    """
+    def visibility_required_inner(func):
+        """
+            Checks the privacy of the user before giving the user data
+        """
+        @wraps(func)
+        def visibilitiy_check(*args,**kwargs):
+            if param_loc == 'args':
+                try:
+                    workspace_id = int(request.args.get(workspace_id_key))
+                except:
+                    return make_response(jsonify({'error':'Wrong input format'}),400) 
+            elif param_loc == 'form':
+                try:
+                    workspace_id = int(request.form.get(workspace_id_key))
+                except:
+                    return make_response(jsonify({'error':'Wrong input format'}),400)
+            # Take Workspace record from database
+            try:
+                workspace = Workspace.query.get(workspace_id)
+            except:
+                return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
+            if workspace.id_private:
+                return active_contribution_required(param_loc,workspace_id_key)
+            else:
+                if workspace.state == int(WorkspaceState.ongoing):
+                    return make_response(jsonify({"err": "You are note allowed to see the content of this workspace"}),200)
+            return func(*args,**kwargs)
+        return visibilitiy_check
+    return visibility_required_inner
+
 
 class TredingProjectManager():
     """
