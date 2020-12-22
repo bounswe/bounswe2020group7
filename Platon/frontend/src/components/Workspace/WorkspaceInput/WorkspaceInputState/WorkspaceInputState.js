@@ -49,7 +49,6 @@ export default function SimpleSelect(props) {
           id="demo-simple-select-outlined"
           value={props.state}
           onChange={(e) => props.handleState(e.target.value)}
-          label="State"
           fullWidth
         >
 

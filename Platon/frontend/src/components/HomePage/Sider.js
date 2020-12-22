@@ -30,17 +30,18 @@ class Sider extends React.Component {
       profileId: decoded.id,
     })
 
-    requestService.getNotifications(1).then((response) => {
+    requestService.getNotifications().then((response) => {
       console.log(response)
       this.setState({
         notifications: response.data.notification_list,
-        notificationNum: response.data.notificationNum,
+        notificationNum: response.data.notification_list.length,
       })
       console.log(response.data)
     })
   }
 
   render() {
+    console.log("not",this.state.notifications)
     return (
       <Menu
         onClick={this.handleClick}
@@ -70,7 +71,7 @@ class Sider extends React.Component {
         </Menu.Item>
         <SubMenu
           key="4"
-          title={this.state.notifications ? 'Notifications(' + this.state.notificationNum + ')' :
+          title={this.state.notifications ? 'Notifications (' + this.state.notificationNum + ')' :
             'Notifications'}
         >
           {this.state.notifications && this.state.notifications.map((notification, index) => {
@@ -82,7 +83,7 @@ class Sider extends React.Component {
 
         <Menu.Item key="5">
           <Link to={`/${this.state.profileId}/workspace`}>
-            <span>My Projects</span>
+            <span>Workspaces</span>
           </Link>
         </Menu.Item>
 
