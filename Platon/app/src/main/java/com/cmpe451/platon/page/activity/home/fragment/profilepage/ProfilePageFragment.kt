@@ -5,12 +5,16 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -29,10 +33,12 @@ import com.cmpe451.platon.adapter.SkillsAdapter
 import com.cmpe451.platon.adapter.UserProjectsAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.AddSkillBinding
+import com.cmpe451.platon.databinding.FragmentEditProfileBinding
 import com.cmpe451.platon.databinding.FragmentProfilePageBinding
 import com.cmpe451.platon.databinding.ResearchesCellBinding
 import com.cmpe451.platon.listener.PaginationListener
 import com.cmpe451.platon.network.Resource
+import com.cmpe451.platon.network.models.Job
 import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.activity.home.HomeActivityViewModel
 import com.cmpe451.platon.util.Definitions
@@ -241,7 +247,85 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
         }
 
         binding.infoTitle.setOnClickListener {
-            findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToEditProfileFragment())
+            mActivityViewModel.getAllJobs()
+            val editBinding = FragmentEditProfileBinding.inflate(layoutInflater, binding.root, false)
+            val editDialog = AlertDialog.Builder(requireContext())
+                .setView(editBinding.root)
+                .show()
+            editDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            editBinding.buttonEdit.setOnClickListener {
+                val jobStr = if (editBinding.etNewJob.text.isEmpty()) editBinding.spJob.selectedItem.toString().trim() else editBinding.etNewJob.text.toString().trim()
+                val institution = if (editBinding.etInstitution.text.isEmpty()) "" else editBinding.etInstitution.text.toString().trim()
+                editDialog.dismiss()
+                mProfilePageViewModel.editProfile(editBinding.firstnameTv,
+                    editBinding.lastnameTv, jobStr ,institution, editBinding.privateSwitch.isChecked, null, null, (activity as HomeActivity).currUserToken)
+            }
+
+            val user = mActivityViewModel.getUserResourceResponse.value?.data
+
+            if (user != null){
+                editBinding.firstnameTv.setText(user.name)
+                editBinding.lastnameTv.setText(user.surname)
+                editBinding.etInstitution.setText(user.institution)
+                editBinding.privateSwitch.isChecked = user.is_private
+            }
+
+            mActivityViewModel.getJobListResourceResponse.observe(viewLifecycleOwner,{ t ->
+                when (t.javaClass) {
+                    Resource.Loading::class.java -> {
+                        val x  = ArrayAdapter(requireContext(), R.layout.spinner_item, mutableListOf("Loading..."))
+                        x.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                        editBinding.spJob.adapter = x
+                    }
+                    Resource.Success::class.java -> {
+                        (editBinding.spJob.adapter as ArrayAdapter<String>).clear()
+                        (editBinding.spJob.adapter as ArrayAdapter<String>).addAll(t.data!!.map { it.name })
+                        (editBinding.spJob.adapter as ArrayAdapter<String>).add("Not in list")
+                        editBinding.spJob.setSelection(t.data!!.map { it.name }.indexOf(user?.job))
+                    }
+                    Resource.Error::class.java -> {
+                        Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+                        mActivityViewModel.getJobListResourceResponse.value = Resource.Done()
+                    }
+                }
+            } )
+
+
+            mProfilePageViewModel.getEditProfileResourceResponse.observe(viewLifecycleOwner, { t ->
+                when(t.javaClass){
+                    Resource.Loading::class.java -> dialog.show()
+                    Resource.Success::class.java ->{
+                        mActivityViewModel.fetchUser((activity as HomeActivity).currUserToken)
+                        editDialog.cancel()
+                        mProfilePageViewModel.getEditProfileResourceResponse.value = Resource.Done()
+
+                    }
+                    Resource.Error::class.java ->{
+                        Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+                        mProfilePageViewModel.getEditProfileResourceResponse.value = Resource.Done()
+
+                    }
+                    Resource.Done::class.java->{
+                        dialog.dismiss()
+                    }
+
+                }
+            })
+
+            editBinding.spJob.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    if (editBinding.spJob.adapter.count-1 == position){
+                        editBinding.etNewJob.visibility = View.VISIBLE
+                    }else{
+                        editBinding.etNewJob.visibility = View.GONE
+                        editBinding.etNewJob.text.clear()
+                    }
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
+            }
+            //findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToEditProfileFragment())
         }
         binding.projectsTitle.setOnClickListener{
             findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToAddResearchInfoFragment())

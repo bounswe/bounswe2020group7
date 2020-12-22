@@ -282,7 +282,6 @@ class HomeActivity : BaseActivity(),
         // listener for all job list
         mActivityViewModel.getJobListResourceResponse.observe(this, { t ->
             when (t.javaClass) {
-                Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java -> {
                     val aList = arrayListOf("Any")
                     t.data!!.forEach {
@@ -291,13 +290,11 @@ class HomeActivity : BaseActivity(),
                         jobIdList.add(it.id)
                     }
                     binding.spJobQuery.adapter = ArrayAdapter(this, R.layout.spinner_item, aList)
-                    mActivityViewModel.getJobListResourceResponse.value = Resource.Done()
                 }
                 Resource.Error::class.java -> {
                     Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
                     mActivityViewModel.getJobListResourceResponse.value = Resource.Done()
                 }
-                Resource.Done::class.java-> dialog.dismiss()
             }
         })
 
