@@ -53,7 +53,7 @@ class EditWorkspaceFragment : Fragment() {
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint("ClickableViewAccessibility", "SetTextI18n")
     private fun setView() {
         binding.wsTitleEt.setText(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.title)
         binding.wsDescriptionEt.setText(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.description)
@@ -79,7 +79,9 @@ class EditWorkspaceFragment : Fragment() {
                 val datePickerDialog = DatePickerDialog(
                     requireContext(),
                     { _, years, months, day ->
-                        binding.wsDeadlineEt.setText("$years.$months.$day")
+                        val monthString = String.format("%02d", months+1)
+                        val dayString = String.format("%02d", day)
+                        binding.wsDeadlineEt.setText("$years.$monthString.$dayString")
                     }, year, month, dayOfMonth
 
                 )
