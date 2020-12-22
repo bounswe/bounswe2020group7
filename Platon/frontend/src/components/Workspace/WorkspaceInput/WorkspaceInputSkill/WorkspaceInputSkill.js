@@ -69,7 +69,7 @@ export default function Affinities(props) {
               required
               name="affinities"
               label={props.label}
-              placeholder={props.label}
+              placeholder="Use ',' as the delimiter."
               id="affinities"
               fullWidth
             />

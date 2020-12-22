@@ -73,6 +73,9 @@ class WorkspaceList extends Component {
     };
   }
   componentDidMount() {
+    this.fetchWorkspaces();
+  }
+  fetchWorkspaces = () =>{
     const token = localStorage.getItem("jwtToken");
     const decoded = jwt_decode(token);
     axios.defaults.headers.common["auth_token"] = `${token}`;
@@ -92,10 +95,49 @@ class WorkspaceList extends Component {
     .catch((err) => {
       console.log(err);
     });
-
-
-
   }
+  handleCloseError = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    this.setState({ error: false });
+  };
+
+  handleCloseSuccess = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    this.setState({ success: false });
+  };
+  deleteWorkspace = (element) => {
+    const token = localStorage.getItem("jwtToken");
+    const url = config.BASE_URL;
+    let formData = new FormData();
+    formData.append("workspace_id", element);
+    axios
+      .delete(url + "/api/workspaces", {
+        headers: {
+          auth_token: token, //the token is a variable which holds the token
+        },
+        data: formData,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          this.setState({
+            success: "Successfully deleted.",
+          });
+          this.fetchWorkspaces();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          error: "Error occured. " + err.message,
+        });
+      });
+  };
   render() {
     const { classes } = this.props;
     console.log(this.state.workspaces)
@@ -151,7 +193,8 @@ class WorkspaceList extends Component {
                           <PageviewIcon style={{color: colors.tertiary}}/>
                         </IconButton>
                         </Link>
-                        <IconButton aria-label="delete">
+
+                        <IconButton onClick={()=>this.deleteWorkspace(item.id)}aria-label="delete">
                           <DeleteIcon style={{color: colors.quinary}}/>
                         </IconButton>
                       </CardActions>

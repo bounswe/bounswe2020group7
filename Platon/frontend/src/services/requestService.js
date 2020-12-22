@@ -85,11 +85,11 @@ const getResearchs = (id) => {
         });
 
 }
-const getNotifications = (page) => {
+const getNotifications = () => {
     const url = config.BASE_URL;
     const token = localStorage.getItem("jwtToken");
     axios.defaults.headers.common["auth_token"] = `${token}`;
-    return axios.get(url + "/api/profile/notifications",{ params: { per_page:1, page:page} } )
+    return axios.get(url + "/api/profile/notifications")
         .then(response => {
             if (response) {
             console.log('NEKIBURASI')
