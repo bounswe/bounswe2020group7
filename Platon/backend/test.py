@@ -1,12 +1,12 @@
 import unittest
 
-#from tests.milestone_test import MilestoneTest
-#from tests.issues_test import IssuesTest
-#from tests.auth_system_test import LoginTest,ResetPasswordTest
-#from tests.follow_test import FollowTest
-#from tests.profile_management_test import ResearchInfoTests,NotificationTests
-from tests.search_engine_test import UpcomingEventsSearchTest
-#from tests.upcoming_events_test import UpcomingEventsTest
+from tests.milestone_test import MilestoneTest
+from tests.issues_test import IssuesTest
+from tests.auth_system_test import LoginTest,ResetPasswordTest
+from tests.follow_test import FollowTest
+from tests.profile_management_test import ResearchInfoTests,NotificationTests
+from tests.search_engine_test import SearchHistoryTests, UserSearchTests, UpcomingEventsSearchTest
+from tests.upcoming_events_test import UpcomingEventsTest
 
 from tests.base_test import TestConfig
 import sqlalchemy
