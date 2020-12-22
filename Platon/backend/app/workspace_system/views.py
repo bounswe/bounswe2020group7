@@ -1068,11 +1068,19 @@ class WorkspacesAPI(Resource):
                         # Checks whether the dictionary of the new attributes is empty or not.
                         # If empty, skips the database operations.
                         # If not, the workspace gets updated as requested.
-                        if new_attributes:
+                        is_updated = False
+                        if new_attributes["skills"] != 'null' or new_attributes["requirements"] != 'null':
+                            is_updated = True
                             update_workspace_skills(form.workspace_id.data, json.loads(new_attributes.pop("skills")))
                             update_workspace_requirements(form.workspace_id.data, json.loads(new_attributes.pop("requirements")))
+                        else:
+                            new_attributes.pop("skills")
+                            new_attributes.pop("requirements")
+                        if new_attributes:
                             requested_workspace.update(new_attributes)
                             db.session.commit()
+                            return make_response(jsonify({"message" : "Workspace has been successfully updated."}), 200)
+                        elif is_updated:
                             return make_response(jsonify({"message" : "Workspace has been successfully updated."}), 200)
                         else:
                             return make_response(jsonify({"message" : "Server has received the request but there was no information to be updated."}), 202)
