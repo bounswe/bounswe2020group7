@@ -2,6 +2,7 @@ package com.cmpe451.platon.page.activity.workspace.fragment.workspace
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
@@ -163,8 +164,10 @@ class WorkspaceFragment : Fragment(){
 
     }
     private fun onAddRequirementClicked() {
+        requirementsArray.clear()
 
         val requirementsList = mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.requirements
+        requirementsArray.addAll(requirementsList)
         val bArray = mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.requirements.map { requirementsList.contains(it) }.toBooleanArray()
         AlertDialog.Builder(context)
             .setCancelable(false)
@@ -174,13 +177,13 @@ class WorkspaceFragment : Fragment(){
                     requireView().parent as ViewGroup,
                     false
                 )
-                AlertDialog.Builder(context).setView(tmpBinding.root)
+                val addNewReq = AlertDialog.Builder(context).setView(tmpBinding.root)
                     .setCancelable(false)
-                    .setNegativeButton("Completed") { _, _ ->
-//                                    mAddWorkspaceViewModel.getAddDeleteSkillResourceResponse.removeObservers(
-//                                        viewLifecycleOwner
-//                                    )
-                    }
+                    .setNegativeButton("Completed",DialogInterface.OnClickListener { dialog, _ ->
+                        val requirementsArrayString:String?= if(requirementsArray.isNotEmpty()) requirementsArray.map{e-> "\"$e\""}.toString() else "[]"
+                        mWorkspaceViewModel.updateWorkspace((activity as WorkspaceActivity).workspace_id!!,null, null,
+                            null, null, null, requirementsArrayString,null,null, (activity as WorkspaceActivity).token!!)
+                    })
                     .create().show()
                 tmpBinding.btnAddRequirement.setOnClickListener {
                     if (!tmpBinding.etNewRequirement.text.isNullOrEmpty()) {
@@ -215,6 +218,8 @@ class WorkspaceFragment : Fragment(){
             when (t.javaClass) {
                 Resource.Success::class.java -> {
                     val skillNameList = mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.skills
+                    skillsArray.clear()
+                    skillsArray.addAll(skillNameList)
                     val bArray = t.data!!.map { skillNameList.contains(it) }.toBooleanArray()
                     AlertDialog.Builder(context)
                         .setCancelable(false)

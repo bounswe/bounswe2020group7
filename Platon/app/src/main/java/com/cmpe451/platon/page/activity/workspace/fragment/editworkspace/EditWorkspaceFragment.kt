@@ -1,4 +1,4 @@
-package com.cmpe451.platon.page.activity.workspace.fragment.workspace
+package com.cmpe451.platon.page.activity.workspace.fragment.editworkspace
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
@@ -12,10 +12,13 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.cmpe451.platon.R
 import com.cmpe451.platon.databinding.FragmentEditWorkspaceBinding
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
+import com.cmpe451.platon.page.activity.workspace.fragment.workspace.WorkspaceViewModel
 import com.cmpe451.platon.util.Definitions
 import java.util.*
 
@@ -24,6 +27,7 @@ class EditWorkspaceFragment : Fragment() {
     private lateinit var binding: FragmentEditWorkspaceBinding
     private lateinit var dialog: AlertDialog
     private val mWorkspaceViewModel: WorkspaceViewModel by activityViewModels()
+    private val mEditWorkspaceViewModel:EditWorkspaceViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -42,7 +46,7 @@ class EditWorkspaceFragment : Fragment() {
 
     private fun setOnClickListeners() {
         binding.buttonWorkspaceDelete.setOnClickListener {
-            mWorkspaceViewModel.deleteWorkspace(
+            mEditWorkspaceViewModel.deleteWorkspace(
                 (activity as WorkspaceActivity).workspace_id!!,
                 (activity as WorkspaceActivity).token!!
             )
@@ -106,7 +110,7 @@ class EditWorkspaceFragment : Fragment() {
                     val deadline =
                         if (binding.wsDeadlineEt.text.isNullOrEmpty()) null else binding.wsDeadlineEt.text.toString()
                     val state = binding.spState.selectedItemPosition
-                    mWorkspaceViewModel.updateWorkspace(
+                    mEditWorkspaceViewModel.updateWorkspace(
                         (activity as WorkspaceActivity).workspace_id!!,
                         title,
                         description,
@@ -126,7 +130,7 @@ class EditWorkspaceFragment : Fragment() {
 
     private fun setObservers() {
         dialog = Definitions().createProgressBar(requireContext())
-        mWorkspaceViewModel.getDeleteResourceResponse.observe(viewLifecycleOwner, {
+        mEditWorkspaceViewModel.getDeleteResourceResponse.observe(viewLifecycleOwner, {
             when (it.javaClass) {
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java -> {
@@ -134,6 +138,22 @@ class EditWorkspaceFragment : Fragment() {
                     Toast.makeText(requireContext(), "Successfully deleted", Toast.LENGTH_LONG)
                         .show()
                     activity?.finish()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
+            }
+        })
+        mEditWorkspaceViewModel.getUpdateResourceResponse.observe(viewLifecycleOwner, {
+            when (it.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    dialog.dismiss()
+                    Toast.makeText(requireContext(), "Successfully updated", Toast.LENGTH_LONG)
+                        .show()
+                    mWorkspaceViewModel.fetchWorkspace((activity as WorkspaceActivity).workspace_id!!, (activity as WorkspaceActivity).token!!)
+                    findNavController().navigateUp()
                 }
                 Resource.Error::class.java -> {
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
