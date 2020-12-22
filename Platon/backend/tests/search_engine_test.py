@@ -323,7 +323,7 @@ class UpcomingEventsSearchTest(BaseTest):
         self.assertEqual(expected_result, json.loads(actual_response.data))
 
     def test_deadline_search(self):
-        actual_response = self.client.get("/api/search_engine/upcoming_events", query_string={"search_query": "Jan 10, 2021"})
+        actual_response = self.client.get("/api/search_engine/upcoming_events", query_string={"search_query": "Jan 10"})
         expected_result = {
             "number_of_pages": 1,
             "result_list": [
