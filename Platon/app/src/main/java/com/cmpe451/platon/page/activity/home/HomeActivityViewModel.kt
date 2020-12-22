@@ -2,7 +2,6 @@ package com.cmpe451.platon.page.activity.home
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.*
@@ -16,7 +15,9 @@ class HomeActivityViewModel(application: Application):AndroidViewModel(applicati
     val acceptRequestResourceResponse: MutableLiveData<Resource<JsonObject>>
 
     val getSearchHistoryResourceResponse: MutableLiveData<Resource<SearchHistory>>
-    val getSearchUserResourceResponse:MutableLiveData<Resource<UserSearch>>
+    val getSearchUserResourceResponse:MutableLiveData<Resource<Search>>
+    val getSearchWorkspaceResourceResponse:MutableLiveData<Resource<Search>>
+
     val getJobListResourceResponse: MutableLiveData<Resource<List<Job>>>
 
     val repository = HomeActivityRepository()
@@ -29,6 +30,7 @@ class HomeActivityViewModel(application: Application):AndroidViewModel(applicati
         getSearchHistoryResourceResponse = repository.searchHistoryResourceResponse
         getSearchUserResourceResponse = repository.searchUserResourceResponse
         getJobListResourceResponse = repository.jobListResourceResponse
+        getSearchWorkspaceResourceResponse=repository.searchWorkspaceResourceResponse
     }
 
     fun getAllJobs() {
@@ -65,6 +67,10 @@ class HomeActivityViewModel(application: Application):AndroidViewModel(applicati
 
     fun searchUser(token:String?, query:String, job:Int?, page:Int?, perPage:Int?){
         repository.searchUser(token, query, job, page, perPage)
+    }
+
+    fun searchWorkspace(token:String?, query:String , skill:String?, event:String?, page:Int?, perPage:Int?){
+        repository.searchWorkspace(token, query, skill,event, page, perPage)
     }
 
 }

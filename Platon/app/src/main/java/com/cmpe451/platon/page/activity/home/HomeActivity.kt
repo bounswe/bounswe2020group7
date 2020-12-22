@@ -4,22 +4,18 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.database.MatrixCursor
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.*
 import android.widget.ArrayAdapter
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.cursoradapter.widget.CursorAdapter
 import androidx.cursoradapter.widget.SimpleCursorAdapter
-import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.FollowRequestElementsAdapter
 import com.cmpe451.platon.adapter.NotificationElementsAdapter
@@ -38,7 +34,6 @@ import com.cmpe451.platon.page.activity.home.fragment.workspace.WorkspaceListFra
 import com.cmpe451.platon.page.activity.login.LoginActivity
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.util.Definitions
-import com.google.android.material.snackbar.Snackbar
 
 
 class HomeActivity : BaseActivity(),
@@ -54,17 +49,15 @@ class HomeActivity : BaseActivity(),
 
     // when notification handled, will be stored here
     private var handledFollowRequestPosition = -1
-    var token:String? = null
-    var userId:Int? = null
 
-    private val searchPageSize = 10
+    var currUserToken:String = ""
+    var currUserId:Int = -1
 
-    //keeper for jobs'ids
-    //TODO this can be improved
-    private var jobIdList:ArrayList<Int>?  = null
+    private var maxPageNumberToolbarElements=0
+    private val toolbarPageSize = 10
 
-    private var maxPageNumberSearch= 0;
-    private var maxPageNumberNotification=0;
+    private var jobIdList:ArrayList<Int>  = arrayListOf(-1)
+    private var searchHistory:List<SearchHistoryElement> = emptyList()
 
     private lateinit var toolbarLayoutManager:LinearLayoutManager
     private lateinit var paginationListener:PaginationListener
@@ -80,19 +73,11 @@ class HomeActivity : BaseActivity(),
         }
 
         //make GONE the views
-        mActivityViewModel.getSearchUserResourceResponse.removeObservers(this)
-        mActivityViewModel.getSearchHistoryResourceResponse.removeObservers(this)
-        mActivityViewModel.getJobListResourceResponse.removeObservers(this)
-
-        mActivityViewModel.getUserNotificationsResourceResponse.removeObservers(this)
-        mActivityViewModel.getUserFollowRequestsResourceResponse.removeObservers(this)
-        mActivityViewModel.acceptRequestResourceResponse.removeObservers(this)
-
+        binding.layWorkspaceFilter.visibility = View.GONE
         binding.layJobQuery.visibility=View.GONE
         binding.notificationRg.visibility = View.GONE
         binding.rgSearchAmong.visibility = View.GONE
         binding.toolbarRecyclerview.visibility = View.GONE
-
 
         binding.rgSearchAmong.setOnCheckedChangeListener(null)
         binding.notificationRg.setOnCheckedChangeListener(null)
@@ -105,21 +90,19 @@ class HomeActivity : BaseActivity(),
         }
 
         paginationListener.currentPage = 0
-        maxPageNumberSearch = 0
-        maxPageNumberNotification = 0
+        maxPageNumberToolbarElements = 0
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_Platon)
         super.onCreate(savedInstanceState)
 
-        // get user id and token from login
-        token = intent.extras?.getString("token")
-        userId = intent.extras?.getInt("user_id")
-
         // if null, close the app
-        if (token == null || userId == null){
+        if (intent.extras?.getString("token") == null || intent.extras?.getInt("user_id") == null){
             finish()
+        }else{
+            currUserToken = intent.extras?.getString("token")!!
+            currUserId= intent.extras?.getInt("user_id")!!
         }
         //inflate
         binding = ActivityHomeBinding.inflate(layoutInflater)
@@ -138,7 +121,6 @@ class HomeActivity : BaseActivity(),
     }
 
     private fun initViews() {
-
         toolbarLayoutManager = LinearLayoutManager(this)
         binding.toolbarRecyclerview.layoutManager = toolbarLayoutManager
 
@@ -148,54 +130,222 @@ class HomeActivity : BaseActivity(),
             when(it.itemId){
                 R.id.profilePageFragment -> {
                     // get current user's information
-                    mActivityViewModel.fetchUser(token)
+                    mActivityViewModel.fetchUser(currUserToken)
                 }
             }
             it.onNavDestinationSelected(navController)
         }
 
         initListeners()
+        setObservers()
     }
 
 
-    private fun initListeners() {
-        // create dialog, which is not singleton
-        //TODO make alert dialog singleton
+    private fun setObservers(){
+        setObserversForSearch()
+        setObserversForNotifications()
+    }
 
-        paginationListener = object: PaginationListener(toolbarLayoutManager, searchPageSize){
+    private fun setObserversForNotifications() {
+        mActivityViewModel.getUserNotificationsResourceResponse.observe(this, { t ->
+            when (t.javaClass) {
+                Resource.Success::class.java -> {
+                    maxPageNumberToolbarElements = t.data!!.number_of_pages
+                    if(binding.toolbarRecyclerview.adapter?.javaClass == NotificationElementsAdapter::class.java){
+                        (binding.toolbarRecyclerview.adapter as NotificationElementsAdapter).submitElements(t.data!!.notification_list)
+                    }else{
+                        binding.toolbarRecyclerview.adapter = NotificationElementsAdapter(t.data!!.notification_list as ArrayList<Notification>, this, this)
+                    }
+                    mActivityViewModel.getUserNotificationsResourceResponse.value = Resource.Done()
+                }
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Error::class.java -> {
+                    mActivityViewModel.getUserNotificationsResourceResponse.value = Resource.Done()
+                    Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
+
+                }
+                Resource.Done::class.java->dialog.dismiss()
+            }
+        })
+
+        mActivityViewModel.getUserFollowRequestsResourceResponse.observe(this, { t ->
+            when (t.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    maxPageNumberToolbarElements = t.data!!.number_of_pages
+                    if(binding.toolbarRecyclerview.javaClass == FollowRequestElementsAdapter::class.java){
+                        (binding.toolbarRecyclerview.adapter as FollowRequestElementsAdapter).submitElements(t.data!!.follow_requests)
+                    }else{
+                        binding.toolbarRecyclerview.adapter = FollowRequestElementsAdapter(t.data!!.follow_requests as ArrayList<FollowRequest>, this, this)
+                    }
+                    mActivityViewModel.getUserFollowRequestsResourceResponse.value = Resource.Done()
+                }
+                Resource.Error::class.java -> {
+                    mActivityViewModel.getUserFollowRequestsResourceResponse.value = Resource.Done()
+                    Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
+                }
+                Resource.Done::class.java->dialog.dismiss()
+            }
+        })
+
+        mActivityViewModel.acceptRequestResourceResponse.observe(this, { i ->
+            when (i.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    if (handledFollowRequestPosition != -1) {
+                        (binding.toolbarRecyclerview.adapter as ToolbarElementsAdapter)
+                            .removeElement(this.handledFollowRequestPosition)
+                        this.handledFollowRequestPosition = -1
+                    }
+                    mActivityViewModel.acceptRequestResourceResponse.value = Resource.Done()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(this, i.message, Toast.LENGTH_SHORT).show()
+                    mActivityViewModel.acceptRequestResourceResponse.value = Resource.Done()
+                }
+
+                Resource.Done::class.java->dialog.dismiss()
+            }
+        })
+
+    }
+
+
+    private fun setObserversForSearch() {
+        //observer for search history
+        mActivityViewModel.getSearchHistoryResourceResponse.observe(this, { t ->
+            when (t.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    searchHistory =  t.data!!.search_history
+                    val historyCursor = MatrixCursor(arrayOf("_id", "query"))
+                    searchHistory.forEachIndexed { i, e ->
+                        historyCursor.addRow(arrayOf(i, e.query))
+                    }
+                    // set adapter's cursor with retrieved suggestion items
+                    search.suggestionsAdapter.changeCursor(historyCursor)
+                    mActivityViewModel.getSearchHistoryResourceResponse.value = Resource.Done()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
+                    mActivityViewModel.getSearchHistoryResourceResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java-> dialog.dismiss()
+            }
+        })
+
+        // listener for search user results
+        mActivityViewModel.getSearchUserResourceResponse.observe(this, { t ->
+            when (t.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    // set max number of pages for pagination
+                    maxPageNumberToolbarElements = t.data!!.number_of_pages
+                    // already exists, append on it, else create new
+                    if(binding.toolbarRecyclerview.adapter?.javaClass == SearchElementsAdapter::class.java){
+                        (binding.toolbarRecyclerview.adapter as SearchElementsAdapter).submitElements(t.data!!.result_list)
+                    }else{
+                        binding.toolbarRecyclerview.adapter = SearchElementsAdapter(t.data!!.result_list as ArrayList<SearchElement>, this, this)
+                    }
+                    mActivityViewModel.getSearchUserResourceResponse.value = Resource.Done()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
+                    mActivityViewModel.getSearchUserResourceResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java-> dialog.dismiss()
+            }
+        })
+
+        mActivityViewModel.getSearchWorkspaceResourceResponse.observe(this, { t ->
+            when (t.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    // set max number of pages for pagination
+                    maxPageNumberToolbarElements = 0
+                    // already exists, append on it, else create new
+                    if(binding.toolbarRecyclerview.adapter?.javaClass == SearchElementsAdapter::class.java){
+                        (binding.toolbarRecyclerview.adapter as SearchElementsAdapter).submitElements(t.data!!.result_list)
+                    }else{
+                        binding.toolbarRecyclerview.adapter = SearchElementsAdapter(t.data!!.result_list as ArrayList<SearchElement>, this, this)
+                    }
+                    mActivityViewModel.getSearchUserResourceResponse.value = Resource.Done()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
+                    mActivityViewModel.getSearchUserResourceResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java-> dialog.dismiss()
+            }
+        })
+
+        // listener for all job list
+        mActivityViewModel.getJobListResourceResponse.observe(this, { t ->
+            when (t.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    val aList = arrayListOf("Any")
+                    t.data!!.forEach {
+                        aList.add(it.name)
+                        // fill jobList Id array defined above
+                        jobIdList.add(it.id)
+                    }
+                    binding.spJobQuery.adapter = ArrayAdapter(this, R.layout.spinner_item, aList)
+                    mActivityViewModel.getJobListResourceResponse.value = Resource.Done()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
+                    mActivityViewModel.getJobListResourceResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java-> dialog.dismiss()
+            }
+        })
+
+    }
+
+    private fun initListeners() {
+        // pagination listener define
+        paginationListener = object: PaginationListener(toolbarLayoutManager, toolbarPageSize){
             override fun loadMoreItems() {
-                if(maxPageNumberNotification-1 > currentPage || maxPageNumberSearch-1 > currentPage){
+                if(maxPageNumberToolbarElements-1 > currentPage){
                     currentPage++
                     when(binding.rgSearchAmong.visibility){
                         View.GONE->{
                             when(binding.notificationRg.checkedRadioButtonId){
                                 R.id.personal_ntf_rb->{
-                                    mActivityViewModel.getFollowRequests(userId!!, token!!,currentPage, PAGE_SIZE)
+                                    mActivityViewModel.getFollowRequests(currUserId,
+                                        currUserToken,currentPage, PAGE_SIZE)
                                 }
                                 R.id.general_ntf_rb->{
-                                    mActivityViewModel.getNotifications(token!!,currentPage, PAGE_SIZE)
+                                    mActivityViewModel.getNotifications(currUserToken,currentPage, PAGE_SIZE)
                                 }
                             }
                         }
                         View.VISIBLE->{
                             when(binding.rgSearchAmong.checkedRadioButtonId){
                                 R.id.rb_searchUser->{
-                                    var jobQuery: Int? = null
-                                    val pos = binding.spJobQuery.selectedItemPosition
-                                    if (pos != 0) {
-                                        jobQuery = jobIdList?.get(pos)
-                                    }
-                                    mActivityViewModel.searchUser(token!!, search.query.toString().trim(), jobQuery, currentPage, PAGE_SIZE)
+                                    mActivityViewModel.searchUser(
+                                        currUserToken,
+                                        search.query.toString().trim(),
+                                        if (jobIdList[binding.spJobQuery.selectedItemPosition] == -1) null else jobIdList[binding.spJobQuery.selectedItemPosition],
+                                        currentPage,
+                                        PAGE_SIZE)
                                 }
                                 R.id.rb_searchUpcoming->{
                                 }
                                 R.id.rb_searchWorkspace->{
+                                    mActivityViewModel.searchWorkspace(
+                                        currUserToken,
+                                        search.query.toString().trim(),
+                                        null,null,
+                                        currentPage,
+                                        PAGE_SIZE)
+                                }
                                 }
                             }
                         }
                     }
                 }
-            }
             override var isLastPage: Boolean = false
             override var isLoading: Boolean = false
             override var currentPage: Int = 0
@@ -210,9 +360,6 @@ class HomeActivity : BaseActivity(),
      * Triggered when search button clicked
      */
     private fun onSearchBarClicked() {
-        // keeper for searchHistory
-        var searchHistory: List<SearchHistoryElement>? = null
-
         // when clicked on search button
         when(binding.rgSearchAmong.visibility){
             // if visible destroy the toolbar, and remove observers
@@ -224,100 +371,37 @@ class HomeActivity : BaseActivity(),
                 // destroy toolbar, but do not collapse search view
                 destroyToolbar(false)
 
-                //listener for search radio group
-                binding.rgSearchAmong.setOnCheckedChangeListener { _, id ->
-                    when (id) {
-                        R.id.rb_searchUser -> {
-                            paginationListener.currentPage = 0
-                            binding.layJobQuery.visibility = View.VISIBLE
-                            mActivityViewModel.fetchSearchHistory(token!!, 0)
-                            mActivityViewModel.getAllJobs()
-                        }
-                        R.id.rb_searchWorkspace -> {
-                            paginationListener.currentPage = 0
-                            binding.layJobQuery.visibility = View.GONE
-                            mActivityViewModel.fetchSearchHistory(token!!, 1)
-                        }
-                        R.id.rb_searchUpcoming -> {
-                            paginationListener.currentPage = 0
-                            binding.layJobQuery.visibility = View.GONE
-                            mActivityViewModel.fetchSearchHistory(token!!, 2)
-                        }
-                    }
-                }
-
                 // make radio group visible
                 binding.rgSearchAmong.visibility = View.VISIBLE
                 binding.toolbarRecyclerview.visibility = View.VISIBLE
-                //observer for search history
-                mActivityViewModel.getSearchHistoryResourceResponse.observe(this, { t ->
-                    when (t.javaClass) {
-                        Resource.Loading::class.java -> dialog.show()
-                        Resource.Success::class.java -> {
-                            searchHistory = t.data!!.search_history
-                            val historyCursor = MatrixCursor(arrayOf("_id", "query"))
-                            searchHistory!!.forEachIndexed { i, e ->
-                                historyCursor.addRow(arrayOf(i, e.query))
-                            }
-                            // set adapter's cursor with retrieved suggestion items
-                            search.suggestionsAdapter.changeCursor(historyCursor)
 
-                            dialog.dismiss()
+                //listener for search radio group
+                binding.rgSearchAmong.setOnCheckedChangeListener { _, id ->
+                    paginationListener.currentPage = 0
+                    if(binding.toolbarRecyclerview.adapter != null){
+                        (binding.toolbarRecyclerview.adapter as ToolbarElementsAdapter).clearElements()
+                    }
+                    when (id) {
+                        R.id.rb_searchUser -> {
+                            binding.layWorkspaceFilter.visibility = View.GONE
+                            binding.layJobQuery.visibility = View.VISIBLE
+                            mActivityViewModel.fetchSearchHistory(currUserToken, 0)
+                            mActivityViewModel.getAllJobs()
                         }
-                        Resource.Error::class.java -> {
-                            Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
-                            dialog.dismiss()
+                        R.id.rb_searchWorkspace -> {
+                            binding.layWorkspaceFilter.visibility = View.VISIBLE
+                            binding.layJobQuery.visibility = View.GONE
+                            mActivityViewModel.fetchSearchHistory(currUserToken, 1)
+                        }
+                        R.id.rb_searchUpcoming -> {
+                            binding.layWorkspaceFilter.visibility = View.GONE
+                            binding.layJobQuery.visibility = View.GONE
+                            mActivityViewModel.fetchSearchHistory(currUserToken, 2)
                         }
                     }
-                })
-
-                // listener for search user results
-                mActivityViewModel.getSearchUserResourceResponse.observe(this, { t ->
-                    when (t.javaClass) {
-                        Resource.Loading::class.java -> dialog.show()
-                        Resource.Success::class.java -> {
-                            // define new adapter
-                            maxPageNumberSearch = t.data!!.number_of_pages
-                            if(binding.toolbarRecyclerview.adapter?.javaClass == SearchElementsAdapter::class.java){
-                                (binding.toolbarRecyclerview.adapter as SearchElementsAdapter).submitElements(t.data!!.result_list)
-                            }else{
-                                binding.toolbarRecyclerview.adapter = SearchElementsAdapter(t.data!!.result_list as ArrayList<SearchElement>, this, this)
-                            }
-                            dialog.dismiss()
-                        }
-                        Resource.Error::class.java -> {
-                            Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
-                            dialog.dismiss()
-                        }
-                    }
-                })
-
-                // listener for all job list
-                mActivityViewModel.getJobListResourceResponse.observe(this, { t ->
-                    when (t.javaClass) {
-                        Resource.Loading::class.java -> dialog.show()
-                        Resource.Success::class.java -> {
-                            val aList = arrayListOf("Any")
-                            jobIdList = arrayListOf(-1)
-                            t.data!!.forEach {
-                                aList.add(it.name)
-                                // fill joblistId array defined above
-                                jobIdList!!.add(it.id)
-                            }
-                            binding.spJobQuery.adapter = ArrayAdapter(this, R.layout.spinner_item, aList)
-
-                            dialog.dismiss()
-                        }
-                        Resource.Error::class.java -> {
-                            Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
-                            dialog.dismiss()
-                        }
-                    }
-                })
-
+                }
             }
         }
-
 
         search.setOnSuggestionListener(object : SearchView.OnSuggestionListener {
             override fun onSuggestionSelect(position: Int): Boolean {
@@ -325,8 +409,7 @@ class HomeActivity : BaseActivity(),
             }
 
             override fun onSuggestionClick(position: Int): Boolean {
-
-                search.setQuery(searchHistory?.get(position)!!.query, false)
+                search.setQuery(searchHistory[position].query, false)
                 return true
             }
 
@@ -338,21 +421,26 @@ class HomeActivity : BaseActivity(),
             }
 
             override fun onQueryTextSubmit(query: String): Boolean {
+                search.clearFocus()
+                paginationListener.currentPage = 0
+                if(binding.toolbarRecyclerview.adapter != null){
+                    (binding.toolbarRecyclerview.adapter as ToolbarElementsAdapter).clearElements()
+                }
+
                 when (binding.rgSearchAmong.checkedRadioButtonId) {
                     R.id.rb_searchUser -> {
-                        var jobQuery: Int? = null
-                        val pos = binding.spJobQuery.selectedItemPosition
-                        if (pos != 0) {
-                            jobQuery = jobIdList?.get(pos)
-                        }
-                        search.clearFocus()
-                        paginationListener.currentPage = 0
-                        if(binding.toolbarRecyclerview.adapter != null){
-                            (binding.toolbarRecyclerview.adapter as ToolbarElementsAdapter).clearElements()
-                        }
-                        mActivityViewModel.searchUser(token!!, query, jobQuery, 0, searchPageSize)
+                        mActivityViewModel.searchUser(
+                            currUserToken, query,
+                            if (jobIdList[binding.spJobQuery.selectedItemPosition] == -1) null else jobIdList[binding.spJobQuery.selectedItemPosition],
+                            0, toolbarPageSize)
                     }
                     R.id.rb_searchWorkspace -> {
+                        mActivityViewModel.searchWorkspace(
+                            currUserToken,
+                            search.query.toString().trim(),
+                            binding.etFilterSkill.text.toString().trim(),binding.etFilterSkill.text.toString().trim(),
+                            0,
+                            toolbarPageSize)
                     }
                     R.id.rb_searchUpcoming -> {
                     }
@@ -373,81 +461,23 @@ class HomeActivity : BaseActivity(),
                 destroyToolbar()
 
                 //listener for notification radio group
-                binding.notificationRg.setOnCheckedChangeListener { d, id ->
+                binding.notificationRg.setOnCheckedChangeListener { _, id ->
+                    paginationListener.currentPage = 0
+                    if(binding.toolbarRecyclerview.adapter != null){
+                        (binding.toolbarRecyclerview.adapter as ToolbarElementsAdapter).clearElements()
+                    }
                     when (id) {
                         R.id.general_ntf_rb -> {
-                            paginationListener.currentPage = 0
-                            mActivityViewModel.getNotifications(token!!, 0, searchPageSize)
+                            mActivityViewModel.getNotifications(currUserToken, 0, toolbarPageSize)
                         }
                         R.id.personal_ntf_rb ->{
-                            paginationListener.currentPage = 0
-                            mActivityViewModel.getFollowRequests(userId!!, token!!, 0, searchPageSize)
+                            mActivityViewModel.getFollowRequests(currUserId, currUserToken, 0, toolbarPageSize)
                         }
                     }
                 }
 
                 binding.notificationRg.visibility = View.VISIBLE
                 binding.toolbarRecyclerview.visibility = View.VISIBLE
-
-                mActivityViewModel.getUserNotificationsResourceResponse.observe(this, Observer { t ->
-                    when (t.javaClass) {
-                        Resource.Success::class.java -> {
-                            maxPageNumberNotification = t.data!!.number_of_pages
-                            if(binding.toolbarRecyclerview.adapter?.javaClass == NotificationElementsAdapter::class.java){
-                                (binding.toolbarRecyclerview.adapter as NotificationElementsAdapter).submitElements(t.data!!.notification_list)
-                            }else{
-                                binding.toolbarRecyclerview.adapter = NotificationElementsAdapter(t.data!!.notification_list as ArrayList<Notification>, this, this)
-                            }
-                            dialog.dismiss()
-                        }
-                        Resource.Loading::class.java -> dialog.show()
-                        Resource.Error::class.java -> {
-                            destroyToolbar()
-                            Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
-                            dialog.dismiss()
-                        }
-                    }
-                })
-
-                mActivityViewModel.getUserFollowRequestsResourceResponse.observe(this, Observer { t ->
-                    when (t.javaClass) {
-                        Resource.Success::class.java -> {
-                            maxPageNumberNotification = t.data!!.number_of_pages
-                            if(binding.toolbarRecyclerview.javaClass == FollowRequestElementsAdapter::class.java){
-                                (binding.toolbarRecyclerview.adapter as FollowRequestElementsAdapter).submitElements(t.data!!.follow_requests)
-                            }else{
-                                binding.toolbarRecyclerview.adapter = FollowRequestElementsAdapter(t.data!!.follow_requests as ArrayList<FollowRequest>, this, this)
-                            }
-
-                            binding.toolbarRecyclerview.adapter = FollowRequestElementsAdapter(t.data!!.follow_requests as ArrayList<FollowRequest>, this, this)
-                            dialog.dismiss()
-                        }
-                        Resource.Loading::class.java -> dialog.show()
-                        Resource.Error::class.java -> {
-                            destroyToolbar()
-                            Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
-                            dialog.dismiss()
-                        }
-                    }
-                })
-
-                mActivityViewModel.acceptRequestResourceResponse.observe(this, Observer { i ->
-                    when (i.javaClass) {
-                        Resource.Success::class.java -> {
-                            if (this.handledFollowRequestPosition != -1) {
-                                (binding.toolbarRecyclerview.adapter as ToolbarElementsAdapter)
-                                        .removeElement(this.handledFollowRequestPosition)
-                                this.handledFollowRequestPosition = -1
-                            }
-                            dialog.dismiss()
-                        }
-                        Resource.Loading::class.java -> dialog.show()
-                        Resource.Error::class.java -> {
-                            Toast.makeText(this, i.message, Toast.LENGTH_SHORT).show()
-                            dialog.dismiss()
-                        }
-                    }
-                })
             }
         }
     }
@@ -475,8 +505,8 @@ class HomeActivity : BaseActivity(),
 
     private fun onAddWorkspaceClicked(){
         val bnd = Bundle()
-        bnd.putString("token", token!!)
-        bnd.putInt("user_id", userId!!)
+        bnd.putString("token", currUserToken)
+        bnd.putInt("user_id", currUserId)
         bnd.putBoolean("add", true)
         bnd.putInt("workspace_id", -1)
         startActivity(Intent(this, WorkspaceActivity::class.java).putExtras(bnd))
@@ -491,7 +521,7 @@ class HomeActivity : BaseActivity(),
         when(navController.currentDestination?.id){
             R.id.followFragment -> binding.bottomNavBar.selectedItemId = R.id.profilePageFragment
             R.id.homeFragment -> {
-                val exitDialog = AlertDialog.Builder(this)
+                AlertDialog.Builder(this)
                         .setMessage("Do you want to exit?")
                         .setPositiveButton("EXIT") { _, _ ->
                             finish()
@@ -511,14 +541,14 @@ class HomeActivity : BaseActivity(),
     override fun onSearchButtonClicked(element: SearchElement, position: Int) {
         when(binding.bottomNavBar.selectedItemId) {
             R.id.workspaceListFragment -> {
-                if (element.id != userId) {
+                if (element.id != currUserId) {
                     navController.navigate(WorkspaceListFragmentDirections.actionWorkspaceListFragmentToOtherProfileFragment(element.id))
                 } else {
                     binding.bottomNavBar.selectedItemId = R.id.profilePageFragment
                 }
             }
             R.id.homeFragment -> {
-                if (element.id != userId) {
+                if (element.id != currUserId) {
                     navController.navigate(HomeFragmentDirections.actionHomeFragmentToOtherProfileFragment(element.id))
                 } else {
                     binding.bottomNavBar.selectedItemId = R.id.profilePageFragment
@@ -534,14 +564,14 @@ class HomeActivity : BaseActivity(),
     override fun onFollowRequestNameClicked(request: FollowRequest, position: Int) {
         when(binding.bottomNavBar.selectedItemId) {
             R.id.workspaceListFragment -> {
-                if (request.id != userId) {
+                if (request.id != currUserId) {
                     navController.navigate(WorkspaceListFragmentDirections.actionWorkspaceListFragmentToOtherProfileFragment(request.id))
                 } else {
                     binding.bottomNavBar.selectedItemId = R.id.profilePageFragment
                 }
             }
             R.id.homeFragment -> {
-                if (request.id != userId) {
+                if (request.id != currUserId) {
                     navController.navigate(HomeFragmentDirections.actionHomeFragmentToOtherProfileFragment(request.id))
                 } else {
                     binding.bottomNavBar.selectedItemId = R.id.profilePageFragment
@@ -552,12 +582,12 @@ class HomeActivity : BaseActivity(),
     }
 
     override fun onFollowRequestAcceptClicked(request: FollowRequest, position: Int) {
-        mActivityViewModel.acceptFollowRequest(request.id, userId!!, token!!)
+        mActivityViewModel.acceptFollowRequest(request.id, currUserId, currUserToken)
         this.handledFollowRequestPosition = position
     }
 
     override fun onFollowRequestRejectClicked(request: FollowRequest, position: Int) {
-        mActivityViewModel.deleteFollowRequest(request.id, userId!!, token!!)
+        mActivityViewModel.deleteFollowRequest(request.id, currUserId, currUserToken)
         this.handledFollowRequestPosition = position
     }
 

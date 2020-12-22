@@ -51,11 +51,17 @@ class SearchElementsAdapter(private val data: ArrayList<SearchElement>, private 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        Log.i("Photo", data[position].profile_photo)
-        Glide.with(context).load(Definitions.API_URL + "api" + data[position].profile_photo)
-            .placeholder(R.drawable.ic_o_logo)
-            .circleCrop().diskCacheStrategy(DiskCacheStrategy.NONE).into(holder.binding.iwSearchImage)
-        holder.binding.tvSearchElement.text = data[position].name + " " + data[position].surname
+
+
+        if(data[position].name != null){
+            Glide.with(context).load(Definitions.API_URL + "api" + data[position].profile_photo)
+                .placeholder(R.drawable.ic_o_logo)
+                .circleCrop().diskCacheStrategy(DiskCacheStrategy.NONE).into(holder.binding.iwSearchImage)
+            holder.binding.tvSearchElement.text = data[position].name + " " + data[position].surname
+        }else{
+            holder.binding.tvSearchElement.text = data[position].title
+        }
+
         holder.bindData(data[position], position,searchButtonClickListener)
     }
 

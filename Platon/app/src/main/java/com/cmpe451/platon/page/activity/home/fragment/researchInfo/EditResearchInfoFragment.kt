@@ -8,7 +8,6 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -116,7 +115,7 @@ class EditResearchInfoFragment : Fragment() {
                             mResearchInfoViewModel.editResearchInfo(mProfilePageViewModel.currentResearch.value?.id!!,
                                     binding.projectNameTv.text.toString(), description,
                                     binding.projectYearTv.text.toString().toInt(),
-                                    (activity as HomeActivity).token!!
+                                    (activity as HomeActivity).currUserToken!!
                             )
                             dialog.show()
                         }
@@ -129,7 +128,7 @@ class EditResearchInfoFragment : Fragment() {
         binding.buttonDelete.setOnClickListener{
             if(mProfilePageViewModel.currentResearch.value != null){
                 mResearchInfoViewModel.deleteResearchInfo(mProfilePageViewModel.currentResearch.value?.id!!,
-                        (activity as HomeActivity).token!!)
+                        (activity as HomeActivity).currUserToken!!)
                 dialog.show()
             }
         }

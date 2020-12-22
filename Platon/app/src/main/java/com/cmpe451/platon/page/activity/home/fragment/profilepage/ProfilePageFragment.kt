@@ -36,7 +36,6 @@ import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.activity.home.HomeActivityViewModel
 import com.cmpe451.platon.util.Definitions
-import com.google.android.play.core.splitinstall.c
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -92,8 +91,8 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                 if (maxPageNumberResearch - 1 > currentPage) {
                     currentPage++
                     mProfilePageViewModel.fetchResearch(
-                        (activity as HomeActivity).token,
-                        (activity as HomeActivity).userId,
+                        (activity as HomeActivity).currUserToken,
+                        (activity as HomeActivity).currUserId,
                         currentPage,
                         5
                     )
@@ -134,14 +133,14 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
 
 
                     mProfilePageViewModel.fetchResearch(
-                        (activity as HomeActivity).token,
+                        (activity as HomeActivity).currUserToken,
                         user.id,
                         0,
                         5
                     )
                     mProfilePageViewModel.getUserSkills(
-                        (activity as HomeActivity).userId!!,
-                        (activity as HomeActivity).token!!
+                        (activity as HomeActivity).currUserId!!,
+                        (activity as HomeActivity).currUserToken!!
                     )
 
                     binding.ratingBar.rating = user.rate.toFloat()
@@ -275,7 +274,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                     .addFormDataPart("profile_photo", file.name, fBody)
                     .build()
 
-                mProfilePageViewModel.uploadPhoto(body, (activity as HomeActivity).token!!)
+                mProfilePageViewModel.uploadPhoto(body, (activity as HomeActivity).currUserToken!!)
             }else{
                 Toast.makeText(
                     requireContext(),
@@ -342,7 +341,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                                 if (!tmpBinding.etNewSkill.text.isNullOrEmpty()) {
                                     mProfilePageViewModel.addSkillToUser(
                                         tmpBinding.etNewSkill.text.toString().trim(),
-                                        (activity as HomeActivity).token!!
+                                        (activity as HomeActivity).currUserToken!!
                                     )
                                 }
                             }
@@ -359,12 +358,12 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                             if (isChecked) {
                                 mProfilePageViewModel.addSkillToUser(
                                     t.data!![which],
-                                    (activity as HomeActivity).token!!
+                                    (activity as HomeActivity).currUserToken!!
                                 )
                             } else {
                                 mProfilePageViewModel.deleteSkillFromUser(
                                     t.data!![which],
-                                    (activity as HomeActivity).token!!
+                                    (activity as HomeActivity).currUserToken!!
                                 )
                             }
                         }
@@ -388,8 +387,8 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java -> {
                     mProfilePageViewModel.getUserSkills(
-                        (activity as HomeActivity).userId!!,
-                        (activity as HomeActivity).token!!
+                        (activity as HomeActivity).currUserId!!,
+                        (activity as HomeActivity).currUserToken!!
                     )
                     dialog.dismiss()
                 }

@@ -81,7 +81,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                 if (maxPageNumberResearch - 1 > currentPage) {
                     currentPage++
                     mOtherProfileViewModel.fetchResearch(
-                            (activity as HomeActivity).token!!,
+                            (activity as HomeActivity).currUserToken!!,
                             userId!!,
                             currentPage,
                             5
@@ -215,7 +215,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
             binding.tvInstitution.text = user?.institution ?: "Institution not specified!"
             binding.tvJob.text = user?.job
 
-            mOtherProfileViewModel.fetchResearch((activity as HomeActivity).token!!, user!!.id!!,0,5)
+            mOtherProfileViewModel.fetchResearch((activity as HomeActivity).currUserToken!!, user!!.id!!,0,5)
         }
         if(status == USERSTATUS.REQUESTED){
             binding.buttonFollow.text = "REQUESTED"
@@ -237,7 +237,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                 binding.tvEmail.text = user?.e_mail
                 binding.tvInstitution.text = user?.institution ?: "Institution not specified!"
                 binding.tvJob.text = user?.job
-                mOtherProfileViewModel.fetchResearch((activity as HomeActivity).token!!, user!!.id!!, 0, 5)
+                mOtherProfileViewModel.fetchResearch((activity as HomeActivity).currUserToken!!, user!!.id!!, 0, 5)
             }
 
         }
@@ -263,7 +263,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                 )
             }
             binding.buttonFollow.setOnClickListener {
-                mOtherProfileViewModel.unfollow(mOtherProfileViewModel.getUserResource.value!!.data?.id!!, (activity as HomeActivity).token!!)
+                mOtherProfileViewModel.unfollow(mOtherProfileViewModel.getUserResource.value!!.data?.id!!, (activity as HomeActivity).currUserToken!!)
             }
 
         }
@@ -281,7 +281,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
         }
         if(status == USERSTATUS.NOT_FOLLOWING){
             binding.buttonFollow.setOnClickListener {
-                mOtherProfileViewModel.follow((activity as HomeActivity).userId!!, user?.id!!, (activity as HomeActivity).token!!)
+                mOtherProfileViewModel.follow((activity as HomeActivity).currUserId!!, user?.id!!, (activity as HomeActivity).currUserToken!!)
             }
             if(isUserPrivate){
                 binding.buttonFollowers.setOnClickListener {
@@ -316,9 +316,9 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
 
     private fun fetchUser() {
         userId = args.userId
-        if(userId != null && (activity as HomeActivity).token != null){
-            mOtherProfileViewModel.getUser(userId!!, (activity as HomeActivity).token!!)
-            mOtherProfileViewModel.getUserSkills(userId!!, (activity as HomeActivity).token!!)
+        if(userId != null && (activity as HomeActivity).currUserToken != null){
+            mOtherProfileViewModel.getUser(userId!!, (activity as HomeActivity).currUserToken!!)
+            mOtherProfileViewModel.getUserSkills(userId!!, (activity as HomeActivity).currUserToken!!)
         }
     }
 

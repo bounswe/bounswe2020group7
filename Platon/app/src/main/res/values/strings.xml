@@ -116,4 +116,6 @@
     <string name="state_finished_str">Finished</string>
     <string name="is_private_str">Is Private</string>
     <string name="requirement_str">Requirement</string>
+    <string name="filter_by_skill_str">Filter by Skill</string>
+    <string name="filter_by_event_str">Filter by Event</string>
 </resources>

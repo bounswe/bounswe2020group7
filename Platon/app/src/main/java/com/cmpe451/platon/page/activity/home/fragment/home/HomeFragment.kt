@@ -6,14 +6,11 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.LayoutAnimationController
 import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.ActivityStreamAdapter
 import com.cmpe451.platon.adapter.TrendingProjectsAdapter
@@ -30,7 +27,6 @@ import com.cmpe451.platon.network.models.TrendingProject
 import com.cmpe451.platon.network.models.UpcomingEvent
 import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.util.Definitions
-import java.lang.Error
 
 class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonClickListener, UpcomingEventsAdapter.UpcomingButtonClickListener, ActivityStreamAdapter.ActivityStreamButtonClickListener {
 
@@ -60,7 +56,7 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
         setListeners()
 
         setObservers()
-        mHomeViewModel.getActivities((activity as HomeActivity).token!!, 0, 5)
+        mHomeViewModel.getActivities((activity as HomeActivity).currUserToken!!, 0, 5)
         mHomeViewModel.getTrendingProjects(10)
         mHomeViewModel.getUpcomingEvents(0, 5)
 

@@ -7,7 +7,6 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -81,7 +80,7 @@ class AddResearchInfoFragment : Fragment() {
                         }
                         mReseachInfoViewModel.addResearchInfo(binding.projectNameTv.text.toString(), description,
                             binding.projectYearTv.text.toString().toInt(),
-                            (activity as HomeActivity).token!!
+                            (activity as HomeActivity).currUserToken!!
                         )
                     }
                 }

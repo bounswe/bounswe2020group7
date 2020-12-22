@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -21,7 +20,6 @@ import com.cmpe451.platon.databinding.FragmentEditProfileBinding
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.activity.home.HomeActivityViewModel
-import com.cmpe451.platon.page.activity.login.fragment.register.RegisterViewModel
 import com.cmpe451.platon.util.Definitions
 
 class EditProfileFragment : Fragment() {
@@ -58,7 +56,7 @@ class EditProfileFragment : Fragment() {
             val institution = if (binding.etInstitution.text.isEmpty()) "" else binding.etInstitution.text.toString().trim()
 
             mEditProfileViewModel.editProfile(binding.firstnameTv,
-                    binding.lastnameTv, jobStr ,institution, binding.privateSwitch.isChecked, binding.googleScholarTv, binding.researchGateTv, (activity as HomeActivity).token)
+                    binding.lastnameTv, jobStr ,institution, binding.privateSwitch.isChecked, binding.googleScholarTv, binding.researchGateTv, (activity as HomeActivity).currUserToken)
         }
 
         binding.spJob.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
@@ -82,7 +80,7 @@ class EditProfileFragment : Fragment() {
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java ->{
                     Toast.makeText(activity, "Account information has been successfully updated!", Toast.LENGTH_SHORT).show()
-                    mActivityViewModel.fetchUser((activity as HomeActivity).token)
+                    mActivityViewModel.fetchUser((activity as HomeActivity).currUserToken)
                     findNavController().navigateUp()
                     dialog.dismiss()
                 }

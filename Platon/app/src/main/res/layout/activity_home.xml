@@ -67,14 +67,46 @@
             android:textColor="@color/primary_light"
             android:text="@string/filter_by_job_str"
             />
-    <Spinner
-        android:layout_marginStart="@dimen/medium"
-        android:id="@+id/sp_jobQuery"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColorHint="@color/primary_light"
-        android:textColor="@color/primary_light" />
+        <Spinner
+            android:layout_marginStart="@dimen/medium"
+            android:id="@+id/sp_jobQuery"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColorHint="@color/primary_light"
+            android:textColor="@color/primary_light" />
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:padding="@dimen/large"
+        android:id="@+id/lay_workspaceFilter"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:background="@color/primary_dark_darker"
+        android:orientation="horizontal">
+
+        <EditText
+            android:layout_weight="1"
+            android:id="@+id/et_filterSkill"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/title_text_size_smaller"
+            android:textColor="@color/primary_light"
+            android:textColorHint="@color/primary_light"
+            android:hint="@string/filter_by_skill_str" />
+
+        <EditText
+            android:layout_weight="1"
+            android:id="@+id/et_filterEvent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/title_text_size_smaller"
+            android:textColor="@color/primary_light"
+            android:textColorHint="@color/primary_light"
+            android:hint="@string/filter_by_event_str"
+            />
+    </LinearLayout>
+
 
     <RadioGroup
         android:id="@+id/notification_rg"
