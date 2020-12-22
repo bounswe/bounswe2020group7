@@ -14,8 +14,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_delete_outline_white_24dp" />
-                            <entry key="sourceFile" value="$USER_HOME$/Downloads/delete_outline-white-24dp.svg" />
+                            <entry key="outputName" value="ic_north_24px" />
+                            <entry key="sourceFile" value="$USER_HOME$/Downloads/north-24px.svg" />
                           </map>
                         </option>
                       </PersistentState>
