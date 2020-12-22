@@ -51,10 +51,6 @@ class AddWorkspaceFragment: Fragment() {
         setListeners()
         mAddWorkspaceViewModel.getAllSkills()
         setObservers()
-
-
-
-
     }
 
     private fun setObservers() {

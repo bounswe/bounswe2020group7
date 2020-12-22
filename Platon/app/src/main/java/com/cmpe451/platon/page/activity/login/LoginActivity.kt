@@ -230,6 +230,10 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                             jobQuery = jobIdList?.get(pos)
                         }
                         search.clearFocus()
+                        paginationListener.currentPage = 0
+                        if(binding.toolbarRecyclerview.adapter != null){
+                            (binding.toolbarRecyclerview.adapter as ToolbarElementsAdapter).clearElements()
+                        }
                         mActivityViewModel.searchUser(null, query, jobQuery,0, searchPageSize)
                     }
                     R.id.rb_searchWorkspace ->{}

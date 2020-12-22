@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.CollaboratorAdapter
 import com.cmpe451.platon.adapter.FollowerFollowingAdapter
@@ -137,12 +138,12 @@ class WorkspaceFragment : Fragment(){
                     dialog.dismiss()
                     Toast.makeText(requireContext(), "Successfully updated", Toast.LENGTH_LONG).show()
                     mWorkspaceViewModel.fetchWorkspace((activity as WorkspaceActivity).workspace_id!!, (activity as WorkspaceActivity).token!!)
+                    mWorkspaceViewModel.getUpdateResourceResponse.value = Resource.Done()
                 }
                 Resource.Error::class.java -> {
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
                     dialog.dismiss()
                 }
-
             }
         })
 
