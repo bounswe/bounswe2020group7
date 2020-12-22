@@ -59,6 +59,7 @@
             android:backgroundTint="@color/secondary_blue"
             android:hint="@string/max_collab_str"
             android:inputType="number"
+            android:maxLength="4"
             android:textColor="@color/primary_light"
             android:textColorHighlight="@color/secondary_blue"
             android:textColorHint="@color/secondary_blue"
@@ -70,6 +71,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:autofillHints=""
+
             android:ems="15"
             android:backgroundTint="@color/secondary_blue"
             android:hint="@string/deadline_str"
