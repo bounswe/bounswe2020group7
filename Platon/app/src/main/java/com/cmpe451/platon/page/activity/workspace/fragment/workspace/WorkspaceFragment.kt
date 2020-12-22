@@ -249,6 +249,8 @@ class WorkspaceFragment : Fragment(){
                             val skillsArrayString:String? = if(skillsArray.isNotEmpty()) skillsArray.map{e-> "\"$e\""}.toString() else "[]"
                             mWorkspaceViewModel.updateWorkspace((activity as WorkspaceActivity).workspace_id!!,null, null,
                                 null, null, null, null,skillsArrayString,null, (activity as WorkspaceActivity).token!!)
+//                            mWorkspaceViewModel.getUpdateResourceResponse.removeObservers(viewLifecycleOwner)
+                            mAddWorkspaceViewModel.allSkills.removeObservers(viewLifecycleOwner)
 
                         }
                         .setMultiChoiceItems(
@@ -263,7 +265,7 @@ class WorkspaceFragment : Fragment(){
                         }
                         .create().show()
                     dialog.dismiss()
-//                    mAddWorkspaceViewModel.allSkills.removeObservers(viewLifecycleOwner)
+                    mAddWorkspaceViewModel.allSkills.removeObservers(viewLifecycleOwner)
                 }
                 Resource.Error::class.java -> {
                     Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
