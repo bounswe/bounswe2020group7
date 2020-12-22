@@ -83,7 +83,7 @@ class Sider extends React.Component {
 
         <Menu.Item key="5">
           <Link to={`/${this.state.profileId}/workspace`}>
-            <span>My Projects</span>
+            <span>Workspaces</span>
           </Link>
         </Menu.Item>
 
