@@ -20,13 +20,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.cmpe451.platon.R
+import com.cmpe451.platon.adapter.CommentsAdapter
 import com.cmpe451.platon.adapter.OtherUserProjectsAdapter
 import com.cmpe451.platon.adapter.SkillsAdapter
+import com.cmpe451.platon.adapter.UserProjectsAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentProfilePageOthersBinding
 import com.cmpe451.platon.databinding.ResearchesCellBinding
 import com.cmpe451.platon.listener.PaginationListener
 import com.cmpe451.platon.network.Resource
+import com.cmpe451.platon.network.models.Comment
+import com.cmpe451.platon.network.models.OtherUser
 import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.util.Definitions
 import com.cmpe451.platon.util.Definitions.USERSTATUS
@@ -62,29 +66,32 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
 
     private fun initializeAdapters() {
         val height = resources.displayMetrics.heightPixels
-        val layoutManager = LinearLayoutManager(this.activity)
 
-        binding.rvProfilePageProjects.adapter = OtherUserProjectsAdapter(
-                ArrayList(),
-                requireContext(),
-                this
-        )
-        binding.rvProfilePageProjects.layoutManager = layoutManager
+        val layoutManagerComments = LinearLayoutManager(this.activity, LinearLayoutManager.HORIZONTAL, false)
+        binding.rvProfilePageComments.layoutManager = layoutManagerComments
+        binding.rvProfilePageComments.layoutParams =
+            LinearLayout.LayoutParams(binding.rvProfilePageComments.layoutParams.width, height / 3)
 
+
+        val layoutManagerProjects = LinearLayoutManager(this.activity)
+
+        binding.rvProfilePageProjects.adapter = OtherUserProjectsAdapter(ArrayList(), requireContext(), this)
+        binding.rvProfilePageProjects.layoutManager = layoutManagerProjects
 
         binding.rvProfilePageProjects.layoutParams =
-                LinearLayout.LayoutParams(binding.rvProfilePageProjects.layoutParams.width, height / 3)
+            LinearLayout.LayoutParams(binding.rvProfilePageProjects.layoutParams.width, height / 3)
+
 
         binding.rvProfilePageProjects.addOnScrollListener(object :
-                PaginationListener(layoutManager) {
+            PaginationListener(layoutManagerProjects) {
             override fun loadMoreItems() {
                 if (maxPageNumberResearch - 1 > currentPage) {
                     currentPage++
                     mOtherProfileViewModel.fetchResearch(
-                            (activity as HomeActivity).currUserToken!!,
-                            userId!!,
-                            currentPage,
-                            5
+                        (activity as HomeActivity).currUserToken,
+                        userId!!,
+                        currentPage,
+                        5
                     )
                 }
             }
@@ -215,7 +222,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
             binding.tvInstitution.text = user?.institution ?: "Institution not specified!"
             binding.tvJob.text = user?.job
 
-            mOtherProfileViewModel.fetchResearch((activity as HomeActivity).currUserToken!!, user!!.id!!,0,5)
+            mOtherProfileViewModel.fetchResearch((activity as HomeActivity).currUserToken, user!!.id!!,0,5)
         }
         if(status == USERSTATUS.REQUESTED){
             binding.buttonFollow.text = "REQUESTED"
@@ -237,7 +244,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                 binding.tvEmail.text = user?.e_mail
                 binding.tvInstitution.text = user?.institution ?: "Institution not specified!"
                 binding.tvJob.text = user?.job
-                mOtherProfileViewModel.fetchResearch((activity as HomeActivity).currUserToken!!, user!!.id!!, 0, 5)
+                mOtherProfileViewModel.fetchResearch((activity as HomeActivity).currUserToken, user!!.id!!, 0, 5)
             }
 
         }
@@ -247,6 +254,22 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
         val user = mOtherProfileViewModel.getUserResource.value!!.data
 
         if(status == USERSTATUS.FOLLOWING){
+
+            binding.tvCommentsTitle.setOnClickListener{
+                when(binding.layComments.visibility){
+                    View.GONE->{
+                        //getComments
+                        binding.rvProfilePageComments.adapter = CommentsAdapter(arrayListOf(Comment(0,"hehe", "haha", "today", 2.5)), requireContext())
+                        binding.layComments.visibility = View.VISIBLE
+                    }
+                    View.VISIBLE->{
+                        binding.layComments.visibility = View.GONE
+                    }
+                }
+
+            }
+
+
             binding.buttonFollowers.setOnClickListener {
                 findNavController().navigate(
                     OtherProfileFragmentDirections.actionOtherProfileFragmentToFollowFragment2(
@@ -263,7 +286,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                 )
             }
             binding.buttonFollow.setOnClickListener {
-                mOtherProfileViewModel.unfollow(mOtherProfileViewModel.getUserResource.value!!.data?.id!!, (activity as HomeActivity).currUserToken!!)
+                mOtherProfileViewModel.unfollow(mOtherProfileViewModel.getUserResource.value!!.data?.id!!, (activity as HomeActivity).currUserToken)
             }
 
         }
@@ -281,7 +304,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
         }
         if(status == USERSTATUS.NOT_FOLLOWING){
             binding.buttonFollow.setOnClickListener {
-                mOtherProfileViewModel.follow((activity as HomeActivity).currUserId!!, user?.id!!, (activity as HomeActivity).currUserToken!!)
+                mOtherProfileViewModel.follow((activity as HomeActivity).currUserId, user?.id!!, (activity as HomeActivity).currUserToken)
             }
             if(isUserPrivate){
                 binding.buttonFollowers.setOnClickListener {
@@ -316,9 +339,9 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
 
     private fun fetchUser() {
         userId = args.userId
-        if(userId != null && (activity as HomeActivity).currUserToken != null){
-            mOtherProfileViewModel.getUser(userId!!, (activity as HomeActivity).currUserToken!!)
-            mOtherProfileViewModel.getUserSkills(userId!!, (activity as HomeActivity).currUserToken!!)
+        if(userId != null){
+            mOtherProfileViewModel.getUser(userId!!, (activity as HomeActivity).currUserToken)
+            mOtherProfileViewModel.getUserSkills(userId!!, (activity as HomeActivity).currUserToken)
         }
     }
 

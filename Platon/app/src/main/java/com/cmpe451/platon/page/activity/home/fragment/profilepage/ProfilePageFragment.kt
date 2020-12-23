@@ -31,12 +31,14 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.signature.MediaStoreSignature
 import com.cmpe451.platon.R
+import com.cmpe451.platon.adapter.CommentsAdapter
 import com.cmpe451.platon.adapter.SkillsAdapter
 import com.cmpe451.platon.adapter.UserProjectsAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.*
 import com.cmpe451.platon.listener.PaginationListener
 import com.cmpe451.platon.network.Resource
+import com.cmpe451.platon.network.models.Comment
 import com.cmpe451.platon.network.models.Job
 import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.activity.home.HomeActivityViewModel
@@ -78,20 +80,23 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     private fun initializeAdapters() {
         val height = resources.displayMetrics.heightPixels
 
-        val layoutManager = LinearLayoutManager(this.activity)
+        val layoutManagerComments = LinearLayoutManager(this.activity, LinearLayoutManager.HORIZONTAL, false)
+        binding.rvProfilePageComments.layoutManager = layoutManagerComments
+        binding.rvProfilePageComments.layoutParams =
+            LinearLayout.LayoutParams(binding.rvProfilePageComments.layoutParams.width, height / 3)
 
-        binding.rvProfilePageProjects.adapter = UserProjectsAdapter(
-            ArrayList(),
-            requireContext(),
-            this
-        )
-        binding.rvProfilePageProjects.layoutManager = layoutManager
+
+        val layoutManagerProjects = LinearLayoutManager(this.activity)
+
+        binding.rvProfilePageProjects.adapter = UserProjectsAdapter(ArrayList(), requireContext(), this)
+        binding.rvProfilePageProjects.layoutManager = layoutManagerProjects
 
         binding.rvProfilePageProjects.layoutParams =
-                LinearLayout.LayoutParams(binding.rvProfilePageProjects.layoutParams.width, height / 3)
+            LinearLayout.LayoutParams(binding.rvProfilePageProjects.layoutParams.width, height / 3)
+
 
         binding.rvProfilePageProjects.addOnScrollListener(object :
-            PaginationListener(layoutManager) {
+            PaginationListener(layoutManagerProjects) {
             override fun loadMoreItems() {
                 if (maxPageNumberResearch - 1 > currentPage) {
                     currentPage++
@@ -294,7 +299,6 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
 
 
     private fun setButtonListeners() {
-        //Instead of onActivityResult() method use this one
         val someActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult())
         {
             if(it.resultCode == Activity.RESULT_OK && it.data != null && it.data!!.data != null) {
@@ -318,6 +322,21 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
 
             someActivityResultLauncher.launch(photoPickerIntent)
         }
+
+        binding.tvCommentsTitle.setOnClickListener{
+            when(binding.rvProfilePageComments.visibility){
+                View.GONE->{
+                    //getComments
+                    binding.rvProfilePageComments.adapter = CommentsAdapter(arrayListOf(Comment(0,"hehe", "haha", "today", 2.5)), requireContext())
+                    binding.rvProfilePageComments.visibility = View.VISIBLE
+                }
+                View.VISIBLE->{
+                    binding.rvProfilePageComments.visibility = View.GONE
+                }
+            }
+
+        }
+
 
         binding.buttonFollowers.setOnClickListener {
             findNavController().navigate(

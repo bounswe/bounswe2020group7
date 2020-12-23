@@ -122,4 +122,5 @@
     <string name="enter_url_str">Enter URL</string>
     <string name="link_str">Link</string>
     <string name="accept_link_str">I accept to share my information with Platon!</string>
+    <string name="comments_str">Comments</string>
 </resources>
