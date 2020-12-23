@@ -29,6 +29,7 @@ import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.*
 import com.cmpe451.platon.listener.PaginationListener
 import com.cmpe451.platon.network.Resource
+import com.cmpe451.platon.network.models.FollowPerson
 import com.cmpe451.platon.network.models.Issue
 import com.cmpe451.platon.network.models.Issues
 import com.cmpe451.platon.network.models.TrendingProject
@@ -41,6 +42,7 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
     private lateinit var dialog: AlertDialog
     private val mIssuesViewModel:IssuesViewModel by viewModels()
     private lateinit var sharedPreferences: SharedPreferences
+    lateinit var myArray: ArrayList<Issue>
 
     lateinit var binding: FragmentIssuesBinding
     private lateinit var adapter: IssuesAdapter
@@ -60,17 +62,13 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
-        setRecyclerView()
         setListeners()
         setObservers()
         mIssuesViewModel.getIssues((activity as WorkspaceActivity).workspace_id!!,0, maxPageNumberIssue,(activity as WorkspaceActivity).token!!)
 
     }
 
-    private fun setRecyclerView() {
-        issueRecyclerView = binding.issuesRecyclerView
-        adapter = IssuesAdapter(ArrayList(),requireContext(), this)
-    }
+
 
 
 
@@ -79,7 +77,8 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
             when(t.javaClass){
                 Resource.Success::class.java ->{
 
-                    val issue = t.data!!.result
+                    val issue = t.data!!.result as ArrayList<Issue>
+                    //adapter.addElement(0, issue[0])
                     adapter.submitElements(issue)
                     //var issueArray = issue
                     //TODO: add element
@@ -99,7 +98,11 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
         val height = resources.displayMetrics.heightPixels
         val width = resources.displayMetrics.widthPixels
 
+        issueRecyclerView = binding.issuesRecyclerView
         val layoutManagerIssues = LinearLayoutManager(this.activity)
+        issueRecyclerView.layoutManager = layoutManagerIssues
+        adapter = IssuesAdapter(ArrayList(),requireContext(), this)
+        issueRecyclerView.adapter = adapter
 
         //binding.issuesRecyclerView.layoutManager = layoutManagerIssues
         //binding.issuesRecyclerView.adapter = IssuesAdapter(ArrayList(),requireContext(), this)

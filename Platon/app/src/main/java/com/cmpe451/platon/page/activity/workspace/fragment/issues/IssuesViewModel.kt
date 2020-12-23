@@ -22,7 +22,9 @@ class IssuesViewModel: ViewModel(){
     }
 
     fun getIssues(workSpaceId: Int, page: Int, paginationSize: Int, authToken: String) {
-        repository.getIssues(workSpaceId, page, paginationSize, authToken)
+        if(authToken != null){
+            repository.getIssues(workSpaceId, page, paginationSize, authToken)
+        }
     }
 
 
