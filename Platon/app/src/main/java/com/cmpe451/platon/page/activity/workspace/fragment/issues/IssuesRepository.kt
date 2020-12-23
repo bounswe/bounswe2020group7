@@ -20,12 +20,13 @@ class IssuesRepository {
 
     fun getIssues(workSpaceId: Int, page: Int, paginationSize: Int, authToken: String) {
         val service = RetrofitClient.getService()
-        val call = service.getIssues(workSpaceId,page, paginationSize,authToken)
+        val call = service.getIssues(workSpaceId, page, paginationSize, authToken)
 
         issuesResponse.value = Resource.Loading()
         //nullable check
         call.enqueue(object : Callback<Issues?> {
             override fun onResponse(call: Call<Issues?>, response: Response<Issues?>) {
+                print("ert")
                 when {
                     response.isSuccessful -> issuesResponse.value = Resource.Success(response.body()!!)
                     response.errorBody() != null -> issuesResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())

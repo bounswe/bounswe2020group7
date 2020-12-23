@@ -4,6 +4,7 @@ package com.cmpe451.platon.page.activity.workspace.fragment.issues
 class IssuesFragment {
 }
 */
+
 package com.cmpe451.platon.page.activity.workspace.fragment.issues
 
 import com.cmpe451.platon.page.activity.login.fragment.landing.LandingFragmentDirections
@@ -21,6 +22,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.cmpe451.platon.adapter.FollowerFollowingAdapter
 import com.cmpe451.platon.adapter.IssuesAdapter
 import com.cmpe451.platon.adapter.TrendingProjectsAdapter
 import com.cmpe451.platon.core.BaseActivity
@@ -30,6 +32,7 @@ import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.Issue
 import com.cmpe451.platon.network.models.Issues
 import com.cmpe451.platon.network.models.TrendingProject
+import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.util.Definitions
 
 class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
@@ -40,6 +43,8 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
     private lateinit var sharedPreferences: SharedPreferences
 
     lateinit var binding: FragmentIssuesBinding
+    private lateinit var adapter: IssuesAdapter
+    private lateinit var issueRecyclerView: RecyclerView
 
     private var maxPageNumberIssue:Int=10
 
@@ -55,30 +60,29 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
+        setRecyclerView()
         setListeners()
         setObservers()
-        mIssuesViewModel.getIssues(1,1,1,"")
+        mIssuesViewModel.getIssues((activity as WorkspaceActivity).workspace_id!!,0, maxPageNumberIssue,(activity as WorkspaceActivity).token!!)
 
     }
 
-    private fun doAutoLogin():Boolean{
-        val mail = sharedPreferences.getString("mail", null)
-        val pass = sharedPreferences.getString("pass", null)
-        if(mail != null && pass != null){
-            findNavController().navigate(LandingFragmentDirections.actionLandingFragmentToLoginFragment())
-            return true
-        }
-        return false
+    private fun setRecyclerView() {
+        issueRecyclerView = binding.issuesRecyclerView
+        adapter = IssuesAdapter(ArrayList(),requireContext(), this)
     }
+
+
 
     private fun setObservers(){
         mIssuesViewModel.issuesResponse.observe(viewLifecycleOwner, { t->
             when(t.javaClass){
                 Resource.Success::class.java ->{
-                    val issue = t.data!!.issues as Issues
-                    var issueArray = issue.issues
-                    binding.issuesRecyclerView.adapter =
-                        IssuesAdapter(issueArray, requireContext(), this)
+
+                    val issue = t.data!!.result
+                    adapter.submitElements(issue)
+                    //var issueArray = issue
+                    //TODO: add element
 
                 }
                 Resource.Error::class.java ->{
@@ -95,17 +99,21 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
         val height = resources.displayMetrics.heightPixels
         val width = resources.displayMetrics.widthPixels
 
-        val layoutManagerIssues = LinearLayoutManager(context)
+        val layoutManagerIssues = LinearLayoutManager(this.activity)
 
-        binding.issuesRecyclerView.layoutManager = layoutManagerIssues
-        binding.issuesRecyclerView.adapter = IssuesAdapter(ArrayList(),requireContext(), this)
+        //binding.issuesRecyclerView.layoutManager = layoutManagerIssues
+        //binding.issuesRecyclerView.adapter = IssuesAdapter(ArrayList(),requireContext(), this)
+        /*
         binding.issuesRecyclerView.addOnScrollListener(object: PaginationListener(layoutManagerIssues){
             override fun loadMoreItems() {
+                /*
                 if(maxPageNumberIssue-1 > currentPage){
                     currentPage++
                     mIssuesViewModel.getIssues(1,1,1,"")
                     Toast.makeText(requireContext(), "Next page", Toast.LENGTH_LONG).show()
                 }
+
+                 */
             }
 
             override var isLastPage: Boolean = false
@@ -113,7 +121,9 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
             override var currentPage: Int = 0
         })
 
-        binding.issuesRecyclerView.layoutParams = LinearLayout.LayoutParams(width, (height/2))
+         */
+
+        //binding.issuesRecyclerView.layoutParams = LinearLayout.LayoutParams(width, (height/2))
 
 
     }

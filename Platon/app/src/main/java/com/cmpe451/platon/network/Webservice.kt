@@ -232,26 +232,26 @@ interface Webservice {
     fun deleteWorkspace(@Field("workspace_id") workspace_id: Int,
                         @Header("auth_token") token: String): Call<JsonObject?>
 
-    @GET("api/workspace/issue")
+    @GET("api/workspaces/issue")
     fun getIssues(@Query("workspace_id") workspaceId: Int,
                   @Query("page") page: Int,
                   @Query("per_page") perPage: Int,
-                  @Header("auth_token") authToken: String ) : Call<Issues?>
+                  @Header("auth_token") authToken: String ): Call<Issues?>
 
     @FormUrlEncoded
-    @POST("api/workspace/issue")
+    @POST("api/workspaces/issue")
     fun addIssue(@Field("workspace_id") workspaceId: Int,
                  @Field("title") title: String,
                  @Field("description") description: String,
                  @Field("deadline") deadline: String ,
-                 @Field("auth_token") authToken: String) : Call<JsonObject?>
+                 @Field("auth_token") authToken: String): Call<JsonObject?>
 
     @FormUrlEncoded
-    @PUT("api/workspace/issue")
+    @PUT("api/workspaces/issue")
     fun editIssue(@Field("workspace_id") workspaceId:String,
                   @Field("issue_id") issueId:String,
                   @Field("title") title:String?,
                   @Field("description") description:String?,
                   @Field("deadline") deadline:String?,
-                  @Header("auth_token") authToken:String?) : Call<JsonObject?>
+                  @Header("auth_token") authToken:String?): Call<JsonObject?>
 }

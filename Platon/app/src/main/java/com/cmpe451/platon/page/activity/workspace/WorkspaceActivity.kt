@@ -83,7 +83,8 @@ class WorkspaceActivity : BaseActivity() {
     }
 
     private fun onIssueClicked() {
-        Toast.makeText(applicationContext,"Issue clicked",Toast.LENGTH_SHORT).show()
+        //Toast.makeText(applicationContext,"Issue clicked",Toast.LENGTH_SHORT).show()
+        navController.navigate(WorkspaceFragmentDirections.actionWorkspaceFragmentToIssuesFragment())
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
