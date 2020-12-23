@@ -9,6 +9,8 @@ import com.google.gson.JsonObject
 
 class HomeActivityViewModel(application: Application):AndroidViewModel(application){
 
+    val repository = HomeActivityRepository()
+
     val getUserResourceResponse: MutableLiveData<Resource<User>>
     val getUserFollowRequestsResourceResponse: MutableLiveData<Resource<FollowRequests>>
     val getUserNotificationsResourceResponse: MutableLiveData<Resource<Notifications>>
@@ -20,7 +22,7 @@ class HomeActivityViewModel(application: Application):AndroidViewModel(applicati
 
     val getJobListResourceResponse: MutableLiveData<Resource<List<Job>>>
 
-    val repository = HomeActivityRepository()
+    val getUserDeleteNotificationResourceResponse:MutableLiveData<Resource<JsonObject>>
 
     init {
         getUserResourceResponse = repository.userResourceResponse
@@ -31,6 +33,11 @@ class HomeActivityViewModel(application: Application):AndroidViewModel(applicati
         getSearchUserResourceResponse = repository.searchUserResourceResponse
         getJobListResourceResponse = repository.jobListResourceResponse
         getSearchWorkspaceResourceResponse=repository.searchWorkspaceResourceResponse
+        getUserDeleteNotificationResourceResponse= repository.userNotificationDeleteResourceResponse
+    }
+
+    fun deleteNotification(id: Int, token:String){
+        repository.deleteNotification(id, token)
     }
 
     fun getAllJobs() {

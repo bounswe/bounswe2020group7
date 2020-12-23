@@ -1,18 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-    <androidx.constraintlayout.widget.ConstraintLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rl_followRequestCell"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/inner_frame_layout_padding"
+    android:padding="@dimen/xx_small"
     android:background="@drawable/search_element_cell_back">
 
+    <ImageView
+        android:layout_marginStart="@dimen/xx_large"
+        android:id="@+id/iv_profilePhoto"
+        android:layout_width="@dimen/medium_photo"
+        android:layout_height="@dimen/medium_photo"
+        android:src="@drawable/ic_o_logo"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
+        />
+
     <TextView
+        android:layout_toEndOf="@id/iv_profilePhoto"
+        android:layout_centerVertical="true"
         android:id="@+id/name_block"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:padding="@dimen/inner_frame_layout_padding_2"
         android:text="@string/loading_str"
@@ -24,6 +37,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
+
         android:id="@+id/accept_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -31,9 +45,12 @@
         app:layout_constraintEnd_toStartOf="@id/reject_icon"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_toStartOf="@id/reject_icon"
         android:layout_margin="@dimen/profile_margin_half"/>
 
     <ImageView
+
+        android:layout_alignParentEnd="true"
         android:id="@+id/reject_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -44,4 +61,4 @@
         android:layout_margin="@dimen/profile_margin_half"/>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

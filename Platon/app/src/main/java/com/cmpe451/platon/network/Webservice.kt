@@ -110,6 +110,12 @@ interface Webservice {
             @Query("page") page:Int?,
             @Query("per_page") perPage:Int?) : Call<Notifications?>
 
+
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "api/profile/notifications",hasBody = true)
+    fun deleteNotification(@Field("notification_id") state:Int,
+                           @Header("auth_token") auth_token :String) : Call<JsonObject?>
+
     @GET("api/follow/follow_requests")
     fun getFollowRequests(@Query("following_id") id:Int,
                           @Header("auth_token")auth_token :String,

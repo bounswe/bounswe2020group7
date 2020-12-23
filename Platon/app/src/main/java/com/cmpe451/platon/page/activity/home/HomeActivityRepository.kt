@@ -18,12 +18,34 @@ class HomeActivityRepository {
     val userNotificationsResourceResponse:MutableLiveData<Resource<Notifications>> = MutableLiveData()
     val userResourceResponse: MutableLiveData<Resource<User>> = MutableLiveData()
     val searchHistoryResourceResponse:MutableLiveData<Resource<SearchHistory>> = MutableLiveData()
-
     val searchUserResourceResponse:MutableLiveData<Resource<Search>> = MutableLiveData()
-
     val searchWorkspaceResourceResponse:MutableLiveData<Resource<Search>> = MutableLiveData()
-
     val jobListResourceResponse:MutableLiveData<Resource<List<Job>>> = MutableLiveData()
+
+    var userNotificationDeleteResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
+
+
+    fun deleteNotification(id: Int, token: String){
+        val service = RetrofitClient.getService()
+        val call = service.deleteNotification(id, token)
+
+        userNotificationDeleteResourceResponse.value = Resource.Loading()
+        call.enqueue(object : Callback<JsonObject?> {
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when {
+                    response.isSuccessful -> userNotificationDeleteResourceResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> userNotificationDeleteResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else ->userNotificationDeleteResourceResponse.value =  Resource.Error("Unknown error")
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+
+    }
 
     fun getAllJobs() {
         val service = RetrofitClient.getService()
