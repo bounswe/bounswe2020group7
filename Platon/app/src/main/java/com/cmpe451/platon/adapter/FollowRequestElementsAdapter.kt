@@ -62,6 +62,7 @@ class FollowRequestElementsAdapter(private val data: ArrayList<FollowRequest>, p
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
+        holder.binding.tvDateTime.visibility  =View.GONE
         holder.binding.nameBlock.text = data[position].name +  " " + data[position].surname
         holder.bindData(data[position], followRequestButtonClickListener, position)
     }

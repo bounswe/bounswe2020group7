@@ -55,7 +55,9 @@ class NotificationElementsAdapter(private val data: ArrayList<Notification>, pri
         // - replace the contents of the view with that element
         holder.binding.nameBlock.text = data[position].text
         holder.binding.acceptIcon.visibility = View.GONE
-        Glide.with(context).load(data[position].link).circleCrop().into(holder.binding.ivProfilePhoto)
+        holder.binding.tvDateTime.text = data[position].timestamp
+        holder.binding.ivProfilePhoto.visibility = View.GONE
+        //Glide.with(context).load(data[position].link).circleCrop().into(holder.binding.ivProfilePhoto)
         holder.bindData(data[position], notificationButtonClickListener, position)
     }
 
