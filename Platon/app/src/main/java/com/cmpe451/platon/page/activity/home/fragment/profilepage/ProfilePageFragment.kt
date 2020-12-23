@@ -82,14 +82,15 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
 
         val layoutManagerComments = LinearLayoutManager(this.activity, LinearLayoutManager.HORIZONTAL, false)
         binding.rvProfilePageComments.layoutManager = layoutManagerComments
-        binding.rvProfilePageComments.layoutParams =
-            LinearLayout.LayoutParams(binding.rvProfilePageComments.layoutParams.width, height / 3)
-
-
+        
         val layoutManagerProjects = LinearLayoutManager(this.activity)
 
         binding.rvProfilePageProjects.adapter = UserProjectsAdapter(ArrayList(), requireContext(), this)
         binding.rvProfilePageProjects.layoutManager = layoutManagerProjects
+
+        binding.rvProfilePageProjects.layoutParams =
+            LinearLayout.LayoutParams(binding.rvProfilePageProjects.layoutParams.width, height / 3)
+
 
         binding.rvProfilePageProjects.addOnScrollListener(object :
             PaginationListener(layoutManagerProjects) {
