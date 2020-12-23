@@ -298,6 +298,27 @@ class HomeActivity : BaseActivity(),
             }
         })
 
+
+        mActivityViewModel.getUserDeleteNotificationResourceResponse.observe(this, { i->
+            when (i.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    if (handledFollowRequestPosition != -1) {
+                        (binding.toolbarRecyclerview.adapter as ToolbarElementsAdapter)
+                            .removeElement(this.handledFollowRequestPosition)
+                        this.handledFollowRequestPosition = -1
+                    }
+                    mActivityViewModel.acceptRequestResourceResponse.value = Resource.Done()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(this, i.message, Toast.LENGTH_SHORT).show()
+                    mActivityViewModel.acceptRequestResourceResponse.value = Resource.Done()
+                }
+
+                Resource.Done::class.java->dialog.dismiss()
+            }
+        })
+
     }
 
     private fun initListeners() {
@@ -556,6 +577,11 @@ class HomeActivity : BaseActivity(),
     }
 
     override fun onNotificationButtonClicked(ntf: Notification, position: Int) {
+    }
+
+    override fun onDeleteNotificationClicked(ntf: Notification, position: Int) {
+       mActivityViewModel.deleteNotification(ntf.id, currUserToken)
+        this.handledFollowRequestPosition = position
     }
 
     override fun onFollowRequestNameClicked(request: FollowRequest, position: Int) {

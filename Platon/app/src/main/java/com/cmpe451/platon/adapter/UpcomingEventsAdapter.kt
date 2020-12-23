@@ -34,6 +34,7 @@ class UpcomingEventsAdapter(private val data: ArrayList<UpcomingEvent>, private 
         fun onUpcomingButtonClicked(binding: UpcomingEventCellBinding, position:Int)
     }
 
+
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(parent: ViewGroup,
                                     viewType: Int): UpcomingEventsAdapter.UpcomingEventViewHolder {

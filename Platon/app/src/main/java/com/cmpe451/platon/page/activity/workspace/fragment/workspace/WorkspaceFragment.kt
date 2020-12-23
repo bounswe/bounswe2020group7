@@ -2,9 +2,11 @@ package com.cmpe451.platon.page.activity.workspace.fragment.workspace
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.*
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -20,12 +22,15 @@ import com.cmpe451.platon.adapter.FollowerFollowingAdapter
 import com.cmpe451.platon.adapter.SkillsAdapter
 import com.cmpe451.platon.databinding.AddRequirementBinding
 import com.cmpe451.platon.databinding.AddSkillBinding
+import com.cmpe451.platon.databinding.FragmentEditWorkspaceBinding
 import com.cmpe451.platon.databinding.FragmentPersonalWorkspaceBinding
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.Contributor
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.page.activity.workspace.fragment.addworkspace.AddWorkspaceViewModel
 import com.cmpe451.platon.util.Definitions
+import java.util.*
+import kotlin.collections.ArrayList
 
 class WorkspaceFragment : Fragment(){
 
@@ -57,7 +62,8 @@ class WorkspaceFragment : Fragment(){
 
     private fun setListeners() {
         binding.infoTitle.setOnClickListener{
-            findNavController().navigate(WorkspaceFragmentDirections.actionWorkspaceFragmentToEditWorkspaceFragment())
+//            findNavController().navigate(WorkspaceFragmentDirections.actionWorkspaceFragmentToEditWorkspaceFragment())
+            onUpdateButtonClicked()
         }
         binding.descTitleTv.setOnClickListener{
             if(binding.projectInfoLl.visibility == View.GONE){
@@ -135,13 +141,33 @@ class WorkspaceFragment : Fragment(){
             when(it.javaClass){
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java -> {
-                    dialog.dismiss()
                     Toast.makeText(requireContext(), "Successfully updated", Toast.LENGTH_LONG).show()
                     mWorkspaceViewModel.fetchWorkspace((activity as WorkspaceActivity).workspace_id!!, (activity as WorkspaceActivity).token!!)
                     mWorkspaceViewModel.getUpdateResourceResponse.value = Resource.Done()
                 }
                 Resource.Error::class.java -> {
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    mWorkspaceViewModel.getUpdateResourceResponse.value = Resource.Done()
+
+                }
+                Resource.Done::class.java ->dialog.dismiss()
+            }
+        })
+        mWorkspaceViewModel.getDeleteResourceResponse.observe(viewLifecycleOwner, {
+            when (it.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    Toast.makeText(requireContext(), "Successfully deleted", Toast.LENGTH_LONG)
+                        .show()
+                    activity?.finish()
+                    mWorkspaceViewModel.getUpdateResourceResponse.value = Resource.Done()
+
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    mWorkspaceViewModel.getUpdateResourceResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java ->{
                     dialog.dismiss()
                 }
             }
@@ -178,7 +204,7 @@ class WorkspaceFragment : Fragment(){
                     requireView().parent as ViewGroup,
                     false
                 )
-                val addNewReq = AlertDialog.Builder(context).setView(tmpBinding.root)
+                AlertDialog.Builder(context).setView(tmpBinding.root)
                     .setCancelable(false)
                     .setNegativeButton("Completed",DialogInterface.OnClickListener { dialog, _ ->
                         val requirementsArrayString:String?= if(requirementsArray.isNotEmpty()) requirementsArray.map{e-> "\"$e\""}.toString() else "[]"
@@ -211,6 +237,107 @@ class WorkspaceFragment : Fragment(){
                 }
             }
             .create().show()
+    }
+    @SuppressLint("ClickableViewAccessibility")
+    private fun onUpdateButtonClicked(){
+        val tmpBinding = FragmentEditWorkspaceBinding.inflate(
+            layoutInflater,
+            requireView().parent as ViewGroup,
+            false
+        )
+        tmpBinding.wsTitleEt.setText(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.title)
+        tmpBinding.wsDescriptionEt.setText(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.description)
+        tmpBinding.privateSwitch.isChecked =
+            mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.is_private
+        tmpBinding.wsMaxCollabNumberEt.setText(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.max_collaborators.toString())
+        val x = ArrayAdapter(requireContext(), R.layout.spinner_item, mutableListOf("Loading..."))
+        x.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        tmpBinding.spState.adapter = x
+        (tmpBinding.spState.adapter as ArrayAdapter<String>).clear()
+        (tmpBinding.spState.adapter as ArrayAdapter<String>).add(getString(R.string.state_search_for_collab_str))
+        (tmpBinding.spState.adapter as ArrayAdapter<String>).add(getString(R.string.state_ongoing_str))
+        (tmpBinding.spState.adapter as ArrayAdapter<String>).add(getString(R.string.state_finished_str))
+        tmpBinding.spState.setSelection(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.state)
+        tmpBinding.wsDeadlineEt.setOnTouchListener { _, event ->
+
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                val calendar = Calendar.getInstance()
+                val year = calendar.get(Calendar.YEAR)
+                val month = calendar.get(Calendar.MONTH)
+                val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+                val datePickerDialog = DatePickerDialog(
+                    requireContext(),
+                    { _, years, months, day ->
+                        val monthString = String.format("%02d", months+1)
+                        val dayString = String.format("%02d", day)
+                        tmpBinding.wsDeadlineEt.setText("$years.$monthString.$dayString")
+                    }, year, month, dayOfMonth
+
+                )
+
+                datePickerDialog.show()
+            }
+            true
+
+
+        }
+        AlertDialog.Builder(context).setView(tmpBinding.root)
+            .setCancelable(true)
+            .setNeutralButton("Delete Workspace") { _: DialogInterface, _: Int ->
+                AlertDialog.Builder(context)
+                    .setMessage("Are you sure you want to delete " + mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.title + "?")
+                    .setPositiveButton("Delete"
+                    ) { _, _ ->
+                        mWorkspaceViewModel.deleteWorkspace(
+                            (activity as WorkspaceActivity).workspace_id!!,
+                            (activity as WorkspaceActivity).token!!
+                        )
+                    }
+                    .setNegativeButton("Cancel"
+                    ) { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .create().show()
+            }
+            .setNegativeButton("Update",DialogInterface.OnClickListener { dialog, _ ->
+                if (tmpBinding.wsTitleEt.text.isNullOrEmpty()) {
+                    Toast.makeText(requireContext(), "Title cannot be left empty", Toast.LENGTH_LONG)
+                        .show()
+                } else {
+                    if (tmpBinding.wsDescriptionEt.text.isNullOrEmpty()) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Description cannot be left empty",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else {
+                        val title: String = tmpBinding.wsTitleEt.text.toString().trim()
+                        val description: String = tmpBinding.wsDescriptionEt.text.toString().trim()
+                        val isPrivate: Int = if (tmpBinding.privateSwitch.isChecked) 1 else 0
+                        val max_collaborators =
+                            if (tmpBinding.wsMaxCollabNumberEt.text.isNullOrEmpty()) null else tmpBinding.wsMaxCollabNumberEt.text.toString()
+                                .toInt()
+                        val deadline =
+                            if (tmpBinding.wsDeadlineEt.text.isNullOrEmpty()) null else tmpBinding.wsDeadlineEt.text.toString()
+                        val state = tmpBinding.spState.selectedItemPosition
+                        mWorkspaceViewModel.updateWorkspace(
+                            (activity as WorkspaceActivity).workspace_id!!,
+                            title,
+                            description,
+                            isPrivate,
+                            max_collaborators,
+                            deadline,
+                            null,
+                            null,
+                            state,
+                            (activity as WorkspaceActivity).token!!
+                        )
+                    }
+                }
+            })
+
+            .create().show()
+
     }
 
     private fun onAddDeleteSkillClicked() {

@@ -8,30 +8,36 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.cmpe451.platon.R
-import com.cmpe451.platon.databinding.SearchElementCellBinding
+import com.cmpe451.platon.databinding.NotificationElementCellBinding
 import com.cmpe451.platon.network.models.Notification
 
 
 class NotificationElementsAdapter(private val data: ArrayList<Notification>, private val context: Context, private val notificationButtonClickListener: NotificationButtonClickListener) :
         RecyclerView.Adapter<NotificationElementsAdapter.MyViewHolder>(),ToolbarElementsAdapter {
 
+
+
     interface NotificationButtonClickListener{
         fun onNotificationButtonClicked(ntf: Notification, position: Int)
+        fun onDeleteNotificationClicked(ntf: Notification, position: Int)
     }
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder.
     // Each data item is just a string in this case that is shown in a TextView.
-    class MyViewHolder(val binding: SearchElementCellBinding) : RecyclerView.ViewHolder(binding.root){
+    class MyViewHolder(val binding: NotificationElementCellBinding) : RecyclerView.ViewHolder(binding.root){
         fun bindData(ntf: Notification, buttonClickListener: NotificationButtonClickListener, position: Int) {
-            binding.rlSearchElement.setOnClickListener{
+
+            binding.rlFollowRequestCell.setOnClickListener{
                 buttonClickListener.onNotificationButtonClicked(ntf, position)
             }
+            binding.rejectIcon.setOnClickListener{
+                buttonClickListener.onDeleteNotificationClicked(ntf, position)
+            }
+
         }
     }
 
@@ -39,15 +45,19 @@ class NotificationElementsAdapter(private val data: ArrayList<Notification>, pri
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         // set the view's size, margins, paddings and layout parameters
-        return MyViewHolder(SearchElementCellBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return MyViewHolder(NotificationElementCellBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
+
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.binding.tvSearchElement.text = data[position].text
-        Glide.with(context).load(data[position].link).circleCrop().into(holder.binding.iwSearchImage)
+        holder.binding.nameBlock.text = data[position].text
+        holder.binding.acceptIcon.visibility = View.GONE
+        holder.binding.tvDateTime.text = data[position].timestamp
+        holder.binding.ivProfilePhoto.visibility = View.GONE
+        //Glide.with(context).load(data[position].link).circleCrop().into(holder.binding.ivProfilePhoto)
         holder.bindData(data[position], notificationButtonClickListener, position)
     }
 

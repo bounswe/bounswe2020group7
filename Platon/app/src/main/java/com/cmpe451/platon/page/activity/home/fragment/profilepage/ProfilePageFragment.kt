@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -22,6 +23,7 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.compose.navArgument
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,10 +34,7 @@ import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.SkillsAdapter
 import com.cmpe451.platon.adapter.UserProjectsAdapter
 import com.cmpe451.platon.core.BaseActivity
-import com.cmpe451.platon.databinding.AddSkillBinding
-import com.cmpe451.platon.databinding.FragmentEditProfileBinding
-import com.cmpe451.platon.databinding.FragmentProfilePageBinding
-import com.cmpe451.platon.databinding.ResearchesCellBinding
+import com.cmpe451.platon.databinding.*
 import com.cmpe451.platon.listener.PaginationListener
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.Job
@@ -63,7 +62,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         binding = FragmentProfilePageBinding.inflate(inflater)
         setHasOptionsMenu(true)
@@ -124,7 +123,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     }
 
     private fun setFields(){
-        mActivityViewModel.getUserResourceResponse.observe(viewLifecycleOwner, Observer { t ->
+        mActivityViewModel.getUserResourceResponse.observe(viewLifecycleOwner, { t ->
             when (t.javaClass) {
                 Resource.Success::class.java -> {
                     val user = t.data!!
@@ -145,8 +144,8 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                         5
                     )
                     mProfilePageViewModel.getUserSkills(
-                        (activity as HomeActivity).currUserId!!,
-                        (activity as HomeActivity).currUserToken!!
+                        (activity as HomeActivity).currUserId,
+                        (activity as HomeActivity).currUserToken
                     )
 
                     binding.ratingBar.rating = user.rate.toFloat()
@@ -179,9 +178,27 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
 
 
     private fun setObservers() {
-        mProfilePageViewModel.getResearchesResourceResponse.observe(
-            viewLifecycleOwner,
-            Observer { t ->
+        mProfilePageViewModel.getUploadPhotoResourceResponse.observe(viewLifecycleOwner, { t ->
+            when (t.javaClass) {
+                Resource.Success::class.java -> {
+                    dialog.dismiss()
+                    Toast.makeText(
+                        requireContext(),
+                        "Update profile photo is successful!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    mProfilePageViewModel.getUploadPhotoResourceResponse.value = Resource.Done()
+                }
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Error::class.java -> {
+                    dialog.dismiss()
+                    Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                    mProfilePageViewModel.getUploadPhotoResourceResponse.value = Resource.Done()
+                }
+            }
+        })
+
+        mProfilePageViewModel.getResearchesResourceResponse.observe(viewLifecycleOwner, { t ->
                 when (t.javaClass) {
                     Resource.Success::class.java -> {
                         maxPageNumberResearch = t.data!!.number_of_pages
@@ -189,15 +206,13 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                             t.data!!.research_info!!
                         )
                     }
-                    Resource.Error::class.java -> Toast.makeText(
-                        activity,
-                        t.message,
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Resource.Error::class.java -> {
+                        Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+                    }
                 }
             })
 
-        mProfilePageViewModel.userSkills.observe(viewLifecycleOwner, Observer { t ->
+        mProfilePageViewModel.userSkills.observe(viewLifecycleOwner, { t ->
             when (t.javaClass) {
                 Resource.Success::class.java -> {
                     (binding.rvProfilePageSkills.adapter as SkillsAdapter).submitElements(t.data!!.skills!!.map { it.name })
@@ -205,6 +220,74 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                 Resource.Error::class.java -> {
                     Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
                 }
+            }
+        })
+
+
+        mProfilePageViewModel.getEditProfileResourceResponse.observe(viewLifecycleOwner, { t ->
+            when(t.javaClass){
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java ->{
+                    mActivityViewModel.fetchUser((activity as HomeActivity).currUserToken)
+                    mProfilePageViewModel.getEditProfileResourceResponse.value = Resource.Done()
+                }
+                Resource.Error::class.java ->{
+                    Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+                    mProfilePageViewModel.getEditProfileResourceResponse.value = Resource.Done()
+
+                }
+                Resource.Done::class.java->{
+                    dialog.dismiss()
+                }
+
+            }
+        })
+
+        mProfilePageViewModel.getAddResearchResourceResponse.observe(viewLifecycleOwner, { t ->
+            when(t.javaClass){
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java ->{
+                    Toast.makeText(activity, "Research Information is added!", Toast.LENGTH_SHORT).show()
+                    mProfilePageViewModel.getAddResearchResourceResponse.value  = Resource.Done()
+                    mActivityViewModel.fetchUser((activity as HomeActivity).currUserToken)
+                }
+                Resource.Error::class.java ->{
+                    Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+                    mProfilePageViewModel.getAddResearchResourceResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java->dialog.dismiss()
+            }
+        })
+
+    mProfilePageViewModel.getDeleteResearchResourceResponse.observe(viewLifecycleOwner, { t->
+            when(t.javaClass){
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java ->{
+                    mProfilePageViewModel.getDeleteResearchResourceResponse.value = Resource.Done()
+                    mActivityViewModel.fetchUser((activity as HomeActivity).currUserToken)
+                }
+                Resource.Error::class.java ->{
+                    mProfilePageViewModel.getDeleteResearchResourceResponse.value = Resource.Done()
+                    Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+                }
+                Resource.Done::class.java->dialog.dismiss()
+            }
+
+        })
+
+
+    mProfilePageViewModel.getEditResearchResourceResponse.observe(viewLifecycleOwner, {t ->
+            when(t.javaClass){
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java ->{
+                    mProfilePageViewModel.getEditResearchResourceResponse.value = Resource.Done()
+                    mActivityViewModel.fetchUser((activity as HomeActivity).currUserToken)
+                }
+                Resource.Error::class.java ->{
+                    Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+                    mProfilePageViewModel.getEditResearchResourceResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java->dialog.dismiss()
             }
         })
     }
@@ -225,8 +308,14 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
         }
 
         binding.profilePhoto.setOnClickListener{
+            ActivityCompat.requestPermissions(
+                activity as HomeActivity,
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1
+            )
+
             val photoPickerIntent = Intent(Intent.ACTION_PICK)
             photoPickerIntent.type = "image/*"
+
             someActivityResultLauncher.launch(photoPickerIntent)
         }
 
@@ -248,7 +337,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
 
         binding.infoTitle.setOnClickListener {
             mActivityViewModel.getAllJobs()
-            val editBinding = FragmentEditProfileBinding.inflate(layoutInflater, binding.root, false)
+            val editBinding = DialogEditProfileBinding.inflate(layoutInflater, binding.root, false)
             val editDialog = AlertDialog.Builder(requireContext())
                 .setView(editBinding.root)
                 .show()
@@ -291,27 +380,6 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
             } )
 
 
-            mProfilePageViewModel.getEditProfileResourceResponse.observe(viewLifecycleOwner, { t ->
-                when(t.javaClass){
-                    Resource.Loading::class.java -> dialog.show()
-                    Resource.Success::class.java ->{
-                        mActivityViewModel.fetchUser((activity as HomeActivity).currUserToken)
-                        editDialog.cancel()
-                        mProfilePageViewModel.getEditProfileResourceResponse.value = Resource.Done()
-
-                    }
-                    Resource.Error::class.java ->{
-                        Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
-                        mProfilePageViewModel.getEditProfileResourceResponse.value = Resource.Done()
-
-                    }
-                    Resource.Done::class.java->{
-                        dialog.dismiss()
-                    }
-
-                }
-            })
-
             editBinding.spJob.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                     if (editBinding.spJob.adapter.count-1 == position){
@@ -328,7 +396,83 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
             //findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToEditProfileFragment())
         }
         binding.projectsTitle.setOnClickListener{
-            findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToAddResearchInfoFragment())
+            val addBinding = DialogResearchInfoAddBinding.inflate(layoutInflater, binding.root, false)
+            val addDialog = AlertDialog.Builder(requireContext())
+                .setView(addBinding.root)
+                .show()
+            addDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+            addBinding.buttonProjectAdd.setOnClickListener {
+                    // check if the title and year is empty
+                    if(addBinding.projectNameTv.text.isNullOrEmpty() && addBinding.projectYearTv.text.isNullOrEmpty()){
+                        Toast.makeText(activity as HomeActivity, "Title and Year cannot be left empty", Toast.LENGTH_LONG).show()
+                    }
+                    else {
+                        when {
+                            addBinding.projectNameTv.text.isNullOrEmpty() -> {
+                                Toast.makeText(activity, "Title cannot be left empty", Toast.LENGTH_LONG).show()
+                            }
+                            addBinding.projectYearTv.text.isNullOrEmpty() -> {
+                                Toast.makeText(activity , "Year cannot be left empty", Toast.LENGTH_LONG).show()
+                            }
+                            else -> {
+                                var description:String? = null
+                                if(!addBinding.projectDescriptionTv.text.isNullOrEmpty()){
+                                    description = addBinding.projectDescriptionTv.text.toString()
+                                }
+                                mProfilePageViewModel.addResearchInfo(addBinding.projectNameTv.text.toString(), description,
+                                    addBinding.projectYearTv.text.toString().toInt(),
+                                    (activity as HomeActivity).currUserToken
+                                )
+                                addDialog.dismiss()
+                            }
+                        }
+                    }
+            }
+
+
+            addBinding.tvLinkScholar.setOnClickListener {
+                addBinding.tvLinkScholar.setTextColor(resources.getColor(R.color.primary_light, requireActivity().theme))
+                addBinding.tvLinkResearchGate.setTextColor(resources.getColor(R.color.secondary_purple, requireActivity().theme))
+                addBinding.projectNameTv.visibility  =View.GONE
+                addBinding.projectDescriptionTv.visibility  =View.GONE
+                addBinding.projectYearTv.visibility  =View.GONE
+                addBinding.layLinkAccount.visibility = View.VISIBLE
+                addBinding.buttonProjectAdd.text = getString(R.string.link_str)
+                addBinding.buttonProjectAdd.setOnClickListener{
+                    if(addBinding.cbAcceptLink.isChecked){
+                        mProfilePageViewModel.editProfile(null, null, null, null, null,
+                            addBinding.etLinkUrl, null,
+                            (activity as HomeActivity).currUserToken)
+                        addDialog.dismiss()
+                    }else{
+                        Toast.makeText(requireContext(), "You must accept information sharing!", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+
+            addBinding.tvLinkResearchGate.setOnClickListener{
+                addBinding.tvLinkResearchGate.setTextColor(resources.getColor(R.color.primary_light, requireActivity().theme))
+                addBinding.tvLinkScholar.setTextColor(resources.getColor(R.color.secondary_purple, requireActivity().theme))
+                addBinding.projectNameTv.visibility  =View.GONE
+                addBinding.projectDescriptionTv.visibility  =View.GONE
+                addBinding.projectYearTv.visibility  =View.GONE
+                addBinding.layLinkAccount.visibility = View.VISIBLE
+                addBinding.buttonProjectAdd.text = getString(R.string.link_str)
+                addBinding.buttonProjectAdd.setOnClickListener{
+                    if(addBinding.cbAcceptLink.isChecked){
+                        mProfilePageViewModel.editProfile(null, null, null, null, null,
+                            null,addBinding.etLinkUrl,
+                            (activity as HomeActivity).currUserToken)
+                        addDialog.dismiss()
+                    }else{
+                        Toast.makeText(requireContext(), "You must accept information sharing!", Toast.LENGTH_SHORT).show()
+                    }
+
+
+                }
+            }
+
         }
         binding.skillsTitle.setOnClickListener{
             mProfilePageViewModel.getAllSkills()
@@ -341,11 +485,6 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
 
     private fun uploadProfilePhoto(data: Uri?) {
         if(data != null){
-            ActivityCompat.requestPermissions(
-                activity as HomeActivity,
-                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1
-            );
-
             if((activity as HomeActivity).checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
                 val file = File(Definitions().getRealPathFromUri(requireContext(), data))
                 val fBody = RequestBody.create(
@@ -358,7 +497,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                     .addFormDataPart("profile_photo", file.name, fBody)
                     .build()
 
-                mProfilePageViewModel.uploadPhoto(body, (activity as HomeActivity).currUserToken!!)
+                mProfilePageViewModel.uploadPhoto(body, (activity as HomeActivity).currUserToken)
             }else{
                 Toast.makeText(
                     requireContext(),
@@ -369,37 +508,13 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
 
 
         }
-        mProfilePageViewModel.getUploadPhotoResourceResponse.observe(viewLifecycleOwner, { t ->
-            when (t.javaClass) {
-                Resource.Success::class.java -> {
-                    dialog.dismiss()
-                    Toast.makeText(
-                        requireContext(),
-                        "Update profile photo is successful!",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    mProfilePageViewModel.getUploadPhotoResourceResponse.removeObservers(
-                        viewLifecycleOwner
-                    )
-                }
-                Resource.Loading::class.java -> dialog.show()
-                Resource.Error::class.java -> {
-                    dialog.dismiss()
-                    Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
-                    mProfilePageViewModel.getUploadPhotoResourceResponse.removeObservers(
-                        viewLifecycleOwner
-                    )
-                }
-            }
 
-
-        })
         
 
     }
 
     private fun onAddDeleteSkillClicked(){
-        mProfilePageViewModel.allSkills.observe(viewLifecycleOwner, Observer { t ->
+        mProfilePageViewModel.allSkills.observe(viewLifecycleOwner, { t ->
             when (t.javaClass) {
                 Resource.Success::class.java -> {
                     val skillNameList =
@@ -425,7 +540,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                                 if (!tmpBinding.etNewSkill.text.isNullOrEmpty()) {
                                     mProfilePageViewModel.addSkillToUser(
                                         tmpBinding.etNewSkill.text.toString().trim(),
-                                        (activity as HomeActivity).currUserToken!!
+                                        (activity as HomeActivity).currUserToken
                                     )
                                 }
                             }
@@ -442,12 +557,12 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                             if (isChecked) {
                                 mProfilePageViewModel.addSkillToUser(
                                     t.data!![which],
-                                    (activity as HomeActivity).currUserToken!!
+                                    (activity as HomeActivity).currUserToken
                                 )
                             } else {
                                 mProfilePageViewModel.deleteSkillFromUser(
                                     t.data!![which],
-                                    (activity as HomeActivity).currUserToken!!
+                                    (activity as HomeActivity).currUserToken
                                 )
                             }
                         }
@@ -471,8 +586,8 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java -> {
                     mProfilePageViewModel.getUserSkills(
-                        (activity as HomeActivity).currUserId!!,
-                        (activity as HomeActivity).currUserToken!!
+                        (activity as HomeActivity).currUserId,
+                        (activity as HomeActivity).currUserToken
                     )
                     dialog.dismiss()
                 }
@@ -504,10 +619,58 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     }
 
     override fun onUserProjectEditClicked(position: Int) {
-        (binding.rvProfilePageProjects.adapter as UserProjectsAdapter).clearElements()
+        val editBinding = DialogResearchInfoEditBinding.inflate(layoutInflater, binding.root, false)
 
-        mProfilePageViewModel.setCurrentResearch(mProfilePageViewModel.getResearchesResourceResponse.value?.data!!.research_info!![position])
-        findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToEditResearchInfoFragment())
+        val editDialog = AlertDialog.Builder(requireContext())
+            .setView(editBinding.root)
+            .show()
+        editDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val currResearch = (binding.rvProfilePageProjects.adapter as UserProjectsAdapter).getElement(position)
+
+
+        editBinding.projectNameTv.setText(currResearch.title)
+        editBinding.projectYearTv.setText(currResearch.year.toString())
+        if(currResearch.description.isNotEmpty()){
+            editBinding.projectDescriptionTv.setText(currResearch.description)
+        }
+
+        editBinding.buttonEdit.setOnClickListener {
+            // check if the title and year is empty
+            if(editBinding.projectNameTv.text.isNullOrEmpty() && editBinding.projectYearTv.text.isNullOrEmpty()){
+                Toast.makeText(activity as HomeActivity, "Title and Year cannot be left empty", Toast.LENGTH_LONG).show()
+            }
+            else {
+                when {
+                    editBinding.projectNameTv.text.isNullOrEmpty() -> {
+                        Toast.makeText(activity, "Title cannot be left empty", Toast.LENGTH_LONG).show()
+                    }
+                    editBinding.projectYearTv.text.isNullOrEmpty() -> {
+                        Toast.makeText(activity , "Year cannot be left empty", Toast.LENGTH_LONG).show()
+                    }
+                    else -> {
+                        var description:String? = null
+                        if(!editBinding.projectDescriptionTv.text.isNullOrEmpty()){
+                            description = editBinding.projectDescriptionTv.text.toString()
+                        }
+                        mProfilePageViewModel.editResearchInfo(currResearch.id,
+                            editBinding.projectNameTv.text.toString(), description,
+                            editBinding.projectYearTv.text.toString().toInt(),
+                            (activity as HomeActivity).currUserToken
+                        )
+                        editDialog.dismiss()
+
+                    }
+                }
+            }
+        }
+
+        editBinding.buttonDelete.setOnClickListener{
+            mProfilePageViewModel.deleteResearchInfo(currResearch.id,
+                (activity as HomeActivity).currUserToken)
+            editDialog.dismiss()
+        }
+
     }
 
 }

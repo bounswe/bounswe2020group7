@@ -106,7 +106,6 @@
     <string name="delete_workspace_str">Delete Workspace</string>
     <string name="deadline_str">Deadline</string>
     <string name="collaborators">Collaborators</string>
-    <string name="link_str">Link</string>
     <string name="location_str">Location</string>
     <string name="researches_STR">Researches</string>
     <string name="private_ws_str">Private Workspace</string>
@@ -118,4 +117,9 @@
     <string name="requirement_str">Requirement</string>
     <string name="filter_by_skill_str">Filter by Skill</string>
     <string name="filter_by_event_str">Filter by Event</string>
+    <string name="link_scholar_str">Link Scholar</string>
+    <string name="link_researchgate_str">Link ResearchGate</string>
+    <string name="enter_url_str">Enter URL</string>
+    <string name="link_str">Link</string>
+    <string name="accept_link_str">I accept to share my information with Platon!</string>
 </resources>

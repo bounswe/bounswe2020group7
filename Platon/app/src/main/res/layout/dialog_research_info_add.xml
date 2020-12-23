@@ -1,26 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/primary_dark"
-    tools:context=".page.activity.login.LoginActivity">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+
+    android:layout_gravity="center"
+    android:background="@drawable/view_back_darker"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="@dimen/inner_frame_layout_padding_2"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+
+
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/lay_linkAccount"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
-        android:layout_gravity="center"
-        android:background="@drawable/view_back_darker"
-        android:gravity="center"
         android:orientation="vertical"
-        android:padding="@dimen/inner_frame_layout_padding_2"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:visibility="gone"
+        android:padding="@dimen/xx_small"
+        >
 
+
+        <EditText
+            android:id="@+id/et_linkUrl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/enter_url_str"
+            android:textSize="@dimen/title_text_size_smaller"
+            android:textColorHint="@color/secondary_purple"
+            />
+        <CheckBox
+            android:textColor="@color/primary_light"
+            android:id="@+id/cb_acceptLink"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/subtitle_text_size"
+            android:text="@string/accept_link_str"
+            />
+    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/tv_linkScholar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/link_scholar_str"
+                android:textColor="@color/secondary_purple"
+                app:drawableLeftCompat="@drawable/ic_add_24dp" />
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/tv_linkResearchGate"
+                android:layout_width="0dp"
+                android:textColor="@color/secondary_purple"
+                android:layout_height="wrap_content"
+                android:text="@string/link_researchgate_str"
+                app:drawableLeftCompat="@drawable/ic_add_24dp" />
+        </LinearLayout>
 
         <EditText
             android:id="@+id/project_name_tv"
@@ -39,7 +84,7 @@
 
         <EditText
             android:id="@+id/project_description_tv"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autofillHints=""
             android:backgroundTint="@color/secondary_purple"
@@ -80,5 +125,4 @@
             android:textColor="@color/primary_light" />
 
     </LinearLayout>
-</ScrollView>
 
