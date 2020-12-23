@@ -62,7 +62,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         binding = FragmentProfilePageBinding.inflate(inflater)
         setHasOptionsMenu(true)
@@ -123,7 +123,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     }
 
     private fun setFields(){
-        mActivityViewModel.getUserResourceResponse.observe(viewLifecycleOwner, Observer { t ->
+        mActivityViewModel.getUserResourceResponse.observe(viewLifecycleOwner, { t ->
             when (t.javaClass) {
                 Resource.Success::class.java -> {
                     val user = t.data!!
@@ -144,8 +144,8 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                         5
                     )
                     mProfilePageViewModel.getUserSkills(
-                        (activity as HomeActivity).currUserId!!,
-                        (activity as HomeActivity).currUserToken!!
+                        (activity as HomeActivity).currUserId,
+                        (activity as HomeActivity).currUserToken
                     )
 
                     binding.ratingBar.rating = user.rate.toFloat()
@@ -337,7 +337,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
 
         binding.infoTitle.setOnClickListener {
             mActivityViewModel.getAllJobs()
-            val editBinding = FragmentEditProfileBinding.inflate(layoutInflater, binding.root, false)
+            val editBinding = DialogEditProfileBinding.inflate(layoutInflater, binding.root, false)
             val editDialog = AlertDialog.Builder(requireContext())
                 .setView(editBinding.root)
                 .show()
@@ -396,7 +396,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
             //findNavController().navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToEditProfileFragment())
         }
         binding.projectsTitle.setOnClickListener{
-            val addBinding = FragmentResearchInfoAddBinding.inflate(layoutInflater, binding.root, false)
+            val addBinding = DialogResearchInfoAddBinding.inflate(layoutInflater, binding.root, false)
             val addDialog = AlertDialog.Builder(requireContext())
                 .setView(addBinding.root)
                 .show()
@@ -497,7 +497,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                     .addFormDataPart("profile_photo", file.name, fBody)
                     .build()
 
-                mProfilePageViewModel.uploadPhoto(body, (activity as HomeActivity).currUserToken!!)
+                mProfilePageViewModel.uploadPhoto(body, (activity as HomeActivity).currUserToken)
             }else{
                 Toast.makeText(
                     requireContext(),
@@ -514,7 +514,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     }
 
     private fun onAddDeleteSkillClicked(){
-        mProfilePageViewModel.allSkills.observe(viewLifecycleOwner, Observer { t ->
+        mProfilePageViewModel.allSkills.observe(viewLifecycleOwner, { t ->
             when (t.javaClass) {
                 Resource.Success::class.java -> {
                     val skillNameList =
@@ -540,7 +540,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                                 if (!tmpBinding.etNewSkill.text.isNullOrEmpty()) {
                                     mProfilePageViewModel.addSkillToUser(
                                         tmpBinding.etNewSkill.text.toString().trim(),
-                                        (activity as HomeActivity).currUserToken!!
+                                        (activity as HomeActivity).currUserToken
                                     )
                                 }
                             }
@@ -557,12 +557,12 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                             if (isChecked) {
                                 mProfilePageViewModel.addSkillToUser(
                                     t.data!![which],
-                                    (activity as HomeActivity).currUserToken!!
+                                    (activity as HomeActivity).currUserToken
                                 )
                             } else {
                                 mProfilePageViewModel.deleteSkillFromUser(
                                     t.data!![which],
-                                    (activity as HomeActivity).currUserToken!!
+                                    (activity as HomeActivity).currUserToken
                                 )
                             }
                         }
@@ -586,8 +586,8 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java -> {
                     mProfilePageViewModel.getUserSkills(
-                        (activity as HomeActivity).currUserId!!,
-                        (activity as HomeActivity).currUserToken!!
+                        (activity as HomeActivity).currUserId,
+                        (activity as HomeActivity).currUserToken
                     )
                     dialog.dismiss()
                 }
@@ -619,7 +619,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     }
 
     override fun onUserProjectEditClicked(position: Int) {
-        val editBinding = FragmentResearchInfoEditBinding.inflate(layoutInflater, binding.root, false)
+        val editBinding = DialogResearchInfoEditBinding.inflate(layoutInflater, binding.root, false)
 
         val editDialog = AlertDialog.Builder(requireContext())
             .setView(editBinding.root)
