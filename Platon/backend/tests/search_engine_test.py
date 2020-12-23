@@ -264,3 +264,223 @@ class UserSearchTests(BaseTest):
         self.assertEqual(200,actual_response.status_code)
         self.assertEqual(expected_result,json.loads(actual_response.data))
 
+class WorkspaceSearchTests(BaseTest):
+    '''
+        Tests for workspace search.
+    '''
+
+'''
+/search_engine/workspace
+
+GET: Search workspaces
+
+- Input:
+
+UMUTUN YAPTIGI
+    - token: STRING - Header
+    - search_query: STRING
+    - skill_filter: STRING  # research area/topic and labels
+    - creator_name: STRING  # to filter for founder of the project Tuna
+    - creator_surname: STR  # to filter for founder of the project Tuğcu
+    - starting_date: DateTime  # to filter.   2 values. inclusive
+    - deadline: DateTime  # to filter.   2 values. exclusive
+    - sorting_criteria
+    - page: INT
+    - per_page = INT
+
+EKSTRALAR
+    - state: INT - query_string.     vakte gore
+    - event_filter: STRING - query_string. vakte gore
+
+- Output:
+
+{
+"number_of_pages": INT,
+"result":[
+{
+		id: INT
+      	title: string
+      	is_private: INT
+      	description: string
+      	state: INT
+      	deadline: DateTime
+      	creation_time: DateTime
+      	max_contibutors: INT
+		contributor_list: LIST<Contributor>
+		creator_id: INT,
+		creator_name: STRING,
+		creator_surname: STRING,
+
+		EKSTRALAR
+		collaborators_needed: INT.  # for sorting
+		"creator_e-mail": STRING,
+		"creator_rate": DOUBLE,
+		"creator_job_name": STRING,
+		"creator_institution": STRING,
+		"creator_is_private": INT     (1 for private, 0 for public)
+},]}
+'''
+
+    def setUp(self):
+
+        super().setUp()
+
+        jobs = [
+            Jobs("academician"),
+            Jobs("PhD student")
+        ]
+
+        for job in jobs:
+            db.session.add(job)
+
+        db.session.commit()
+
+        # Umut and Can are public users. Alperen and Hilal are private users.
+        users = [
+            User("umut@deneme.com", True, "b73ec5e4625ffcb6d0d70826f33be7a75d45b37046e26c4b60d9111266d70e32", 3.5,
+                 "Umut", "Özdemir", False, None, None, None, 1, "boun"),
+            User("can@deneme.com", True, "cce0c2170d1ae52e099c716165d80119ee36840e3252e57f2b2b4d6bb111d8a5", 3.4,
+                 "Can", "Deneme", False, None, None, None, 2, "boun"),
+            User("alperen@deneme.com", True, "hashedpassword", 4.6, "Alperen", "Ozprivate", True, None, None, None, 1, "boun"),
+            User("hilal@deneme.com", True, "hasheddpassword", 4.5, "Hilal", "Private", True, None, None, None, 1, "boun")
+        ]
+        for user in users:
+            db.session.add(user)
+
+        db.session.commit()
+
+        workspaces = [
+            Workspace(creator_id = 1, is_private = 0, title = "coronavirus study", description = "Swiss scientists wondering if Sarimsak will cure COVID.", state = WorkspaceState.search_for_collaborator.value), # public workspace by Umut on state 1
+            Workspace(creator_id = 2, is_private = 0, title = "SWE difficulties", description = "Investigating how to make workspaces great again.", state = WorkspaceState.search_for_collaborator.value), # public workspace by Can on state 1
+            Workspace(creator_id = 4, is_private = 0, title = "honeybadger", description = "searching for bravest animal in the universe.", state = WorkspaceState.search_for_collaborator.value), #public workspace by Hilal on state 1
+            Workspace(creator_id = 3, is_private = 1, title = "life", description = "is hard.", state = WorkspaceState.search_for_collaborator.value) # private workspace by Alperen on state 1
+        ]
+
+        for workspace in workspaces:
+            db.session.add(workspace)
+        
+        db.session.commit()
+
+        contributions = [
+            Contribution(workspace_id = 1, user_id = 1, is_active = 1), # Umut will be active in coronovirus study
+            Contribution(workspace_id = 2, user_id = 2, is_active = 1), # can will be active in SWE difficulties
+            Contribution(workspace_id = 2, user_id = 3, is_active = 1),  # alperen will be active in SWE difficulties
+            Contribution(workspace_id = 3, user_id = 2, is_active = 0), # can will be inactive in honey badger study
+            Contribution(workspace_id = 3, user_id = 4, is_active = 1), # hilal will be active in honey badger study
+            Contribution(workspace_id = 3, user_id = 1, is_active = 1), # umut will be active in honey badger study
+            Contribution(workspace_id = 4, user_id = 3, is_active = 1) # alperen will be active in life.
+        ]
+
+        for contribution in contributions:
+            db.session.add(contribution)
+
+        db.session.commit()
+
+
+    # Check if searched element appears in the workspace title.
+    # Upper case is ignored.
+    def test_searched_element_in_title(self):
+
+        # Searched element is one word query.
+        # Can will search "coronavirus". 
+        # Success
+        valid_token = generate_token(2, datetime.timedelta(minutes=10))
+        data = {'search_query': "coronavirus"}
+        expected_status_code = 200
+
+        actual_response = self.client.get('/api/search_engine/workspace', query_string=data,
+                                          headers={'auth_token': valid_token})
+
+        self.assertEqual(actual_response.status_code, expected_status_code, 'Incorrect HTTP Response Code')
+
+        # searched element is multiple words.
+        # Can will search "coronavirus study". 
+        # Success
+        valid_token = generate_token(2, datetime.timedelta(minutes=10))
+        data = {'search_query': "coronavirus study"}
+        expected_status_code = 200
+
+        actual_response = self.client.get('/api/search_engine/workspace', query_string=data,
+                                          headers={'auth_token': valid_token})
+
+        self.assertEqual(actual_response.status_code, expected_status_code, 'Incorrect HTTP Response Code')
+
+        # searched element is multiple words and contains white spaces.
+        # Can will search "cORonaviRus     sTudy  ". 
+        # Success
+        valid_token = generate_token(2, datetime.timedelta(minutes=10))
+        data = {'search_query': "coronavirus study"}
+        expected_status_code = 200
+
+        actual_response = self.client.get('/api/search_engine/workspace', query_string=data,
+                                          headers={'auth_token': valid_token})
+
+        self.assertEqual(actual_response.status_code, expected_status_code, 'Incorrect HTTP Response Code')
+
+
+    # Check if searched element appears in the workspace description
+    def test_searched_element_in_description(self):
+
+        # Searched element is one word query.
+        # Can will search "Swiss".
+        valid_token = generate_token(2, datetime.timedelta(minutes=10))
+        data = {'search_query': "Swiss"} 
+        # Success
+        expected_status_code = 200
+
+        actual_response = self.client.get('/api/search_engine/workspace', query_string=data,
+                                          headers={'auth_token': valid_token})
+
+        self.assertEqual(actual_response.status_code, expected_status_code, 'Incorrect HTTP Response Code')
+
+        # Check if upper case letters are ignored.
+        # Searched element is one word query.
+        # Can will search "swiss".
+        valid_token = generate_token(2, datetime.timedelta(minutes=10))
+        data = {'search_query': "swiss"} 
+        # Success
+        expected_status_code = 200
+
+        actual_response = self.client.get('/api/search_engine/workspace', query_string=data,
+                                          headers={'auth_token': valid_token})
+
+        self.assertEqual(actual_response.status_code, expected_status_code, 'Incorrect HTTP Response Code')
+
+        # searched element is multiple words.
+        # Can will be the user.
+        valid_token = generate_token(2, datetime.timedelta(minutes=10))
+        # User is searching "bravest animal".
+        data = {'search_query': "bravest animal"} 
+        # Should be success.
+        expected_status_code = 200
+
+        actual_response = self.client.get('/api/search_engine/workspace', query_string=data,
+                                          headers={'auth_token': valid_token})
+
+        self.assertEqual(actual_response.status_code, expected_status_code, 'Incorrect HTTP Response Code')
+
+
+    # Check if private workspaces does not appear in the search.
+
+
+    # Check if searched element does not appear in title but is similar to a word in title semantically.
+
+    # Check if searched element does not appear in description but is similar to a word in description semanticallly.
+
+    # Check if searched elemet does not appear in title or description. It should return no values.
+
+    # Check if skill filter works.
+
+    # Check if starting date filter works.
+
+    # Check if deadline filter works.
+
+    # Check if sorting criterias work.
+
+    # Check if founder name and surname filter works.
+
+    # Check if pagination works.
+
+
+    def tearDown(self):
+        super().tearDown()
