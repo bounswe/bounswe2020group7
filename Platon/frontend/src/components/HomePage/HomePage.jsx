@@ -42,7 +42,6 @@ class HomePage extends React.Component {
               top: 80,
             }}
           >
-            <Sider />
           </Layout>
           <Layout
             style={{
