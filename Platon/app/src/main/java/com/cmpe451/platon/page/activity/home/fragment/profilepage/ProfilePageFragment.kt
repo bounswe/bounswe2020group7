@@ -91,10 +91,6 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
         binding.rvProfilePageProjects.adapter = UserProjectsAdapter(ArrayList(), requireContext(), this)
         binding.rvProfilePageProjects.layoutManager = layoutManagerProjects
 
-        binding.rvProfilePageProjects.layoutParams =
-            LinearLayout.LayoutParams(binding.rvProfilePageProjects.layoutParams.width, height / 3)
-
-
         binding.rvProfilePageProjects.addOnScrollListener(object :
             PaginationListener(layoutManagerProjects) {
             override fun loadMoreItems() {

@@ -143,8 +143,29 @@
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/tv_comments_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/comments_str"
+            android:gravity="start"
+            android:fontFamily="@font/dm_sans_bold"
+            android:padding="@dimen/x_small"
+            android:shadowColor="@color/primary_dark"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"
+            android:textColor="@color/secondary_orange_transparent"
+            android:textSize="@dimen/project_title_text_size"
+            android:drawablePadding="@dimen/x_small"
+            app:drawableRightCompat="@drawable/ic_comment_24dp"
+            />
 
-
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_profile_page_comments"
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/skills_title"
             android:layout_width="match_parent"
@@ -190,29 +211,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/tv_comments_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/comments_str"
-            android:gravity="start"
-            android:fontFamily="@font/dm_sans_bold"
-            android:padding="@dimen/x_small"
-            android:shadowColor="@color/primary_dark"
-            android:shadowDx="1"
-            android:shadowDy="1"
-            android:shadowRadius="2"
-            android:textColor="@color/secondary_orange_transparent"
-            android:textSize="@dimen/project_title_text_size"
-            android:drawablePadding="@dimen/x_small"
-            app:drawableRightCompat="@drawable/ic_comment_24dp"
-            />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_profile_page_comments"
-            android:layout_width="match_parent"
-            android:visibility="gone"
-            android:layout_height="wrap_content" />
 
     </LinearLayout>
 </ScrollView>

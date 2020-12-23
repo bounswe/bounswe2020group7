@@ -78,10 +78,6 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
         binding.rvProfilePageProjects.adapter = OtherUserProjectsAdapter(ArrayList(), requireContext(), this)
         binding.rvProfilePageProjects.layoutManager = layoutManagerProjects
 
-        binding.rvProfilePageProjects.layoutParams =
-            LinearLayout.LayoutParams(binding.rvProfilePageProjects.layoutParams.width, height / 3)
-
-
         binding.rvProfilePageProjects.addOnScrollListener(object :
             PaginationListener(layoutManagerProjects) {
             override fun loadMoreItems() {
