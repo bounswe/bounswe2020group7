@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.cardview.widget.CardView xmlns:android = "http://schemas.android.com/apk/res/android"
+    xmlns:card_view = "http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    card_view:cardCornerRadius = "@dimen/medium"
+    card_view:cardElevation="@dimen/xxx_small"
+    android:layout_marginBottom="@dimen/xxx_small"
+    card_view:cardBackgroundColor="@color/secondary_orange_transparent"
+    android:layout_width = "match_parent"
+    android:layout_height = "wrap_content">
+
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            tools:ignore="Orientation">
+
+            <TextView
+                android:id="@+id/issue_deadline"
+                android:background="@drawable/view_back_darker"
+                android:padding="@dimen/xx_large"
+                android:layout_width="match_parent"
+                android:layout_margin="@dimen/x_small"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:maxLines="3"
+                android:text="@string/project_title_str"
+                android:textColor="@color/primary_light"
+                android:textSize="@dimen/desc_text_size" />
+
+            <TextView
+                android:id="@+id/issue_title"
+                android:background="@drawable/view_back_darker"
+                android:padding="@dimen/xx_large"
+                android:layout_width="match_parent"
+                android:layout_margin="@dimen/x_small"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:maxLines="3"
+                android:text="@string/project_title_str"
+                android:textColor="@color/primary_light"
+                android:textSize="@dimen/desc_text_size" />
+            <TextView
+                android:id="@+id/issue_description"
+                android:background="@drawable/view_back_darker"
+                android:padding="@dimen/xx_large"
+                android:layout_width="match_parent"
+                android:layout_margin="@dimen/x_small"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:maxLines="3"
+                android:text="@string/project_title_str"
+                android:textColor="@color/primary_light"
+                android:textSize="@dimen/desc_text_size" />
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

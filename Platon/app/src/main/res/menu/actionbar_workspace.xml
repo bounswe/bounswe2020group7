@@ -2,5 +2,12 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <item
+        android:id="@+id/issue_btn"
+        android:title="@string/issue_str"
+        android:icon="@drawable/ic_issue_white_24dp"
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+
 
 </menu>
