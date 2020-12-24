@@ -57,6 +57,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     private lateinit var binding: FragmentProfilePageBinding
     private val mProfilePageViewModel: ProfilePageViewModel by activityViewModels()
     private val mActivityViewModel: HomeActivityViewModel by activityViewModels()
+    private lateinit var paginationListener:PaginationListener
 
     private lateinit var dialog:AlertDialog
     private var maxPageNumberResearch:Int=0
@@ -78,22 +79,8 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     }
 
     private fun initializeAdapters() {
-        val height = resources.displayMetrics.heightPixels
-
-        val layoutManagerComments = LinearLayoutManager(this.activity, LinearLayoutManager.HORIZONTAL, false)
-        binding.rvProfilePageComments.layoutManager = layoutManagerComments
-        
         val layoutManagerProjects = LinearLayoutManager(this.activity)
-
-        binding.rvProfilePageProjects.adapter = UserProjectsAdapter(ArrayList(), requireContext(), this)
-        binding.rvProfilePageProjects.layoutManager = layoutManagerProjects
-
-        binding.rvProfilePageProjects.layoutParams =
-            LinearLayout.LayoutParams(binding.rvProfilePageProjects.layoutParams.width, height / 3)
-
-
-        binding.rvProfilePageProjects.addOnScrollListener(object :
-            PaginationListener(layoutManagerProjects) {
+        paginationListener = object:PaginationListener(layoutManagerProjects) {
             override fun loadMoreItems() {
                 if (maxPageNumberResearch - 1 > currentPage) {
                     currentPage++
@@ -104,13 +91,29 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                         5
                     )
                 }
+
             }
 
             override var isLastPage: Boolean = false
             override var isLoading: Boolean = false
             override var currentPage: Int = 0
-        })
+        }
 
+        val height = resources.displayMetrics.heightPixels
+
+        val layoutManagerComments = LinearLayoutManager(this.activity, LinearLayoutManager.HORIZONTAL, false)
+        binding.rvProfilePageComments.layoutManager = layoutManagerComments
+        
+
+
+        binding.rvProfilePageProjects.adapter = UserProjectsAdapter(ArrayList(), requireContext(), this)
+        binding.rvProfilePageProjects.layoutManager = layoutManagerProjects
+
+        binding.rvProfilePageProjects.layoutParams =
+            LinearLayout.LayoutParams(binding.rvProfilePageProjects.layoutParams.width, height / 3)
+
+
+        binding.rvProfilePageProjects.addOnScrollListener(paginationListener)
         binding.rvProfilePageSkills.adapter = SkillsAdapter(ArrayList(), requireContext())
         binding.rvProfilePageSkills.layoutManager = GridLayoutManager(this.activity, 3)
 
@@ -251,7 +254,9 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                 Resource.Success::class.java ->{
                     Toast.makeText(activity, "Research Information is added!", Toast.LENGTH_SHORT).show()
                     mProfilePageViewModel.getAddResearchResourceResponse.value  = Resource.Done()
+                    paginationListener.currentPage =0
                     mActivityViewModel.fetchUser((activity as HomeActivity).currUserToken)
+
                 }
                 Resource.Error::class.java ->{
                     Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
@@ -266,6 +271,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java ->{
                     mProfilePageViewModel.getDeleteResearchResourceResponse.value = Resource.Done()
+                    paginationListener.currentPage =0
                     mActivityViewModel.fetchUser((activity as HomeActivity).currUserToken)
                 }
                 Resource.Error::class.java ->{
@@ -283,6 +289,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java ->{
                     mProfilePageViewModel.getEditResearchResourceResponse.value = Resource.Done()
+                    paginationListener.currentPage =0
                     mActivityViewModel.fetchUser((activity as HomeActivity).currUserToken)
                 }
                 Resource.Error::class.java ->{

@@ -1,16 +1,27 @@
 package com.cmpe451.platon.page.activity.workspace.fragment.filesystem
 
+import android.Manifest
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.content.Intent
+import android.content.Intent.ACTION_OPEN_DOCUMENT
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.FilesAdapter
@@ -19,8 +30,13 @@ import com.cmpe451.platon.databinding.AddRequirementBinding
 import com.cmpe451.platon.databinding.DialogAddFolderBinding
 import com.cmpe451.platon.databinding.FragmentWorkspaceFolderBinding
 import com.cmpe451.platon.network.Resource
+import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.util.Definitions
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.File
 
 class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickListener, FilesAdapter.FilesButtonClickListener {
 
@@ -111,8 +127,54 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
                 }
             }
         }
+        val someActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult())
+        {
+            if(it.resultCode == Activity.RESULT_OK && it.data != null && it.data!!.data != null) {
+                uploadFile(it.data!!.data)
+            }
+        }
+
+        binding.filesTitleTv.setOnClickListener{
+            ActivityCompat.requestPermissions(
+                activity as WorkspaceActivity,
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1
+            )
+
+            val photoPickerIntent = Intent(ACTION_OPEN_DOCUMENT)
+            photoPickerIntent.type = "*/*"
+            someActivityResultLauncher.launch(photoPickerIntent)
+        }
+
+
     }
 
+    private fun uploadFile(data: Uri?) {
+        if(data != null){
+            Log.i("denem", data.path.toString())
+            if((activity as WorkspaceActivity).checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+                val file = File(Definitions().getRealPathFromUri(requireContext(), data))
+                val fBody = RequestBody.create(
+                    MediaType.parse("*/*"),
+                    file
+                )
+
+                val body = MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("profile_photo", file.name, fBody)
+                    .build()
+
+//                mProfilePageViewModel.uploadPhoto(body, (activity as HomeActivity).currUserToken)
+            }else{
+                Toast.makeText(
+                    requireContext(),
+                    "Please give read permissions!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+
+
+        }
+    }
 
 
     private fun setView(folders:List<String>, files:List<String>, cwd:String) {
