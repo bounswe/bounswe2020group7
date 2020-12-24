@@ -338,7 +338,7 @@ class NotificationAPI(Resource):
             Returns all notifications of the logged in user with related user lists
         """
         try:
-            all_notifications = Notification.query.filter(Notification.owner_id == user_id).all()
+            all_notifications = Notification.query.filter(Notification.owner_id == user_id).order_by(Notification.timestamp.desc()).all()
         except:
             return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
 
