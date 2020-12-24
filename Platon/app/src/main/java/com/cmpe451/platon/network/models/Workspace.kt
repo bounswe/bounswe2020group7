@@ -30,6 +30,11 @@ data class Workspace(
         val state: Int,
 
 )
+data class Folder(
+        val cwd:String,
+        val files :List<String>,
+        val folders:List<String>
+)
 
 
 data class Job(

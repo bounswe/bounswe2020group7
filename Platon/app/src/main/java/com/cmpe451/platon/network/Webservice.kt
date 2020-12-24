@@ -231,4 +231,11 @@ interface Webservice {
     @HTTP(method = "DELETE", path = "api/workspaces",hasBody = true)
     fun deleteWorkspace(@Field("workspace_id") workspace_id: Int,
                         @Header("auth_token") token: String): Call<JsonObject?>
+
+    @GET("api/file_system/folder")
+    fun getFolder(
+        @Query("workspace_id") workspace_id:Int,
+        @Query("path") path:String,
+        @Header("auth_token") auth_token: String
+    ) : Call<Folder?>
 }

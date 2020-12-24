@@ -115,7 +115,7 @@ class WorkspaceFragment : Fragment(){
                     if(it.data?.max_collaborators == null)
                         binding.maxCollabTv.visibility = View.GONE
                     else
-                        binding.maxCollabTv.text = getString(R.string.max_collab_str) + " " + it.data?.max_collaborators.toString()
+                        binding.maxCollabTv.text = getString(R.string.max_collab_str) + ": " + it.data?.max_collaborators.toString()
                     if(it.data?.deadline==null)
                         binding.deadlineTv.visibility = View.GONE
                     else
@@ -198,7 +198,7 @@ class WorkspaceFragment : Fragment(){
         val bArray = mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.requirements.map { requirementsList.contains(it) }.toBooleanArray()
         AlertDialog.Builder(context)
             .setCancelable(false)
-            .setNeutralButton("Add Nonexistent Requirement") { _, _ ->
+            .setNeutralButton("Add Nonexistent") { _, _ ->
                 val tmpBinding = AddRequirementBinding.inflate(
                     layoutInflater,
                     requireView().parent as ViewGroup,

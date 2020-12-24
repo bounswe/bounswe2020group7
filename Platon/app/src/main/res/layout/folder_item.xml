@@ -23,13 +23,13 @@
             android:text="@string/folders"
             android:textSize="@dimen/details_text_size"
             android:textColor="@color/primary_light"
-            app:drawableLeftCompat="@drawable/ic_insert_drive_file_24px"
+            app:drawableLeftCompat="@drawable/ic_folder_24px"
             android:drawablePadding="@dimen/small"/>
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/edit_file_iv"
-            android:src="@drawable/ic_editprofile_24px"
+            android:src="@drawable/ic_text_fields_24px"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:padding="@dimen/xx_small"/>
