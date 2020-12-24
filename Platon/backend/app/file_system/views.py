@@ -240,6 +240,8 @@ class FolderSystemAPI(Resource):
             ws_path = FileSystem.workspace_base_path(form.workspace_id.data)
             # Control given path exists or not
             path = ws_path + os.path.sep + form.path.data
+            if os.path.abspath(ws_path) == os.path.abspath(path):
+                return make_response(jsonify({"err":"It is forbidden to change the name of main folder"}),403)
             if not FileSystem.is_directory_exists(path):
                 return make_response(jsonify({"err":"Give Appropriate Path"}),400)
             if FileSystem.is_path_forbidden(ws_path,path):
