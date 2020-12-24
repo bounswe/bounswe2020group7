@@ -157,6 +157,17 @@ def workspace_exists(param_loc,workspace_id_key):
         return workspace_check
     return workspace_exists_inner
 
+def active_contribution_check(workspace_id,user_id,func,*args,**kwargs):
+    try:
+        contribution = Contribution.query.filter((Contribution.workspace_id == workspace_id) & (Contribution.user_id == user_id)).first()
+    except:
+        return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
+    if contribution is None:
+        return make_response(jsonify({'error': 'You have to contribute the Workspace'}),404)
+    if int(contribution.is_active) != 1:
+        return make_response(jsonify({'error': 'You have to contribute the Workspace actively'}),404)
+    return func(*args,**kwargs)
+
 def active_contribution_required(param_loc,workspace_id_key):
     """
         param_loc: it only can be "args" or "form" which specifies the location of the requested wokspace id in the request
@@ -179,15 +190,7 @@ def active_contribution_required(param_loc,workspace_id_key):
                 except:
                     return make_response(jsonify({'error':'Wrong input format'}),400)
             user_id = args[0]
-            try:
-                contribution = Contribution.query.filter((Contribution.workspace_id == workspace_id) & (Contribution.user_id == user_id)).first()
-            except:
-                return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
-            if contribution is None:
-                return make_response(jsonify({'error': 'You have to contribute the Workspace'}),404)
-            if int(contribution.is_active) != 1:
-                return make_response(jsonify({'error': 'You have to contribute the Workspace actively'}),404)
-            return func(*args,**kwargs)
+            return active_contribution_check(workspace_id,user_id,func,*args,**kwargs)
         return contribution_check
     return active_contribution_required_inner
 
@@ -219,7 +222,8 @@ def visibility_required(param_loc,workspace_id_key):
             except:
                 return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
             if workspace.is_private:
-                return active_contribution_required(param_loc,workspace_id_key)
+                user_id = args[0]
+                return active_contribution_check(workspace.id,user_id,func,*args,**kwargs)
             else:
                 if workspace.state == int(WorkspaceState.ongoing):
                     return make_response(jsonify({"err": "You are note allowed to see the content of this workspace"}),403)
