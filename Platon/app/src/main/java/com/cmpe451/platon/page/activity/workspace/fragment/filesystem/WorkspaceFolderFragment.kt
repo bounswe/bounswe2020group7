@@ -13,6 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.cmpe451.platon.R
+import com.cmpe451.platon.adapter.FilesAdapter
 import com.cmpe451.platon.adapter.FoldersAdapter
 import com.cmpe451.platon.databinding.AddRequirementBinding
 import com.cmpe451.platon.databinding.DialogAddFolderBinding
@@ -21,7 +22,7 @@ import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.util.Definitions
 
-class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickListener {
+class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickListener, FilesAdapter.FilesButtonClickListener {
 
     lateinit var binding:FragmentWorkspaceFolderBinding
     private lateinit var cwd:String
@@ -123,6 +124,7 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
             binding.directoryUpTv.visibility = View.VISIBLE
         }
         (binding.rvWorkspaceFolders.adapter as FoldersAdapter).replaceElements(folders)
+        (binding.rvWorkspaceFiles.adapter as FilesAdapter).replaceElements(files)
 
     }
 
@@ -130,6 +132,9 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
         dialog = Definitions().createProgressBar(requireContext())
         binding.rvWorkspaceFolders.adapter = FoldersAdapter(ArrayList(), requireContext(), this)
         binding.rvWorkspaceFolders.layoutManager = LinearLayoutManager(requireContext())
+
+        binding.rvWorkspaceFiles.adapter = FilesAdapter(ArrayList(), requireContext(), this)
+        binding.rvWorkspaceFiles.layoutManager = LinearLayoutManager(requireContext())
     }
 
 
@@ -189,6 +194,18 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
     }
     private fun deleteFolder(folderName:String){
         mWorkspaceFolderViewModel.deleteFolder((activity as WorkspaceActivity).workspace_id!!, "$cwd/$folderName", folderName, (activity as WorkspaceActivity).token!!)
+    }
+
+    override fun onEditFileClicked(folder: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onFileNameClicked(folder: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onDeleteFileClicked(folder: String) {
+        TODO("Not yet implemented")
     }
 
 }
