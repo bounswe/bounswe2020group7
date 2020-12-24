@@ -38,7 +38,7 @@ class SearchEngine():
     wrong_stopwords = ["can"]
 
     @staticmethod
-    def semantic_related_list(search_tokens,max_num_of_related=8):
+    def semantic_related_list(search_tokens,max_num_of_related=40):
         """
             where 'search_tokens': List of tokens that are given in a search string
             where 'max_num_of_related': Number of words that will be chosen for a token
