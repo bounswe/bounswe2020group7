@@ -17,12 +17,13 @@ import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import WorkspaceViewFileSectionDeleteConfirmation from "./WorkspaceViewFileSectionDeleteConfirmation/WorkspaceViewFileSectionDeleteConfirmation";
 import WorkspaceViewFileSectionRenameConfirmation from "./WorkspaceViewFileSectionRenameConfirmation/WorkspaceViewFileSectionRenameConfirmation";
 import WorkspaceViewFileSectionEditConfirmation from "./WorkspaceViewFileSectionEditConfirmation/WorkspaceViewFileSectionEditConfirmation.js";
+import WorkspaceViewFileSectionPreviewConfirmation from "./WorkspaceViewFileSectionPreviewConfirmation/WorkspaceViewFileSectionPreviewConfirmation.js";
 import config from "../../../../utils/config";
 import colors from "../../../../utils/colors";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import EditIcon from "@material-ui/icons/Edit";
 import Button from "@material-ui/core/Button";
-
+import VisibilityIcon from '@material-ui/icons/Visibility';
 const StyledButton = withStyles({
   root: {
     background: colors.tertiary,
@@ -60,6 +61,7 @@ class WorkspaceViewFileSection extends Component {
       deleteFolderDialogArray: [],
       renameFolderDialogArray: [],
       editFileDialogArray: [],
+      previewFileDialogArray: []
     };
   }
   fetchFileStructure = () => {
@@ -90,6 +92,9 @@ class WorkspaceViewFileSection extends Component {
               false
             ),
             renameFolderDialogArray: Array(response.data.folders.length).fill(
+              false
+            ),
+            previewFileDialogArray: Array(response.data.folders.length).fill(
               false
             ),
           });
@@ -421,7 +426,16 @@ class WorkspaceViewFileSection extends Component {
     prevState[index] = false;
     this.setState({ renameFolderDialogArray: prevState });
   };
-
+  handlePreviewFileDialogOpen = (index) => {
+    let prevState = this.state.previewFileDialogArray;
+    prevState[index] = true;
+    this.setState({ previewFileDialogArray: prevState });
+  };
+  handlePreviewFileDialogClose = (index) => {
+    let prevState = this.state.previewFileDialogArray;
+    prevState[index] = false;
+    this.setState({ previewFileDialogArray: prevState });
+  };
   render() {
     const { classes } = this.props;
 
@@ -510,12 +524,28 @@ class WorkspaceViewFileSection extends Component {
                   primary={element}
                 />
                 <ListItemSecondaryAction>
-                  <IconButton edge="end" aria-label="download">
+                <IconButton edge="end" aria-label="download">
                     <GetAppIcon onClick={() => this.downloadFile(element)} />
                   </IconButton>
+                <IconButton edge="end" aria-label="download">
+                    <VisibilityIcon
+                      style={{ color: colors.tertiary }}
+                      onClick={() => this.handlePreviewFileDialogOpen(index)}
+                    />
+                    <WorkspaceViewFileSectionPreviewConfirmation
+                      type="file"
+                      element={element}
+                      previewDialog={this.state.previewFileDialogArray[index]}
+                      handlePreviewFileDialogClose={this.handlePreviewFileDialogClose}
+                      index={index}
+                      cwd={this.state.cwd}
+                      c_workspace_id={this.props.workspaceId}
+                    />
+                  </IconButton>
+
                   <IconButton edge="end" aria-label="download">
                     <EditIcon
-                      style={{ color: colors.tertiary }}
+                      style={{ color: colors.quaternary }}
                       onClick={() => this.handleEditFileDialogOpen(index)}
                     />
                     <WorkspaceViewFileSectionEditConfirmation
