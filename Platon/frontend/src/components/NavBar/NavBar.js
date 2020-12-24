@@ -111,7 +111,8 @@ const NavBar = ({ itemsPerPage = 3, width = "500px" }) => {
   const [data, setData] = useState({});
   const [fetching, setFetching] = useState(false);
   const [page, setPage] = useState(1);
-  const [notificationCount, setNotificationCount] = useState(0);
+  const [sonBirSarki, setSonBirSarki] = useState(false);
+  const [pageNumber, setPageNumber] = useState(0);
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
@@ -128,6 +129,7 @@ const NavBar = ({ itemsPerPage = 3, width = "500px" }) => {
       .then((response) => {
         if (response.status === 200) {
           setData(response.data);
+          setPageNumber(response.data.number_of_pages)
           setNotifications(response.data.notification_list);
           setFetching(false);
         }
@@ -136,7 +138,7 @@ const NavBar = ({ itemsPerPage = 3, width = "500px" }) => {
         console.error(err);
         setFetching(false);
       });
-  }, [page]);
+  }, [page, sonBirSarki]);
 
   const handlePageChange = (event, page) => {
     setPage(page);
@@ -167,11 +169,18 @@ const NavBar = ({ itemsPerPage = 3, width = "500px" }) => {
         if (response.status === 200) {
           let prevArray = notifications
           prevArray.splice(index, 1)
-          //notifications.filter(item => item.id !== index)
+
           setNotifications([...prevArray])
-          if((page>0) && notifications.length===0){
-            setPage(page-1);
+          if(notifications.length===0){
+            setPageNumber(pageNumber-1)
+            if(page>1){
+              setPage(page-1);
+            }
+            else{
+              setSonBirSarki(!sonBirSarki)
+            }
           }
+
         }
       })
       .catch((err) => {
@@ -181,6 +190,7 @@ const NavBar = ({ itemsPerPage = 3, width = "500px" }) => {
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
+
 
   return (
     <div className={classes.root}>
@@ -279,7 +289,7 @@ const NavBar = ({ itemsPerPage = 3, width = "500px" }) => {
                       </div>
                     ))}
                   </List>
-                  {data.notification_list && (data.notification_list.length === 0) && (
+                  {notifications && (notifications.length === 0) && (pageNumber === 0) && (
                 <div
                   style={{
                     padding: "20px 0",
