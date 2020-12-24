@@ -5,7 +5,7 @@ from flask import send_from_directory
 from app.file_system.forms import FileInfoForm, FileForm, file_post_parser, FileGetForm, file_get_parser,file_delete_parser
 from app.file_system.forms import FolderInfoForm, folder_get_parser, FolderPostPutForm, folder_post_put_parser, folder_delete_parser
 from app.file_system.helpers import FileSystem
-from app.workspace_system.helpers import workspace_exists,active_contribution_required
+from app.workspace_system.helpers import workspace_exists,active_contribution_required, visibility_required
 from app.auth_system.helpers import login_required
 from app import api, db
 import os
@@ -37,7 +37,7 @@ class FileSystemAPI(Resource):
     @api.expect(file_get_parser)
     @login_required
     @workspace_exists(param_loc='args',workspace_id_key='workspace_id')
-    @active_contribution_required(param_loc='args',workspace_id_key='workspace_id')
+    @visibility_required(param_loc='args',workspace_id_key='workspace_id')
     def get(user_id,self):
         form = FileGetForm(request.args)
         if form.validate():
@@ -83,7 +83,7 @@ class FileSystemAPI(Resource):
                 return make_response(jsonify({"err":"Give Appropriate Filename"}),400)
             # Save file to the given path
             new_file.save(file_path)
-            return make_response(jsonify({"err":"Your File is successfully uploaded"}),201)
+            return make_response(jsonify({"msg":"Your File is successfully uploaded"}),201)
         else:
             return make_response(jsonify({"err":"Invalid Input"}),400)
     
@@ -117,7 +117,7 @@ class FileSystemAPI(Resource):
             # Update the given file
             os.remove(file_path)
             new_file.save(file_path)
-            return make_response(jsonify({"err":"Your File is successfully changed"}),200)
+            return make_response(jsonify({"msg":"Your File is successfully changed"}),200)
         else:
             return make_response(jsonify({"err":"Invalid Input"}),400)
     
@@ -165,7 +165,7 @@ class FolderSystemAPI(Resource):
     @api.expect(folder_get_parser)
     @login_required
     @workspace_exists(param_loc='args',workspace_id_key='workspace_id')
-    @active_contribution_required(param_loc='args',workspace_id_key='workspace_id')
+    @visibility_required(param_loc='args',workspace_id_key='workspace_id')
     def get(user_id,self):
         form = FolderInfoForm(request.args)
         if form.validate():
@@ -219,7 +219,7 @@ class FolderSystemAPI(Resource):
             except:
                 return make_response(jsonify({"err":"Recursive directories can not be created"}),400)
 
-            return make_response(jsonify({"err":"Folder is successfully created"}),201)
+            return make_response(jsonify({"msg":"Folder is successfully created"}),201)
         else:
             return make_response(jsonify({"err":"Invalid Input"}),400)
 
@@ -240,6 +240,8 @@ class FolderSystemAPI(Resource):
             ws_path = FileSystem.workspace_base_path(form.workspace_id.data)
             # Control given path exists or not
             path = ws_path + os.path.sep + form.path.data
+            if os.path.abspath(ws_path) == os.path.abspath(path):
+                return make_response(jsonify({"err":"It is forbidden to change the name of main folder"}),403)
             if not FileSystem.is_directory_exists(path):
                 return make_response(jsonify({"err":"Give Appropriate Path"}),400)
             if FileSystem.is_path_forbidden(ws_path,path):
@@ -252,7 +254,7 @@ class FolderSystemAPI(Resource):
                 return make_response(jsonify({"err":"Give Appropriate New File Name"}),400)
             # Rename folder
             os.rename(path,new_folder_path)
-            return make_response(jsonify({"err":"Folder Name is successfully changed"}),200)
+            return make_response(jsonify({"msg":"Folder Name is successfully changed"}),200)
 
         else:
             return make_response(jsonify({"err":"Invalid Input"}),400)
@@ -282,7 +284,7 @@ class FolderSystemAPI(Resource):
                 return make_response(jsonify({"err":"Folder does not exist"}),400)
             # Delete all contents of the folder
             FileSystem.delete_all_content(folder_path)
-            return make_response(jsonify({"err":"Folder is successfully deleted"}),200)
+            return make_response(jsonify({"msg":"Folder is successfully deleted"}),200)
         else:
             return make_response(jsonify({"err":"Invalid Input"}),400)
 
