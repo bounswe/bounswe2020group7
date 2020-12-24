@@ -3,12 +3,13 @@ from tests.base_test import TestConfig
 
 from app.auth_system.models import User
 from app.profile_management.models import Jobs, Skills, UserSkills
+from app.search_engine.models import SearchHistoryItem
 from app.auth_system.views import generate_token
 
 from app import db
 import json
 
-class UserSearchTests(BaseTest):
+class SearchHistoryTests(BaseTest):
     
     def setUp(self):
         # Add artificial users to test login feature
@@ -26,6 +27,100 @@ class UserSearchTests(BaseTest):
             User("umut@deneme.com", True, "b73ec5e4625ffcb6d0d70826f33be7a75d45b37046e26c4b60d9111266d70e32", 3.5,
                  "Umut", "Özdemir", False, None, None, None, 1, "boun"),
             User("can@deneme.com", False, "cce0c2170d1ae52e099c716165d80119ee36840e3252e57f2b2b4d6bb111d8a5", 3.4,
+                 "Can", "Deneme", False, None, None, None, 2, "boun")
+        ]
+        for user in users:
+            db.session.add(user)
+        db.session.commit()
+        
+        search_history = [
+            SearchHistoryItem(1,"can",0),
+            SearchHistoryItem(1,"boun",1),
+            SearchHistoryItem(1,"nanonetwork",2),
+            SearchHistoryItem(1,"umut",0),
+            SearchHistoryItem(1,"umut",0),
+            SearchHistoryItem(2,"umut",0),
+            SearchHistoryItem(2,"umut",0),
+            SearchHistoryItem(2,"computer networks",1)
+        ]
+
+        for hist_item in search_history:
+            db.session.add(hist_item)
+        db.session.commit()
+    
+    def test_user_search_history(self):
+        valid_token = generate_token(1,TestConfig.SESSION_DURATION)
+        actual_response = self.client.get("/api/search_engine/search_history",
+                                              query_string={"search_type":0},
+                                              headers={"auth_token":valid_token})
+        expected_response = {"search_history": [
+                {
+                    "query": "umut",
+                    "number_of_use": 2
+                },
+                {
+                    "query": "can",
+                    "number_of_use": 1
+                }
+            ]}
+        self.assertEqual(actual_response.status_code,200)
+        self.assertEqual(json.loads(actual_response.data),expected_response)
+    
+    def test_workspace_search(self):
+        valid_token = generate_token(1,TestConfig.SESSION_DURATION)
+        actual_response = self.client.get("/api/search_engine/search_history",
+                                              query_string={"search_type":1},
+                                              headers={"auth_token":valid_token})
+        expected_response = {"search_history": [
+                {
+                    "query": "boun",
+                    "number_of_use": 1
+                }
+            ]}
+        self.assertEqual(actual_response.status_code,200)
+        self.assertEqual(json.loads(actual_response.data),expected_response)
+
+    def test_ue_search_history(self):
+        valid_token = generate_token(1,TestConfig.SESSION_DURATION)
+        actual_response = self.client.get("/api/search_engine/search_history",
+                                              query_string={"search_type":2},
+                                              headers={"auth_token":valid_token})
+        expected_response = {"search_history": [
+                {
+                    "query": "nanonetwork",
+                    "number_of_use": 1
+                }
+            ]}
+        self.assertEqual(actual_response.status_code,200)
+        self.assertEqual(json.loads(actual_response.data),expected_response)
+    
+    def test_empty_result(self):
+        valid_token = generate_token(2,TestConfig.SESSION_DURATION)
+        actual_response = self.client.get("/api/search_engine/search_history",
+                                              query_string={"search_type":2},
+                                              headers={"auth_token":valid_token})
+        expected_response = {"search_history": []}
+        self.assertEqual(actual_response.status_code,200)
+        self.assertEqual(json.loads(actual_response.data),expected_response)
+        
+class UserSearchTests(BaseTest):
+    
+    def setUp(self):
+        # Add artificial users to test login feature
+        jobs = [
+            Jobs("Academician"),
+            Jobs("PhD Student")
+        ]
+
+        for job in jobs:
+            db.session.add(job)
+
+        db.session.commit()
+        # Add artificia users to test login feature
+        users = [
+            User("umut@deneme.com", True, "b73ec5e4625ffcb6d0d70826f33be7a75d45b37046e26c4b60d9111266d70e32", 3.5,
+                 "Umut", "Özdemir", False, None, None, None, 1, "boun"),
+            User("can@deneme.com", True, "cce0c2170d1ae52e099c716165d80119ee36840e3252e57f2b2b4d6bb111d8a5", 3.4,
                  "Can", "Deneme", False, None, None, None, 2, "boun")
         ]
         for user in users:
@@ -167,4 +262,5 @@ class UserSearchTests(BaseTest):
             ]
         }
         self.assertEqual(200,actual_response.status_code)
-        self.assertEqual(expected_result,json.loads(actual_response.data))        
+        self.assertEqual(expected_result,json.loads(actual_response.data))
+

@@ -107,7 +107,7 @@ class SearchEngine():
             Adds new search history item record to the database
             Returns True if it is added, False if there is any problem
         """
-        new_search_item = SearchHistoryItem(user_id,query,search_type)
+        new_search_item = SearchHistoryItem(user_id,query.lower(),search_type)
         try:
             db.session.add(new_search_item)
             db.session.commit()

@@ -9,6 +9,18 @@ from dateutil import parser
 from hashlib import sha256
 from functools import wraps
 
+ALLOWED_PHOTO_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_PHOTO_EXTENSIONS
+
+def profile_photo_link(profile_photo_field,user_id):
+    if profile_photo_field is not None and allowed_file(profile_photo_field):
+        return "/auth_system/profile_photo?user_id={}".format(user_id)
+    else:
+        return "/auth_system/logo"
+
 def generate_token(user_id,expire_duration):
     """
         Generates new token for given user id

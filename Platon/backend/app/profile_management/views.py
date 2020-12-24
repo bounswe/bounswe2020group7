@@ -12,12 +12,13 @@ from app.profile_management.models import Skills
 from app.profile_management.models import Jobs
 from app.profile_management.forms import JobsPostForm,jobs_post_parser, JobsPutForm,jobs_put_parser, JobsDeleteForm,jobs_delete_parser
 from app.profile_management.forms import SkillsPostForm,skills_post_parser, SkillsPutForm,skills_put_parser, SkillsDeleteForm,skills_delete_parser
-from app.profile_management.forms import notification_get_parser,NotificationDeleteForm,notification_delete_parser
+from app.profile_management.forms import NotificationGetForm,notification_get_parser,NotificationDeleteForm,notification_delete_parser
 from app.profile_management.forms import front_page_parser
 from app.profile_management.models import ResearchInformation,Notification,NotificationRelatedUser
 from app.profile_management.helpers import schedule_regularly,ResearchType
 
 from app import api, db
+import math
 
 profile_management_ns = Namespace("Profile Management",
                                   description="Profile Management Endpoints",
@@ -31,6 +32,7 @@ research_info_model = api.model('Research Info', {
 })
 
 research_list_model = api.model('Research List', {
+    'number_of_pages' : fields.Integer,
     'research_info': fields.List(
         fields.Nested(research_info_model)
     )
@@ -51,6 +53,7 @@ notification_model = api.model('Notification', {
 })
 
 notification_list_model = api.model('Notification List', {
+    'number_of_pages' : fields.Integer,
     'notification_list': fields.List(
         fields.Nested(notification_model)
     )
@@ -76,7 +79,15 @@ class ResearchInformationAPI(Resource):
                 all_research_info = ResearchInformation.query.filter(ResearchInformation.user_id == form.user_id.data).all()
             except:
                 return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
-            return make_response(jsonify({'research_info' :[{'id': info.id,'title': info.research_title, 'description': info.description, 'year': info.year}for info in all_research_info]}),200)
+            research_list = [{'id': info.id,'title': info.research_title, 'description': info.description, 'year': info.year}for info in all_research_info]
+            number_of_pages = 1
+            if form.page.data is not None and form.per_page.data is not None:
+                per_page = form.per_page.data
+                number_of_pages = math.ceil(len(research_list) / per_page)
+                # Assign the page index to the maximum if it exceeds the max index
+                page = form.page.data if form.page.data < number_of_pages else number_of_pages-1
+                research_list = research_list[page*per_page:(page+1)*per_page]
+            return make_response(jsonify({'number_of_pages':number_of_pages ,'research_info' :research_list}),200)
         else:
             return make_response(jsonify({'error':'Wrong input format'}),400)
     
@@ -327,7 +338,7 @@ class NotificationAPI(Resource):
             Returns all notifications of the logged in user with related user lists
         """
         try:
-            all_notifications = Notification.query.filter(Notification.owner_id == user_id).all()
+            all_notifications = Notification.query.filter(Notification.owner_id == user_id).order_by(Notification.timestamp.desc()).all()
         except:
             return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
 
@@ -338,8 +349,17 @@ class NotificationAPI(Resource):
         except:
             return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
 
-        response = [{'id': notification.id, 'text': notification.text, 'link': notification.link,'timestamp' : notification.timestamp ,'related_users': [ user.related_user_id for user in related_users[notification.id]]} for notification in all_notifications]
-        return make_response(jsonify(response),200)
+        notification_list = [{'id': notification.id, 'text': notification.text, 'link': notification.link,'timestamp' : notification.timestamp ,'related_users': [ user.related_user_id for user in related_users[notification.id]]} for notification in all_notifications]
+        number_of_pages = 1
+        form = NotificationGetForm(request.args)
+        if form.page.data is not None and form.per_page.data is not None:
+            per_page = form.per_page.data
+            number_of_pages = math.ceil(len(notification_list) / per_page)
+            # Assign the page index to the maximum if it exceeds the max index
+            page = form.page.data if form.page.data < number_of_pages else number_of_pages-1
+            notification_list = notification_list[page*per_page:(page+1)*per_page]
+
+        return make_response(jsonify({'number_of_pages':number_of_pages,'notification_list' : notification_list}),200)
 
     @api.doc(responses={200:'Successfully Deleted',400:'Wrong Input Format',401:'Authantication Problem',404:'Notification Not Found',500:'Database Connection Problem'})
     @api.expect(notification_delete_parser)

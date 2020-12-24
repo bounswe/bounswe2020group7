@@ -17,7 +17,8 @@ const UpcomingEvents = () => {
           console.error("Error:", error);
         });
     },
-    [ upcomingEventsList ]
+    []
+
   );
   return (
     <div>

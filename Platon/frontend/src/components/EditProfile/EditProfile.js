@@ -4,7 +4,8 @@ import NavBar from "../NavBar/NavBar";
 import colors from "../../utils/colors";
 import { Container, Col, Row, Button } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { TextField, withStyles } from '@material-ui/core';
+import { TextField, withStyles, Switch, FormControlLabel } from '@material-ui/core';
+
 import axios from 'axios';
 import MuiAlert from "@material-ui/lab/Alert";
 import jwt_decode from "jwt-decode";
@@ -12,6 +13,8 @@ import config from "../../utils/config";
 import Snackbar from "@material-ui/core/Snackbar";
 import { Link } from "react-router-dom";
 import requestService from "../../services/requestService";
+import Spinner from '../Spinner/Spinner'
+
 
 const StyledTextField = withStyles({
     root: {
@@ -61,13 +64,22 @@ class EditProfile extends Component {
       researchgate_name: "",
       showSuccess: false,
       fieldEmptyError: false,
-      user: null
+      user: null,
+      profileId: null,
+      isLoading: true,
+
+
      }
   }
 
   componentDidMount(){
     const token = localStorage.getItem("jwtToken");
     const decoded = jwt_decode(token);
+    this.setState({
+      profileId: decoded.id
+    })
+
+
     requestService.getUser(decoded.id).then((response) => {
       this.setState({
         user: response.data,
@@ -79,8 +91,13 @@ class EditProfile extends Component {
         profile_photo: this.state.user.profile_photo,
         google_scholar_name: this.state.user.google_scholar_name,
         researchgate_name: this.state.user.researchgate_name,
+        is_private: this.state.user.is_private,
+      })
+      this.setState({
+        isLoading: false
       })
     });
+
 
   }
 
@@ -101,6 +118,13 @@ class EditProfile extends Component {
 
     this.setState({ showSuccess: false });
   };
+
+  handleSwitch = (event) => {
+    this.setState({
+      is_private: !this.state.is_private
+    })
+  };
+
   handleSubmit = () => {
     const token = localStorage.getItem("jwtToken");
     const decoded = jwt_decode(token);
@@ -132,6 +156,11 @@ class EditProfile extends Component {
       formData.append("researchgate_name", this.state.researchgate_name)
       dbcheck=true
     }
+    if(this.state.is_private !== this.state.user.is_private){
+      formData.append("is_private", this.state.is_private)
+      dbcheck=true
+    }
+
 
     if(!dbcheck){
       return
@@ -161,18 +190,20 @@ class EditProfile extends Component {
   render() {
 
     return (
+      <div className="EditProfileLanding">
 
-      <div className="Landing">
         <div className="AppBar">
           <NavBar />
         </div>
-
+        { this.state.isLoading ? <div className="EditProfileSpinner"><Spinner/></div> :
         <Container className = "ProfilePageContainer">
         <Row className="mb-3 justify-content-center">
                 <Col sm={6}>
-                    <Link to='profile'>
+                    <a href={`/${this.state.profileId}`}>
+
+
                         Back to profile
-                    </Link>
+                    </a>
                 </Col>
             </Row>
             <Row className="mb-3 justify-content-center">
@@ -182,7 +213,7 @@ class EditProfile extends Component {
                 </Col>
             </Row>
 
-            {this.state.user !== null ? (<div>
+
             <Row className="mb-3 justify-content-center">
                 <Col sm={6}>
                     <Row>
@@ -231,13 +262,30 @@ class EditProfile extends Component {
 
             <Row className="mb-3 justify-content-center">
                 <Col sm={6}>
+                <FormControlLabel
+                control={
+                <Switch
+                  checked={this.state.is_private}
+                  onChange={this.handleSwitch}
+                  name="checkedA"
+                  inputProps={{ 'aria-label': 'secondary checkbox' }}
+                />}
+                label={this.state.is_private ? "Private" : "Public"}
+                />
+                </Col>
+            </Row>
+
+            <Row className="mb-3 justify-content-center">
+                <Col sm={6}>
+
                     <Button className="ProfileUpdateButton" variant="primary" size="lg" block onClick={this.handleSubmit}>
                         Update
                     </Button>
                 </Col>
             </Row>
-            </div>): null}
-        </Container>
+        </Container> }
+
+
         {this.state.fieldEmptyError && (
               <Snackbar
                 open={this.state.fieldEmptyError}
@@ -268,7 +316,9 @@ class EditProfile extends Component {
                 </Alert>
               </Snackbar>
             )}
+
       </div>
+
     );
   }
 }

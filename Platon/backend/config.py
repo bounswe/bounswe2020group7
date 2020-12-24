@@ -1,19 +1,19 @@
 import datetime
 # In the production please make False both DEVELOPMENT and DEBUG flags
-DEBUG = True
-DEVELOPMENT = True
+DEBUG = False
+DEVELOPMENT = False
 
 # Define the application directory
 import os
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
-FRONTEND_HOSTNAME = "http://ec2-3-127-150-96.eu-central-1.compute.amazonaws.com"
+FRONTEND_HOSTNAME = "http://ec2-3-120-98-39.eu-central-1.compute.amazonaws.com"
 
 if DEVELOPMENT and DEBUG:
     # Define the database - we are working with
     mysql_user = "root"
     mysql_password = "rootpassword"
-    mysql_host = "3.127.150.96"
+    mysql_host = "18.185.75.161"
     mysql_port = "3306"
     mysql_database = "platondb"
 elif DEVELOPMENT:
@@ -55,3 +55,14 @@ MAIL_DEFAULT_SENDER = ('Platon','platon.group7@gmail.com')
 
 # Secret key for signing cookies
 SECRET_KEY = "secret"
+
+WORKSPACE_FILE_PATH = BASE_DIR + os.path.sep + "data" + os.path.sep + "workspaces"
+
+PROFILE_PHOTO_PATH = BASE_DIR + os.path.sep + "data" + os.path.sep +"profile_photos"
+
+LOGO_PATH = BASE_DIR + os.path.sep + "data"
+
+# Maximum file size for file uploads (Megabytes)
+MAX_UPLOAD_LIMIT = 500
+
+MAX_CONTENT_LENGTH = MAX_UPLOAD_LIMIT * 1024 * 1024
