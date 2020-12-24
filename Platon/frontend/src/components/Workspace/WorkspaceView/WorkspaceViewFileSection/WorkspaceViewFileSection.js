@@ -21,7 +21,18 @@ import config from "../../../../utils/config";
 import colors from "../../../../utils/colors";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import EditIcon from "@material-ui/icons/Edit";
+import Button from "@material-ui/core/Button";
 
+const StyledButton = withStyles({
+  root: {
+    background: colors.tertiary,
+    color: colors.secondary,
+
+    "&:hover": {
+      backgroundColor: colors.tertiaryDark,
+    },
+  },
+})(Button);
 const useStyles = (theme) => ({
   root: {
     width: "auto",
@@ -559,13 +570,14 @@ class WorkspaceViewFileSection extends Component {
               }}
             >
               <input
+              style={{marginRight: "8px"}}
                 value={this.state.folderName}
                 onChange={(e) => this.setState({ folderName: e.target.value })}
                 name="folderName"
                 label="FolderName"
               />
 
-              <button onClick={this.createFolder}>Create folder</button>
+              <StyledButton onClick={this.createFolder}>Create folder</StyledButton>
             </div>
             <hr />
 
@@ -596,7 +608,7 @@ class WorkspaceViewFileSection extends Component {
                 name="fileuploaded"
                 label="fileuploaded"
               />
-              <button onClick={this.uploadFile}>Upload File</button>
+              <StyledButton onClick={this.uploadFile}>Upload File</StyledButton>
             </div>
             <hr />
           </div>
