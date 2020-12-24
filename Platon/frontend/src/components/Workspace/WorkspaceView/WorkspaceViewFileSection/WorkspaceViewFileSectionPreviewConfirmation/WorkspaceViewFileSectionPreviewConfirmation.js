@@ -9,7 +9,7 @@ import colors from "../../../../../utils/colors";
 import TextField from "@material-ui/core/TextField";
 import config from "../../../../../utils/config";
 import axios from "axios";
-export default function WorkspaceViewFileSectionEditConfirmation(props) {
+export default function WorkspaceViewFileSectionPreviewConfirmation(props) {
   const [body, setBody] = useState(props.element);
   useEffect(() => {
     const token = localStorage.getItem("jwtToken");
