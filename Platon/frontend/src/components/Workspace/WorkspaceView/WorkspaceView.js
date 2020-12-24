@@ -63,7 +63,7 @@ const useStyles = (theme) => ({
   },
   chip: {
     color: colors.secondary,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.tertiaryDark,
     margin: theme.spacing(0.5),
   },
   section1: {
@@ -361,7 +361,7 @@ class WorkspaceView extends Component {
                               Requirements
                             </Typography>
                             {this.state.workspace.requirements ? (
-                              <div style={{ color: colors.primary }}>
+                              <div style={{ color: colors.tertiaryDark }}>
                                 {this.state.workspace.requirements.join(", ")}
                               </div>
                             ) : (
@@ -419,7 +419,7 @@ class WorkspaceView extends Component {
                             (element) => (
                               <Link
                                 to={`/${element.id}/`}
-                                style={{ textDecoration: "none" }}
+                                style={{ textDecoration: "none", color: colors.quinaryDark }}
                               >
                                 <div>
                                   {element.name} {element.surname}
