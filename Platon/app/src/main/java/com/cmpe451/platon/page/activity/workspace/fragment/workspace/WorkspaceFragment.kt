@@ -245,6 +245,9 @@ class WorkspaceFragment : Fragment(){
             requireView().parent as ViewGroup,
             false
         )
+        val editDialog = AlertDialog.Builder(context).setView(tmpBinding.root)
+            .setCancelable(true)
+            .show()
         tmpBinding.wsTitleEt.setText(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.title)
         tmpBinding.wsDescriptionEt.setText(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.description)
         tmpBinding.privateSwitch.isChecked =
@@ -281,62 +284,62 @@ class WorkspaceFragment : Fragment(){
 
 
         }
-        AlertDialog.Builder(context).setView(tmpBinding.root)
-            .setCancelable(true)
-            .setNeutralButton("Delete Workspace") { _: DialogInterface, _: Int ->
-                AlertDialog.Builder(context)
-                    .setMessage("Are you sure you want to delete " + mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.title + "?")
-                    .setPositiveButton("Delete"
-                    ) { _, _ ->
-                        mWorkspaceViewModel.deleteWorkspace(
-                            (activity as WorkspaceActivity).workspace_id!!,
-                            (activity as WorkspaceActivity).token!!
-                        )
-                    }
-                    .setNegativeButton("Cancel"
-                    ) { dialog, _ ->
-                        dialog.dismiss()
-                    }
-                    .create().show()
-            }
-            .setNegativeButton("Update",DialogInterface.OnClickListener { dialog, _ ->
-                if (tmpBinding.wsTitleEt.text.isNullOrEmpty()) {
-                    Toast.makeText(requireContext(), "Title cannot be left empty", Toast.LENGTH_LONG)
-                        .show()
-                } else {
-                    if (tmpBinding.wsDescriptionEt.text.isNullOrEmpty()) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Description cannot be left empty",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    } else {
-                        val title: String = tmpBinding.wsTitleEt.text.toString().trim()
-                        val description: String = tmpBinding.wsDescriptionEt.text.toString().trim()
-                        val isPrivate: Int = if (tmpBinding.privateSwitch.isChecked) 1 else 0
-                        val max_collaborators =
-                            if (tmpBinding.wsMaxCollabNumberEt.text.isNullOrEmpty()) null else tmpBinding.wsMaxCollabNumberEt.text.toString()
-                                .toInt()
-                        val deadline =
-                            if (tmpBinding.wsDeadlineEt.text.isNullOrEmpty()) null else tmpBinding.wsDeadlineEt.text.toString()
-                        val state = tmpBinding.spState.selectedItemPosition
-                        mWorkspaceViewModel.updateWorkspace(
-                            (activity as WorkspaceActivity).workspace_id!!,
-                            title,
-                            description,
-                            isPrivate,
-                            max_collaborators,
-                            deadline,
-                            null,
-                            null,
-                            state,
-                            (activity as WorkspaceActivity).token!!
-                        )
-                    }
+        tmpBinding.deleteWsBtn.setOnClickListener {
+            AlertDialog.Builder(context)
+                .setMessage("Are you sure you want to delete " + mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.title + "?")
+                .setPositiveButton("Delete"
+                ) { _, _ ->
+                    mWorkspaceViewModel.deleteWorkspace(
+                        (activity as WorkspaceActivity).workspace_id!!,
+                        (activity as WorkspaceActivity).token!!
+                    )
                 }
-            })
+                .setNegativeButton("Cancel"
+                ) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create().show()
+        }
+        tmpBinding.updateWsBtn.setOnClickListener {
+            if (tmpBinding.wsTitleEt.text.isNullOrEmpty()) {
+                Toast.makeText(requireContext(), "Title cannot be left empty", Toast.LENGTH_LONG)
+                    .show()
+            } else {
+                if (tmpBinding.wsDescriptionEt.text.isNullOrEmpty()) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Description cannot be left empty",
+                        Toast.LENGTH_LONG
+                    ).show()
+                } else {
+                    val title: String = tmpBinding.wsTitleEt.text.toString().trim()
+                    val description: String = tmpBinding.wsDescriptionEt.text.toString().trim()
+                    val isPrivate: Int = if (tmpBinding.privateSwitch.isChecked) 1 else 0
+                    val max_collaborators =
+                        if (tmpBinding.wsMaxCollabNumberEt.text.isNullOrEmpty()) null else tmpBinding.wsMaxCollabNumberEt.text.toString()
+                            .toInt()
+                    val deadline =
+                        if (tmpBinding.wsDeadlineEt.text.isNullOrEmpty()) null else tmpBinding.wsDeadlineEt.text.toString()
+                    val state = tmpBinding.spState.selectedItemPosition
+                    mWorkspaceViewModel.updateWorkspace(
+                        (activity as WorkspaceActivity).workspace_id!!,
+                        title,
+                        description,
+                        isPrivate,
+                        max_collaborators,
+                        deadline,
+                        null,
+                        null,
+                        state,
+                        (activity as WorkspaceActivity).token!!
 
-            .create().show()
+                    )
+
+                }
+            }
+            editDialog.dismiss()
+        }
+
 
     }
 
