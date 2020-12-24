@@ -166,6 +166,14 @@ class IssuesTest(BaseTest):
 
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
 
+        # Can(2) will try to post an issue into an workspace in which he is a contributor without a deadline. Success.
+        valid_token = generate_token(2, datetime.timedelta(minutes=10))
+        data = {'workspace_id': 2, 'title': "vlog idea vol 2", 'description': "why not vlogging the diffs?"}
+        actual_response = self.client.post('/api/workspaces/issue', data=data,
+                                          headers={'auth_token': valid_token})
+
+        self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
+
 
         # Can(2) will try to post an issue into an workspace in which he is not a contributor. Fail.
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
@@ -175,6 +183,16 @@ class IssuesTest(BaseTest):
 
         # 404 is used, because active_contribution_required decorator returns 404.
         self.assertEqual(actual_response.status_code, 404, 'Incorrect HTTP Response Code')
+
+        # Check if issue_id is returned.
+        # Can(2) will try to post an issue into an workspace in which he is a contributor. Success.
+        valid_token = generate_token(2, datetime.timedelta(minutes=10))
+        data = {'workspace_id': 2, 'title': "issue id test", 'description': "burhan's request", 'deadline': datetime.datetime(2020, 12, 30)}
+        actual_response = self.client.post('/api/workspaces/issue', data=data,
+                                          headers={'auth_token': valid_token})
+
+        self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
+        self.assertEqual(actual_response.json.get("issue_id"), 6, "Incorrect issue_id")
 
     def test_put_issues(self):
 

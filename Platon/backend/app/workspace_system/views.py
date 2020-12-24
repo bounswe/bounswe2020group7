@@ -91,6 +91,17 @@ issue_list_model = api.model('Issues List', {
     )
 })
 
+issue_post_model = api.model('Issue', {
+    'msg': fields.string_types,
+	"issue_id": fields.Integer, 
+	"workspace_id": fields.Integer, 
+	"title": fields.String,
+	"description": fields.String,
+	"deadline": fields.DateTime,
+	"is_open": fields.Boolean,
+	"creator_id": fields.Integer,
+    })
+
 milestone_model = api.model('Milestone', {
     "milestone_id": fields.Integer, 
     "workspace_id": fields.Integer,
@@ -244,6 +255,7 @@ class IssueAPI(Resource):
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
 
     @api.doc(responses={401 : 'Account Problems', 400 : 'Input Format Error' ,500 : ' Database Connection Error', 404: 'Not found'})
+    @api.response(200, 'Success', issue_post_model)
     @api.expect(post_issue_parser)
     @login_required
     @workspace_exists(param_loc='form',workspace_id_key='workspace_id')
@@ -267,7 +279,16 @@ class IssueAPI(Resource):
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
-            return make_response(jsonify({'msg': 'Issue is successfully created'}), 200)
+            return make_response(jsonify({
+                'msg': 'Issue is successfully created',
+                "issue_id": issue.id, 
+	            "workspace_id": issue.workspace_id, 
+	            "title": issue.title,
+	            "description": issue.description,
+	            "deadline": issue.deadline,
+	            "is_open": issue.is_open,
+	            "creator_id": issue.creator_id
+                }), 200)
 
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
