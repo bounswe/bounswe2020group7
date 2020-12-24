@@ -26,7 +26,6 @@ export default function WorkspaceViewFileSectionEditConfirmation(props) {
       .then((response) => {
         if (response.status === 200) {
           setBody(response.data);
-          props.handlePreview(response.data)
         }
       })
       .catch((err) => {
@@ -36,7 +35,7 @@ export default function WorkspaceViewFileSectionEditConfirmation(props) {
 
   const handleEditFile = () => {
     props.handleEditFileDialogClose(props.index);
-    props.editFile(props.element, body);
+    props.editFile(props.element, body, props.index);
   };
   return (
     <div>
