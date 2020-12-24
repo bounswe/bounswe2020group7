@@ -119,9 +119,9 @@ class UserSearchTests(BaseTest):
         # Add artificia users to test login feature
         users = [
             User("umut@deneme.com", True, "b73ec5e4625ffcb6d0d70826f33be7a75d45b37046e26c4b60d9111266d70e32", 3.5,
-                 "Umut", "Özdemir", False, None, None, None, 1, "boun"),
+                 "Umut", "Özdemir", False, "", None, None, 1, "boun"),
             User("can@deneme.com", True, "cce0c2170d1ae52e099c716165d80119ee36840e3252e57f2b2b4d6bb111d8a5", 3.4,
-                 "Can", "Deneme", False, None, None, None, 2, "boun")
+                 "Can", "Deneme", False, "", None, None, 2, "boun")
         ]
         for user in users:
             db.session.add(user)
@@ -157,7 +157,7 @@ class UserSearchTests(BaseTest):
                     "is_private": 0,
                     "job_id": 1,
                     "name": "Umut",
-                    "profile_photo": None,
+                    "profile_photo": "/auth_system/logo",
                     "surname": "Özdemir"
                 }
             ]
@@ -174,7 +174,7 @@ class UserSearchTests(BaseTest):
         }
         self.assertEqual(200,actual_response.status_code)
         self.assertEqual(expected_result,json.loads(actual_response.data))
-
+    
     def test_no_result_search_filter(self):
         actual_response = self.client.get("/api/search_engine/user",query_string={"search_query":"umut","job_filter":2})
         expected_result = {
@@ -194,7 +194,7 @@ class UserSearchTests(BaseTest):
                     "is_private": 0,
                     "job_id": 1,
                     "name": "Umut",
-                    "profile_photo": None,
+                    "profile_photo": "/auth_system/logo",
                     "surname": "Özdemir"
                 }
             ]
@@ -212,7 +212,7 @@ class UserSearchTests(BaseTest):
                     "is_private": 0,
                     "job_id": 1,
                     "name": "Umut",
-                    "profile_photo": None,
+                    "profile_photo": "/auth_system/logo",
                     "surname": "Özdemir"
                 }
             ]
@@ -230,7 +230,7 @@ class UserSearchTests(BaseTest):
                     "is_private": 0,
                     "job_id": 1,
                     "name": "Umut",
-                    "profile_photo": None,
+                    "profile_photo": "/auth_system/logo",
                     "surname": "Özdemir"
                 }
             ]
@@ -248,7 +248,7 @@ class UserSearchTests(BaseTest):
                     "is_private": 0,
                     "job_id": 1,
                     "name": "Umut",
-                    "profile_photo": None,
+                    "profile_photo": "/auth_system/logo",
                     "surname": "Özdemir"
                 },
                 {
@@ -256,11 +256,10 @@ class UserSearchTests(BaseTest):
                     'is_private': 0,
                     'job_id': 2,
                     'name': 'Can',
-                    'profile_photo': None,
+                    'profile_photo': "/auth_system/logo",
                     'surname': 'Deneme'
                 }
             ]
         }
         self.assertEqual(200,actual_response.status_code)
         self.assertEqual(expected_result,json.loads(actual_response.data))
-
