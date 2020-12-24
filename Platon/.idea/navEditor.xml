@@ -313,6 +313,18 @@
                       </LayoutPositions>
                     </value>
                   </entry>
+                  <entry key="workspaceFolderFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="530" />
+                            <option name="y" value="-770" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
                   <entry key="workspaceFragment">
                     <value>
                       <LayoutPositions>
@@ -325,6 +337,16 @@
                         <option name="myPositions">
                           <map>
                             <entry key="action_workspaceFragment_to_addWorkspaceFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_workspaceFragment_to_editWorkspaceFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_workspaceFragment_to_workspaceFolderFragment">
                               <value>
                                 <LayoutPositions />
                               </value>

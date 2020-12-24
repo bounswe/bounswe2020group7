@@ -4,10 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.DatePicker
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -69,6 +66,11 @@ class AddWorkspaceFragment: Fragment() {
 
             }
         })
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        menu.findItem(R.id.workspaceFolderFragment)?.isVisible = false
+        super.onPrepareOptionsMenu(menu)
     }
 
     @SuppressLint("ClickableViewAccessibility")

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="@dimen/profile_page_margin"
+    android:background="@color/primary_dark"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/directory_up_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/dm_sans_bold"
+        android:gravity="start"
+        android:padding="@dimen/x_small"
+        android:shadowColor="@color/primary_dark"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
+        android:text="Previous Directory"
+        android:textColor="@color/primary_light"
+        android:textSize="@dimen/details_text_size"
+        android:drawablePadding="@dimen/x_small"
+        app:drawableLeftCompat="@drawable/ic_north_24px" />
+    <TextView
+        android:id="@+id/folders_title_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/dm_sans_bold"
+        android:gravity="start"
+        android:padding="@dimen/x_small"
+        android:shadowColor="@color/primary_dark"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
+        android:text="@string/folders"
+        android:textColor="@color/secondary_yellow"
+        android:textSize="@dimen/project_title_text_size"
+        android:drawablePadding="@dimen/x_small"
+        app:drawableRightCompat="@drawable/ic_create_new_folder_24px" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_workspace_folders"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/files_title_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/dm_sans_bold"
+        android:gravity="start"
+        android:padding="@dimen/x_small"
+        android:shadowColor="@color/primary_dark"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
+        android:text="@string/files_str"
+        android:textColor="@color/secondary_yellow"
+        android:textSize="@dimen/project_title_text_size"
+        android:drawablePadding="@dimen/x_small"
+        app:drawableRightCompat="@drawable/ic_attach_file_24px" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_workspace_files"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+</LinearLayout>
