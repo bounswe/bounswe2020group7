@@ -313,6 +313,18 @@
                       </LayoutPositions>
                     </value>
                   </entry>
+                  <entry key="issueDetailFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="433" />
+                            <option name="y" value="908" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
                   <entry key="issuesFragment">
                     <value>
                       <LayoutPositions>
@@ -321,6 +333,15 @@
                             <option name="x" value="89" />
                             <option name="y" value="531" />
                           </Point>
+                        </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_issuesFragment_to_issueDetailFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
                         </option>
                       </LayoutPositions>
                     </value>

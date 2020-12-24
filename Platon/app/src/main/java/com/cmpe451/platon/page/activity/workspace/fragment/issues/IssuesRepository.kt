@@ -17,6 +17,7 @@ import java.sql.SQLTransactionRollbackException
 class IssuesRepository {
 
     val issuesResponse:MutableLiveData<Resource<Issues>> = MutableLiveData()
+    val addIssuesResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
 
     fun getIssues(workSpaceId: Int, page: Int, paginationSize: Int, authToken: String) {
         val service = RetrofitClient.getService()
@@ -35,6 +36,28 @@ class IssuesRepository {
             }
 
             override fun onFailure(call: Call<Issues?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+
+    fun addIssues(workSpaceId: Int, title: String, description: String,deadline: String, authToken: String) {
+        val service = RetrofitClient.getService()
+        val call = service.addIssue(workSpaceId, title, description, deadline, authToken)
+        val response: JSONObject
+        //nullable check
+        call.enqueue(object : Callback<JsonObject?> {
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                print("ert")
+                when {
+                    response.isSuccessful && response.body() != null -> addIssuesResourceResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> addIssuesResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> addIssuesResourceResponse.value = Resource.Error("Unknown error!")
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
                 call.clone().enqueue(this)
             }
 

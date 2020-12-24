@@ -124,4 +124,8 @@
     <string name="accept_link_str">I accept to share my information with Platon!</string>
     <string name="comments_str">Comments</string>
     <string name="issue_str">Issue</string>
+    <string name="issue_title_str">Issue Title</string>
+    <string name="issue_description_str">Description of Issue</string>
+    <string name="issue_add_str">Add Issue</string>
+    <string name="assignee">Assignee</string>
 </resources>

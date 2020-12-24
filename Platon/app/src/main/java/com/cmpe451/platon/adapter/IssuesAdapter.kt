@@ -46,7 +46,7 @@ class IssuesAdapter(private val data: ArrayList<Issue>, private val context: Con
 
         holder.binding.issueTitle.text = data[position].title
         holder.binding.issueDescription.text = data[position].description
-        holder.binding.issueDeadline.text = data[position].deadline.toString()
+        holder.binding.issueDeadline.text = data[position].deadline
 
         holder.bindData(holder.binding, position, issuesButtonClickListener)
     }

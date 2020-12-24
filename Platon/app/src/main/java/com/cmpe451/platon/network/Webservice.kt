@@ -254,4 +254,19 @@ interface Webservice {
                   @Field("description") description:String?,
                   @Field("deadline") deadline:String?,
                   @Header("auth_token") authToken:String?): Call<JsonObject?>
+
+    @FormUrlEncoded
+    @HTTP(method = "DELETE" , path = "api/workspaces/issue", hasBody = true)
+    fun deleteIssue(@Field("workspace_id") workspaceId:Int,
+                    @Field("issue_id") issueId:Int,
+                    @Header("auth_token") auth_token :String) : Call<JsonObject?>
+
+
+
+    @GET("api/workspaces/issue/comment")
+    fun getIssueComments(@Query("workspace_id") workspaceId: Int,
+                         @Query("issue_id") issueId: Int,
+                         @Query("page") page: Int,
+                         @Query("per_page") perPage: Int,
+                         @Header("auth_token") authToken: String ): Call<IssueComment?>
 }

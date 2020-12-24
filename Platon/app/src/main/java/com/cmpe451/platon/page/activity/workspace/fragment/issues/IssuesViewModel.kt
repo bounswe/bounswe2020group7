@@ -12,18 +12,28 @@ import com.google.gson.JsonObject
 
 class IssuesViewModel: ViewModel(){
 
-    var issuesResponse: MutableLiveData<Resource<Issues>>
-
     val repository = IssuesRepository()
+
+    var issuesResponse: MutableLiveData<Resource<Issues>>
+    var addIssuesResourceResponse = repository.addIssuesResourceResponse
+
+
 
     init {
         issuesResponse = repository.issuesResponse
+        addIssuesResourceResponse = repository.addIssuesResourceResponse
 
     }
 
     fun getIssues(workSpaceId: Int, page: Int, paginationSize: Int, authToken: String) {
         if(authToken != null){
             repository.getIssues(workSpaceId, page, paginationSize, authToken)
+        }
+    }
+
+    fun addIssues(workSpaceId: Int, title: String, description: String,deadline: String, authToken: String) {
+        if(authToken != null){
+            repository.addIssues(workSpaceId, title, description, deadline, authToken)
         }
     }
 

@@ -402,6 +402,11 @@ class WorkspaceFragment : Fragment(){
         })
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        menu.findItem(R.id.add_issue_btn)?.isVisible = false
+        super.onPrepareOptionsMenu(menu)
+    }
+
 
 
 }

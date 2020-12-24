@@ -25,3 +25,29 @@ data class Issue(
     val creator_is_private: Boolean
 )
 
+data class IssueAssignee(
+    val number_of_pages: Int,
+    val result: ArrayList<Issue>
+)
+
+data class IssueComment(
+    val number_of_pages: Int,
+    val result: ArrayList<Issue>
+)
+
+data class Comments(
+    val comment_id: Int,
+    val comment: String,
+    val owner_id: Int,
+    val owner_name: String,
+    val owner_surname: String,
+    val owner_e_mail: String,
+    val owner_rate: Int
+)
+
+
+
+
+
+
+

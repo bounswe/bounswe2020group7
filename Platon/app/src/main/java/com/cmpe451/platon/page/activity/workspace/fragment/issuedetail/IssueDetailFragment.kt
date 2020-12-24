@@ -1,13 +1,5 @@
-/*
-package com.cmpe451.platon.page.activity.workspace.fragment.issues
+package com.cmpe451.platon.page.activity.workspace.fragment.issuedetail
 
-class IssuesFragment {
-}
-*/
-
-package com.cmpe451.platon.page.activity.workspace.fragment.issues
-
-import com.cmpe451.platon.page.activity.login.fragment.landing.LandingFragmentDirections
 import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
@@ -15,48 +7,30 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
-import com.cmpe451.platon.adapter.FollowerFollowingAdapter
 import com.cmpe451.platon.adapter.IssuesAdapter
-import com.cmpe451.platon.adapter.TrendingProjectsAdapter
-import com.cmpe451.platon.core.BaseActivity
-import com.cmpe451.platon.databinding.*
-import com.cmpe451.platon.listener.PaginationListener
+import com.cmpe451.platon.databinding.DialogAddIssueBinding
+import com.cmpe451.platon.databinding.FragmentIssueDetailBinding
+import com.cmpe451.platon.databinding.IssueCellBinding
 import com.cmpe451.platon.network.Resource
-import com.cmpe451.platon.network.models.FollowPerson
 import com.cmpe451.platon.network.models.Issue
-import com.cmpe451.platon.network.models.Issues
-import com.cmpe451.platon.network.models.TrendingProject
-import com.cmpe451.platon.page.activity.home.fragment.profilepage.ProfilePageFragmentDirections
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
-import com.cmpe451.platon.page.activity.workspace.fragment.workspace.WorkspaceFragmentDirections
 import com.cmpe451.platon.util.Definitions
 
-class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
-
-    //definitions
+class IssueDetailFragment: Fragment() {
     private lateinit var dialog: AlertDialog
-    private val mIssuesViewModel:IssuesViewModel by viewModels()
+    private val mIssueDetailViewModel: IssueDetailViewModel by viewModels()
     private lateinit var sharedPreferences: SharedPreferences
 
-    lateinit var binding: FragmentIssuesBinding
-    private lateinit var adapter: IssuesAdapter
-    private lateinit var issueRecyclerView: RecyclerView
-
-    private var maxPageNumberIssue:Int=10
-
+    lateinit var binding: FragmentIssueDetailBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = FragmentIssuesBinding.inflate(layoutInflater)
+        binding = FragmentIssueDetailBinding.inflate(layoutInflater)
         setHasOptionsMenu(true)
         sharedPreferences = activity?.getSharedPreferences("token_file", Context.MODE_PRIVATE)!!
         return binding.root
@@ -67,7 +41,7 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
         initViews()
         setListeners()
         setObservers()
-        mIssuesViewModel.getIssues((activity as WorkspaceActivity).workspace_id!!,0, maxPageNumberIssue, (activity as WorkspaceActivity).token!!)
+        //mIssueDetailViewModel.getIssues((activity as WorkspaceActivity).workspace_id!!,0, maxPageNumberIssue, (activity as WorkspaceActivity).token!!)
 
     }
 
@@ -76,7 +50,8 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
 
 
     private fun setObservers(){
-        mIssuesViewModel.issuesResponse.observe(viewLifecycleOwner, { t->
+        /*
+         mIssueDetailViewModel.issuesResponse.observe(viewLifecycleOwner, { t->
             when(t.javaClass){
                 Resource.Success::class.java ->{
 
@@ -92,6 +67,8 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
                 }
             }
         })
+         */
+
 
     }
     private fun initViews() {
@@ -99,35 +76,15 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
         val height = resources.displayMetrics.heightPixels
         val width = resources.displayMetrics.widthPixels
 
+        /*
         issueRecyclerView = binding.issuesRecyclerView
         val layoutManagerIssues = LinearLayoutManager(this.activity)
         issueRecyclerView.layoutManager = layoutManagerIssues
         adapter = IssuesAdapter(ArrayList(),requireContext(), this)
         issueRecyclerView.adapter = adapter
-
-        //binding.issuesRecyclerView.layoutManager = layoutManagerIssues
-        //binding.issuesRecyclerView.adapter = IssuesAdapter(ArrayList(),requireContext(), this)
-        /*
-        binding.issuesRecyclerView.addOnScrollListener(object: PaginationListener(layoutManagerIssues){
-            override fun loadMoreItems() {
-                /*
-                if(maxPageNumberIssue-1 > currentPage){
-                    currentPage++
-                    mIssuesViewModel.getIssues(1,1,1,"")
-                    Toast.makeText(requireContext(), "Next page", Toast.LENGTH_LONG).show()
-                }
-
-                 */
-            }
-
-            override var isLastPage: Boolean = false
-            override var isLoading: Boolean = false
-            override var currentPage: Int = 0
-        })
-
          */
 
-        //binding.issuesRecyclerView.layoutParams = LinearLayout.LayoutParams(width, (height/2))
+
 
 
     }
@@ -135,19 +92,27 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
 
     private fun setListeners() {
         dialog = Definitions().createProgressBar(requireContext())
+
+        binding.issueDescription.setOnClickListener{
+            if(binding.issueInfoLinearLayout.visibility == View.GONE){
+                binding.issueInfoLinearLayout.visibility = View.VISIBLE
+            }
+            else{
+                binding.issueInfoLinearLayout.visibility = View.GONE
+            }
+        }
     }
 
 
-    override fun onIssueButtonClicked(binding: IssueCellBinding, position: Int) {
-        findNavController().navigate(IssuesFragmentDirections.actionIssuesFragmentToIssueDetailFragment())
-    }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.issue_btn)?.isVisible = false
+        menu.findItem(R.id.button_issue_add)?.isVisible = false
         super.onPrepareOptionsMenu(menu)
     }
 
     private fun onAddIssueButtonClicked() {
+        /*
         val addBinding = DialogAddIssueBinding.inflate(layoutInflater, binding.root, false)
         val addDialog = AlertDialog.Builder(requireContext())
             .setView(addBinding.root)
@@ -169,21 +134,16 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
                     }
                     else -> {
 
-                        mIssuesViewModel.addIssues((activity as WorkspaceActivity).workspace_id!!, addBinding.issueTitle.text.toString(),addBinding.issueDescription.text.toString(),addBinding.issueDeadline.text.toString(), (activity as WorkspaceActivity).token!!)
+                        mIssueDetailViewModel.addIssues((activity as WorkspaceActivity).workspace_id!!, addBinding.issueTitle.text.toString(),addBinding.issueDescription.text.toString(),addBinding.issueDeadline.text.toString(), (activity as WorkspaceActivity).token!!)
                         addDialog.dismiss()
                     }
                 }
             }
         }
+         */
+
     }
 
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.add_issue_btn -> onAddIssueButtonClicked()
-        }
 
-        return super.onOptionsItemSelected(item)
-    }
 }
-
