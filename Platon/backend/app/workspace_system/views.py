@@ -91,8 +91,8 @@ issue_list_model = api.model('Issues List', {
     )
 })
 
-issue_post_model = api.model('Issue', {
-    'msg': fields.string_types,
+issue_post_model = api.model('Issue Post', {
+    'msg': fields.String,
 	"issue_id": fields.Integer, 
 	"workspace_id": fields.Integer, 
 	"title": fields.String,
