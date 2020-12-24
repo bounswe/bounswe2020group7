@@ -129,10 +129,9 @@ class WorkspaceView extends Component {
         }
       })
       .catch((err) => {
-        /*this.setState({
-        isSending: false,
+        this.setState({
         error: "Error occured. " + err.message,
-      });*/
+      });
         console.log(err);
       });
   }
@@ -141,6 +140,8 @@ class WorkspaceView extends Component {
       value: newValue,
     });
   };
+
+
   render() {
     const { classes } = this.props;
     return (
