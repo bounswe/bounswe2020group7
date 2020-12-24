@@ -316,14 +316,7 @@ class WorkspaceViewFileSection extends Component {
     let fileArray= body.split("\n")
     fileArray.map((row, index) => {fileArray[index] += '\r\n'})
     let new_file = new File(fileArray, "filename");
-    const downloadUrl = window.URL.createObjectURL(
-      new Blob([new_file])
-    );
-    const link = document.createElement("a");
-    link.href = downloadUrl;
-    link.setAttribute("download", name);
-    document.body.appendChild(link);
-    link.click();
+
     let formData = new FormData();
     formData.append("filename", name);
     formData.append("new_file", new_file);
