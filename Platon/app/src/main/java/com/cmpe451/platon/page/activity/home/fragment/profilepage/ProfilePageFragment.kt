@@ -552,7 +552,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                                 false
                             )
                             AlertDialog.Builder(context).setView(tmpBinding.root)
-                                .setCancelable(false)
+                                .setCancelable(true)
                                 .setNegativeButton("Completed") { _, _ ->
                                     mProfilePageViewModel.getAddDeleteSkillResourceResponse.removeObservers(
                                         viewLifecycleOwner
@@ -565,6 +565,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                                         tmpBinding.etNewSkill.text.toString().trim(),
                                         (activity as HomeActivity).currUserToken
                                     )
+                                    tmpBinding.etNewSkill.text.clear()
                                 }
                             }
                         }

@@ -211,6 +211,7 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
             requireView().parent as ViewGroup,
             false
         )
+        tmpBinding.btnAddFolder.text = getString(R.string.update_str)
         val editFolderDialog = AlertDialog.Builder(context).setView(tmpBinding.root)
             .setCancelable(true)
             .show()

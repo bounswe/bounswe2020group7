@@ -187,7 +187,7 @@ class WorkspaceFragment : Fragment(){
         binding.rvWorkspaceRequirements.layoutManager = LinearLayoutManager(requireContext())
 
         binding.collaboratorsRv.adapter = CollaboratorAdapter(ArrayList(), requireContext())
-        binding.collaboratorsRv.layoutManager = LinearLayoutManager(requireContext())
+        binding.collaboratorsRv.layoutManager = GridLayoutManager(requireContext(),2)
 
     }
     private fun onAddRequirementClicked() {
