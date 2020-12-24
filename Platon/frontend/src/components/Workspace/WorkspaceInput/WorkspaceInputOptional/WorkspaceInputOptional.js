@@ -96,7 +96,7 @@ class WorkspaceInput extends Component {
             type="number"
             value={this.props.max_collaborators}
             onChange={(e) => this.props.handleMaxCollaborators(e.target.value)}
-            InputProps={{ inputProps: { min: 1 } }}
+            InputProps={{ inputProps: { min: 1, max: 32000 } }}
             variant="outlined"
           />
         </FormControl>
