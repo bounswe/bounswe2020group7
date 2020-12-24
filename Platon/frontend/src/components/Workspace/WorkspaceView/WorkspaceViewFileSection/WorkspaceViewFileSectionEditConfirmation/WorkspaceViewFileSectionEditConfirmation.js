@@ -26,6 +26,7 @@ export default function WorkspaceViewFileSectionEditConfirmation(props) {
       .then((response) => {
         if (response.status === 200) {
           setBody(response.data);
+          props.handlePreview(response.data)
         }
       })
       .catch((err) => {

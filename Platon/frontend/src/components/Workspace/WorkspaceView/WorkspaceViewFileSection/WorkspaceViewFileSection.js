@@ -61,7 +61,8 @@ class WorkspaceViewFileSection extends Component {
       deleteFolderDialogArray: [],
       renameFolderDialogArray: [],
       editFileDialogArray: [],
-      previewFileDialogArray: []
+      previewFileDialogArray: [],
+      triggerBody: "",
     };
   }
   fetchFileStructure = () => {
@@ -330,7 +331,7 @@ class WorkspaceViewFileSection extends Component {
       })
       .then((response) => {
         if (response.status === 200) {
-          this.fetchFileStructure();
+          this.setState({triggerBody: body})
         }
       })
       .catch((err) => {
@@ -439,6 +440,11 @@ class WorkspaceViewFileSection extends Component {
     prevState[index] = false;
     this.setState({ previewFileDialogArray: prevState });
   };
+  handlePreview = (value) => {
+    this.setState({
+      triggerBody: value
+    })
+  }
   render() {
     const { classes } = this.props;
 
@@ -538,6 +544,7 @@ class WorkspaceViewFileSection extends Component {
                     <WorkspaceViewFileSectionPreviewConfirmation
                       type="file"
                       element={element}
+                      body={this.state.triggerBody}
                       previewDialog={this.state.previewFileDialogArray[index]}
                       handlePreviewFileDialogClose={this.handlePreviewFileDialogClose}
                       index={index}
@@ -555,6 +562,7 @@ class WorkspaceViewFileSection extends Component {
                       type="file"
                       element={element}
                       editFile={this.editFile}
+                      handlePreview={this.handlePreview}
                       editDialog={this.state.editFileDialogArray[index]}
                       handleEditFileDialogClose={this.handleEditFileDialogClose}
                       index={index}

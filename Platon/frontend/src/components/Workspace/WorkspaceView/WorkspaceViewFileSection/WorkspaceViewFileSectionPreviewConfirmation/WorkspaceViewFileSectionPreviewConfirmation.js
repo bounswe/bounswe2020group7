@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -7,32 +7,8 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import colors from "../../../../../utils/colors";
 import TextField from "@material-ui/core/TextField";
-import config from "../../../../../utils/config";
-import axios from "axios";
-export default function WorkspaceViewFileSectionPreviewConfirmation(props) {
-  const [body, setBody] = useState(props.element);
-  useEffect(() => {
-    const token = localStorage.getItem("jwtToken");
-    axios.defaults.headers.common["auth_token"] = `${token}`;
-    const url = config.BASE_URL;
-    axios
-      .get(url + "/api/file_system/file", {
-        params: {
-          path: props.cwd,
-          workspace_id: props.c_workspace_id,
-          filename: props.element,
-        },
-      })
-      .then((response) => {
-        if (response.status === 200) {
-          setBody(response.data);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
 
+export default function WorkspaceViewFileSectionPreviewConfirmation(props) {
 
   return (
     <div>
@@ -58,12 +34,11 @@ export default function WorkspaceViewFileSectionPreviewConfirmation(props) {
             >
               <TextField
                 variant="outlined"
-                value={body}
+                value={props.body}
                 disabled
                 multiline
                 fullWidth
                 rows={15}
-                onChange={(e) => setBody(e.target.value)}
               />
             </div>
           </DialogContentText>
