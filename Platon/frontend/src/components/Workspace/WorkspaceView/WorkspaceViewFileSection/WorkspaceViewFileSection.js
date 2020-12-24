@@ -17,11 +17,23 @@ import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import WorkspaceViewFileSectionDeleteConfirmation from "./WorkspaceViewFileSectionDeleteConfirmation/WorkspaceViewFileSectionDeleteConfirmation";
 import WorkspaceViewFileSectionRenameConfirmation from "./WorkspaceViewFileSectionRenameConfirmation/WorkspaceViewFileSectionRenameConfirmation";
 import WorkspaceViewFileSectionEditConfirmation from "./WorkspaceViewFileSectionEditConfirmation/WorkspaceViewFileSectionEditConfirmation.js";
+import WorkspaceViewFileSectionPreviewConfirmation from "./WorkspaceViewFileSectionPreviewConfirmation/WorkspaceViewFileSectionPreviewConfirmation.js";
 import config from "../../../../utils/config";
 import colors from "../../../../utils/colors";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import EditIcon from "@material-ui/icons/Edit";
+import Button from "@material-ui/core/Button";
+import VisibilityIcon from '@material-ui/icons/Visibility';
+const StyledButton = withStyles({
+  root: {
+    background: colors.tertiary,
+    color: colors.secondary,
 
+    "&:hover": {
+      backgroundColor: colors.tertiaryDark,
+    },
+  },
+})(Button);
 const useStyles = (theme) => ({
   root: {
     width: "auto",
@@ -49,6 +61,8 @@ class WorkspaceViewFileSection extends Component {
       deleteFolderDialogArray: [],
       renameFolderDialogArray: [],
       editFileDialogArray: [],
+      previewFileDialogArray: [],
+      triggerBody: "",
     };
   }
   fetchFileStructure = () => {
@@ -79,6 +93,9 @@ class WorkspaceViewFileSection extends Component {
               false
             ),
             renameFolderDialogArray: Array(response.data.folders.length).fill(
+              false
+            ),
+            previewFileDialogArray: Array(response.data.folders.length).fill(
               false
             ),
           });
@@ -297,7 +314,10 @@ class WorkspaceViewFileSection extends Component {
     axios.defaults.headers.common["auth_token"] = `${token}`;
     const url = config.BASE_URL;
     const c_workspace_id = this.props.workspaceId;
-    let new_file = new File(body.split("\n"), "filename");
+    let fileArray= body.split("\n")
+    fileArray.map((row, index) => {fileArray[index] += '\r\n'})
+    let new_file = new File(fileArray, "filename");
+
     let formData = new FormData();
     formData.append("filename", name);
     formData.append("new_file", new_file);
@@ -311,7 +331,7 @@ class WorkspaceViewFileSection extends Component {
       })
       .then((response) => {
         if (response.status === 200) {
-          this.fetchFileStructure();
+          this.setState({triggerBody: body})
         }
       })
       .catch((err) => {
@@ -410,7 +430,21 @@ class WorkspaceViewFileSection extends Component {
     prevState[index] = false;
     this.setState({ renameFolderDialogArray: prevState });
   };
-
+  handlePreviewFileDialogOpen = (index) => {
+    let prevState = this.state.previewFileDialogArray;
+    prevState[index] = true;
+    this.setState({ previewFileDialogArray: prevState });
+  };
+  handlePreviewFileDialogClose = (index) => {
+    let prevState = this.state.previewFileDialogArray;
+    prevState[index] = false;
+    this.setState({ previewFileDialogArray: prevState });
+  };
+  handlePreview = (value) => {
+    this.setState({
+      triggerBody: value
+    })
+  }
   render() {
     const { classes } = this.props;
 
@@ -499,18 +533,36 @@ class WorkspaceViewFileSection extends Component {
                   primary={element}
                 />
                 <ListItemSecondaryAction>
-                  <IconButton edge="end" aria-label="download">
+                <IconButton edge="end" aria-label="download">
                     <GetAppIcon onClick={() => this.downloadFile(element)} />
                   </IconButton>
+                <IconButton edge="end" aria-label="download">
+                    <VisibilityIcon
+                      style={{ color: colors.tertiary }}
+                      onClick={() => this.handlePreviewFileDialogOpen(index)}
+                    />
+                    <WorkspaceViewFileSectionPreviewConfirmation
+                      type="file"
+                      element={element}
+                      body={this.state.triggerBody}
+                      previewDialog={this.state.previewFileDialogArray[index]}
+                      handlePreviewFileDialogClose={this.handlePreviewFileDialogClose}
+                      index={index}
+                      cwd={this.state.cwd}
+                      c_workspace_id={this.props.workspaceId}
+                    />
+                  </IconButton>
+
                   <IconButton edge="end" aria-label="download">
                     <EditIcon
-                      style={{ color: colors.tertiary }}
+                      style={{ color: colors.quaternary }}
                       onClick={() => this.handleEditFileDialogOpen(index)}
                     />
                     <WorkspaceViewFileSectionEditConfirmation
                       type="file"
                       element={element}
                       editFile={this.editFile}
+                      handlePreview={this.handlePreview}
                       editDialog={this.state.editFileDialogArray[index]}
                       handleEditFileDialogClose={this.handleEditFileDialogClose}
                       index={index}
@@ -559,13 +611,14 @@ class WorkspaceViewFileSection extends Component {
               }}
             >
               <input
+              style={{marginRight: "8px"}}
                 value={this.state.folderName}
                 onChange={(e) => this.setState({ folderName: e.target.value })}
                 name="folderName"
                 label="FolderName"
               />
 
-              <button onClick={this.createFolder}>Create folder</button>
+              <StyledButton onClick={this.createFolder}>Create folder</StyledButton>
             </div>
             <hr />
 
@@ -596,7 +649,7 @@ class WorkspaceViewFileSection extends Component {
                 name="fileuploaded"
                 label="fileuploaded"
               />
-              <button onClick={this.uploadFile}>Upload File</button>
+              <StyledButton onClick={this.uploadFile}>Upload File</StyledButton>
             </div>
             <hr />
           </div>
