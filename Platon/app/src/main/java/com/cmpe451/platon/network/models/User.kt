@@ -1,5 +1,13 @@
 package com.cmpe451.platon.network.models
 
+data class Comment(
+        val id: Int,
+        val title:String,
+        val desc:String,
+        val dateTime:String,
+        val rate:Double
+)
+
 
 data class User (
         val id: Int,

@@ -8,16 +8,27 @@ data class SearchHistoryElement(
         val query: String
 )
 
-data class UserSearch(
+data class Search(
     val number_of_pages:Int,
     val result_list:List<SearchElement>
 )
 
 data class SearchElement(
-        val id:Int,
+    val id:Int,
     val is_private:Int,
-    val job_id:Int,
-    val name:String,
-    val surname:String,
-    val profile_photo:String
+
+    //for workspace
+    val title: String?,
+    val description: String?,
+    val creation_time:String?,
+    val deadline:String?,
+    val state: Int?,
+    val max_collaborators:Int?,
+    val contributors: List<Contributor>?,
+
+    //for user
+    val job_id:Int?,
+    val name:String?,
+    val surname:String?,
+    val profile_photo:String?
 )

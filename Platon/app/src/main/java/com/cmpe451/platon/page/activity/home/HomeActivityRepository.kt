@@ -10,7 +10,6 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.sql.SQLTransactionRollbackException
 
 class HomeActivityRepository {
 
@@ -19,10 +18,34 @@ class HomeActivityRepository {
     val userNotificationsResourceResponse:MutableLiveData<Resource<Notifications>> = MutableLiveData()
     val userResourceResponse: MutableLiveData<Resource<User>> = MutableLiveData()
     val searchHistoryResourceResponse:MutableLiveData<Resource<SearchHistory>> = MutableLiveData()
-
-    val searchUserResourceResponse:MutableLiveData<Resource<UserSearch>> = MutableLiveData()
-
+    val searchUserResourceResponse:MutableLiveData<Resource<Search>> = MutableLiveData()
+    val searchWorkspaceResourceResponse:MutableLiveData<Resource<Search>> = MutableLiveData()
     val jobListResourceResponse:MutableLiveData<Resource<List<Job>>> = MutableLiveData()
+
+    var userNotificationDeleteResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
+
+
+    fun deleteNotification(id: Int, token: String){
+        val service = RetrofitClient.getService()
+        val call = service.deleteNotification(id, token)
+
+        userNotificationDeleteResourceResponse.value = Resource.Loading()
+        call.enqueue(object : Callback<JsonObject?> {
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when {
+                    response.isSuccessful -> userNotificationDeleteResourceResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> userNotificationDeleteResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else ->userNotificationDeleteResourceResponse.value =  Resource.Error("Unknown error")
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+
+    }
 
     fun getAllJobs() {
         val service = RetrofitClient.getService()
@@ -176,8 +199,8 @@ class HomeActivityRepository {
         val call = service.searchUser(token, query,jobs, page, perPage)
 
         searchUserResourceResponse.value = Resource.Loading()
-        call.enqueue(object :Callback<UserSearch?>{
-            override fun onResponse(call: Call<UserSearch?>, response: Response<UserSearch?>) {
+        call.enqueue(object :Callback<Search?>{
+            override fun onResponse(call: Call<Search?>, response: Response<Search?>) {
                 when{
                     response.isSuccessful && response.body() != null -> searchUserResourceResponse.value =  Resource.Success(response.body()!!)
                     response.errorBody() != null -> searchUserResourceResponse.value =  Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
@@ -185,14 +208,31 @@ class HomeActivityRepository {
                 }
             }
 
-            override fun onFailure(call: Call<UserSearch?>, t: Throwable) {
-                Log.i("Error", t.message.toString())
+            override fun onFailure(call: Call<Search?>, t: Throwable) {
                 call.clone().enqueue(this)
             }
         })
+    }
 
 
+    fun searchWorkspace(token: String?, query:String, skill:String?, event:String?, page:Int?, perPage:Int?){
+        val service = RetrofitClient.getService()
+        val call = service.searchWorkspace(token, query,skill, event, page, perPage)
 
+        searchUserResourceResponse.value = Resource.Loading()
+        call.enqueue(object :Callback<Search?>{
+            override fun onResponse(call: Call<Search?>, response: Response<Search?>) {
+                when{
+                    response.isSuccessful && response.body() != null -> searchWorkspaceResourceResponse.value =  Resource.Success(response.body()!!)
+                    response.errorBody() != null -> searchWorkspaceResourceResponse.value =  Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> searchWorkspaceResourceResponse.value =  Resource.Error("Unknown error!")
+                }
+            }
+
+            override fun onFailure(call: Call<Search?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+        })
     }
 
 }

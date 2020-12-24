@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/profile_page_margin"
+        android:animateLayoutChanges="true"
         android:orientation="vertical">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -113,6 +114,7 @@
             android:id="@+id/project_info_ll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
             android:orientation="vertical"
             android:visibility="gone">
 
@@ -134,44 +136,80 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="@dimen/xx_small"
                 android:background="@drawable/view_back_darker"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="@dimen/xx_small">
 
                 <TextView
                     android:id="@+id/tv_email"
-                    android:layout_margin="@dimen/xx_small"
-                    android:gravity="start"
-                    android:textColor="@color/primary_light"
-                    android:textSize="@dimen/title_text_size_smaller"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/xx_small"
+                    android:gravity="start"
                     android:text="@string/prompt_email"
-                    />
+                    android:textColor="@color/primary_light"
+                    android:textSize="@dimen/title_text_size_smaller" />
+
                 <TextView
                     android:id="@+id/tv_job"
-                    android:layout_margin="@dimen/xx_small"
-                    android:gravity="start"
-                    android:textColor="@color/primary_light"
-                    android:textSize="@dimen/title_text_size_smaller"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/xx_small"
+                    android:gravity="start"
                     android:text="@string/job_str"
-                    />
+                    android:textColor="@color/primary_light"
+                    android:textSize="@dimen/title_text_size_smaller" />
 
                 <TextView
                     android:id="@+id/tv_institution"
-                    android:layout_margin="@dimen/xx_small"
-                    android:gravity="start"
-                    android:textColor="@color/primary_light"
-                    android:textSize="@dimen/title_text_size_smaller"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/xx_small"
+                    android:gravity="start"
                     android:text="@string/institution_str"
-                    />
+                    android:textColor="@color/primary_light"
+                    android:textSize="@dimen/title_text_size_smaller" />
 
             </LinearLayout>
 
+
+            <TextView
+                android:id="@+id/tv_comments_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawablePadding="@dimen/x_small"
+                android:fontFamily="@font/dm_sans_bold"
+                android:gravity="start"
+                android:padding="@dimen/x_small"
+                android:shadowColor="@color/primary_dark"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2"
+                android:text="@string/comments_str"
+                android:textColor="@color/secondary_orange_transparent"
+                android:textSize="@dimen/project_title_text_size"
+                app:drawableRightCompat="@drawable/ic_comment_24dp" />
+
+            <LinearLayout
+                android:id="@+id/lay_comments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/xx_small"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/iv_addComment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_add_comment_24dp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_profile_page_comments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
 
 
             <TextView
@@ -214,6 +252,7 @@
                 android:id="@+id/rv_profile_page_projects"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+
 
         </LinearLayout>
 

@@ -6,11 +6,9 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -50,8 +48,8 @@ class FollowFragment:Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setAdapter()
-        token = (activity as HomeActivity).token.toString()
-        userId = (activity as HomeActivity).userId
+        token = (activity as HomeActivity).currUserToken.toString()
+        userId = (activity as HomeActivity).currUserId
 
         setObservers()
 
@@ -108,7 +106,7 @@ class FollowFragment:Fragment() {
         adapter = FollowerFollowingAdapter(ArrayList(), requireContext()) { userId:Int->
 //            Toast.makeText(activity, userId, Toast.LENGTH_LONG)
 //            (activity as HomeActivity).navController.navigate(FollowersFollowingFragmentDirections.actionFollowersFollowingFragmentToProfilePagePrivateFragment(id))
-            if(userId == (activity as HomeActivity).userId){
+            if(userId == (activity as HomeActivity).currUserId){
                 findNavController().navigate(FollowFragmentDirections.actionFollowFragmentToProfilePageFragment())
             }
             else {

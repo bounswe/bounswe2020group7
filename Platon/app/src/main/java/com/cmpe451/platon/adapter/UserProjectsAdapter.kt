@@ -77,6 +77,11 @@ class UserProjectsAdapter(private val data: ArrayList<Research>, private val con
         data[position] = element
         this.notifyItemChanged(position)
     }
+
+    fun getElement(position: Int):Research{
+        return data[position]
+    }
+
     /**
      * Clear all elements
      */

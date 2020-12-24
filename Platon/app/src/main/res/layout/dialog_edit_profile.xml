@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/primary_dark"
-    tools:context=".page.activity.login.LoginActivity">
-
     <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -83,7 +78,7 @@
         <EditText
             android:visibility="gone"
             android:id="@+id/et_newJob"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autofillHints=""
             android:backgroundTint="@color/secondary_purple"
@@ -97,41 +92,12 @@
 
         <EditText
             android:id="@+id/et_institution"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autofillHints=""
             android:backgroundTint="@color/secondary_purple"
-            android:ems="15"
             android:hint="@string/institution_str"
             android:inputType="text|textAutoCorrect"
-            android:textColor="@color/primary_light"
-            android:textColorHighlight="@color/primary_light"
-            android:textColorHint="@color/secondary_purple"
-            android:textColorLink="@color/secondary_purple" />
-
-
-        <EditText
-            android:id="@+id/google_scholar_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:autofillHints=""
-            android:backgroundTint="@color/secondary_purple"
-            android:ems="15"
-            android:hint="@string/gs_url_request"
-            android:inputType="text"
-            android:textColor="@color/primary_light"
-            android:textColorHighlight="@color/primary_light"
-            android:textColorHint="@color/secondary_purple"
-            android:textColorLink="@color/secondary_purple" />
-        <EditText
-            android:id="@+id/research_gate_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:autofillHints=""
-            android:backgroundTint="@color/secondary_purple"
-            android:ems="15"
-            android:hint="@string/rg_url_request"
-            android:inputType="text"
             android:textColor="@color/primary_light"
             android:textColorHighlight="@color/primary_light"
             android:textColorHint="@color/secondary_purple"
@@ -155,7 +121,4 @@
             android:backgroundTint="@color/secondary_purple"
             android:text="@string/text_edit_profile"
             android:textColor="@color/primary_light" />
-
-    </LinearLayout>
-</ScrollView>
-
+</LinearLayout>

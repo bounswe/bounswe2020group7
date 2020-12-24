@@ -2,7 +2,6 @@ package com.cmpe451.platon.page.activity.home
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.*
@@ -10,16 +9,20 @@ import com.google.gson.JsonObject
 
 class HomeActivityViewModel(application: Application):AndroidViewModel(application){
 
+    val repository = HomeActivityRepository()
+
     val getUserResourceResponse: MutableLiveData<Resource<User>>
     val getUserFollowRequestsResourceResponse: MutableLiveData<Resource<FollowRequests>>
     val getUserNotificationsResourceResponse: MutableLiveData<Resource<Notifications>>
     val acceptRequestResourceResponse: MutableLiveData<Resource<JsonObject>>
 
     val getSearchHistoryResourceResponse: MutableLiveData<Resource<SearchHistory>>
-    val getSearchUserResourceResponse:MutableLiveData<Resource<UserSearch>>
+    val getSearchUserResourceResponse:MutableLiveData<Resource<Search>>
+    val getSearchWorkspaceResourceResponse:MutableLiveData<Resource<Search>>
+
     val getJobListResourceResponse: MutableLiveData<Resource<List<Job>>>
 
-    val repository = HomeActivityRepository()
+    val getUserDeleteNotificationResourceResponse:MutableLiveData<Resource<JsonObject>>
 
     init {
         getUserResourceResponse = repository.userResourceResponse
@@ -29,6 +32,12 @@ class HomeActivityViewModel(application: Application):AndroidViewModel(applicati
         getSearchHistoryResourceResponse = repository.searchHistoryResourceResponse
         getSearchUserResourceResponse = repository.searchUserResourceResponse
         getJobListResourceResponse = repository.jobListResourceResponse
+        getSearchWorkspaceResourceResponse=repository.searchWorkspaceResourceResponse
+        getUserDeleteNotificationResourceResponse= repository.userNotificationDeleteResourceResponse
+    }
+
+    fun deleteNotification(id: Int, token:String){
+        repository.deleteNotification(id, token)
     }
 
     fun getAllJobs() {
@@ -65,6 +74,10 @@ class HomeActivityViewModel(application: Application):AndroidViewModel(applicati
 
     fun searchUser(token:String?, query:String, job:Int?, page:Int?, perPage:Int?){
         repository.searchUser(token, query, job, page, perPage)
+    }
+
+    fun searchWorkspace(token:String?, query:String , skill:String?, event:String?, page:Int?, perPage:Int?){
+        repository.searchWorkspace(token, query, skill,event, page, perPage)
     }
 
 }

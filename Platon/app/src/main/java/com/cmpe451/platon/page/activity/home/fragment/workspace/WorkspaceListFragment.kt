@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -15,10 +14,8 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.WorkspaceListAdapter
-import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.FragmentWorkspaceListBinding
 import com.cmpe451.platon.databinding.WorkspaceCellBinding
-import com.cmpe451.platon.listener.PaginationListener
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
@@ -81,7 +78,7 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
     }
 
     private fun fetchWorkspaces(){
-        mWorkspaceListViewModel.getWorkspaces((activity as HomeActivity).token!!)
+        mWorkspaceListViewModel.getWorkspaces((activity as HomeActivity).currUserToken!!)
     }
 
 
@@ -93,8 +90,8 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
 
     override fun onWorkspaceListButtonClicked(binding: WorkspaceCellBinding, projectId: Int) {
         val bnd = Bundle()
-        bnd.putString("token", (activity as HomeActivity).token!!)
-        bnd.putInt("user_id", (activity as HomeActivity).userId!!)
+        bnd.putString("token", (activity as HomeActivity).currUserToken!!)
+        bnd.putInt("user_id", (activity as HomeActivity).currUserId!!)
         bnd.putBoolean("add", false)
         bnd.putInt("workspace_id", projectId)
         startActivity(Intent(activity, WorkspaceActivity::class.java).putExtras(bnd))
@@ -102,7 +99,7 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
 
     override fun onResume() {
         workspaceListAdapter.clearElements()
-        mWorkspaceListViewModel.getWorkspaces((activity as HomeActivity).token!!)
+        mWorkspaceListViewModel.getWorkspaces((activity as HomeActivity).currUserToken!!)
         super.onResume()
     }
 }

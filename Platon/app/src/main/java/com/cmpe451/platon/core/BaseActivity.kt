@@ -14,12 +14,4 @@ open class BaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base)
     }
-
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        if(currentFocus != null) {
-            val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            inputMethodManager.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
-        }
-        return super.dispatchTouchEvent(ev)
-    }
 }

@@ -2,7 +2,6 @@ package com.cmpe451.platon.network
 
 import com.cmpe451.platon.network.models.*
 import com.google.gson.JsonObject
-import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.*
@@ -111,6 +110,12 @@ interface Webservice {
             @Query("page") page:Int?,
             @Query("per_page") perPage:Int?) : Call<Notifications?>
 
+
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "api/profile/notifications",hasBody = true)
+    fun deleteNotification(@Field("notification_id") state:Int,
+                           @Header("auth_token") auth_token :String) : Call<JsonObject?>
+
     @GET("api/follow/follow_requests")
     fun getFollowRequests(@Query("following_id") id:Int,
                           @Header("auth_token")auth_token :String,
@@ -162,7 +167,16 @@ interface Webservice {
                    @Query("search_query") query:String,
                     @Query("job_filter") job:Int?,
                    @Query("page") page:Int?,
-                   @Query("per_page") perPage:Int?):Call<UserSearch?>
+                   @Query("per_page") perPage:Int?):Call<Search?>
+
+
+    @GET("api/search_engine/workspace")
+    fun searchWorkspace(@Header("auth_token") token: String?,
+                   @Query("search_query") query:String,
+                   @Query("skill_filter") skill:String?,
+                   @Query("event_filter") event:String?,
+                   @Query("page") page:Int?,
+                   @Query("per_page") perPage:Int?):Call<Search?>
 
 
 
