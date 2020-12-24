@@ -1,6 +1,6 @@
 import datetime
 # In the production please make False both DEVELOPMENT and DEBUG flags
-DEBUG = False
+DEBUG = True
 DEVELOPMENT = True
 
 # Define the application directory
