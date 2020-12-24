@@ -24,6 +24,9 @@ class FoldersAdapter(private val data: ArrayList<String>, private val context: C
             binding.tvFolderName.setOnClickListener {
                 buttonClickListener.onFolderNameClicked(folder)
             }
+            binding.deleteFolderIv.setOnClickListener {
+                buttonClickListener.onDeleteFolderClicked(folder)
+            }
             binding.tvFolderName.text = folder
         }
     }
@@ -31,6 +34,7 @@ class FoldersAdapter(private val data: ArrayList<String>, private val context: C
     interface FoldersButtonClickListener{
         fun onEditFolderClicked(folder:String)
         fun onFolderNameClicked(folder: String)
+        fun onDeleteFolderClicked(folder: String)
     }
 
     // Create new views (invoked by the layout manager)

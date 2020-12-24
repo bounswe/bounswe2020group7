@@ -127,5 +127,6 @@
 
     <string name="folders">Folders</string>
     <string name="files_str">Files</string>
+    <string name="folder_name_str">Folder Name</string>
 
 </resources>

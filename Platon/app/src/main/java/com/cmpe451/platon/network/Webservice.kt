@@ -238,4 +238,30 @@ interface Webservice {
         @Query("path") path:String,
         @Header("auth_token") auth_token: String
     ) : Call<Folder?>
+
+    @FormUrlEncoded
+    @POST("api/file_system/folder")
+    fun addFolder(
+        @Field("workspace_id") workspace_id:Int,
+        @Field("path") path:String,
+        @Field("new_folder_name") new_folder_name:String,
+        @Header("auth_token") auth_token: String
+    ) : Call<JsonObject?>
+
+
+    @FormUrlEncoded
+    @PUT("api/file_system/folder")
+    fun changeFolderName(
+        @Field("workspace_id") workspace_id:Int,
+        @Field("path") path:String,
+        @Field("new_folder_name") new_folder_name:String,
+        @Header("auth_token") auth_token: String
+    ) : Call<JsonObject?>
+
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "api/file_system/folder",hasBody = true)
+    fun deleteFolder(@Field("workspace_id") workspace_id: Int,
+                     @Field("path") path:String,
+                     @Field("new_folder_name") new_folder_name:String,
+                     @Header("auth_token") token: String): Call<JsonObject?>
 }

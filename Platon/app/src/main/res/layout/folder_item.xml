@@ -30,9 +30,17 @@
             android:layout_height="wrap_content"
             android:id="@+id/edit_file_iv"
             android:src="@drawable/ic_text_fields_24px"
-            android:layout_alignParentEnd="true"
+            android:layout_toStartOf="@id/delete_folder_iv"
             android:layout_centerVertical="true"
             android:padding="@dimen/xx_small"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/delete_folder_iv"
+        android:src="@drawable/ic_delete_24dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:padding="@dimen/xx_small"/>
 
 
     </RelativeLayout>
