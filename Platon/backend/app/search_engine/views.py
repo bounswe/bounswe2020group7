@@ -176,12 +176,18 @@ class UserSearchAPI(Resource):
                             result_id_score[id_index] =(user[0], result_id_score[id_index][1]+score)
                 except:
                     return make_response(jsonify({"error": "Database Connection Problem."}), 500)
-            # Sort result ids according to their scores
-            sorted_id_list = SearchEngine.sort_ids(result_id_score)
             sorted_result_list = []
-            for user_id,score in sorted_id_list:
-                index = [user["id"] for user in result_list].index(user_id)
-                sorted_result_list.append(result_list[index])
+            # Sort result ids according to their scores
+            if form.sorting_criteria.data is None:
+                sorted_id_list = SearchEngine.sort_ids(result_id_score)
+                for user_id,score in sorted_id_list:
+                    index = [user["id"] for user in result_list].index(user_id)
+                    sorted_result_list.append(result_list[index])
+            # Sort Results according to Sorting Criteria
+            else:
+                reverse = form.sorting_criteria.data == 1
+                sorted_result_list = SearchEngine.sort_results(result_list,["name","surname"],reverse)
+
             # Apply given filters
             if form.job_filter.data is not None:
                 for i,user in enumerate(sorted_result_list):
