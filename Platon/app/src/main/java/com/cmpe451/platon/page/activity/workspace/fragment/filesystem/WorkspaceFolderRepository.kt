@@ -47,7 +47,7 @@ class WorkspaceFolderRepository {
                 when{
                     response.isSuccessful -> addUpdateDeleteFolderResourceResponse.value = Resource.Success(response.body()!!)
                     response.errorBody() != null -> addUpdateDeleteFolderResourceResponse.value = Resource.Error(
-                        JSONObject(response.errorBody()!!.string()).get("error").toString())
+                        JSONObject(response.errorBody()!!.string()).get("err").toString())
                     else -> addUpdateDeleteFolderResourceResponse.value = Resource.Error("Unknown error!")
                 }
                 response.errorBody()?.close()
