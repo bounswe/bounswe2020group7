@@ -4,7 +4,7 @@ from flask_restplus import reqparse
 class UserSearchForm(Form):
     search_query = StringField("search_query",validators=[validators.DataRequired()])
     job_filter = IntegerField("job_filter")
-    sorting_criteria = IntegerField("sorting_criteria",validators=[validators.NumberRange(min=0, max=1)])
+    sorting_criteria = IntegerField("sorting_criteria",validators=[validators.NumberRange(min=0, max=1),validators.optional()])
     page = IntegerField("page")
     per_page = IntegerField("per_page")
 
