@@ -31,7 +31,7 @@ export default function WorkspaceViewFileSectionEditConfirmation(props) {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [props.pls]);
 
   const handleEditFile = () => {
     props.handleEditFileDialogClose(props.index);
@@ -61,7 +61,6 @@ export default function WorkspaceViewFileSectionEditConfirmation(props) {
             >
               <TextField
                 variant="outlined"
-                label="File Body"
                 value={body}
                 multiline
                 fullWidth
@@ -79,6 +78,7 @@ export default function WorkspaceViewFileSectionEditConfirmation(props) {
           >
             Cancel
           </Button>
+
           <Button
             onClick={handleEditFile}
             style={{

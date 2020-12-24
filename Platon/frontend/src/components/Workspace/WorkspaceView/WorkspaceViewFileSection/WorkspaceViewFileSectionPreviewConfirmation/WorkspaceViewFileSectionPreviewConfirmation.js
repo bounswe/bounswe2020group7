@@ -35,7 +35,7 @@ export default function WorkspaceViewFileSectionPreviewConfirmation(props) {
       .catch((err) => {
         console.log(err);
       });
-  }, [body, props.shouldMount]);
+  }, [props.pls, props.shouldMount]);
 
 
   return (
