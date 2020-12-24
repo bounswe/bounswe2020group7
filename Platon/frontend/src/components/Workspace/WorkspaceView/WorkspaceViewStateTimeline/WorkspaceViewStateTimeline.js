@@ -8,38 +8,41 @@ import TimelineDot from "@material-ui/lab/TimelineDot";
 import PeopleIcon from "@material-ui/icons/People";
 import PublicIcon from '@material-ui/icons/Public';
 import WorkIcon from '@material-ui/icons/Work';
+import DoneIcon from '@material-ui/icons/Done';
+import colors from '../../../../utils/colors'
 export default function WorkspaceViewStateTimeline(props) {
 
   return (
     <Timeline align="right">
       <TimelineItem>
         <TimelineSeparator>
-          <TimelineDot>
-            <PeopleIcon />
+          <TimelineDot style={ props.state > 0 ? {backgroundColor: colors.quaternary} : {backgroundColor: colors.quinary}} >
+          {props.state > 0 ? <DoneIcon style={{color: colors.primary }} />: <PeopleIcon style={{color: colors.primary }}/>}
           </TimelineDot>
-          {props.state > 0? <TimelineConnector />:null}
+
+          {props.state > 0? <TimelineConnector/>:null}
         </TimelineSeparator>
-        <TimelineContent>Search For Collaborators</TimelineContent>
+        <TimelineContent style={{margin: "8px 0px"}}>Search For Collaborators</TimelineContent>
       </TimelineItem>
       {props.state > 0?
       <TimelineItem>
         <TimelineSeparator>
-          <TimelineDot>
-            <WorkIcon />
+        <TimelineDot style={ props.state > 1 ? {backgroundColor: colors.quaternary} : {backgroundColor: colors.quinary}} >
+          {props.state > 1 ? <DoneIcon style={{color: colors.primary }} />: <WorkIcon style={{color: colors.primary }}/>}
           </TimelineDot>
+
           {props.state > 1 ? <TimelineConnector />:null}
         </TimelineSeparator>
-        <TimelineContent>Ongoing</TimelineContent>
+        <TimelineContent  style={{margin: "8px 0px"}}>Ongoing</TimelineContent>
       </TimelineItem> : null
     }
     {props.state > 1?
       <TimelineItem>
         <TimelineSeparator>
-          <TimelineDot>
-            <PublicIcon />
+        <TimelineDot style={{backgroundColor: colors.quinary}} >            <PublicIcon style={{color: colors.primary }}/>
           </TimelineDot>
         </TimelineSeparator>
-        <TimelineContent>Published</TimelineContent>
+        <TimelineContent  style={{margin: "8px 0px"}}>Published</TimelineContent>
       </TimelineItem> : null
     }
     </Timeline>

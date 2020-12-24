@@ -182,7 +182,6 @@ const NavBar = ({ itemsPerPage = 3, width = "500px" }) => {
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
-  console.log("data", data);
   return (
     <div className={classes.root}>
       <AppBar style={{ background: colors.primaryDark }} position="static">

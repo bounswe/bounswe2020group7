@@ -19,7 +19,16 @@ import axios from "axios";
 import WorkspaceViewStateTimeline from "./WorkspaceViewStateTimeline/WorkspaceViewStateTimeline";
 import Tabs from "@material-ui/core/Tabs";
 import { Link } from "react-router-dom";
+const StyledButton = withStyles({
+  root: {
+    background: colors.tertiary,
+    color: colors.secondary,
 
+    "&:hover": {
+      backgroundColor: colors.tertiaryDark,
+    },
+  },
+})(Button);
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -44,21 +53,37 @@ function a11yProps(index) {
 }
 const useStyles = (theme) => ({
   root: {
+    margin: theme.spacing(2, 0),
     backgroundColor: colors.secondary,
+    minWidth: "480px",
+    width: "720px",
+  },
+  divider: {
+    margin: theme.spacing(2),
   },
   chip: {
-    color: colors.primary,
-    backgroundColor: colors.tertiary,
+    color: colors.secondary,
+    backgroundColor: colors.tertiaryDark,
     margin: theme.spacing(0.5),
   },
   section1: {
     margin: theme.spacing(0, 2),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
   },
   section2: {
     margin: theme.spacing(2),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
   },
+
   section3: {
     margin: theme.spacing(3, 1, 1),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
   },
 });
 function Alert(props) {
@@ -119,80 +144,84 @@ class WorkspaceView extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <div
-        className="WorkspaceViewContainer"
-
-      >
+      <div className="WorkspaceViewContainer">
         <Navbar />
-        <div style={{ backgroundColor: colors.primary}}>
-        <div className="container">
-          <div style={{ display: "flex", justifyContent: "space-between",paddingTop: "40px", paddingBottom: "10px" }}>
-            <Typography
-              style={{ color: colors.secondary }}
-              component="h1"
-              variant="h5"
-              align="center"
+        <div style={{ backgroundColor: colors.primary }}>
+          <div className="container">
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                paddingTop: "40px",
+                paddingBottom: "10px",
+              }}
             >
-              View Workspace
-            </Typography>
-            <Link
-              to={`/${this.state.profileId}/workspace`}
-              style={{ textDecoration: "none" }}
-            >
-              Back to workspaces
-            </Link>
+              <Typography
+                style={{ color: colors.secondary }}
+                component="h1"
+                variant="h5"
+                align="center"
+              >
+                View Workspace
+              </Typography>
+              <Link
+                to={`/${this.state.profileId}/workspace`}
+                style={{ textDecoration: "none" }}
+              >
+                Back to workspaces
+              </Link>
+            </div>
           </div>
         </div>
-        </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Tabs
+            value={this.state.value}
+            onChange={this.handleChange}
+            aria-label="simple tabs example"
+            style={{ width: "100%" }}
+            centered
+            TabIndicatorProps={{ style: { background: colors.secondary } }}
           >
-            <Tabs
-              value={this.state.value}
-              onChange={this.handleChange}
-              aria-label="simple tabs example"
-              style={{ width: "100%" }}
-              centered
-              TabIndicatorProps={{ style: { background: colors.secondary } }}
-            >
-              <Tab
-                style={{
-                  backgroundColor: colors.secondary,
-                  borderRadius: "5px 5px 0px 0px",
-                }}
-                label="Details"
-                {...a11yProps(0)}
-              />
-              <Tab
-                style={{
-                  backgroundColor: colors.secondary,
-                  borderRadius: "5px 5px 0px 0px",
-                }}
-                label="Files"
-                {...a11yProps(1)}
-              />
-              <Tab
-                style={{
-                  backgroundColor: colors.secondary,
-                  borderRadius: "5px 5px 0px 0px",
-                }}
-                label="Issues"
-                {...a11yProps(2)}
-              />
-              <Tab
-                style={{
-                  backgroundColor: colors.secondary,
-                  borderRadius: "5px 5px 0px 0px",
-                }}
-                label="Milestones"
-                {...a11yProps(3)}
-              />
-            </Tabs>
-            <div style={{backgroundColor: colors.secondary, width: "100%"}}>
+            <Tab
+              style={{
+                backgroundColor: colors.secondary,
+                borderRadius: "5px 5px 0px 0px",
+              }}
+              label="Details"
+              {...a11yProps(0)}
+            />
+            <Tab
+              style={{
+                backgroundColor: colors.secondary,
+                borderRadius: "5px 5px 0px 0px",
+              }}
+              label="Files"
+              {...a11yProps(1)}
+            />
+            <Tab
+              style={{
+                backgroundColor: colors.secondary,
+                borderRadius: "5px 5px 0px 0px",
+              }}
+              label="Issues"
+              {...a11yProps(2)}
+            />
+            <Tab
+              style={{
+                backgroundColor: colors.secondary,
+                borderRadius: "5px 5px 0px 0px",
+              }}
+              label="Milestones"
+              {...a11yProps(3)}
+            />
+          </Tabs>
+          <div style={{ backgroundColor: colors.secondary, width: "100%" }}>
             <div
               className="container"
               style={{
@@ -214,102 +243,220 @@ class WorkspaceView extends Component {
                   <TabPanel value={this.state.value} index={0}>
                     <div className={classes.root}>
                       <div className={classes.section1}>
-                        <Grid container alignItems="center">
-                          <Grid item xs>
-                            <Typography gutterBottom variant="h4">
-                              {this.state.workspace.title}
-                            </Typography>
-                          </Grid>
-                        </Grid>
-                        <Typography color="textSecondary" variant="h6">
+                        <Typography
+                          gutterBottom
+                          variant="h4"
+                          align="center"
+                          style={{ color: colors.tertiaryDark }}
+                        >
+                          {this.state.workspace.title}
+                        </Typography>
+
+                        <Typography
+                          color="textSecondary"
+                          variant="h6"
+                          align="center"
+                          style={{ color: colors.tertiary }}
+                        >
                           {this.state.workspace.description}
                         </Typography>
                       </div>
-                      <Divider variant="middle" />
+                      <Divider
+                        className={classes.divider}
+                        variant="middle"
+                        style={{ backgroundColor: colors.primaryLight }}
+                      />
                       <div className={classes.section2}>
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <div>
-                            <Typography gutterBottom variant="body1">
+                        <Grid container={true} spacing={2}>
+                          <Grid
+                            item
+                            xs
+                            container={true}
+                            direction="column"
+                            alignItems="center"
+                          >
+                            <Typography
+                              gutterBottom
+                              variant="body1"
+                              align="center"
+                              style={{ color: colors.quaternaryDark }}
+                            >
                               Workspace Privacy
                             </Typography>
-                            <div>
+                            <div style={{ color: colors.quinaryDark }}>
                               {this.state.workspace.is_private
                                 ? "Private"
                                 : "Public"}
                             </div>
-                          </div>
-                          <div>
-                            <Typography gutterBottom variant="body1">
-                              Maximum Collaborator Number
+                          </Grid>
+                          <Grid
+                            item
+                            xs
+                            container={true}
+                            direction="column"
+                            alignItems="center"
+                          >
+                            <Typography
+                              gutterBottom
+                              variant="body1"
+                              align="center"
+                              style={{ color: colors.quaternaryDark }}
+                            >
+                              Maximum Collaborator
                             </Typography>
-                            <div>{this.state.workspace.max_collaborators}</div>
-                          </div>
-                        </div>
-                        <Typography gutterBottom variant="body1">
-                          Skills
-                        </Typography>
-                        {this.state.workspace.skills.length !== 0 ? (
-                          <div>
-                            {this.state.workspace.skills.map((element) => (
-                              <Chip className={classes.chip} label={element} />
-                            ))}
-                          </div>
-                        ) : (
-                          "Not specified"
-                        )}
-                        <Typography gutterBottom variant="body1">
-                          Requirements
-                        </Typography>
-                        {this.state.workspace.requirements ? (
-                          <div>
-                            {this.state.workspace.requirements.join(", ")}
-                          </div>
-                        ) : (
-                          "Not specified"
-                        )}
-                        <Typography gutterBottom variant="body1">
-                          Deadline
-                        </Typography>
-                        {this.state.workspace.deadline ? (
-                          <div>
-                            {new Date(this.state.workspace.deadline)
-                              .toLocaleString()
-                              .substring(0, 10)}
-                          </div>
-                        ) : (
-                          "Not specified"
-                        )}
-                        <Typography gutterBottom variant="body1">
+                            <div style={{ color: colors.quinaryDark }}>
+                              {this.state.workspace.max_collaborators !== ""
+                                ? this.state.workspace.max_collaborators
+                                : "Not specified"}
+                            </div>
+                          </Grid>
+                          <Grid
+                            item
+                            xs
+                            container={true}
+                            direction="column"
+                            alignItems="center"
+                          >
+                            <Typography
+                              gutterBottom
+                              variant="body1"
+                              align="center"
+                              style={{ color: colors.quaternaryDark }}
+                            >
+                              Deadline
+                            </Typography>
+                            {this.state.workspace.deadline ? (
+                              <div style={{ color: colors.quinaryDark }}>
+                                {new Date(this.state.workspace.deadline)
+                                  .toLocaleString()
+                                  .substring(0, 10)}
+                              </div>
+                            ) : (
+                              "Not specified"
+                            )}
+                          </Grid>
+                        </Grid>
+
+                        <Divider
+                          className={classes.divider}
+                          variant="middle"
+                          style={{
+                            width: "100%",
+                            backgroundColor: colors.primaryLight,
+                          }}
+                        />
+                        <Grid container={true} spacing={2}>
+                          <Grid
+                            item
+                            xs
+                            container={true}
+                            direction="column"
+                            alignItems="center"
+                          >
+                            <Typography
+                              gutterBottom
+                              variant="body1"
+                              style={{ color: colors.quaternaryDark }}
+                            >
+                              Requirements
+                            </Typography>
+                            {this.state.workspace.requirements ? (
+                              <div style={{ color: colors.tertiaryDark }}>
+                                {this.state.workspace.requirements.join(", ")}
+                              </div>
+                            ) : (
+                              "Not specified"
+                            )}
+                          </Grid>
+
+                          <Grid
+                            item
+                            xs
+                            container={true}
+                            direction="column"
+                            alignItems="center"
+                            style={{ color: colors.quaternaryDark }}
+                          >
+                            <Typography
+                              gutterBottom
+                              variant="body1"
+                              style={{ color: colors.quaternaryDark }}
+                            >
+                              Skills
+                            </Typography>
+                            {this.state.workspace.skills.length !== 0 ? (
+                              <div>
+                                {this.state.workspace.skills.map((element) => (
+                                  <Chip
+                                    className={classes.chip}
+                                    label={element}
+                                  />
+                                ))}
+                              </div>
+                            ) : (
+                              "Not specified"
+                            )}
+                          </Grid>
+                        </Grid>
+                        <Divider
+                          className={classes.divider}
+                          variant="middle"
+                          style={{
+                            width: "100%",
+                            backgroundColor: colors.primaryLight,
+                          }}
+                        />
+
+                        <Typography
+                          gutterBottom
+                          variant="body1"
+                          style={{ color: colors.quaternaryDark }}
+                        >
                           Collaborators
                         </Typography>
                         <div>
                           {this.state.workspace.active_contributors.map(
                             (element) => (
-                              <div>
-                                {element.name} {element.surname}
-                              </div>
+                              <Link
+                                to={`/${element.id}/`}
+                                style={{ textDecoration: "none", color: colors.quinaryDark }}
+                              >
+                                <div>
+                                  {element.name} {element.surname}
+                                </div>
+                              </Link>
                             )
                           )}
                         </div>
-                        <Typography gutterBottom variant="body1">
+
+                      </div>
+                      <Divider
+                          className={classes.divider}
+                          variant="middle"
+                          style={{
+                            width: "100%",
+                            backgroundColor: colors.primaryLight,
+                          }}
+                        />
+                        <Typography
+                          gutterBottom
+                          variant="body1"
+                          align="center"
+                          style={{ color: colors.quaternaryDark }}
+                        >
                           State
                         </Typography>
                         <WorkspaceViewStateTimeline
                           state={this.state.workspace.state}
                         />
-                      </div>
-
                       <div className={classes.section3}>
                         <Link
                           to={`/${this.state.profileId}/workspace/${this.props.match.params.workspaceId}/edit`}
                           style={{ textDecoration: "none" }}
                         >
-                          <Button color="primary">Edit Workspace</Button>
+                          <StyledButton color="primary">
+                            Edit Workspace
+                          </StyledButton>
                         </Link>
                       </div>
                     </div>
@@ -334,7 +481,7 @@ class WorkspaceView extends Component {
                 </div>
               )}
             </div>
-            </div>
+          </div>
           {this.state.error && (
             <Snackbar
               open={this.state.error}
