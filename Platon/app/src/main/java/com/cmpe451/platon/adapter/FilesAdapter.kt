@@ -2,13 +2,14 @@ package com.cmpe451.platon.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.databinding.FileItemBinding
 import com.cmpe451.platon.databinding.FolderItemBinding
 import com.cmpe451.platon.databinding.ResearchesCellBinding
 
-class FilesAdapter(private val data: ArrayList<String>, private val context: Context, private val filesButtonClickListener: FilesButtonClickListener) :
+class FilesAdapter(private val data: ArrayList<String>, private val filesButtonClickListener: FilesButtonClickListener, private val isOwner:Boolean) :
 
     RecyclerView.Adapter<FilesAdapter.FilesViewHolder>() {
 
@@ -18,7 +19,11 @@ class FilesAdapter(private val data: ArrayList<String>, private val context: Con
     // Each data item is just a string in this case that is shown in a TextView.
     class FilesViewHolder(val binding: FileItemBinding) : RecyclerView.ViewHolder(binding.root){
 
-        fun bindData(binding: FileItemBinding, file: String, buttonClickListener: FilesButtonClickListener) {
+        fun bindData(binding: FileItemBinding, file: String, buttonClickListener: FilesButtonClickListener, isOwner: Boolean) {
+            if(!isOwner){
+                binding.editFileIv.visibility = View.GONE
+                binding.deleteFolderIv.visibility = View.GONE
+            }
             binding.editFileIv.setOnClickListener{
                 buttonClickListener.onEditFileClicked(file)
             }
@@ -45,9 +50,7 @@ class FilesAdapter(private val data: ArrayList<String>, private val context: Con
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(holder: FilesViewHolder, position: Int) {
-
-
-        holder.bindData(holder.binding, data[position], filesButtonClickListener)
+        holder.bindData(holder.binding, data[position], filesButtonClickListener, isOwner)
     }
 
 

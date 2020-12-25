@@ -24,7 +24,7 @@ data class SearchElement(
     val deadline:String?,
     val state: Int?,
     val max_collaborators:Int?,
-    val contributors: List<Contributor>?,
+    val contributor_list: List<Contributor>?,
 
     //for user
     val job_id:Int?,

@@ -61,9 +61,18 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
         initializeAdapters()
         setListeners()
         setObservers()
+        initView()
         setView(ArrayList(), ArrayList(), ".")
         getFolder(cwd)
         setHasOptionsMenu(true)
+
+    }
+
+    private fun initView() {
+        if(!(activity as WorkspaceActivity).isOwner!!){
+            binding.filesTitleTv.setCompoundDrawables(null, null, null, null)
+            binding.foldersTitleTv.setCompoundDrawables(null, null, null, null)
+        }
 
     }
 
@@ -134,65 +143,68 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
         binding.directoryUpTv.setOnClickListener {
             getFolder("$cwd/..")
         }
-        binding.foldersTitleTv.setOnClickListener {
-            val tmpBinding = DialogAddFolderBinding.inflate(
-                layoutInflater,
-                requireView().parent as ViewGroup,
-                false
-            )
-            val addFolderDialog = AlertDialog.Builder(context).setView(tmpBinding.root)
-                .setCancelable(true)
-                .show()
-            tmpBinding.btnAddFolder.setOnClickListener {
-                if (tmpBinding.etNewFolderName.text.isNullOrEmpty()) {
-                    addFolderDialog.dismiss()
-                } else {
-                    addFolderDialog.dismiss()
-                    postFolder(tmpBinding.etNewFolderName.text.toString().trim())
-                }
-            }
-        }
-
-        binding.filesTitleTv.setOnClickListener {
-
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                PackageManager.PERMISSION_GRANTED
-            )
-
-            if (requireActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-
-                /*
-
-                val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult())
-                {
-                    if (it.resultCode == Activity.RESULT_OK && it.data != null && it.data!!.data != null) {
-                        uploadFile(it.data!!.data!!)
+        if((activity as WorkspaceActivity).isOwner!!){
+            binding.foldersTitleTv.setOnClickListener {
+                val tmpBinding = DialogAddFolderBinding.inflate(
+                    layoutInflater,
+                    requireView().parent as ViewGroup,
+                    false
+                )
+                val addFolderDialog = AlertDialog.Builder(context).setView(tmpBinding.root)
+                    .setCancelable(true)
+                    .show()
+                tmpBinding.btnAddFolder.setOnClickListener {
+                    if (tmpBinding.etNewFolderName.text.isNullOrEmpty()) {
+                        addFolderDialog.dismiss()
+                    } else {
+                        addFolderDialog.dismiss()
+                        postFolder(tmpBinding.etNewFolderName.text.toString().trim())
                     }
                 }
+            }
 
-                var chooseFile = Intent(ACTION_GET_CONTENT)
-                chooseFile.type = "*//*"
+            binding.filesTitleTv.setOnClickListener {
+
+                ActivityCompat.requestPermissions(
+                    requireActivity(),
+                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                    PackageManager.PERMISSION_GRANTED
+                )
+
+                if (requireActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+
+                    /*
+
+                    val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult())
+                    {
+                        if (it.resultCode == Activity.RESULT_OK && it.data != null && it.data!!.data != null) {
+                            uploadFile(it.data!!.data!!)
+                        }
+                    }
+
+                    var chooseFile = Intent(ACTION_GET_CONTENT)
+                    chooseFile.type = "*//*"
                 chooseFile = Intent.createChooser(chooseFile, "Choose a file")
                 startForResult.launch(chooseFile)
                 */
 
-                FilePickerBuilder.instance
-                    .setMaxCount(1)
-                    .addFileSupport("C", arrayOf("c", "cpp", "C", "CPP"))
-                    .addFileSupport("PYTHON", arrayOf("PY", "py"))
-                    .addFileSupport("README", arrayOf("md", "MD"))
-                    .pickFile(this);
+                    FilePickerBuilder.instance
+                        .setMaxCount(1)
+                        .addFileSupport("C", arrayOf("c", "cpp", "C", "CPP"))
+                        .addFileSupport("PYTHON", arrayOf("PY", "py"))
+                        .addFileSupport("README", arrayOf("md", "MD"))
+                        .pickFile(this);
 
-            } else {
-                Toast.makeText(
-                    requireContext(),
-                    "Please give read permissions!",
-                    Toast.LENGTH_SHORT
-                ).show()
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Please give read permissions!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
         }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -254,10 +266,10 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
 
     private fun initializeAdapters() {
         dialog = Definitions().createProgressBar(requireContext())
-        binding.rvWorkspaceFolders.adapter = FoldersAdapter(ArrayList(), requireContext(), this)
+        binding.rvWorkspaceFolders.adapter = FoldersAdapter(ArrayList(), this, (activity as WorkspaceActivity).isOwner!!)
         binding.rvWorkspaceFolders.layoutManager = LinearLayoutManager(requireContext())
 
-        binding.rvWorkspaceFiles.adapter = FilesAdapter(ArrayList(), requireContext(), this)
+        binding.rvWorkspaceFiles.adapter = FilesAdapter(ArrayList(), this,(activity as WorkspaceActivity).isOwner!!)
         binding.rvWorkspaceFiles.layoutManager = LinearLayoutManager(requireContext())
     }
 

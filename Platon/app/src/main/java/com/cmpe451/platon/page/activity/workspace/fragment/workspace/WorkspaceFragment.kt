@@ -54,17 +54,36 @@ class WorkspaceFragment : Fragment(){
             initializeAdapters()
             setObservers()
             setListeners()
+            initViews()
             mWorkspaceViewModel.fetchWorkspace((activity as WorkspaceActivity).workspace_id!!, (activity as WorkspaceActivity).token!!)
         }
 
         super.onViewCreated(view, savedInstanceState)
     }
 
-    private fun setListeners() {
-        binding.infoTitle.setOnClickListener{
-//            findNavController().navigate(WorkspaceFragmentDirections.actionWorkspaceFragmentToEditWorkspaceFragment())
-            onUpdateButtonClicked()
+    private fun initViews() {
+        if(!(activity as WorkspaceActivity).isOwner!!){
+            binding.addRequirementIv.visibility = View.GONE
+            binding.addSkillIv.visibility = View.GONE
+            binding.infoTitle.setCompoundDrawables(null,null,null,null)
+            binding.collabTitleTv.setCompoundDrawables(null,null,null,null)
         }
+    }
+
+    private fun setListeners() {
+        if((activity as WorkspaceActivity).isOwner!!){
+            binding.infoTitle.setOnClickListener{
+//            findNavController().navigate(WorkspaceFragmentDirections.actionWorkspaceFragmentToEditWorkspaceFragment())
+                onUpdateButtonClicked()
+            }
+            binding.addSkillIv.setOnClickListener {
+                onAddDeleteSkillClicked()
+            }
+            binding.addRequirementIv.setOnClickListener {
+                onAddRequirementClicked()
+            }
+        }
+
         binding.descTitleTv.setOnClickListener{
             if(binding.projectInfoLl.visibility == View.GONE){
                 binding.projectInfoLl.visibility = View.VISIBLE
@@ -74,31 +93,22 @@ class WorkspaceFragment : Fragment(){
             }
         }
         binding.requirementsTitleTv.setOnClickListener{
-            if(binding.rvWorkspaceRequirements.visibility == View.GONE){
-                binding.rvWorkspaceRequirements.visibility = View.VISIBLE
-                binding.addRequirementIv.visibility = View.VISIBLE
+            if(binding.requirementLl.visibility == View.GONE){
+                binding.requirementLl.visibility = View.VISIBLE
             }
             else{
-                binding.rvWorkspaceRequirements.visibility = View.GONE
-                binding.addRequirementIv.visibility = View.GONE
+                binding.requirementLl.visibility = View.GONE
             }
         }
         binding.skillsTitleTv.setOnClickListener{
-            if(binding.rvWorkspaceSkills.visibility == View.GONE){
-                binding.rvWorkspaceSkills.visibility = View.VISIBLE
-                binding.addSkillIv.visibility = View.VISIBLE
+            if(binding.skillLl.visibility == View.GONE){
+                binding.skillLl.visibility = View.VISIBLE
             }
             else{
-                binding.rvWorkspaceSkills.visibility = View.GONE
-                binding.addSkillIv.visibility = View.GONE
+                binding.skillLl.visibility = View.GONE
             }
         }
-        binding.addSkillIv.setOnClickListener {
-            onAddDeleteSkillClicked()
-        }
-        binding.addRequirementIv.setOnClickListener {
-            onAddRequirementClicked()
-        }
+
     }
 
     @SuppressLint("SetTextI18n")

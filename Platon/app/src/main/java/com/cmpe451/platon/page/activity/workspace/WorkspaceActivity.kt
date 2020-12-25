@@ -30,6 +30,7 @@ class WorkspaceActivity : BaseActivity() {
     var user_id:Int? = null
     var workspace_id:Int? = null
     var addClicked:Boolean? = null
+    var isOwner:Boolean? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_Platon)
@@ -39,6 +40,7 @@ class WorkspaceActivity : BaseActivity() {
         user_id = intent.extras?.getInt("user_id")
         workspace_id = intent.extras?.getInt("workspace_id")
         addClicked = intent.extras?.getBoolean("add")
+        isOwner = intent.extras?.getBoolean("isOwner")
 
         if (token == null || user_id == null || workspace_id == null){
             finish()

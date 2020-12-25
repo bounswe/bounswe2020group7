@@ -559,18 +559,56 @@ class HomeActivity : BaseActivity(),
     override fun onSearchButtonClicked(element: SearchElement, position: Int) {
         when(binding.bottomNavBar.selectedItemId) {
             R.id.workspaceListFragment -> {
-                if (element.id != currUserId) {
-                    navController.navigate(WorkspaceListFragmentDirections.actionWorkspaceListFragmentToOtherProfileFragment(element.id))
-                } else {
-                    binding.bottomNavBar.selectedItemId = R.id.profilePageFragment
+                if(element.name!= null){
+                    if (element.id != currUserId) {
+                        navController.navigate(WorkspaceListFragmentDirections.actionWorkspaceListFragmentToOtherProfileFragment(element.id))
+                    } else {
+                        binding.bottomNavBar.selectedItemId = R.id.profilePageFragment
+                    }
                 }
+                else{
+                    val collabIds = element.contributor_list!!.map{it.id}
+                    val bnd = Bundle()
+                    bnd.putString("token", currUserToken)
+                    bnd.putInt("user_id", currUserId)
+                    bnd.putBoolean("add", false)
+                    bnd.putInt("workspace_id", element.id)
+                    bnd.putBoolean("isOwner", true)
+                    if(collabIds.contains(currUserId)){
+                        bnd.putBoolean("isOwner", true)
+                    }
+                    else {
+                        bnd.putBoolean("isOwner", false)
+                    }
+                    startActivity(Intent(this, WorkspaceActivity::class.java).putExtras(bnd))
+                }
+
             }
             R.id.homeFragment -> {
-                if (element.id != currUserId) {
-                    navController.navigate(HomeFragmentDirections.actionHomeFragmentToOtherProfileFragment(element.id))
-                } else {
-                    binding.bottomNavBar.selectedItemId = R.id.profilePageFragment
+                if(element.name != null){
+                    if (element.id != currUserId) {
+                        navController.navigate(HomeFragmentDirections.actionHomeFragmentToOtherProfileFragment(element.id))
+                    } else {
+                        binding.bottomNavBar.selectedItemId = R.id.profilePageFragment
+                    }
                 }
+                else{
+                    val collabIds = element.contributor_list!!.map{it.id}
+                    val bnd = Bundle()
+                    bnd.putString("token", currUserToken)
+                    bnd.putInt("user_id", currUserId)
+                    bnd.putBoolean("add", false)
+                    bnd.putInt("workspace_id", element.id)
+                    bnd.putBoolean("isOwner", true)
+                    if(collabIds.contains(currUserId)){
+                        bnd.putBoolean("isOwner", true)
+                    }
+                    else {
+                        bnd.putBoolean("isOwner", false)
+                    }
+                    startActivity(Intent(this, WorkspaceActivity::class.java).putExtras(bnd))
+                }
+
             }
         }
         destroyToolbar()

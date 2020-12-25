@@ -2,12 +2,13 @@ package com.cmpe451.platon.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.databinding.FolderItemBinding
 import com.cmpe451.platon.databinding.ResearchesCellBinding
 
-class FoldersAdapter(private val data: ArrayList<String>, private val context: Context, private val foldersButtonClickListener: FoldersButtonClickListener) :
+class FoldersAdapter(private val data: ArrayList<String>, private val foldersButtonClickListener: FoldersButtonClickListener, private val isOwner:Boolean) :
 
     RecyclerView.Adapter<FoldersAdapter.FoldersViewHolder>() {
 
@@ -17,7 +18,11 @@ class FoldersAdapter(private val data: ArrayList<String>, private val context: C
     // Each data item is just a string in this case that is shown in a TextView.
     class FoldersViewHolder(val binding: FolderItemBinding) : RecyclerView.ViewHolder(binding.root){
 
-        fun bindData(binding: FolderItemBinding, folder: String, buttonClickListener: FoldersButtonClickListener) {
+        fun bindData(binding: FolderItemBinding, folder: String, buttonClickListener: FoldersButtonClickListener, isOwner: Boolean) {
+            if(!isOwner){
+                binding.editFileIv.visibility = View.GONE
+                binding.deleteFolderIv.visibility = View.GONE
+            }
             binding.editFileIv.setOnClickListener{
                 buttonClickListener.onEditFolderClicked(folder)
             }
@@ -46,7 +51,7 @@ class FoldersAdapter(private val data: ArrayList<String>, private val context: C
     override fun onBindViewHolder(holder: FoldersViewHolder, position: Int) {
 
 
-        holder.bindData(holder.binding, data[position], foldersButtonClickListener)
+        holder.bindData(holder.binding, data[position], foldersButtonClickListener, isOwner)
     }
 
 
