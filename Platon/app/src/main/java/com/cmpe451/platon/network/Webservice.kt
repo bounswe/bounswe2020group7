@@ -167,6 +167,7 @@ interface Webservice {
     fun searchUser(@Header("auth_token") token: String?,
                    @Query("search_query") query:String,
                     @Query("job_filter") job:Int?,
+                   @Query("sorting_criteria") sortBy:Int?,
                    @Query("page") page:Int?,
                    @Query("per_page") perPage:Int?):Call<Search?>
 
@@ -175,6 +176,13 @@ interface Webservice {
     fun searchWorkspace(@Header("auth_token") token: String?,
                    @Query("search_query") query:String,
                    @Query("skill_filter") skill:String?,
+                    @Query("creator_name") creatorName:String?,
+                    @Query("creator_surname") creatorSurname:String?,
+                    @Query("starting_date_start") startDateS:String?,
+                    @Query("starting_date_end") startDateE:String?,
+                    @Query("deadline_start") deadlineS:String?,
+                    @Query("deadline_end") deadlineE:String?,
+                    @Query("sorting_criteria") sortBy:Int?,
                    @Query("event_filter") event:String?,
                    @Query("page") page:Int?,
                    @Query("per_page") perPage:Int?):Call<Search?>

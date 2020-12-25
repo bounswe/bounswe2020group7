@@ -72,12 +72,13 @@ class HomeActivityViewModel(application: Application):AndroidViewModel(applicati
         repository.fetchSearchHistory(token, i)
     }
 
-    fun searchUser(token:String?, query:String, job:Int?, page:Int?, perPage:Int?){
-        repository.searchUser(token, query, job, page, perPage)
+    fun searchUser(token:String?, query:String, job:Int?, sortBy: Int?, page:Int?, perPage:Int?){
+        repository.searchUser(token, query, job, sortBy, page, perPage)
     }
 
-    fun searchWorkspace(token:String?, query:String , skill:String?, event:String?, page:Int?, perPage:Int?){
-        repository.searchWorkspace(token, query, skill,event, page, perPage)
+    fun searchWorkspace(token: String?, query:String, skill:String?, creatorName:String?,
+                        creatorSurname:String?, startDateS:String?, startDateE:String?, deadlineS:String?, deadlineE: String?, sortBy:Int?, event:String?,page:Int?, perPage:Int?){
+        repository.searchWorkspace(token, query, skill,creatorName, creatorSurname, startDateS, startDateE, deadlineS, deadlineE, sortBy, event, page, perPage)
     }
 
 }

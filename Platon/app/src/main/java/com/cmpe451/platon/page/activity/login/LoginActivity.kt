@@ -4,11 +4,14 @@ package com.cmpe451.platon.page.activity.login
  * @author Burak Ömür
  */
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.database.MatrixCursor
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
@@ -32,6 +35,8 @@ import com.cmpe451.platon.network.models.SearchElement
 import com.cmpe451.platon.network.models.SearchHistoryElement
 import com.cmpe451.platon.page.activity.home.HomeActivityViewModel
 import com.cmpe451.platon.util.Definitions
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Main starter activity of the application.
@@ -67,9 +72,9 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
 
         //make GONE the views
         binding.layWorkspaceFilter.visibility = View.GONE
-        binding.layJobQuery.visibility=View.GONE
-        binding.rgSearchAmong.visibility = View.GONE
+        binding.laySearchUser.visibility=View.GONE
         binding.toolbarRecyclerview.visibility = View.GONE
+
         binding.rgSearchAmong.setOnCheckedChangeListener(null)
         binding.rgSearchAmong.clearCheck()
         // if adapter not null, clear it
@@ -208,6 +213,7 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initListeners() {
         // pagination listener define
         paginationListener = object: PaginationListener(toolbarLayoutManager, toolbarPageSize){
@@ -216,22 +222,35 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                     currentPage++
                     when(binding.rgSearchAmong.checkedRadioButtonId){
                         R.id.rb_searchUser->{
+                            val sortBy = binding.spSortByUser.selectedItemPosition
                             mActivityViewModel.searchUser(
                                 null,
                                 search.query.toString().trim(),
                                 if (jobIdList[binding.spJobQuery.selectedItemPosition] == -1) null else jobIdList[binding.spJobQuery.selectedItemPosition],
-                                currentPage,
+                                if(sortBy!=0) sortBy-1 else null, currentPage,
                                 PAGE_SIZE)
                         }
                         R.id.rb_searchUpcoming->{
                         }
                         R.id.rb_searchWorkspace->{
+                            val sortBy = binding.spSortByWorkspace.selectedItemPosition
+                            val name = binding.etFilterName.text.toString().trim()
+                            val surname = binding.etFilterSurname.text.toString().trim()
+                            val startDateE = binding.etStartDateE.text.toString().trim()
+                            val startDateS=binding.etDeadlineS.text.toString().trim()
+                            val deadlineS=binding.etStartDateS.text.toString().trim()
+                            val deadlineE = binding.etDeadlineE.text.toString().trim()
+                            val event = binding.etFilterEvent.text.toString().trim()
+
                             mActivityViewModel.searchWorkspace(
                                 null,
-                                search.query.toString().trim(),
-                                null,null,
-                                currentPage,
-                                PAGE_SIZE)
+                                search.query.toString().trim(), binding.etFilterSkill.text.toString().trim(),
+                                if(name.isNotEmpty()) name else null, if(surname.isNotEmpty()) surname else null,
+                                if(startDateS.isNotEmpty()) startDateS else null,if(startDateE.isNotEmpty()) startDateE else null,
+                                if(deadlineS.isNotEmpty()) deadlineS else null,if(deadlineE.isNotEmpty()) deadlineE else null ,if(sortBy!=0) sortBy-1 else null,
+                                if(event.isNotEmpty()) event else null,
+                                0,
+                                toolbarPageSize)
                         }
                     }
                 }
@@ -242,6 +261,98 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
         }
 
         binding.toolbarRecyclerview.addOnScrollListener(paginationListener)
+
+        binding.spSortByUser.adapter = ArrayAdapter(this, R.layout.spinner_item, arrayOf("Semantic Rating", "Alphabetical Order(A=>Z)","Alphabetical Order (Z=>A)"))
+        binding.spSortByWorkspace.adapter = ArrayAdapter(this, R.layout.spinner_item,
+            arrayOf("Semantic Rating", "Ascending Date","Descending Date","Ascending Number of Collaborators Needed", "Descending Number of Collaborators Needed",
+                "Ascending Alphabetical Order","Descending Alphabetical Order"))
+        binding.etStartDateS.setOnTouchListener { _, event ->
+            if(event.action == MotionEvent.ACTION_DOWN){
+                val calendar = Calendar.getInstance()
+                val year = calendar.get(Calendar.YEAR)
+                val month = calendar.get(Calendar.MONTH)
+                val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+                val datePickerDialog = DatePickerDialog(
+                    this,
+                    { _, years, months, day ->
+                        val monthString = String.format("%02d", months+1)
+                        val dayString = String.format("%02d", day)
+                        binding.etStartDateS.setText("$years.$monthString.$dayString")
+                    }, year, month, dayOfMonth
+                )
+                datePickerDialog.setOnCancelListener{
+                    binding.etStartDateS.setText("")
+                }
+                datePickerDialog.show()
+            }
+            true
+        }
+
+        binding.etStartDateE.setOnTouchListener { _, event ->
+            if(event.action == MotionEvent.ACTION_DOWN){
+                val calendar = Calendar.getInstance()
+                val year = calendar.get(Calendar.YEAR)
+                val month = calendar.get(Calendar.MONTH)
+                val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+                val datePickerDialog = DatePickerDialog(
+                    this,
+                    { _, years, months, day ->
+                        val monthString = String.format("%02d", months+1)
+                        val dayString = String.format("%02d", day)
+                        binding.etStartDateE.setText("$years.$monthString.$dayString")
+                    }, year, month, dayOfMonth
+                )
+                datePickerDialog.setOnCancelListener{
+                    binding.etStartDateE.setText("")
+                }
+                datePickerDialog.show()
+            }
+            true
+        }
+
+        binding.etDeadlineE.setOnTouchListener { _, event ->
+            if(event.action == MotionEvent.ACTION_DOWN){
+                val calendar = Calendar.getInstance()
+                val year = calendar.get(Calendar.YEAR)
+                val month = calendar.get(Calendar.MONTH)
+                val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+                val datePickerDialog = DatePickerDialog(
+                    this,
+                    { _, years, months, day ->
+                        val monthString = String.format("%02d", months+1)
+                        val dayString = String.format("%02d", day)
+                        binding.etDeadlineE.setText("$years.$monthString.$dayString")
+                    }, year, month, dayOfMonth
+                )
+                datePickerDialog.setOnCancelListener{
+                    binding.etDeadlineE.setText("")
+                }
+                datePickerDialog.show()
+            }
+            true
+        }
+
+        binding.etDeadlineS.setOnTouchListener { _, event ->
+            if(event.action == MotionEvent.ACTION_DOWN){
+                val calendar = Calendar.getInstance()
+                val year = calendar.get(Calendar.YEAR)
+                val month = calendar.get(Calendar.MONTH)
+                val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+                val datePickerDialog = DatePickerDialog(
+                    this,
+                    { _, years, months, day ->
+                        val monthString = String.format("%02d", months+1)
+                        val dayString = String.format("%02d", day)
+                        binding.etDeadlineS.setText("$years.$monthString.$dayString")
+                    }, year, month, dayOfMonth
+                )
+                datePickerDialog.setOnCancelListener{
+                    binding.etDeadlineS.setText("")
+                }
+                datePickerDialog.show()
+            }
+            true
+        }
 
         dialog = Definitions().createProgressBar(this as BaseActivity)
     }
@@ -274,16 +385,16 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                     when (id) {
                         R.id.rb_searchUser -> {
                             binding.layWorkspaceFilter.visibility = View.GONE
-                            binding.layJobQuery.visibility = View.VISIBLE
+                            binding.laySearchUser.visibility = View.VISIBLE
                             mActivityViewModel.getAllJobs()
                         }
                         R.id.rb_searchWorkspace -> {
                             binding.layWorkspaceFilter.visibility = View.VISIBLE
-                            binding.layJobQuery.visibility = View.GONE
+                            binding.laySearchUser.visibility = View.GONE
                         }
                         R.id.rb_searchUpcoming -> {
                             binding.layWorkspaceFilter.visibility = View.GONE
-                            binding.layJobQuery.visibility = View.GONE
+                            binding.laySearchUser.visibility = View.GONE
                         }
                     }
                 }
@@ -305,16 +416,31 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
 
                 when (binding.rgSearchAmong.checkedRadioButtonId) {
                     R.id.rb_searchUser -> {
+                        val sortBy = binding.spSortByUser.selectedItemPosition
                         mActivityViewModel.searchUser(
-                            null, query,
-                            if (jobIdList[binding.spJobQuery.selectedItemPosition] == -1) null else jobIdList[binding.spJobQuery.selectedItemPosition],
-                            0, toolbarPageSize)
-                    }
-                    R.id.rb_searchWorkspace -> {
-                        mActivityViewModel.searchWorkspace(
                             null,
                             search.query.toString().trim(),
-                            binding.etFilterSkill.text.toString().trim(),binding.etFilterSkill.text.toString().trim(),
+                            if (jobIdList[binding.spJobQuery.selectedItemPosition] == -1) null else jobIdList[binding.spJobQuery.selectedItemPosition],
+                            if(sortBy!=0) sortBy-1 else null, 0,
+                            toolbarPageSize)
+                    }
+                    R.id.rb_searchWorkspace -> {
+                        val sortBy = binding.spSortByWorkspace.selectedItemPosition
+                        val name = binding.etFilterName.text.toString().trim()
+                        val surname = binding.etFilterSurname.text.toString().trim()
+                        val startDateE = binding.etStartDateE.text.toString().trim()
+                        val startDateS=binding.etDeadlineS.text.toString().trim()
+                        val deadlineS=binding.etStartDateS.text.toString().trim()
+                        val deadlineE = binding.etDeadlineE.text.toString().trim()
+                        val event = binding.etFilterEvent.text.toString().trim()
+
+                        mActivityViewModel.searchWorkspace(
+                            null,
+                            search.query.toString().trim(), binding.etFilterSkill.text.toString().trim(),
+                            if(name.isNotEmpty()) name else null, if(surname.isNotEmpty()) surname else null,
+                            if(startDateS.isNotEmpty()) startDateS else null,if(startDateE.isNotEmpty()) startDateE else null,
+                            if(deadlineS.isNotEmpty()) deadlineS else null,if(deadlineE.isNotEmpty()) deadlineE else null ,if(sortBy!=0) sortBy-1 else null,
+                            if(event.isNotEmpty()) event else null,
                             0,
                             toolbarPageSize)
                     }

@@ -131,5 +131,12 @@
     <string name="update_str">Update</string>
     <string name="milestone_str">Milestone</string>
     <string name="creator_str">Created by</string>
+    <string name="sort_by_Str">Sort by:</string>
+    <string name="creator_name_str">Creator Name</string>
+    <string name="creator_surname_str">Creator Surname</string>
+    <string name="starting_from_str">Starting from</string>
+    <string name="starting_to_str">Starting to</string>
+    <string name="deadline_from_str">Deadline from</string>
+    <string name="deadline_to_str">Deadline To</string>
 
 </resources>
