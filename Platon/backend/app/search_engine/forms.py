@@ -1,5 +1,6 @@
-from wtforms import Form, StringField, IntegerField, BooleanField, validators
+from wtforms import Form, StringField, IntegerField, BooleanField, validators, DateTimeField
 from flask_restplus import reqparse
+import datetime
 
 class UserSearchForm(Form):
     search_query = StringField("search_query",validators=[validators.DataRequired()])
@@ -26,14 +27,26 @@ search_history_parser.add_argument('auth_token', required=True ,type=str,help="A
 class WorkspaceSearchForm(Form):
     search_query = StringField("search_query",validators=[validators.DataRequired()])
     skill_filter = StringField("skill_filter")
-    event_filter = StringField("event_filter")
+    creator_name = StringField("creator_name")
+    creator_surname = StringField("creator_surname")   
+    starting_date_start = DateTimeField("starting_date_start", default=None)
+    starting_date_end = DateTimeField("starting_date_end", default=None)
+    deadline_start = DateTimeField("deadline_start", default=None)
+    deadline_end = DateTimeField("deadline_end", default=None)
+    sorting_criteria = IntegerField("sorting_criteria",validators=[validators.NumberRange(min=0, max=5),validators.optional()], default=None)
     page = IntegerField("page")
     per_page = IntegerField("per_page")
 
 ws_search_parser = reqparse.RequestParser()
 ws_search_parser.add_argument('search_query',required=True,type=str,help="Search Query",location='args')
 ws_search_parser.add_argument('skill_filter',type=str,help="Skill Filter",location='args')
-ws_search_parser.add_argument('event_filter',type=str,help="Give Acronym",location='args')
+ws_search_parser.add_argument('creator_name',type=str,help="Name of the creator",location='args')
+ws_search_parser.add_argument('creator_surname',type=str,help="Surname of the creator",location='args')
+ws_search_parser.add_argument('starting_date_start',type=datetime.datetime,help="Inclusive.",location='args')
+ws_search_parser.add_argument('starting_date_end',type=datetime.datetime,help="Exclusive.",location='args')
+ws_search_parser.add_argument('deadline_start',type=datetime.datetime,help="Inclusive.",location='args')
+ws_search_parser.add_argument('deadline_end',type=datetime.datetime,help="Exclusive.",location='args')
+ws_search_parser.add_argument('sorting_criteria',type=int,help="None: Semantic Rating, 0: Ascending Date, 1: Descending Date, 2: Ascending Number of Collaborators Needed, 3: Descending Number of Collaborators Needed, 4: Ascending Alphabetical Order, 5: Descending Alphabetical Order)",location='args')
 ws_search_parser.add_argument('page',type=int,help="Page ID(0-Indexed)",location='args')
 ws_search_parser.add_argument('per_page',type=int,help="Number of Records in a Page",location='args')
 ws_search_parser.add_argument('auth_token', type=str,help="Authantication Token(If registered)",location='headers')
