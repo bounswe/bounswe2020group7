@@ -60,7 +60,7 @@ const UpcomingEvents = ({itemsPerPage= 5, classes, width= '500px'}) => {
           <Spinner />
         </div>
       )}
-      {data && data.upcoming_events && (
+      {!fetching && data && data.upcoming_events && (
         <div className="UpcomingEventsItems" style={{width: width}}>
           {data.upcoming_events.map((event, index) => (
             <UpcomingEventsItem
