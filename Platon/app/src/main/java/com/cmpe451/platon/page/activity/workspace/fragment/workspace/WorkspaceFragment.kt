@@ -19,20 +19,19 @@ import com.bumptech.glide.Glide
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.CollaboratorAdapter
 import com.cmpe451.platon.adapter.FollowerFollowingAdapter
+import com.cmpe451.platon.adapter.MilestoneAdapter
 import com.cmpe451.platon.adapter.SkillsAdapter
-import com.cmpe451.platon.databinding.AddRequirementBinding
-import com.cmpe451.platon.databinding.AddSkillBinding
-import com.cmpe451.platon.databinding.FragmentEditWorkspaceBinding
-import com.cmpe451.platon.databinding.FragmentPersonalWorkspaceBinding
+import com.cmpe451.platon.databinding.*
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.Contributor
+import com.cmpe451.platon.network.models.Milestone
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.page.activity.workspace.fragment.addworkspace.AddWorkspaceViewModel
 import com.cmpe451.platon.util.Definitions
 import java.util.*
 import kotlin.collections.ArrayList
 
-class WorkspaceFragment : Fragment(){
+class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListener{
 
     private lateinit var binding: FragmentPersonalWorkspaceBinding
     private lateinit var dialog:AlertDialog
@@ -55,7 +54,7 @@ class WorkspaceFragment : Fragment(){
             setObservers()
             setListeners()
             initViews()
-            mWorkspaceViewModel.fetchWorkspace((activity as WorkspaceActivity).workspace_id!!, (activity as WorkspaceActivity).token!!)
+
         }
 
         super.onViewCreated(view, savedInstanceState)
@@ -66,8 +65,15 @@ class WorkspaceFragment : Fragment(){
             binding.addRequirementIv.visibility = View.GONE
             binding.addSkillIv.visibility = View.GONE
             binding.infoTitle.setCompoundDrawables(null,null,null,null)
-            binding.collabTitleTv.setCompoundDrawables(null,null,null,null)
+            binding.milestoneTitleTv.setCompoundDrawables(null,null,null,null)
         }
+        binding.collabTitleTv.setCompoundDrawables(null,null,null,null)
+        mWorkspaceViewModel.fetchWorkspace((activity as WorkspaceActivity).workspace_id!!, (activity as WorkspaceActivity).token!!)
+        getMilestones()
+    }
+
+    private fun getMilestones() {
+        mWorkspaceViewModel.getMilestones((activity as WorkspaceActivity).workspace_id!!, null, null, (activity as WorkspaceActivity).token!!)
     }
 
     private fun setListeners() {
@@ -110,7 +116,6 @@ class WorkspaceFragment : Fragment(){
         }
 
     }
-
     @SuppressLint("SetTextI18n")
     private fun setObservers() {
         dialog = Definitions().createProgressBar(requireContext())
@@ -182,6 +187,23 @@ class WorkspaceFragment : Fragment(){
                 }
             }
         })
+        mWorkspaceViewModel.getMilestoneResponse.observe(viewLifecycleOwner, {
+            when (it.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    (binding.milestoneRv.adapter as MilestoneAdapter).replaceElements(it.data!!.result)
+                    mWorkspaceViewModel.getMilestoneResponse.value = Resource.Done()
+
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    mWorkspaceViewModel.getMilestoneResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java ->{
+                    dialog.dismiss()
+                }
+            }
+        })
 
 
     }
@@ -198,6 +220,9 @@ class WorkspaceFragment : Fragment(){
 
         binding.collaboratorsRv.adapter = CollaboratorAdapter(ArrayList(), requireContext())
         binding.collaboratorsRv.layoutManager = GridLayoutManager(requireContext(),2)
+
+        binding.milestoneRv.adapter = MilestoneAdapter(ArrayList(),this, (activity as WorkspaceActivity).isOwner!!)
+        binding.milestoneRv.layoutManager = LinearLayoutManager(requireContext())
 
     }
     private fun onAddRequirementClicked() {
@@ -415,6 +440,19 @@ class WorkspaceFragment : Fragment(){
         })
     }
 
+    override fun onMilestoneNameClicked(binding: MilestoneCellBinding) {
+        if(binding.expandLl.visibility == View.GONE) binding.expandLl.visibility = View.VISIBLE
+        else binding.expandLl.visibility = View.GONE
+
+    }
+
+    override fun onEditMilestoneClicked(milestone: Milestone) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onDeleteMilestoneClicked(milestone: Milestone) {
+        TODO("Not yet implemented")
+    }
 
 
 }

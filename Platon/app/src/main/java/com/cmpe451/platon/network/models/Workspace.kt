@@ -40,3 +40,23 @@ data class Job(
     val id: Int,
     val name:String
 )
+
+data class Milestone(
+        val milestone_id:Int,
+        val workspace_id:Int,
+        val title:String,
+        val description: String,
+        val deadline: String,
+        val creator_id:Int,
+        val creator_name:String,
+        val creator_surname:String,
+        val creator_e_mail:String,
+        val creator_rate:Double,
+        val creator_job_name:String,
+        val creator_institution:String,
+        val creator_is_private:Boolean
+)
+data class Milestones(
+        val number_of_pages:Int,
+        val result: List<Milestone>
+)

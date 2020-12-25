@@ -277,4 +277,42 @@ interface Webservice {
         @Part("new_file\"; filename=\"new_file\" ") new_file: RequestBody,
         @Header("auth_token") token: String): Call<JsonObject?>
 
+
+
+    @GET("api/workspaces/milestone")
+    fun getMilestones(
+        @Query("workspace_id") workspace_id:Int,
+        @Query("page") page:Int?,
+        @Query("per_page") per_page:Int?,
+        @Header("auth_token") auth_token: String
+    ) : Call<Milestones?>
+
+    @FormUrlEncoded
+    @POST("api/workspaces/milestone")
+    fun addMilestone(
+        @Field("workspace_id") workspace_id:Int,
+        @Field("title") title:String,
+        @Field("description") description: String,
+        @Field("deadline") deadline: String,
+        @Header("auth_token") auth_token: String
+    ) : Call<JsonObject?>
+
+
+    @FormUrlEncoded
+    @PUT("api/workspaces/milestone")
+    fun updateMilestone(
+        @Field("workspace_id") workspace_id:Int,
+        @Field("milestone_id") milestone_id:Int,
+        @Field("title") title:String?,
+        @Field("description") description: String?,
+        @Field("deadline") deadline: String?,
+        @Header("auth_token") auth_token: String
+    ) : Call<JsonObject?>
+
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "api/workspaces/milestone",hasBody = true)
+    fun deleteMilestone( @Field("workspace_id") workspace_id:Int,
+                      @Field("milestone_id") milestone_id:Int,
+                     @Header("auth_token") token: String): Call<JsonObject?>
+
 }

@@ -129,5 +129,7 @@
     <string name="files_str">Files</string>
     <string name="folder_name_str">Folder Name</string>
     <string name="update_str">Update</string>
+    <string name="milestone_str">Milestone</string>
+    <string name="creator_str">Created by</string>
 
 </resources>

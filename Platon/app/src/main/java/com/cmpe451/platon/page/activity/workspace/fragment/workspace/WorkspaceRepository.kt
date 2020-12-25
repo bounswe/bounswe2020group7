@@ -3,9 +3,7 @@ package com.cmpe451.platon.page.activity.workspace.fragment.workspace
 import androidx.lifecycle.MutableLiveData
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.RetrofitClient
-import com.cmpe451.platon.network.models.Workspace
-import com.cmpe451.platon.network.models.WorkspaceListItem
-import com.cmpe451.platon.network.models.WorkspaceListItems
+import com.cmpe451.platon.network.models.*
 import com.google.gson.JsonObject
 import org.json.JSONObject
 import retrofit2.Call
@@ -20,6 +18,8 @@ class WorkspaceRepository {
     var getWorkspaceResponse: MutableLiveData<Resource<Workspace>> = MutableLiveData()
     var updateResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
     var deleteResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
+    var getMilestoneResponse: MutableLiveData<Resource<Milestones>> = MutableLiveData()
+    var addDeleteUpdateMilestoneResponse: MutableLiveData<Resource<JsonObject>> = MutableLiveData()
     fun fetchWorkspace(workspace_id:Int, token:String) {
         val service = RetrofitClient.getService()
         val call = service.getWorkspace(workspace_id,token)
@@ -84,6 +84,86 @@ class WorkspaceRepository {
 
         })
     }
+
+    fun getMilestones(workspace_id: Int, page:Int?, per_page:Int?, token: String){
+        val service = RetrofitClient.getService()
+        val call = service.getMilestones(workspace_id,page, per_page,token)
+        getMilestoneResponse.value = Resource.Loading()
+        call.enqueue(object: Callback<Milestones?> {
+            override fun onResponse(call: Call<Milestones?>, response: Response<Milestones?>) {
+                when {
+                    response.isSuccessful && response.body() != null -> {
+                        getMilestoneResponse.value = Resource.Success(response.body()!!)
+                    }
+                    response.errorBody() != null -> getMilestoneResponse.value = Resource.Error(
+                        JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> getMilestoneResponse.value = Resource.Error("Unknown error!")
+                }
+            }
+
+            override fun onFailure(call: Call<Milestones?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+        })
+    }
+    fun addMilestone(workspace_id: Int, title: String, description: String,deadline: String, token: String){
+        val service = RetrofitClient.getService()
+        val call = service.addMilestone(workspace_id, title, description, deadline,token)
+        addDeleteUpdateMilestoneResponse.value = Resource.Loading()
+        call.enqueue(object: Callback<JsonObject?> {
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when {
+                    response.isSuccessful && response.body() != null -> addDeleteUpdateMilestoneResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> addDeleteUpdateMilestoneResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> addDeleteUpdateMilestoneResponse.value = Resource.Error("Unknown error!")
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+    fun updateMilestone( workspace_id: Int,milestone_id:Int, title: String?, description: String?,deadline: String?, token: String){
+        val service = RetrofitClient.getService()
+        val call = service.updateMilestone(workspace_id, milestone_id,title, description, deadline,token)
+        addDeleteUpdateMilestoneResponse.value = Resource.Loading()
+        call.enqueue(object: Callback<JsonObject?> {
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when {
+                    response.isSuccessful && response.body() != null -> addDeleteUpdateMilestoneResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> addDeleteUpdateMilestoneResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> addDeleteUpdateMilestoneResponse.value = Resource.Error("Unknown error!")
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+    fun deleteMilestone(workspace_id: Int, milestone_id: Int, token: String){
+        val service = RetrofitClient.getService()
+        val call = service.deleteMilestone(workspace_id, milestone_id,token)
+        addDeleteUpdateMilestoneResponse.value = Resource.Loading()
+        call.enqueue(object: Callback<JsonObject?> {
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when {
+                    response.isSuccessful && response.body() != null -> addDeleteUpdateMilestoneResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> addDeleteUpdateMilestoneResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> addDeleteUpdateMilestoneResponse.value = Resource.Error("Unknown error!")
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+
 
 
 }
