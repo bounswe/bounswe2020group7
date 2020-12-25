@@ -9,7 +9,7 @@ from app.profile_management.models import Jobs,Skills,UserSkills
 from app.auth_system.models import User
 from app.auth_system.helpers import decode_token,login_required,allowed_file
 from app.search_engine.forms import WorkspaceSearchForm,ws_search_parser
-from app.workspace_system.models import Contribution
+from app.workspace_system.models import Contribution, Workspace, WorkspaceSkill
 
 from app import api, db
 import math
@@ -62,6 +62,9 @@ workspace_model = api.model('Worksapce', {
     "contributors": fields.List(
         fields.Nested(contributor_model)
     ),
+    "creator_id": fields.Integer,
+	"creator_name": fields.String,
+	"creator_surname": fields.String,
 })
 
 workspace_list_model = api.model('Worksapce List', {
@@ -282,13 +285,112 @@ class WorkspaceSearchAPI(Resource):
                                     "name": user.name,
                                     "surname": user.surname
                             })
+                        try:
+                            creator_info = User.query.filter(User.id == workspace[1]).first()
+                        except:
+                            return make_response(jsonify({"err": "Database Connection Error"}),500)
                         result_list.append({"id":workspace[0], "title": workspace[3], "is_private": int(workspace[2]), 
                                             "description" : workspace[6], "state": workspace[4], "deadline" : workspace[7],
-                                            "creation_time": workspace[5], "max_contributors": workspace[8],"contributor_list":contributor_list})
+                                            "creation_time": workspace[5], "max_contributors": workspace[8],"contributor_list":contributor_list,
+                                            "creator_id": workspace[1], "creator_name": creator_info.name,"creator_surname": creator_info.surname})
                         result_id_score.append((workspace[0],score))
                     else:
                         id_index = id_list.index(workspace[0])
                         result_id_score[id_index] =(workspace[0], result_id_score[id_index][1]+score)
+            
+            # Filtering
+            skill_filter_list = []
+            if form.skill_filter.data != '':
+                for result in result_list:
+                    ws_id = result.get("id")
+                    try:
+                        ws_skills = WorkspaceSkill.query.filter(WorkspaceSkill.workspace_id == ws_id).all()
+                    except:
+                        return make_response(jsonify({"err": "Database Connection Error"}),500)
+
+                    skill_ids = []
+                    for ws_skill in ws_skills:
+                        skill_ids.append(ws_skill.skill_id)
+
+                    skill_names_of_ws = []
+                    for skill_id in skill_ids:
+                        try:
+                            skill_info = Skills.query.filter(Skills.id == skill_id).first()
+                        except:
+                            return make_response(jsonify({"err": "Database Connection Error"}),500)
+                        
+                        skill_names_of_ws.append(skill_info.name)
+                    
+                    if form.skill_filter.data in skill_names_of_ws:
+                        skill_filter_list.append(result)
+
+                # After filtering, original result is updated.
+                result_list = skill_filter_list
+
+            starting_date_start_filter = []
+            if form.starting_date_start.data is not None: #!!!!!
+                for result in result_list:
+                    ws_start_date = result.get("creation_time")
+                    if ws_start_date >= form.starting_date_start.data: #!!!!
+                        starting_date_start_filter.append(result)
+                # After filtering, original result is updated.
+                result_list = starting_date_start_filter
+            
+            starting_date_end_filter = []
+            if form.starting_date_end.data is not None: #!!!!!
+                for result in result_list:
+                    ws_start_date = result.get("creation_time")
+                    if ws_start_date < form.starting_date_start.data: #!!!!
+                        starting_date_end_filter.append(result)
+                # After filtering, original result is updated.
+                result_list = starting_date_end_filter
+            
+            deadline_start_filter = []
+            if form.deadline_start.data is not None:
+                for result in result_list:
+                    ws_deadline = result.get("deadline")
+                    # If there is no deadline, filter them also.
+                    if ws_deadline is None:
+                        continue
+                    if ws_deadline >= form.deadline_start.data:
+                        deadline_start_filter.append(result)
+                result_list = deadline_start_filter
+            
+            deadline_end_filter = []
+            if form.deadline_end.data is not None:
+                for result in result_list:
+                    ws_deadline = result.get("deadline")
+                    # If there is no deadline, filter them also.
+                    if ws_deadline is None:
+                        continue
+                    if ws_deadline < form.deadline_end.data:
+                        deadline_end_filter.append(result)
+                result_list = deadline_end_filter
+
+            founder_name_filter = []
+            if form.creator_name.data != '':
+                for result in result_list:
+                    requested_creator_name = form.creator_name.data
+                    requested_creator_name = requested_creator_name.lower()
+                    actual_creator_name = result.get("creator_name")
+                    actual_creator_name = actual_creator_name.lower()
+                    if requested_creator_name == actual_creator_name:
+                        founder_name_filter.append(result)
+                # Update original results with filtered results. 
+                result_list = founder_name_filter
+
+            founder_surname_filter = []
+            if form.creator_surname.data != '':
+                for result in result_list:
+                    requested_creator_surname = form.creator_surname.data
+                    requested_creator_surname = requested_creator_surname.lower()
+                    actual_creator_surname = result.get("creator_surname")
+                    actual_creator_surname = actual_creator_surname.lower()
+                    if requested_creator_surname == actual_creator_surname:
+                        founder_surname_filter.append(result)
+                # Update original results with filtered results. 
+                result_list = founder_surname_filter
+
             number_of_pages = 1
             # Apply Pagination
             if form.page.data is not None and form.per_page.data is not None:

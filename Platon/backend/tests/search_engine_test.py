@@ -641,7 +641,6 @@ class WorkspaceSearchTests(BaseTest):
 
         self.assertEqual(actual_result, expected_workspace_ids, "Expected workspace ids and actual lists are not equal!")
       
-
     # Check if starting date filter works.
     def test_starting_date_filter(self):
 
@@ -675,9 +674,6 @@ class WorkspaceSearchTests(BaseTest):
         self.assertEqual(actual_response.status_code, expected_status_code, 'Incorrect HTTP Response Code')
 
         self.assertEqual(len(actual_response.json.get('result_list')), 0, "No workspace should have been found!!!")
-
-
-
 
     # Check if deadline filter works.
     def test_deadline_filter(self):
@@ -778,22 +774,23 @@ class WorkspaceSearchTests(BaseTest):
 
         self.assertEqual(actual_result, expected_workspace_ids, "Expected workspace ids and actual lists are not equal!")
 
-
     # Check if founder name and surname filter works.
     def test_filter_founder_name_surname(self):
         
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
-        data = {'search_query': 'bravest', 'creator_name': "can", 'creator_surname': "bolukbas"}
+        data = {'search_query': 'bravest', 'creator_name': "alperen", 'creator_surname': "ozprivate"}
         # Success
         expected_status_code = 200
         actual_response = self.client.get('/api/search_engine/workspace', query_string=data,
                                           headers={'auth_token': valid_token})
         self.assertEqual(actual_response.status_code, expected_status_code, 'Incorrect HTTP Response Code')
 
-        expected_workspace_id = 2
-        actual_result = actual_response.json.get('result_list')[0].get('id') # can be developed later, it may create buggy results!
+        expected_workspace_id = [5]
+        result_list = actual_response.json.get('result_list')
+        actual_result = []
+        for result in result_list:
+            actual_result.append(result.get("id"))
         self.assertEqual(actual_result, expected_workspace_id, "Expected workspace id and actual result are not equal!")    
-
 
     def tearDown(self):
         super().tearDown()
