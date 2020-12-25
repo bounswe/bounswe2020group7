@@ -1708,9 +1708,32 @@ class CollaborationApplicationsAPI(Resource):
         else:
             return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
 
-'''
-WRITE AN ENDPOINT TO ENABLE USERS TO QUIT A WORKSPACE
-'''
+class QuitWorkspaceAPI(Resource):
+
+    @api.expect(quit_workspace_parser)
+    @api.doc(responses={
+                201: "You successfully quited from workspace",
+                400: "Missing or invalid data",
+                401: "Login Required"
+            })
+    @login_required
+    @workspace_exists(param_loc='form',workspace_id_key='workspace_id')
+    @active_contribution_required(param_loc='form',workspace_id_key='workspace_id')
+    def delete(user_id,self):
+        """
+            Use it to quit from a workspace
+        """
+        form = QuitWorkspaceForm(request.form)
+        if form.validate():
+            try:
+                contribution = Contribution.query.filter_by(workspace_id=form.workspace_id.data, user_id = user_id , is_active=True).first()
+                db.session.delete(contribution)
+            except:
+                return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+        else:
+            return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
+
+        
 
 def register_resources(api):
     schedule_regularly()

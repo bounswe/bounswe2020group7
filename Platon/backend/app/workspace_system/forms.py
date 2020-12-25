@@ -290,3 +290,11 @@ delete_collaboration_application_parser = reqparse.RequestParser()
 delete_collaboration_application_parser.add_argument("application_id",required=True,type=int,help="ID of the application sent",location="form")
 delete_collaboration_application_parser.add_argument("is_accepted",required=True,type=str,help="Acceptance status of the collaboration application",location="form")
 delete_collaboration_application_parser.add_argument("auth_token",required=True,type=str,help="Authentication token",location="headers")
+
+class QuitWorkspaceForm(Form):
+	workspace_id = IntegerField('workspace_id', validators=[validators.DataRequired()])
+
+quit_workspace_parser = reqparse.RequestParser()
+quit_workspace_parser.add_argument("workspace_id",required=True,type=int,help="ID of the Workspace",location="form")
+quit_workspace_parser.add_argument("auth_token",required=True,type=str,help="Authentication token",location="headers")
+
