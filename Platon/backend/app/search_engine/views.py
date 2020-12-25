@@ -7,9 +7,9 @@ from app.search_engine.helpers import SearchEngine, SearchType
 from app.search_engine.models import SearchHistoryItem
 from app.profile_management.models import Jobs,Skills,UserSkills
 from app.auth_system.models import User
-from app.auth_system.helpers import decode_token,login_required,allowed_file
+from app.auth_system.helpers import decode_token,login_required,profile_photo_link
 from app.search_engine.forms import WorkspaceSearchForm,ws_search_parser
-from app.workspace_system.models import Contribution
+from app.workspace_system.models import Contribution, Workspace, WorkspaceSkill
 
 from app import api, db
 import math
@@ -62,6 +62,9 @@ workspace_model = api.model('Worksapce', {
     "contributors": fields.List(
         fields.Nested(contributor_model)
     ),
+    "creator_id": fields.Integer,
+	"creator_name": fields.String,
+	"creator_surname": fields.String,
 })
 
 workspace_list_model = api.model('Worksapce List', {
@@ -112,11 +115,8 @@ class UserSearchAPI(Resource):
                         if user.id not in id_list:
                             if user.is_valid == 0:
                                 continue
-                            profile_photo = ""
-                            if allowed_file(user.profile_photo):
-                                profile_photo = "/auth_system/profile_photo?user_id={}".format(user.id)
                             result_list.append({"id":user.id, "name": user.name, "surname": user.surname, 
-                                            "profile_photo" : profile_photo, "is_private": int(user.is_private), "job_id" : user.job_id})
+                                            "profile_photo" : profile_photo_link(user.profile_photo,user.id), "is_private": int(user.is_private), "job_id" : user.job_id})
                             result_id_score.append((user.id,score))
                         else:
                             id_index = id_list.index(user.id)
@@ -143,11 +143,8 @@ class UserSearchAPI(Resource):
                                 return make_response(jsonify({"error": "Database Connection Problem."}), 500)
                             if user.is_valid == 0:
                                 continue
-                            profile_photo = ""
-                            if allowed_file(user.profile_photo):
-                                profile_photo = "/auth_system/profile_photo?user_id={}".format(user.id)
                             result_list.append({"id":user.id, "name": user.name, "surname": user.surname, 
-                                            "profile_photo" : profile_photo, "is_private": int(user.is_private), "job_id" : user.job_id})
+                                            "profile_photo" : profile_photo_link(user.profile_photo,user.id), "is_private": int(user.is_private), "job_id" : user.job_id})
                             result_id_score.append((user.id,score))
                         else:
                             id_index = id_list.index(owner_id.user_id)
@@ -165,23 +162,27 @@ class UserSearchAPI(Resource):
                         if user[0] not in id_list:
                             if user[-1] == 0:
                                 continue
-                            profile_photo = ""
-                            if allowed_file(user[3]):
-                                profile_photo = "/auth_system/profile_photo?user_id={}".format(user.id)
                             result_list.append({"id":user[0], "name": user[1], "surname": user[2], 
-                                            "profile_photo" : profile_photo, "is_private": int(user[4]),"job_id" : user.job_id})
+                                            "profile_photo" : profile_photo_link(user[3],user[0]), "is_private": int(user[4]),"job_id" : user.job_id})
                             result_id_score.append((user[0],score))
                         else:
                             id_index = id_list.index(user[0])
                             result_id_score[id_index] =(user[0], result_id_score[id_index][1]+score)
-                except:
+                except Exception as e:
+                    print(str(e))
                     return make_response(jsonify({"error": "Database Connection Problem."}), 500)
-            # Sort result ids according to their scores
-            sorted_id_list = SearchEngine.sort_ids(result_id_score)
             sorted_result_list = []
-            for user_id,score in sorted_id_list:
-                index = [user["id"] for user in result_list].index(user_id)
-                sorted_result_list.append(result_list[index])
+            # Sort result ids according to their scores
+            if form.sorting_criteria.data is None:
+                sorted_id_list = SearchEngine.sort_ids(result_id_score)
+                for user_id,score in sorted_id_list:
+                    index = [user["id"] for user in result_list].index(user_id)
+                    sorted_result_list.append(result_list[index])
+            # Sort Results according to Sorting Criteria
+            else:
+                reverse = form.sorting_criteria.data == 1
+                sorted_result_list = SearchEngine.sort_results(result_list,["name","surname"],reverse)
+
             # Apply given filters
             if form.job_filter.data is not None:
                 for i,user in enumerate(sorted_result_list):
@@ -282,13 +283,137 @@ class WorkspaceSearchAPI(Resource):
                                     "name": user.name,
                                     "surname": user.surname
                             })
+                        try:
+                            creator_info = User.query.filter(User.id == workspace[1]).first()
+                        except:
+                            return make_response(jsonify({"err": "Database Connection Error"}),500)
                         result_list.append({"id":workspace[0], "title": workspace[3], "is_private": int(workspace[2]), 
                                             "description" : workspace[6], "state": workspace[4], "deadline" : workspace[7],
-                                            "creation_time": workspace[5], "max_contributors": workspace[8],"contributor_list":contributor_list})
+                                            "creation_time": workspace[5], "max_contributors": workspace[8],"contributor_list":contributor_list,
+                                            "creator_id": workspace[1], "creator_name": creator_info.name,"creator_surname": creator_info.surname})
                         result_id_score.append((workspace[0],score))
                     else:
                         id_index = id_list.index(workspace[0])
                         result_id_score[id_index] =(workspace[0], result_id_score[id_index][1]+score)
+            
+            # Filtering
+            skill_filter_list = []
+            if form.skill_filter.data != '':
+                for result in result_list:
+                    ws_id = result.get("id")
+                    try:
+                        ws_skills = WorkspaceSkill.query.filter(WorkspaceSkill.workspace_id == ws_id).all()
+                    except:
+                        return make_response(jsonify({"err": "Database Connection Error"}),500)
+
+                    skill_ids = []
+                    for ws_skill in ws_skills:
+                        skill_ids.append(ws_skill.skill_id)
+
+                    skill_names_of_ws = []
+                    for skill_id in skill_ids:
+                        try:
+                            skill_info = Skills.query.filter(Skills.id == skill_id).first()
+                        except:
+                            return make_response(jsonify({"err": "Database Connection Error"}),500)
+                        
+                        skill_names_of_ws.append(skill_info.name)
+                    
+                    if form.skill_filter.data in skill_names_of_ws:
+                        skill_filter_list.append(result)
+
+                # After filtering, original result is updated.
+                result_list = skill_filter_list
+
+            starting_date_start_filter = []
+            if form.starting_date_start.data is not None: #!!!!!
+                for result in result_list:
+                    ws_start_date = result.get("creation_time")
+                    if ws_start_date >= form.starting_date_start.data: #!!!!
+                        starting_date_start_filter.append(result)
+                # After filtering, original result is updated.
+                result_list = starting_date_start_filter
+            
+            starting_date_end_filter = []
+            if form.starting_date_end.data is not None: #!!!!!
+                for result in result_list:
+                    ws_start_date = result.get("creation_time")
+                    if ws_start_date < form.starting_date_start.data: #!!!!
+                        starting_date_end_filter.append(result)
+                # After filtering, original result is updated.
+                result_list = starting_date_end_filter
+            
+            deadline_start_filter = []
+            if form.deadline_start.data is not None:
+                for result in result_list:
+                    ws_deadline = result.get("deadline")
+                    # If there is no deadline, filter them also.
+                    if ws_deadline is None:
+                        continue
+                    if ws_deadline >= form.deadline_start.data:
+                        deadline_start_filter.append(result)
+                result_list = deadline_start_filter
+            
+            deadline_end_filter = []
+            if form.deadline_end.data is not None:
+                for result in result_list:
+                    ws_deadline = result.get("deadline")
+                    # If there is no deadline, filter them also.
+                    if ws_deadline is None:
+                        continue
+                    if ws_deadline < form.deadline_end.data:
+                        deadline_end_filter.append(result)
+                result_list = deadline_end_filter
+
+            founder_name_filter = []
+            if form.creator_name.data != '':
+                for result in result_list:
+                    requested_creator_name = form.creator_name.data
+                    requested_creator_name = requested_creator_name.lower()
+                    actual_creator_name = result.get("creator_name")
+                    actual_creator_name = actual_creator_name.lower()
+                    if requested_creator_name == actual_creator_name:
+                        founder_name_filter.append(result)
+                # Update original results with filtered results. 
+                result_list = founder_name_filter
+
+            founder_surname_filter = []
+            if form.creator_surname.data != '':
+                for result in result_list:
+                    requested_creator_surname = form.creator_surname.data
+                    requested_creator_surname = requested_creator_surname.lower()
+                    actual_creator_surname = result.get("creator_surname")
+                    actual_creator_surname = actual_creator_surname.lower()
+                    if requested_creator_surname == actual_creator_surname:
+                        founder_surname_filter.append(result)
+                # Update original results with filtered results. 
+                result_list = founder_surname_filter
+
+            if form.sorting_criteria.data is not None:
+                if form.sorting_criteria.data == 0:
+                    # ascending date order
+                    result_list.sort(key = lambda x: x.get('creation_time'))
+
+                if form.sorting_criteria.data == 1:
+                    # descending date order
+                    result_list.sort(key = lambda x: x.get('creation_time'), reverse = True)
+
+                elif form.sorting_criteria.data == 2:
+                    # ascending number of collaborators needed
+                    result_list.sort(key = lambda x: (x.get('max_contributors')-len(x.get('contributor_list'))))
+
+                elif form.sorting_criteria.data == 3:
+                    # descending number of collaborators needed
+                    result_list.sort(key = lambda x: (x.get('max_contributors')-len(x.get('contributor_list'))), reverse=True)
+
+                elif form.sorting_criteria.data == 4:
+                    # ascending alphabetical order
+                    result_list.sort(key = lambda result: result.get('title'))
+
+                elif form.sorting_criteria.data == 5:
+                    # descending alphabetical order
+                    result_list.sort(key = lambda result: result.get('title'), reverse= True)
+
             number_of_pages = 1
             # Apply Pagination
             if form.page.data is not None and form.per_page.data is not None:
