@@ -391,6 +391,31 @@ class WorkspaceSearchAPI(Resource):
                 # Update original results with filtered results. 
                 result_list = founder_surname_filter
 
+            if form.sorting_criteria.data is not None:
+                if form.sorting_criteria.data == 0:
+                    # ascending date order
+                    result_list.sort(key = lambda x: x.get('creation_time'))
+
+                if form.sorting_criteria.data == 1:
+                    # descending date order
+                    result_list.sort(key = lambda x: x.get('creation_time'), reverse = True)
+
+                elif form.sorting_criteria.data == 2:
+                    # ascending number of collaborators needed
+                    result_list.sort(key = lambda x: (x.get('max_contributors')-len(x.get('contributor_list'))))
+
+                elif form.sorting_criteria.data == 3:
+                    # descending number of collaborators needed
+                    result_list.sort(key = lambda x: (x.get('max_contributors')-len(x.get('contributor_list'))), reverse=True)
+
+                elif form.sorting_criteria.data == 4:
+                    # ascending alphabetical order
+                    result_list.sort(key = lambda result: result.get('title'))
+
+                elif form.sorting_criteria.data == 5:
+                    # descending alphabetical order
+                    result_list.sort(key = lambda result: result.get('title'), reverse= True)
+
             number_of_pages = 1
             # Apply Pagination
             if form.page.data is not None and form.per_page.data is not None:

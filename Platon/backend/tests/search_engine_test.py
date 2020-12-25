@@ -357,12 +357,16 @@ class WorkspaceSearchTests(BaseTest):
             Workspace(creator_id = 2, is_private = 0, title = "SWE difficulties", description = "Investigating how to make workspaces great again.", deadline = datetime.datetime(2021, 4, 3, 0, 1, 45), max_collaborators = 5, state = WorkspaceState.search_for_collaborator.value), # public workspace by Can on state 1
             Workspace(creator_id = 4, is_private = 0, title = "honeybadger", description = "searching for bravest animal in the universe.", deadline = datetime.datetime(2021, 5, 3, 0, 1, 45), max_collaborators = 5, state = WorkspaceState.search_for_collaborator.value), #public workspace by Hilal on state 1
             Workspace(creator_id = 3, is_private = 1, title = "life", description = "is hard. be bravest.", state = WorkspaceState.search_for_collaborator.value), # private workspace by Alperen on state 1
-            Workspace(creator_id = 3, is_private = 0, title = "hello darkness", description = "my old friend. be bravest.", deadline =datetime.datetime(2021, 12, 4, 0, 1), max_collaborators = 2, state = WorkspaceState.search_for_collaborator.value) # public workspace by Alperen on state 1
         ]
 
         for workspace in workspaces:
             db.session.add(workspace)
         
+        db.session.commit()
+
+        # since we want different timestamp values of workspaces to check sorting functionality. 
+        extra_workspace = Workspace(creator_id = 3, is_private = 0, title = "hello darkness", description = "my old friend. be bravest.", deadline =datetime.datetime(2021, 12, 4, 0, 1), max_collaborators = 2, state = WorkspaceState.search_for_collaborator.value) # public workspace by Alperen on state 1
+        db.session.add(extra_workspace)
         db.session.commit()
 
         skills = [
@@ -718,15 +722,14 @@ class WorkspaceSearchTests(BaseTest):
     def test_sorting_with_date(self):
         
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
-        data = {'search_query': 'bravest', 'sorting_criteria': 0} # 0: date
+        data = {'search_query': 'bravest', 'sorting_criteria': 1}
         # Success
         expected_status_code = 200
         actual_response = self.client.get('/api/search_engine/workspace', query_string=data,
                                           headers={'auth_token': valid_token})
         self.assertEqual(actual_response.status_code, expected_status_code, 'Incorrect HTTP Response Code')
 
-        # Should be in ascending order.
-        expected_workspace_ids = [3,5]
+        expected_workspace_ids = [5,3]
         result_list = actual_response.json.get('result_list')
         actual_result = []
         for result in result_list:
@@ -738,15 +741,14 @@ class WorkspaceSearchTests(BaseTest):
     def test_sorting_with_number_of_collaborators_needed(self):
         
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
-        data = {'search_query': 'bravest', 'sorting_criteria': 1} # number of collaborators needed.
+        data = {'search_query': 'bravest', 'sorting_criteria': 3} # number of collaborators needed.
         # Success
         expected_status_code = 200
         actual_response = self.client.get('/api/search_engine/workspace', query_string=data,
                                           headers={'auth_token': valid_token})
         self.assertEqual(actual_response.status_code, expected_status_code, 'Incorrect HTTP Response Code')
 
-        # It should be in ascending order
-        expected_workspace_ids = [5, 3]
+        expected_workspace_ids = [3, 5]
         result_list = actual_response.json.get('result_list')
         actual_result = []
         for result in result_list:
@@ -758,7 +760,7 @@ class WorkspaceSearchTests(BaseTest):
     def test_sorting_with_alphabetical_order(self):
         
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
-        data = {'search_query': 'bravest', 'sorting_criteria': 2} # alphabetical order.
+        data = {'search_query': 'bravest', 'sorting_criteria': 5} # alphabetical order.
         # Success
         expected_status_code = 200
         actual_response = self.client.get('/api/search_engine/workspace', query_string=data,
@@ -766,7 +768,7 @@ class WorkspaceSearchTests(BaseTest):
         self.assertEqual(actual_response.status_code, expected_status_code, 'Incorrect HTTP Response Code')
 
         # It should be in ascending order
-        expected_workspace_ids = [5, 3]
+        expected_workspace_ids = [3, 5]
         result_list = actual_response.json.get('result_list')
         actual_result = []
         for result in result_list:

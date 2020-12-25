@@ -31,7 +31,7 @@ class WorkspaceSearchForm(Form):
     starting_date_end = DateTimeField("starting_date_end", default=None)
     deadline_start = DateTimeField("deadline_start", default=None)
     deadline_end = DateTimeField("deadline_end", default=None)
-    sorting_criteria = IntegerField("sorting_criteria",validators=[validators.NumberRange(min=0, max=2),validators.optional()], default=None)
+    sorting_criteria = IntegerField("sorting_criteria",validators=[validators.NumberRange(min=0, max=5),validators.optional()], default=None)
     page = IntegerField("page")
     per_page = IntegerField("per_page")
 
@@ -44,7 +44,7 @@ ws_search_parser.add_argument('starting_date_start',type=datetime.datetime,help=
 ws_search_parser.add_argument('starting_date_end',type=datetime.datetime,help="Exclusive.",location='args')
 ws_search_parser.add_argument('deadline_start',type=datetime.datetime,help="Inclusive.",location='args')
 ws_search_parser.add_argument('deadline_end',type=datetime.datetime,help="Exclusive.",location='args')
-ws_search_parser.add_argument('sorting_criteria',type=int,help="None => Semantic Rating // 0 => (Ascending) Date Order // 1 => (Ascending) Number of Collaborators Needed Order // 2 => (Ascending) Alphabetical Order)",location='args')
+ws_search_parser.add_argument('sorting_criteria',type=int,help="None: Semantic Rating, 0: Ascending Date, 1: Descending Date, 2: Ascending Number of Collaborators Needed, 3: Descending Number of Collaborators Needed, 4: Ascending Alphabetical Order, 5: Descending Alphabetical Order)",location='args')
 ws_search_parser.add_argument('page',type=int,help="Page ID(0-Indexed)",location='args')
 ws_search_parser.add_argument('per_page',type=int,help="Number of Records in a Page",location='args')
 ws_search_parser.add_argument('auth_token', type=str,help="Authantication Token(If registered)",location='headers')
