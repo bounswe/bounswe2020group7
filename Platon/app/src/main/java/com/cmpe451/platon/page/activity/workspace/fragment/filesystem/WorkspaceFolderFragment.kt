@@ -3,9 +3,8 @@ package com.cmpe451.platon.page.activity.workspace.fragment.filesystem
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
-import android.content.Intent.ACTION_OPEN_DOCUMENT
+import android.content.Intent.ACTION_GET_CONTENT
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -20,23 +19,21 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.FilesAdapter
 import com.cmpe451.platon.adapter.FoldersAdapter
-import com.cmpe451.platon.databinding.AddRequirementBinding
 import com.cmpe451.platon.databinding.DialogAddFolderBinding
 import com.cmpe451.platon.databinding.FragmentWorkspaceFolderBinding
 import com.cmpe451.platon.network.Resource
-import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.util.Definitions
+import droidninja.filepicker.FilePickerBuilder
+import droidninja.filepicker.FilePickerConst
+import droidninja.filepicker.utils.ContentUriUtils
 import okhttp3.MediaType
-import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
+
 
 class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickListener, FilesAdapter.FilesButtonClickListener {
 
@@ -48,8 +45,10 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
 
     private val mWorkspaceFolderViewModel:WorkspaceFolderViewModel by viewModels()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         // Inflate the layout for this fragment
         binding = FragmentWorkspaceFolderBinding.inflate(layoutInflater, container, false)
         return binding.root
@@ -69,39 +68,65 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
 
     private fun setObservers() {
         mWorkspaceFolderViewModel.getFolderResourceResponse.observe(viewLifecycleOwner, {
-            when(it.javaClass){
+            when (it.javaClass) {
                 Resource.Loading::class.java -> dialog.show()
-                Resource.Success::class.java ->{
+                Resource.Success::class.java -> {
                     setView(it.data!!.folders, it.data!!.files, it.data!!.cwd)
                     mWorkspaceFolderViewModel.getFolderResourceResponse.value = Resource.Done()
                 }
-                Resource.Error::class.java ->{
+                Resource.Error::class.java -> {
                     Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
                     mWorkspaceFolderViewModel.getFolderResourceResponse.value = Resource.Done()
 
                 }
-                Resource.Done::class.java->{
+                Resource.Done::class.java -> {
                     dialog.dismiss()
                 }
             }
         })
-        mWorkspaceFolderViewModel.getAddUpdateDeleteFolderResourceResponse.observe(viewLifecycleOwner, {
-            when(it.javaClass){
-                Resource.Loading::class.java -> dialog.show()
-                Resource.Success::class.java ->{
-                    getFolder(cwd)
-                    mWorkspaceFolderViewModel.getFolderResourceResponse.value = Resource.Done()
-                }
-                Resource.Error::class.java ->{
-                    Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
-                    mWorkspaceFolderViewModel.getFolderResourceResponse.value = Resource.Done()
+        mWorkspaceFolderViewModel.getAddUpdateDeleteFolderResourceResponse.observe(
+            viewLifecycleOwner,
+            {
+                when (it.javaClass) {
+                    Resource.Loading::class.java -> dialog.show()
+                    Resource.Success::class.java -> {
+                        getFolder(cwd)
+                        mWorkspaceFolderViewModel.getFolderResourceResponse.value = Resource.Done()
+                    }
+                    Resource.Error::class.java -> {
+                        Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
+                        mWorkspaceFolderViewModel.getFolderResourceResponse.value = Resource.Done()
 
+                    }
+                    Resource.Done::class.java -> {
+                        dialog.dismiss()
+                    }
                 }
-                Resource.Done::class.java->{
-                    dialog.dismiss()
+            })
+
+        mWorkspaceFolderViewModel.getAddFileToWorkspaceResourceResponse.observe(
+            viewLifecycleOwner,
+            {
+                when (it.javaClass) {
+                    Resource.Loading::class.java -> dialog.show()
+                    Resource.Success::class.java -> {
+                        getFolder(cwd)
+                        mWorkspaceFolderViewModel.getAddFileToWorkspaceResourceResponse.value =
+                            Resource.Done()
+                    }
+                    Resource.Error::class.java -> {
+                        Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
+                        mWorkspaceFolderViewModel.getAddFileToWorkspaceResourceResponse.value =
+                            Resource.Done()
+
+                    }
+                    Resource.Done::class.java -> {
+                        dialog.dismiss()
+                    }
                 }
-            }
-        })
+
+            })
+
     }
 
     private fun setListeners() {
@@ -120,64 +145,100 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
             tmpBinding.btnAddFolder.setOnClickListener {
                 if (tmpBinding.etNewFolderName.text.isNullOrEmpty()) {
                     addFolderDialog.dismiss()
-                }
-                else {
+                } else {
                     addFolderDialog.dismiss()
                     postFolder(tmpBinding.etNewFolderName.text.toString().trim())
                 }
             }
         }
-        val someActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult())
-        {
-            if(it.resultCode == Activity.RESULT_OK && it.data != null && it.data!!.data != null) {
-                uploadFile(it.data!!.data)
-            }
-        }
 
-        binding.filesTitleTv.setOnClickListener{
+        binding.filesTitleTv.setOnClickListener {
+
             ActivityCompat.requestPermissions(
-                activity as WorkspaceActivity,
-                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1
+                requireActivity(),
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                PackageManager.PERMISSION_GRANTED
             )
 
-            val photoPickerIntent = Intent(ACTION_OPEN_DOCUMENT)
-            photoPickerIntent.type = "*/*"
-            someActivityResultLauncher.launch(photoPickerIntent)
-        }
+            if (requireActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
 
+                /*
 
-    }
+                val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult())
+                {
+                    if (it.resultCode == Activity.RESULT_OK && it.data != null && it.data!!.data != null) {
+                        uploadFile(it.data!!.data!!)
+                    }
+                }
 
-    private fun uploadFile(data: Uri?) {
-        if(data != null){
-            Log.i("denem", data.path.toString())
-            if((activity as WorkspaceActivity).checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
-                val file = File(Definitions().getRealPathFromUri(requireContext(), data))
-                val fBody = RequestBody.create(
-                    MediaType.parse("*/*"),
-                    file
-                )
+                var chooseFile = Intent(ACTION_GET_CONTENT)
+                chooseFile.type = "*//*"
+                chooseFile = Intent.createChooser(chooseFile, "Choose a file")
+                startForResult.launch(chooseFile)
+                */
 
-                val body = MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)
-                    .addFormDataPart("profile_photo", file.name, fBody)
-                    .build()
+                FilePickerBuilder.instance
+                    .setMaxCount(1)
+                    .addFileSupport("C", arrayOf("c", "cpp", "C", "CPP"))
+                    .addFileSupport("PYTHON", arrayOf("PY", "py"))
+                    .addFileSupport("README", arrayOf("md", "MD"))
+                    .pickFile(this);
 
-//                mProfilePageViewModel.uploadPhoto(body, (activity as HomeActivity).currUserToken)
-            }else{
+            } else {
                 Toast.makeText(
                     requireContext(),
                     "Please give read permissions!",
                     Toast.LENGTH_SHORT
                 ).show()
             }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode)
+           {
+               FilePickerConst.REQUEST_CODE_PHOTO->
+                   if(resultCode== Activity.RESULT_OK && data!=null)
+                   {
+                       val ls = data.getParcelableArrayListExtra<Uri>(FilePickerConst.KEY_SELECTED_MEDIA)
+                       if(!ls.isNullOrEmpty()){
+                           uploadFile(ls[0])
+                       }
+                   }
+                FilePickerConst.REQUEST_CODE_DOC->
+                   if(resultCode== Activity.RESULT_OK && data!=null)
+                   {
+                       val ls = data.getParcelableArrayListExtra<Uri>(FilePickerConst.KEY_SELECTED_DOCS)
+                       if(!ls.isNullOrEmpty()){
+                           uploadFile(ls[0])
+                       }
+                   }
+           }
+    }
 
 
+    private fun uploadFile(data: Uri) {
+
+        val path = ContentUriUtils.getFilePath(requireContext(), data);
+        if (path != null) {
+            val file = File(path)
+            val fBody = RequestBody.create(
+                MediaType.parse(requireContext().contentResolver.getType(data)!!),
+                file
+            )
+            val body = RequestBody.create(fBody.contentType(), file)
+            mWorkspaceFolderViewModel.uploadFile(
+                (activity as WorkspaceActivity).workspace_id!!,
+                cwd,
+                file.name,
+                body,
+                (activity as WorkspaceActivity).token!!
+            )
         }
     }
 
 
-    private fun setView(folders:List<String>, files:List<String>, cwd:String) {
+    private fun setView(folders: List<String>, files: List<String>, cwd: String) {
         this.cwd = cwd
         if(this.cwd == "."){
             binding.directoryUpTv.visibility = View.GONE
@@ -222,7 +283,7 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
             }
             else {
                 editFolderDialog.dismiss()
-                updateFolderName(folder,tmpBinding.etNewFolderName.text.toString().trim())
+                updateFolderName(folder, tmpBinding.etNewFolderName.text.toString().trim())
             }
         }
     }
@@ -234,29 +295,47 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
     override fun onDeleteFolderClicked(folder: String) {
         AlertDialog.Builder(context)
             .setMessage("Are you sure you want to delete folder $folder? All content within the folder will be lost.")
-            .setPositiveButton("Delete"
+            .setPositiveButton(
+                "Delete"
             ) { _, _ ->
                 deleteFolder(folder)
             }
-            .setNegativeButton("Cancel"
+            .setNegativeButton(
+                "Cancel"
             ) { dialog, _ ->
                 dialog.dismiss()
             }
             .create().show()
     }
 
-    private fun getFolder(path:String){
-        mWorkspaceFolderViewModel.getFolder((activity as WorkspaceActivity).workspace_id!!, path, (activity as WorkspaceActivity).token!!)
+    private fun getFolder(path: String){
+        mWorkspaceFolderViewModel.getFolder(
+            (activity as WorkspaceActivity).workspace_id!!,
+            path,
+            (activity as WorkspaceActivity).token!!
+        )
     }
     private fun postFolder(folderName: String) {
-        mWorkspaceFolderViewModel.addFolder((activity as WorkspaceActivity).workspace_id!!,
-            cwd, folderName, (activity as WorkspaceActivity).token!!)
+        mWorkspaceFolderViewModel.addFolder(
+            (activity as WorkspaceActivity).workspace_id!!,
+            cwd, folderName, (activity as WorkspaceActivity).token!!
+        )
     }
-    private fun updateFolderName(oldFolderName:String,folderName: String){
-        mWorkspaceFolderViewModel.updateFolderName((activity as WorkspaceActivity).workspace_id!!, "$cwd/$oldFolderName", folderName, (activity as WorkspaceActivity).token!!)
+    private fun updateFolderName(oldFolderName: String, folderName: String){
+        mWorkspaceFolderViewModel.updateFolderName(
+            (activity as WorkspaceActivity).workspace_id!!,
+            "$cwd/$oldFolderName",
+            folderName,
+            (activity as WorkspaceActivity).token!!
+        )
     }
-    private fun deleteFolder(folderName:String){
-        mWorkspaceFolderViewModel.deleteFolder((activity as WorkspaceActivity).workspace_id!!, "$cwd/$folderName", folderName, (activity as WorkspaceActivity).token!!)
+    private fun deleteFolder(folderName: String){
+        mWorkspaceFolderViewModel.deleteFolder(
+            (activity as WorkspaceActivity).workspace_id!!,
+            "$cwd/$folderName",
+            folderName,
+            (activity as WorkspaceActivity).token!!
+        )
     }
 
     override fun onEditFileClicked(folder: String) {

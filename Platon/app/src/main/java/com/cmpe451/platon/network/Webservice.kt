@@ -67,8 +67,9 @@ interface Webservice {
                      @Field("researchgate_name") researchgate_name:String?,
                      @Header("auth_token") auth_token :String) : Call<JsonObject?>
 
+    @Multipart
     @PUT("api/auth_system/user")
-    fun uploadPhoto(@Body image: RequestBody,
+    fun uploadPhoto(@Part("profile_photo\"; filename=\"profile_photo.png\" ") profile_photo: RequestBody,
                     @Header("auth_token") auth_token :String): Call<JsonObject?>
 
     @FormUrlEncoded
@@ -264,4 +265,16 @@ interface Webservice {
                      @Field("path") path:String,
                      @Field("new_folder_name") new_folder_name:String,
                      @Header("auth_token") token: String): Call<JsonObject?>
+
+
+
+    @Multipart
+    @POST("api/file_system/file")
+    fun uploadFileToWorkspace(
+        @Part("workspace_id") workspace_id:Int,
+        @Part("path") path:String,
+        @Part("filename") fileName:String,
+        @Part("new_file\"; filename=\"new_file\" ") new_file: RequestBody,
+        @Header("auth_token") token: String): Call<JsonObject?>
+
 }

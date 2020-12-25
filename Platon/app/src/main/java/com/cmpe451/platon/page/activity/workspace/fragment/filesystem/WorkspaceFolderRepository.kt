@@ -5,6 +5,7 @@ import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.RetrofitClient
 import com.cmpe451.platon.network.models.Folder
 import com.google.gson.JsonObject
+import okhttp3.RequestBody
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -15,6 +16,37 @@ class WorkspaceFolderRepository {
 
     val foldersResourceResponse:MutableLiveData<Resource<Folder>> = MutableLiveData()
     val addUpdateDeleteFolderResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
+
+    val addFileToWorkspaceResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
+
+
+    fun uploadFile(workspaceId: Int, path: String, fileName:String, file:RequestBody, token: String){
+        addFileToWorkspaceResourceResponse.value =Resource.Loading()
+        val service = RetrofitClient.getService()
+        val call = service.uploadFileToWorkspace(workspaceId, ".", fileName, file, token)
+
+        call.enqueue(object : Callback<JsonObject?> {
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when{
+                    response.isSuccessful -> addFileToWorkspaceResourceResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null ->{
+                        val js = JSONObject(response.errorBody()!!.string())
+                        addFileToWorkspaceResourceResponse.value = Resource.Error(if(js.has("error"))  js.getString("error") else "Unknown error")
+                    }
+                    else -> addFileToWorkspaceResourceResponse.value = Resource.Error("Unknown error!")
+                }
+                response.errorBody()?.close()
+            }
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+
+
+    }
+
+
     fun getFolder(workspaceId: Int, path: String, token: String) {
         foldersResourceResponse.value =Resource.Loading()
 
