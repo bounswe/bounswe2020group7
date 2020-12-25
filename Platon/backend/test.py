@@ -8,6 +8,7 @@ from tests.profile_management_test import ResearchInfoTests,NotificationTests
 from tests.search_engine_test import SearchHistoryTests, WorkspaceSearchTests, UserSearchTests
 from tests.upcoming_events_test import UpcomingEventsTest
 
+
 from tests.base_test import TestConfig
 import sqlalchemy
 
