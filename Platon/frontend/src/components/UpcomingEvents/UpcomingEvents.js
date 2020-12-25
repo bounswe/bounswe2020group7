@@ -15,7 +15,7 @@ const useStyles = () => ({
   },
 })
 
-const UpcomingEvents = ({itemsPerPage= 5, classes, width= '500px'}) => {
+const UpcomingEvents = ({ itemsPerPage = 5, classes, width = '500px' }) => {
   const [data, setData] = useState({})
   const [fetching, setFetching] = useState(false)
   const [page, setPage] = useState(1)
@@ -55,14 +55,13 @@ const UpcomingEvents = ({itemsPerPage= 5, classes, width= '500px'}) => {
       >
         Upcoming Events
       </Typography>
-      {fetching && (
-        <div className="TrendingProjectsSpinner">
-          <Spinner />
-        </div>
-      )}
-      {!fetching && data && data.upcoming_events && (
-        <div className="UpcomingEventsItems" style={{width: width}}>
-          {data.upcoming_events.map((event, index) => (
+        <div className="UpcomingEventsItems" style={{ width: width }}>
+          {fetching && (
+            <div className="TrendingProjectsSpinner">
+              <Spinner />
+            </div>
+          )}
+          {!fetching && data && data.upcoming_events && data.upcoming_events.map((event, index) => (
             <UpcomingEventsItem
               event={event}
               key={index}
@@ -85,7 +84,6 @@ const UpcomingEvents = ({itemsPerPage= 5, classes, width= '500px'}) => {
             </div>
           </div>
         </div>
-      )}
     </div>
   )
 }
