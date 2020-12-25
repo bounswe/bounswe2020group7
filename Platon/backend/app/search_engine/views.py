@@ -7,7 +7,7 @@ from app.search_engine.helpers import SearchEngine, SearchType
 from app.search_engine.models import SearchHistoryItem
 from app.profile_management.models import Jobs,Skills,UserSkills
 from app.auth_system.models import User
-from app.auth_system.helpers import decode_token,login_required,allowed_file
+from app.auth_system.helpers import decode_token,login_required,profile_photo_link
 from app.search_engine.forms import WorkspaceSearchForm,ws_search_parser
 from app.workspace_system.models import Contribution
 
@@ -112,11 +112,8 @@ class UserSearchAPI(Resource):
                         if user.id not in id_list:
                             if user.is_valid == 0:
                                 continue
-                            profile_photo = ""
-                            if allowed_file(user.profile_photo):
-                                profile_photo = "/auth_system/profile_photo?user_id={}".format(user.id)
                             result_list.append({"id":user.id, "name": user.name, "surname": user.surname, 
-                                            "profile_photo" : profile_photo, "is_private": int(user.is_private), "job_id" : user.job_id})
+                                            "profile_photo" : profile_photo_link(user.profile_photo,user.id), "is_private": int(user.is_private), "job_id" : user.job_id})
                             result_id_score.append((user.id,score))
                         else:
                             id_index = id_list.index(user.id)
@@ -143,11 +140,8 @@ class UserSearchAPI(Resource):
                                 return make_response(jsonify({"error": "Database Connection Problem."}), 500)
                             if user.is_valid == 0:
                                 continue
-                            profile_photo = ""
-                            if allowed_file(user.profile_photo):
-                                profile_photo = "/auth_system/profile_photo?user_id={}".format(user.id)
                             result_list.append({"id":user.id, "name": user.name, "surname": user.surname, 
-                                            "profile_photo" : profile_photo, "is_private": int(user.is_private), "job_id" : user.job_id})
+                                            "profile_photo" : profile_photo_link(user.profile_photo,user.id), "is_private": int(user.is_private), "job_id" : user.job_id})
                             result_id_score.append((user.id,score))
                         else:
                             id_index = id_list.index(owner_id.user_id)
@@ -165,23 +159,27 @@ class UserSearchAPI(Resource):
                         if user[0] not in id_list:
                             if user[-1] == 0:
                                 continue
-                            profile_photo = ""
-                            if allowed_file(user[3]):
-                                profile_photo = "/auth_system/profile_photo?user_id={}".format(user.id)
                             result_list.append({"id":user[0], "name": user[1], "surname": user[2], 
-                                            "profile_photo" : profile_photo, "is_private": int(user[4]),"job_id" : user.job_id})
+                                            "profile_photo" : profile_photo_link(user[3],user[0]), "is_private": int(user[4]),"job_id" : user.job_id})
                             result_id_score.append((user[0],score))
                         else:
                             id_index = id_list.index(user[0])
                             result_id_score[id_index] =(user[0], result_id_score[id_index][1]+score)
-                except:
+                except Exception as e:
+                    print(str(e))
                     return make_response(jsonify({"error": "Database Connection Problem."}), 500)
-            # Sort result ids according to their scores
-            sorted_id_list = SearchEngine.sort_ids(result_id_score)
             sorted_result_list = []
-            for user_id,score in sorted_id_list:
-                index = [user["id"] for user in result_list].index(user_id)
-                sorted_result_list.append(result_list[index])
+            # Sort result ids according to their scores
+            if form.sorting_criteria.data is None:
+                sorted_id_list = SearchEngine.sort_ids(result_id_score)
+                for user_id,score in sorted_id_list:
+                    index = [user["id"] for user in result_list].index(user_id)
+                    sorted_result_list.append(result_list[index])
+            # Sort Results according to Sorting Criteria
+            else:
+                reverse = form.sorting_criteria.data == 1
+                sorted_result_list = SearchEngine.sort_results(result_list,["name","surname"],reverse)
+
             # Apply given filters
             if form.job_filter.data is not None:
                 for i,user in enumerate(sorted_result_list):
