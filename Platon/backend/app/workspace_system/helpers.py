@@ -4,7 +4,7 @@ from flask import make_response,jsonify,request
 import atexit, json
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from app.workspace_system.models import Workspace,WorkspaceSkill, WorkspaceRequirement, Contribution, Requirement
+from app.workspace_system.models import *
 from app.profile_management.models import Skills
 from app.auth_system.models import User
 from enum import IntEnum
@@ -124,6 +124,20 @@ def update_workspace_requirements(workspace_id, workspace_updated_requirements_l
         workspace_requirements_list.delete()
         db.session.commit()
         add_workspace_requirements(workspace_id, workspace_updated_requirements_list)
+
+
+def add_new_collaboration(workspace_id, new_contributor_id):
+    '''
+    This method adds the new collaboration relations for the new contributor of a workspace.
+    '''
+    workspace_contributors = Contribution.query.filter_by(workspace_id=workspace_id, is_active=True).all()
+    contributors_id_list = [contributor.user_id for contributor in workspace_contributors]
+    contributors_id_list.remove(new_contributor_id)
+    for contributor_id in contributors_id_list:
+        pair_1 = Collaboration(user_1_id=new_contributor_id, user_2_id=contributor_id)
+        pair_2 = Collaboration(user_1_id=contributor_id, user_2_id=new_contributor_id)
+        db.session.merge(pair_1)
+        db.session.merge(pair_2)
 
 
 def workspace_exists(param_loc,workspace_id_key):

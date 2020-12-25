@@ -8,7 +8,7 @@ from app import api, db
 from app.auth_system.models import User
 from app.follow_system.models import Follow, FollowRequests
 from app.profile_management.models import Jobs, Skills
-from app.workspace_system.models import Issue, IssueAssignee, IssueComment, Workspace, Contribution, Workspace, WorkspaceSkill, WorkspaceRequirement, Contribution, Requirement, Milestone
+from app.workspace_system.models import *
 
 from app.workspace_system.forms import *
 
@@ -29,7 +29,7 @@ contributor_model = api.model("Contributor", {
     }
 )
 
-workspace_model = api.model('Worksapce', {
+workspace_model = api.model('Workspace', {
     "id": fields.Integer,
     "title": fields.String,
     "is_private": fields.Integer,
@@ -1289,6 +1289,381 @@ class TrendingWorkspacesAPI(Resource):
             return make_response(jsonify({"err": "Invalid Input Format"}),400)
 
 
+@workspace_system_ns.route("/invitations")
+class CollaborationInvitationsAPI(Resource):
+    # POST request
+    @api.expect(create_collaboration_invitation_parser)
+    @api.doc(responses={
+                201: "Invitation has been successfully created.",
+                400: "Missing data fields or invalid data.",
+                401: "You are not the creator of this workspace, you cannot invite users to this workspace.",
+                404: "The workspace or the invitee user does not exist.",
+                409: "Invitee user is already an active contributor of this workspace OR \
+                there is already an invitation sent to the invitee user for this workspace. OR \
+                the workspace has already reached its maximum number of collaborators OR \
+                this workspace is not in 'search for collaborators' state.",
+                500: "The server is not connected to the database."
+            })
+    @login_required
+    def post(invitor_id, self):
+        '''
+        Creates an invitation for a workspace. (i.e. an invitation for a workspace gets sent to the invitee user)
+        '''
+        
+        # Parses the form data.
+        form = CreateCollaborationInvitationForm(request.form)
+
+        # Checks whether the sent data is in valid form.
+        # If yes, starts processing the data.
+        # If not, an error is raised.
+        if form.validate():
+            # Tries to connect to the database.
+            # If it fails, an error is raised.
+            try:
+                requested_workspace = Workspace.query.filter_by(id=form.workspace_id.data).first()
+                invitee_user = User.query.filter_by(id=form.invitee_id.data).first()
+            except:
+                return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+            else:
+                # Checks whether there is an existing workspace and a user with the given IDs in the database.
+                # If yes, processing continues.
+                # If not, an error gets raised.
+                if (requested_workspace is not None) and (invitee_user is not None):
+                    # Checks whether the user who tries to sent this invitation is the creator of this workspace or not.
+                    # If yes the processing continues.
+                    # (or when the user who created this workspace has deleted their account. In that case, any of the active contributors of a workspace can invite users to that workspace.)
+                    # If not, an error gets raised.
+                    if (requested_workspace.creator_id == invitor_id) or (requested_workspace.creator_id is None):
+                        # Checks whether the invitee user is an active contributor of the requested workspace or
+                        # whether there is an already sent invitation to the invitee user for the requested workspace or
+                        # whether the workspace has already reached its maximum number of collaborators or
+                        # whether the workspace is not in "search for collaborators" state. 
+                        # If not, the invitation gets created.
+                        # If yes, an error gets raised.
+                        active_contribution = Contribution.query.filter_by(workspace_id=requested_workspace.id, user_id=invitee_user.id, is_active=True).first()
+                        invitation = CollaborationInvitation.query.filter_by(workspace_id=requested_workspace.id, invitee_id=invitee_user.id).first()
+                        contributions = Contribution.query.filter_by(workspace_id=requested_workspace.id, is_active=True).all()
+                        if (active_contribution is None) and (invitation is None) and \
+                        (len(contributions) < requested_workspace.max_collaborators) and (requested_workspace.state == 0):
+                            new_invitation = CollaborationInvitation(workspace_id=requested_workspace.id, invitee_id=invitee_user.id, invitor_id=invitor_id)
+                            try:
+                                db.session.add(new_invitation)
+                                db.session.commit()
+                            except:
+                                return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+                            else:
+                                return make_response(jsonify({"message" : "Invitation has been successfully created."}), 201)
+                        else:
+                            return make_response(jsonify({"error" : "Invitee user is already an active contributor of this workspace OR \
+                                there is already an invitation sent to the invitee user for this workspace. OR \
+                                the workspace has already reached its maximum number of collaborators OR \
+                                this workspace is not in 'search for collaborators' state."}), 409)
+                    else:
+                        return make_response(jsonify({"error" : "You are not the creator of this workspace, you cannot invite users to this workspace."}), 401)
+                else:
+                    return make_response(jsonify({"error" : "The workspace or the invitee user does not exist."}), 404)
+        else:
+            return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
+
+
+    # GET request
+    @api.expect(read_collaboration_invitation_parser)
+    @api.doc(responses={
+                200: "Invitation(s) found.",
+                400: "Missing data fields or invalid data.",
+                404: "Invitation(s) not found.",
+                500: "The server is not connected to the database."
+            })
+    @login_required
+    def get(invitee_id, self):
+        '''
+        From the database, retrieves the requested pending invitation(s) sent to the user and returns them.
+        '''
+
+        # Parses the form data.
+        form = ReadCollaborationInvitationForm(request.args)
+
+        # Checks whether the sent data is in valid form.
+        # If yes, starts processing the data.
+        # If not, an error is raised.
+        if form.validate():
+            # Tries to connect to the database.
+            # If it fails, an error is raised.
+            try:
+                if form.invitation_id.data is not None:
+                    invitations_list = CollaborationInvitation.query.filter_by(id=form.invitation_id.data, invitee_id=invitee_id).all()
+                else:
+                    invitations_list = CollaborationInvitation.query.filter_by(invitee_id=invitee_id).all()
+            except Exception as e:
+                return make_response(jsonify({"error" : str(e) + "The server is not connected to the database."}), 500)
+            else:
+                # 
+                if len(invitations_list) == 0:
+                    return make_response(jsonify({"error" : "Invitation(s) not found."}), 404)
+                else:
+                    response = []
+                    for invitation in invitations_list:
+                        invitation_details = {}
+                        invitation_details["invitation_id"] = invitation.id
+                        invitation_details["workspace_id"] = invitation.workspace_id
+                        invitation_details["invitor_id"] = invitation.invitor_id
+                        invitation_details["invitee_id"] = invitation.invitee_id
+
+                        invited_workspace = Workspace.query.filter_by(id=invitation.workspace_id).first()
+                        invitation_details["workspace_title"] =  invited_workspace.title
+                        invitation_details["workspace_description"] = invited_workspace.description
+
+                        invitor_user = User.query.filter_by(id=invitation.invitor_id).first()
+                        invitation_details["invitor_fullname"] = "{} {}".format(invitor_user.name, invitor_user.surname)
+                    
+                        response.append(invitation_details)
+                    return make_response(jsonify(response), 200)
+        else:
+            return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
+
+
+    # DELETE request
+    @api.expect(delete_collaboration_invitation_parser)
+    @api.doc(responses={
+                200: "Invitation has been successfully responded.",
+                400: "Missing data fields or invalid data.",
+                401: "You are not the invitee of this invitation, you cannot respond to it.",
+                404: "The invitation is not found.",
+                500: "The server is not connected to the database."
+            })
+    @login_required
+    def delete(invitee_id, self):
+        '''
+        Responds to the invitation with the given ID.
+        '''
+
+        # Parses the form data.
+        form = DeleteCollaborationInvitationForm(request.form)
+
+        # Checks whether the sent data is in valid form.
+        # If yes, starts processing the data.
+        # If not, an error is raised.
+        if form.validate():
+            # Tries to connect to the database.
+            # If it fails, an error is raised.
+            try:
+                invitation = CollaborationInvitation.query.filter_by(id=form.invitation_id.data).first()
+            except:
+                return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+            else:
+                # Checks whether there is an existing invitation with the given ID in the database.
+                # If yes, processing continues.
+                # If not, an error gets raised.
+                if invitation is not None:
+                    # Checks whether the given invitation is for the requester user or not.
+                    # If yes, processing continues.
+                    # If not, an error gets raised.
+                    if invitation.invitee_id == invitee_id:
+                        # If the invitation is accepted, the user becomes an active contributor of the workspace they were invited to.
+                        if form.is_accepted.data == 1:
+                            contribution = Contribution(workspace_id=invitation.workspace_id,user_id=invitee_id,is_active=True)
+                            db.session.add(contribution)
+                            add_new_collaboration(invitation.workspace_id, invitee_id)
+                        # Invitation gets deleted no matter how it was responded.
+                        db.session.delete(invitation)
+                        try:
+                            db.session.commit()
+                        except:
+                            return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+                        else:
+                            return make_response(jsonify({"message" : "Invitation has been successfully responded."}), 200)
+                    else:
+                        return make_response(jsonify({"error" : "You are not the invitee of this invitation, you cannot respond to it."}), 401)
+                else:
+                    return make_response(jsonify({"error" : "The invitation is not found."}), 404)
+        else:
+            return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
+
+
+@workspace_system_ns.route("/applications")
+class CollaborationApplicationsAPI(Resource):
+    # POST request
+    @api.expect(create_collaboration_application_parser)
+    @api.doc(responses={
+                201: "Application has been successfully created.",
+                400: "Missing data fields or invalid data.",
+                404: "The workspace does not exist.",
+                409: "The user is already an active contributor of this workspace OR \
+                there is already an application sent to this workspace. OR \
+                the workspace has already reached its maximum number of collaborators OR \
+                this workspace is not in 'search for collaborators' state.",
+                500: "The server is not connected to the database."
+            })
+    @login_required
+    def post(applicant_id, self):
+        '''
+        Creates an application for a workspace.
+        '''
+        
+        # Parses the form data.
+        form = CreateCollaborationApplicationForm(request.form)
+
+        # Checks whether the sent data is in valid form.
+        # If yes, starts processing the data.
+        # If not, an error is raised.
+        if form.validate():
+            # Tries to connect to the database.
+            # If it fails, an error is raised.
+            try:
+                requested_workspace = Workspace.query.filter_by(id=form.workspace_id.data).first()
+            except:
+                return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+            else:
+                # Checks whether there is an existing workspace and a user with the given IDs in the database.
+                # If yes, processing continues.
+                # If not, an error gets raised.
+                if requested_workspace is not None:
+                    # Checks whether the applicant user is an active contributor of the requested workspace or
+                    # whether there is an already sent application to the requested workspace or
+                    # whether the workspace has already reached its maximum number of collaborators or
+                    # whether the workspace is not in "search for collaborators" state. 
+                    # If not, the application gets created.
+                    # If yes, an error gets raised.
+                    active_contribution = Contribution.query.filter_by(workspace_id=requested_workspace.id, user_id=applicant_id, is_active=True).first()
+                    application = CollaborationApplication.query.filter_by(workspace_id=requested_workspace.id, applicant_id=applicant_id).first()
+                    contributions = Contribution.query.filter_by(workspace_id=requested_workspace.id, is_active=True).all()
+                    if (active_contribution is None) and (application is None) and \
+                    (len(contributions) < requested_workspace.max_collaborators) and (requested_workspace.state == 0):
+                        new_application = CollaborationInvitation(workspace_id=requested_workspace.id, applicant_id=applicant_id)
+                        try:
+                            db.session.add(new_application)
+                            db.session.commit()
+                        except:
+                            return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+                        else:
+                            return make_response(jsonify({"message" : "Application has been successfully created."}), 201)
+                    else:
+                        return make_response(jsonify({"error" : "Invitee user is already an active contributor of this workspace OR \
+                            there is already an invitation sent to the invitee user for this workspace. OR \
+                            the workspace has already reached its maximum number of collaborators OR \
+                            this workspace is not in 'search for collaborators' state."}), 409)
+                else:
+                    return make_response(jsonify({"error" : "The workspace does not exist."}), 404)
+        else:
+            return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
+
+
+    # GET request
+    @api.expect(read_collaboration_invitation_parser)
+    @api.doc(responses={
+                200: "Invitation(s) found.",
+                400: "Missing data fields or invalid data.",
+                404: "Invitation(s) not found.",
+                500: "The server is not connected to the database."
+            })
+    @login_required
+    def get(invitee_id, self):
+        '''
+        From the database, retrieves the requested pending invitation(s) sent to the user and returns them.
+        '''
+
+        # Parses the form data.
+        form = ReadCollaborationInvitationForm(request.args)
+
+        # Checks whether the sent data is in valid form.
+        # If yes, starts processing the data.
+        # If not, an error is raised.
+        if form.validate():
+            # Tries to connect to the database.
+            # If it fails, an error is raised.
+            try:
+                if form.invitation_id.data is not None:
+                    invitations_list = CollaborationInvitation.query.filter_by(id=form.invitation_id.data, invitee_id=invitee_id).all()
+                else:
+                    invitations_list = CollaborationInvitation.query.filter_by(invitee_id=invitee_id).all()
+            except Exception as e:
+                return make_response(jsonify({"error" : str(e) + "The server is not connected to the database."}), 500)
+            else:
+                # 
+                if len(invitations_list) == 0:
+                    return make_response(jsonify({"error" : "Invitation(s) not found."}), 404)
+                else:
+                    response = []
+                    for invitation in invitations_list:
+                        invitation_details = {}
+                        invitation_details["invitation_id"] = invitation.id
+                        invitation_details["workspace_id"] = invitation.workspace_id
+                        invitation_details["invitor_id"] = invitation.invitor_id
+                        invitation_details["invitee_id"] = invitation.invitee_id
+
+                        invited_workspace = Workspace.query.filter_by(id=invitation.workspace_id).first()
+                        invitation_details["workspace_title"] =  invited_workspace.title
+                        invitation_details["workspace_description"] = invited_workspace.description
+
+                        invitor_user = User.query.filter_by(id=invitation.invitor_id).first()
+                        invitation_details["invitor_fullname"] = "{} {}".format(invitor_user.name, invitor_user.surname)
+                    
+                        response.append(invitation_details)
+                    return make_response(jsonify(response), 200)
+        else:
+            return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
+
+
+    # DELETE request
+    @api.expect(delete_collaboration_invitation_parser)
+    @api.doc(responses={
+                200: "Invitation has been successfully responded.",
+                400: "Missing data fields or invalid data.",
+                401: "You are not the invitee of this invitation, you cannot respond to it.",
+                404: "The invitation is not found.",
+                500: "The server is not connected to the database."
+            })
+    @login_required
+    def delete(invitee_id, self):
+        '''
+        Responds to the invitation with the given ID.
+        '''
+
+        # Parses the form data.
+        form = DeleteCollaborationInvitationForm(request.form)
+
+        # Checks whether the sent data is in valid form.
+        # If yes, starts processing the data.
+        # If not, an error is raised.
+        if form.validate():
+            # Tries to connect to the database.
+            # If it fails, an error is raised.
+            try:
+                invitation = CollaborationInvitation.query.filter_by(id=form.invitation_id.data).first()
+            except:
+                return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+            else:
+                # Checks whether there is an existing invitation with the given ID in the database.
+                # If yes, processing continues.
+                # If not, an error gets raised.
+                if invitation is not None:
+                    # Checks whether the given invitation is for the requester user or not.
+                    # If yes, processing continues.
+                    # If not, an error gets raised.
+                    if invitation.invitee_id == invitee_id:
+                        # If the invitation is accepted, the user becomes an active contributor of the workspace they were invited to.
+                        if form.is_accepted.data == 1:
+                            contribution = Contribution(workspace_id=invitation.workspace_id,user_id=invitee_id,is_active=True)
+                            db.session.add(contribution)
+                            add_new_collaboration(invitation.workspace_id, invitee_id)
+                        # Invitation gets deleted no matter how it was responded.
+                        db.session.delete(invitation)
+                        try:
+                            db.session.commit()
+                        except:
+                            return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+                        else:
+                            return make_response(jsonify({"message" : "Invitation has been successfully responded."}), 200)
+                    else:
+                        return make_response(jsonify({"error" : "You are not the invitee of this invitation, you cannot respond to it."}), 401)
+                else:
+                    return make_response(jsonify({"error" : "The invitation is not found."}), 404)
+        else:
+            return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
+
+'''
+WRITE AN ENDPOINT TO ENABLE USERS TO QUIT A WORKSPACE
+'''
 
 def register_resources(api):
     schedule_regularly()
