@@ -32,7 +32,7 @@ data class TrendingProject(
         val state:Int,
         val id:Int,
         val title:String,
-        val contributors:List<Contributor>
+        val contributor_list:List<Contributor>
 
 )
 
