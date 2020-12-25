@@ -168,8 +168,7 @@ class UserSearchAPI(Resource):
                         else:
                             id_index = id_list.index(user[0])
                             result_id_score[id_index] =(user[0], result_id_score[id_index][1]+score)
-                except Exception as e:
-                    print(str(e))
+                except:
                     return make_response(jsonify({"error": "Database Connection Problem."}), 500)
             sorted_result_list = []
             # Sort result ids according to their scores
@@ -192,7 +191,7 @@ class UserSearchAPI(Resource):
             # Apply Pagination
             if form.page.data is not None and form.per_page.data is not None:
                 per_page = form.per_page.data
-                number_of_pages = math.ceil(len(sorted_id_list)/per_page)
+                number_of_pages = math.ceil(len(sorted_result_list)/per_page)
                 page = form.page.data if form.page.data < number_of_pages else number_of_pages-1
                 sorted_result_list = sorted_result_list[page*per_page:(page+1)*per_page]
             # Add Search History Item
