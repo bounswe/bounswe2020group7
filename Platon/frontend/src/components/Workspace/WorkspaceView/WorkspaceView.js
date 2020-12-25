@@ -1,36 +1,39 @@
-import React, { Component } from "react";
-import Navbar from "../../NavBar/NavBar";
-import { withStyles } from "@material-ui/core/styles";
-import Chip from "@material-ui/core/Chip";
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
-import Divider from "@material-ui/core/Divider";
-import colors from "../../../utils/colors";
-import Typography from "@material-ui/core/Typography";
-import jwt_decode from "jwt-decode";
-import Spinner from "../../Spinner/Spinner";
-import Tab from "@material-ui/core/Tab";
-import "./WorkspaceView.css";
-import MuiAlert from "@material-ui/lab/Alert";
-import Snackbar from "@material-ui/core/Snackbar";
-import WorkspaceViewFileSection from "./WorkspaceViewFileSection/WorkspaceViewFileSection";
-import config from "../../../utils/config";
-import axios from "axios";
-import WorkspaceViewStateTimeline from "./WorkspaceViewStateTimeline/WorkspaceViewStateTimeline";
-import Tabs from "@material-ui/core/Tabs";
-import { Link } from "react-router-dom";
+import React, { Component } from 'react'
+import Navbar from '../../NavBar/NavBar'
+import { withStyles } from '@material-ui/core/styles'
+import Chip from '@material-ui/core/Chip'
+import Button from '@material-ui/core/Button'
+import Grid from '@material-ui/core/Grid'
+import Divider from '@material-ui/core/Divider'
+import colors from '../../../utils/colors'
+import Typography from '@material-ui/core/Typography'
+import jwt_decode from 'jwt-decode'
+import Spinner from '../../Spinner/Spinner'
+import Tab from '@material-ui/core/Tab'
+import './WorkspaceView.css'
+import MuiAlert from '@material-ui/lab/Alert'
+import Snackbar from '@material-ui/core/Snackbar'
+import WorkspaceViewFileSection from './WorkspaceViewFileSection/WorkspaceViewFileSection'
+import config from '../../../utils/config'
+import axios from 'axios'
+import WorkspaceViewStateTimeline from './WorkspaceViewStateTimeline/WorkspaceViewStateTimeline'
+import Tabs from '@material-ui/core/Tabs'
+import { Link } from 'react-router-dom'
+import WorkspaceViewMilestoneSection from './WorkspaceViewMilestoneSection'
+
 const StyledButton = withStyles({
   root: {
     background: colors.tertiary,
     color: colors.secondary,
 
-    "&:hover": {
+    '&:hover': {
       backgroundColor: colors.tertiaryDark,
     },
   },
-})(Button);
+})(Button)
+
 function TabPanel(props) {
-  const { children, value, index, ...other } = props;
+  const { children, value, index, ...other } = props
 
   return (
     <div
@@ -42,21 +45,22 @@ function TabPanel(props) {
     >
       {value === index && <div>{children}</div>}
     </div>
-  );
+  )
 }
 
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
+    'aria-controls': `simple-tabpanel-${index}`,
+  }
 }
+
 const useStyles = (theme) => ({
   root: {
     margin: theme.spacing(2, 0),
     backgroundColor: colors.secondary,
-    minWidth: "480px",
-    width: "720px",
+    minWidth: '480px',
+    width: '720px',
   },
   divider: {
     margin: theme.spacing(2),
@@ -68,30 +72,33 @@ const useStyles = (theme) => ({
   },
   section1: {
     margin: theme.spacing(0, 2),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
   },
   section2: {
     margin: theme.spacing(2),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
   },
 
   section3: {
     margin: theme.spacing(3, 1, 1),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
   },
-});
+})
+
 function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
+  return <MuiAlert elevation={6} variant="filled" {...props} />
 }
+
+
 class WorkspaceView extends Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       success: false,
       error: false,
@@ -100,22 +107,23 @@ class WorkspaceView extends Component {
       workspaceId: null,
       value: 0,
       workspace: {},
-    };
+    }
   }
+
   componentDidMount() {
-    const token = localStorage.getItem("jwtToken");
-    const decoded = jwt_decode(token);
-    const workspaceId = this.props.match.params.workspaceId;
+    const token = localStorage.getItem('jwtToken')
+    const decoded = jwt_decode(token)
+    const workspaceId = this.props.match.params.workspaceId
     this.setState({
       profileId: decoded.id,
       workspaceId: workspaceId,
-    });
+    })
 
-    axios.defaults.headers.common["auth_token"] = `${token}`;
-    const url = config.BASE_URL;
+    axios.defaults.headers.common['auth_token'] = `${token}`
+    const url = config.BASE_URL
 
     axios
-      .get(url + "/api/workspaces", {
+      .get(url + '/api/workspaces', {
         params: {
           workspace_id: workspaceId,
         },
@@ -125,25 +133,26 @@ class WorkspaceView extends Component {
           this.setState({
             workspace: response.data,
             loaded: true,
-          });
+          })
         }
       })
       .catch((err) => {
         this.setState({
-        error: "Error occured. " + err.message,
-      });
-        console.log(err);
-      });
+          error: 'Error occured. ' + err.message,
+        })
+        console.log(err)
+      })
   }
+
   handleChange = (event, newValue) => {
     this.setState({
       value: newValue,
-    });
-  };
+    })
+  }
 
 
   render() {
-    const { classes } = this.props;
+    const { classes } = this.props
     return (
       <div className="WorkspaceViewContainer">
         <Navbar />
@@ -151,10 +160,10 @@ class WorkspaceView extends Component {
           <div className="container">
             <div
               style={{
-                display: "flex",
-                justifyContent: "space-between",
-                paddingTop: "40px",
-                paddingBottom: "10px",
+                display: 'flex',
+                justifyContent: 'space-between',
+                paddingTop: '40px',
+                paddingBottom: '10px',
               }}
             >
               <Typography
@@ -167,7 +176,7 @@ class WorkspaceView extends Component {
               </Typography>
               <Link
                 to={`/${this.state.profileId}/workspace`}
-                style={{ textDecoration: "none" }}
+                style={{ textDecoration: 'none' }}
               >
                 Back to workspaces
               </Link>
@@ -176,23 +185,23 @@ class WorkspaceView extends Component {
         </div>
         <div
           style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
           }}
         >
           <Tabs
             value={this.state.value}
             onChange={this.handleChange}
             aria-label="simple tabs example"
-            style={{ width: "100%" }}
+            style={{ width: '100%' }}
             centered
             TabIndicatorProps={{ style: { background: colors.secondary } }}
           >
             <Tab
               style={{
                 backgroundColor: colors.secondary,
-                borderRadius: "5px 5px 0px 0px",
+                borderRadius: '5px 5px 0px 0px',
               }}
               label="Details"
               {...a11yProps(0)}
@@ -200,7 +209,7 @@ class WorkspaceView extends Component {
             <Tab
               style={{
                 backgroundColor: colors.secondary,
-                borderRadius: "5px 5px 0px 0px",
+                borderRadius: '5px 5px 0px 0px',
               }}
               label="Files"
               {...a11yProps(1)}
@@ -208,7 +217,7 @@ class WorkspaceView extends Component {
             <Tab
               style={{
                 backgroundColor: colors.secondary,
-                borderRadius: "5px 5px 0px 0px",
+                borderRadius: '5px 5px 0px 0px',
               }}
               label="Issues"
               {...a11yProps(2)}
@@ -216,29 +225,29 @@ class WorkspaceView extends Component {
             <Tab
               style={{
                 backgroundColor: colors.secondary,
-                borderRadius: "5px 5px 0px 0px",
+                borderRadius: '5px 5px 0px 0px',
               }}
               label="Milestones"
               {...a11yProps(3)}
             />
           </Tabs>
-          <div style={{ backgroundColor: colors.secondary, width: "100%" }}>
+          <div style={{ backgroundColor: colors.secondary, width: '100%' }}>
             <div
               className="container"
               style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
                 backgroundColor: colors.secondary,
               }}
             >
               {this.state.loaded ? (
                 <div
                   style={{
-                    display: "flex",
-                    justifyContent: "space-around",
-                    alignItems: "center",
-                    width: "100%",
+                    display: 'flex',
+                    justifyContent: 'space-around',
+                    alignItems: 'center',
+                    width: '100%',
                   }}
                 >
                   <TabPanel value={this.state.value} index={0}>
@@ -286,8 +295,8 @@ class WorkspaceView extends Component {
                             </Typography>
                             <div style={{ color: colors.quinaryDark }}>
                               {this.state.workspace.is_private
-                                ? "Private"
-                                : "Public"}
+                                ? 'Private'
+                                : 'Public'}
                             </div>
                           </Grid>
                           <Grid
@@ -306,9 +315,9 @@ class WorkspaceView extends Component {
                               Maximum Collaborator
                             </Typography>
                             <div style={{ color: colors.quinaryDark }}>
-                              {this.state.workspace.max_collaborators !== ""
+                              {this.state.workspace.max_collaborators !== ''
                                 ? this.state.workspace.max_collaborators
-                                : "Not specified"}
+                                : 'Not specified'}
                             </div>
                           </Grid>
                           <Grid
@@ -333,7 +342,7 @@ class WorkspaceView extends Component {
                                   .substring(0, 10)}
                               </div>
                             ) : (
-                              "Not specified"
+                              'Not specified'
                             )}
                           </Grid>
                         </Grid>
@@ -342,7 +351,7 @@ class WorkspaceView extends Component {
                           className={classes.divider}
                           variant="middle"
                           style={{
-                            width: "100%",
+                            width: '100%',
                             backgroundColor: colors.primaryLight,
                           }}
                         />
@@ -363,10 +372,10 @@ class WorkspaceView extends Component {
                             </Typography>
                             {this.state.workspace.requirements ? (
                               <div style={{ color: colors.tertiaryDark }}>
-                                {this.state.workspace.requirements.join(", ")}
+                                {this.state.workspace.requirements.join(', ')}
                               </div>
                             ) : (
-                              "Not specified"
+                              'Not specified'
                             )}
                           </Grid>
 
@@ -395,7 +404,7 @@ class WorkspaceView extends Component {
                                 ))}
                               </div>
                             ) : (
-                              "Not specified"
+                              'Not specified'
                             )}
                           </Grid>
                         </Grid>
@@ -403,7 +412,7 @@ class WorkspaceView extends Component {
                           className={classes.divider}
                           variant="middle"
                           style={{
-                            width: "100%",
+                            width: '100%',
                             backgroundColor: colors.primaryLight,
                           }}
                         />
@@ -420,40 +429,40 @@ class WorkspaceView extends Component {
                             (element) => (
                               <Link
                                 to={`/${element.id}/`}
-                                style={{ textDecoration: "none", color: colors.quinaryDark }}
+                                style={{ textDecoration: 'none', color: colors.quinaryDark }}
                               >
                                 <div>
                                   {element.name} {element.surname}
                                 </div>
                               </Link>
-                            )
+                            ),
                           )}
                         </div>
 
                       </div>
                       <Divider
-                          className={classes.divider}
-                          variant="middle"
-                          style={{
-                            width: "100%",
-                            backgroundColor: colors.primaryLight,
-                          }}
-                        />
-                        <Typography
-                          gutterBottom
-                          variant="body1"
-                          align="center"
-                          style={{ color: colors.quaternaryDark }}
-                        >
-                          State
-                        </Typography>
-                        <WorkspaceViewStateTimeline
-                          state={this.state.workspace.state}
-                        />
+                        className={classes.divider}
+                        variant="middle"
+                        style={{
+                          width: '100%',
+                          backgroundColor: colors.primaryLight,
+                        }}
+                      />
+                      <Typography
+                        gutterBottom
+                        variant="body1"
+                        align="center"
+                        style={{ color: colors.quaternaryDark }}
+                      >
+                        State
+                      </Typography>
+                      <WorkspaceViewStateTimeline
+                        state={this.state.workspace.state}
+                      />
                       <div className={classes.section3}>
                         <Link
                           to={`/${this.state.profileId}/workspace/${this.props.match.params.workspaceId}/edit`}
-                          style={{ textDecoration: "none" }}
+                          style={{ textDecoration: 'none' }}
                         >
                           <StyledButton color="primary">
                             Edit Workspace
@@ -472,12 +481,11 @@ class WorkspaceView extends Component {
                     {/*<Issues workspaceId={this.props.match.params.workspaceId} members={this.state.workspace.active_contributors} />*/}
                   </TabPanel>
                   <TabPanel value={this.state.value} index={3}>
-                    Milestones
-                    {/*<Milestone workspaceId={this.props.match.params.workspaceId} members={this.state.workspace.active_contributors} />*/}
+                    <WorkspaceViewMilestoneSection workspaceId={this.state.workspaceId} />
                   </TabPanel>
                 </div>
               ) : (
-                <div style={{ marginTop: "150px" }}>
+                <div style={{ marginTop: '150px' }}>
                   <Spinner />
                 </div>
               )}
@@ -515,8 +523,9 @@ class WorkspaceView extends Component {
           )}
         </div>
       </div>
-    );
+    )
   }
 }
 
-export default withStyles(useStyles)(WorkspaceView);
+
+export default withStyles(useStyles)(WorkspaceView)

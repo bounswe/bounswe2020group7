@@ -43,7 +43,7 @@ const StyledButton = withStyles({
 })(Button);
 const useStyles = (theme) => ({
   root: {
-    width: "auto",
+    width: '620px',
     marginBottom: theme.spacing(3),
   },
   demo: {
