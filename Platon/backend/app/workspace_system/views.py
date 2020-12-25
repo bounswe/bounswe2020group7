@@ -91,6 +91,17 @@ issue_list_model = api.model('Issues List', {
     )
 })
 
+issue_post_model = api.model('Issue Post', {
+    'msg': fields.String,
+	"issue_id": fields.Integer, 
+	"workspace_id": fields.Integer, 
+	"title": fields.String,
+	"description": fields.String,
+	"deadline": fields.DateTime,
+	"is_open": fields.Boolean,
+	"creator_id": fields.Integer,
+    })
+
 milestone_model = api.model('Milestone', {
     "milestone_id": fields.Integer, 
     "workspace_id": fields.Integer,
@@ -244,6 +255,7 @@ class IssueAPI(Resource):
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
 
     @api.doc(responses={401 : 'Account Problems', 400 : 'Input Format Error' ,500 : ' Database Connection Error', 404: 'Not found'})
+    @api.response(200, 'Success', issue_post_model)
     @api.expect(post_issue_parser)
     @login_required
     @workspace_exists(param_loc='form',workspace_id_key='workspace_id')
@@ -267,7 +279,16 @@ class IssueAPI(Resource):
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
-            return make_response(jsonify({'msg': 'Issue is successfully created'}), 200)
+            return make_response(jsonify({
+                'msg': 'Issue is successfully created',
+                "issue_id": issue.id, 
+	            "workspace_id": issue.workspace_id, 
+	            "title": issue.title,
+	            "description": issue.description,
+	            "deadline": issue.deadline,
+	            "is_open": issue.is_open,
+	            "creator_id": issue.creator_id
+                }), 200)
 
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
@@ -1005,7 +1026,7 @@ class WorkspacesAPI(Resource):
                                                     "state": requested_workspace.state,
                                                     "timestamp": requested_workspace.timestamp,
                                                     "description": requested_workspace.description,
-                                                    "deadline": requested_workspace.deadline,
+                                                    "deadline": requested_workspace.deadline.strftime("%d.%m.%Y"),
                                                     "max_collaborators": requested_workspace.max_collaborators,
                                                     "skills": get_workspace_skills_list(form.workspace_id.data),
                                                     "requirements": get_workspace_requirements_list(form.workspace_id.data),
@@ -1051,7 +1072,7 @@ class WorkspacesAPI(Resource):
                 # Checks whether the requested workspace with the given ID exists in the database.
                 # If not, an error is raised.
                 # If yes, workspace information is updated depending on whether the requester can update the requested workspace.
-                if requested_workspace is None:
+                if requested_workspace.first() is None:
                     return make_response(jsonify({"error" : "Requested workspace is not found."}), 404)
                 else:
                     if Contribution.query.filter_by(workspace_id=form.workspace_id.data, user_id=requester_id, is_active=True).first() is None:
@@ -1068,11 +1089,19 @@ class WorkspacesAPI(Resource):
                         # Checks whether the dictionary of the new attributes is empty or not.
                         # If empty, skips the database operations.
                         # If not, the workspace gets updated as requested.
-                        if new_attributes:
+                        is_updated = False
+                        if new_attributes["skills"] != 'null' or new_attributes["requirements"] != 'null':
+                            is_updated = True
                             update_workspace_skills(form.workspace_id.data, json.loads(new_attributes.pop("skills")))
                             update_workspace_requirements(form.workspace_id.data, json.loads(new_attributes.pop("requirements")))
+                        else:
+                            new_attributes.pop("skills")
+                            new_attributes.pop("requirements")
+                        if new_attributes:
                             requested_workspace.update(new_attributes)
                             db.session.commit()
+                            return make_response(jsonify({"message" : "Workspace has been successfully updated."}), 200)
+                        elif is_updated:
                             return make_response(jsonify({"message" : "Workspace has been successfully updated."}), 200)
                         else:
                             return make_response(jsonify({"message" : "Server has received the request but there was no information to be updated."}), 202)

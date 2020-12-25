@@ -88,7 +88,7 @@ post_issue_parser = reqparse.RequestParser()
 post_issue_parser.add_argument("workspace_id",required=True,type=int,help="ID of the requested workspace", location="form")
 post_issue_parser.add_argument("title", required=True, type=str, help="Title of the new issue", location="form")
 post_issue_parser.add_argument("description", required=True, type=str, help="Description of the new issue", location="form")
-post_issue_parser.add_argument("deadline", required=False, type=datetime.datetime, help="Deadline of the new issue", location="form")
+post_issue_parser.add_argument("deadline", required=False, type=datetime.datetime, help="Should be in DateTime form. e.g. 2015-12-20 10:01:00", location="form")
 post_issue_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
 
 class PutIssuesForm(Form):
@@ -209,7 +209,7 @@ post_milestone_parser = reqparse.RequestParser()
 post_milestone_parser.add_argument("workspace_id",required=True,type=int,help="ID of the requested workspace", location="form")
 post_milestone_parser.add_argument("title", required=True, type=str, help="Title of the new milestone", location="form")
 post_milestone_parser.add_argument("description", required=True, type=str, help="Description of the new milestone", location="form")
-post_milestone_parser.add_argument("deadline", required=True, type=datetime.datetime, help="Deadline of the new Milestone", location="form")
+post_milestone_parser.add_argument("deadline", required=True, type=datetime.datetime, help="Should be in DateTime form. e.g. 2015-12-20 10:01:00", location="form")
 post_milestone_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
 
 class PutMilestoneForm(Form):
