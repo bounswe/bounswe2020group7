@@ -20,10 +20,10 @@ class WorkspaceFolderRepository {
     val addFileToWorkspaceResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
 
 
-    fun uploadFile(workspaceId: Int, path: String, fileName:String, file:RequestBody, token: String){
+    fun uploadFile(workspaceId: Int, path: RequestBody, fileName:RequestBody, file:RequestBody, token: String){
         addFileToWorkspaceResourceResponse.value =Resource.Loading()
         val service = RetrofitClient.getService()
-        val call = service.uploadFileToWorkspace(workspaceId, ".", fileName, file, token)
+        val call = service.uploadFileToWorkspace(workspaceId, path, fileName, file, token)
 
         call.enqueue(object : Callback<JsonObject?> {
             override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
@@ -31,7 +31,7 @@ class WorkspaceFolderRepository {
                     response.isSuccessful -> addFileToWorkspaceResourceResponse.value = Resource.Success(response.body()!!)
                     response.errorBody() != null ->{
                         val js = JSONObject(response.errorBody()!!.string())
-                        addFileToWorkspaceResourceResponse.value = Resource.Error(if(js.has("error"))  js.getString("error") else "Unknown error")
+                        addFileToWorkspaceResourceResponse.value = Resource.Error(if(js.has("err"))  js.getString("err") else "Unknown error!")
                     }
                     else -> addFileToWorkspaceResourceResponse.value = Resource.Error("Unknown error!")
                 }

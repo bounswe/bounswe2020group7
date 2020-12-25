@@ -27,7 +27,7 @@ class WorkspaceFolderViewModel:ViewModel() {
         repository.deleteFolder(workspaceId, cwd, folderName, token)
     }
 
-    fun uploadFile(workspaceId: Int, path: String, fileName:String, file: RequestBody, token: String){
+    fun uploadFile(workspaceId: Int, path: RequestBody, fileName:RequestBody, file: RequestBody, token: String){
         repository.uploadFile(workspaceId, path,fileName ,file ,token)
     }
 

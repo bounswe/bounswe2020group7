@@ -272,8 +272,8 @@ interface Webservice {
     @POST("api/file_system/file")
     fun uploadFileToWorkspace(
         @Part("workspace_id") workspace_id:Int,
-        @Part("path") path:String,
-        @Part("filename") fileName:String,
+        @Part("path") path:RequestBody,
+        @Part("filename") fileName:RequestBody,
         @Part("new_file\"; filename=\"new_file\" ") new_file: RequestBody,
         @Header("auth_token") token: String): Call<JsonObject?>
 

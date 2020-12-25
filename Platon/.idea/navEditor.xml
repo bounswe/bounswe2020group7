@@ -313,6 +313,18 @@
                       </LayoutPositions>
                     </value>
                   </entry>
+                  <entry key="workspaceEditorFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="1090" />
+                            <option name="y" value="-313" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
                   <entry key="workspaceFolderFragment">
                     <value>
                       <LayoutPositions>

@@ -18,6 +18,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.FilesAdapter
@@ -218,7 +219,6 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
 
 
     private fun uploadFile(data: Uri) {
-
         val path = ContentUriUtils.getFilePath(requireContext(), data);
         if (path != null) {
             val file = File(path)
@@ -226,12 +226,13 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
                 MediaType.parse(requireContext().contentResolver.getType(data)!!),
                 file
             )
-            val body = RequestBody.create(fBody.contentType(), file)
+            val pathBody = RequestBody.create(MediaType.parse("text/plain"), cwd)
+            val fileNameBody = RequestBody.create(MediaType.parse("text/plain"), file.name)
             mWorkspaceFolderViewModel.uploadFile(
                 (activity as WorkspaceActivity).workspace_id!!,
-                cwd,
-                file.name,
-                body,
+                pathBody,
+                fileNameBody,
+                fBody,
                 (activity as WorkspaceActivity).token!!
             )
         }
@@ -339,7 +340,7 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
     }
 
     override fun onEditFileClicked(folder: String) {
-        TODO("Not yet implemented")
+        findNavController().navigate(WorkspaceFolderFragmentDirections.actionWorkspaceFolderFragmentToWorkspaceEditorFragment())
     }
 
     override fun onFileNameClicked(folder: String) {
