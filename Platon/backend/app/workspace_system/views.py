@@ -1708,6 +1708,7 @@ class CollaborationApplicationsAPI(Resource):
         else:
             return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
 
+@workspace_system_ns.route("/quit")
 class QuitWorkspaceAPI(Resource):
 
     @api.expect(quit_workspace_parser)
@@ -1728,6 +1729,8 @@ class QuitWorkspaceAPI(Resource):
             try:
                 contribution = Contribution.query.filter_by(workspace_id=form.workspace_id.data, user_id = user_id , is_active=True).first()
                 db.session.delete(contribution)
+                db.session.commit()
+                return make_response(jsonify({"msg" : "You successfully quited from workspace."}), 201)
             except:
                 return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
         else:
