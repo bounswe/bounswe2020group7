@@ -1334,6 +1334,7 @@ class CollaborationInvitationsAPI(Resource):
                 500: "The server is not connected to the database."
             })
     @login_required
+    @active_contribution_required(param_loc='form',workspace_id_key='workspace_id')
     def post(invitor_id, self):
         '''
         Creates an invitation for a workspace. (i.e. an invitation for a workspace gets sent to the invitee user)
@@ -1419,14 +1420,17 @@ class CollaborationInvitationsAPI(Resource):
             # Tries to connect to the database.
             # If it fails, an error is raised.
             try:
+                # Checks whether the requester want to view a specific single invitation or all the invitations sent to them.
+                # Depending on the case, invitation(s) is retrieved from the database.
                 if form.invitation_id.data is not None:
                     invitations_list = CollaborationInvitation.query.filter_by(id=form.invitation_id.data, invitee_id=invitee_id).all()
                 else:
                     invitations_list = CollaborationInvitation.query.filter_by(invitee_id=invitee_id).all()
-            except Exception as e:
-                return make_response(jsonify({"error" : str(e) + "The server is not connected to the database."}), 500)
+            except:
+                return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
             else:
-                # 
+                # If no invitations found with the given input, an error gets raised.
+                # If not, found invitations are returned.
                 if len(invitations_list) == 0:
                     return make_response(jsonify({"error" : "Invitation(s) not found."}), 404)
                 else:
@@ -1611,14 +1615,17 @@ class CollaborationApplicationsAPI(Resource):
                 # If no, an error gets raised.
                 if requester_id in [contribution.user_id for contribution in active_contributors]:
                     try:
+                        # Checks whether the requester want to view a specific single application or all the invitations sent to them.
+                        # Depending on the case, application(s) is retrieved from the database.
                         if form.application_id.data is not None:
                             applications_list = CollaborationApplication.query.filter_by(id=form.application_id.data, workspace_id=form.workspace_id.data).all()
                         else:
                             applications_list = CollaborationApplication.query.filter_by(workspace_id=form.workspace_id.data).all()
-                    except Exception as e:
-                        return make_response(jsonify({"error" : str(e) + "The server is not connected to the database."}), 500)
+                    except:
+                        return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
                     else:
-                        # 
+                        # If no applications found with the given input, an error gets raised.
+                        # If not, found applications are returned. 
                         if len(applications_list) == 0:
                             return make_response(jsonify({"error" : "Application(s) not found."}), 404)
                         else:
