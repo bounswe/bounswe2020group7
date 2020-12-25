@@ -271,59 +271,7 @@ class WorkspaceSearchTests(BaseTest):
     '''
         Tests for workspace search.
     '''
-
-    '''
-    /search_engine/workspace
-
-    GET: Search workspaces
-
-    - Input:
-
-    - token: STRING - Header
-    - search_query: STRING
-    - skill_filter: STRING  # research area/topic and labels
-    - creator_name: STRING  # to filter for founder of the project Tuna
-    - creator_surname: STR  # to filter for founder of the project Tuğcu
-    - starting_date_start: DateTime  # to filter. inclusive
-    - starting_date_end: DateTime  # to filter.   exclusive
-    - deadline_start: DateTime  # to filter.   inclusive
-    - deadline_end: DateTime  # to filter.   exclusive
-    - sorting_criteria: INT -  0: date, 1:  number of collaborators needed, 2: alphabetical order.
-    - page: INT
-    - per_page = INT
-
-    EKSTRALAR
-    - state: INT - query_string.     vakte gore
-    - event_filter: STRING - query_string. vakte gore
-
-    - Output:
     
-    {
-    "number_of_pages": INT,
-    "result_list":[
-    {
-		id: INT
-      	title: string
-      	is_private: INT
-      	description: string
-      	state: INT
-      	deadline: DateTime
-      	creation_time: DateTime
-      	max_contibutors: INT
-		contributor_list: LIST<Contributor>
-		creator_id: INT,
-		creator_name: STRING,
-		creator_surname: STRING,
-
-		EKSTRALAR
-		collaborators_needed: INT.  # for sorting
-		"creator_e-mail": STRING,
-		"creator_rate": DOUBLE,
-		"creator_job_name": STRING,
-		"creator_institution": STRING,
-		"creator_is_private": INT     (1 for private, 0 for public)
-    },]}
-    '''
     def setUp(self):
 
         super().setUp()
