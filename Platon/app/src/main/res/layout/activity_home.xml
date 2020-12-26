@@ -14,7 +14,7 @@
 
     <RadioGroup
         android:id="@+id/rg_searchAmong"
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/primary_dark_darker"
@@ -243,7 +243,7 @@
         <Spinner
             android:layout_marginStart="@dimen/medium"
             android:id="@+id/sp_sortByWorkspace"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColorHint="@color/primary_light"
             android:textColor="@color/primary_light" />

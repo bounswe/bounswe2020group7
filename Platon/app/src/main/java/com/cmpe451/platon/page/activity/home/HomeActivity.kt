@@ -81,6 +81,7 @@ class HomeActivity : BaseActivity(),
         binding.laySearchUser.visibility=View.GONE
         binding.toolbarRecyclerview.visibility = View.GONE
         binding.rgSearchAmong.visibility = View.GONE
+        binding.notificationRg.visibility = View.GONE
 
         binding.rgSearchAmong.setOnCheckedChangeListener(null)
         binding.notificationRg.setOnCheckedChangeListener(null)
