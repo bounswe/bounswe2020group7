@@ -271,7 +271,7 @@ class FollowRequestAPI(Resource):
                 follow_record = Follow(form.follower_id.data, form.following_id.data)
                 try:
                     logged_in_user = User.query.filter(User.id == user_id).first()
-                    text = "{} started to following you".format(logged_in_user.name + " " + logged_in_user.surname)
+                    text = "{} started following you".format(logged_in_user.name + " " + logged_in_user.surname)
                     NotificationManager.add_notification(form.following_id.data,[logged_in_user.id],text)
                 except:
                     return make_response(jsonify({'error': 'Database Connection Error'}), 500)

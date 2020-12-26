@@ -187,8 +187,7 @@ class UserSearchAPI(Resource):
                         else:
                             id_index = id_list.index(user[0])
                             result_id_score[id_index] =(user[0], result_id_score[id_index][1]+score)
-                except Exception as e:
-                    print(str(e))
+                except:
                     return make_response(jsonify({"error": "Database Connection Problem."}), 500)
             sorted_result_list = []
             # Sort result ids according to their scores
@@ -211,7 +210,7 @@ class UserSearchAPI(Resource):
             # Apply Pagination
             if form.page.data is not None and form.per_page.data is not None:
                 per_page = form.per_page.data
-                number_of_pages = math.ceil(len(sorted_id_list)/per_page)
+                number_of_pages = math.ceil(len(sorted_result_list)/per_page)
                 page = form.page.data if form.page.data < number_of_pages else number_of_pages-1
                 sorted_result_list = sorted_result_list[page*per_page:(page+1)*per_page]
             # Add Search History Item
@@ -290,13 +289,13 @@ class WorkspaceSearchAPI(Resource):
                         try:
                             contributors = Contribution.query.filter(Contribution.workspace_id == workspace[0]).all()
                         except:
-                            return make_response(jsonify({"err": "Database Connection Error"}),500)
+                            return make_response(jsonify({"error": "Database Connection Error"}),500)
                         contributor_list = []
                         for contributor in contributors:
                             try:
                                 user = User.query.get(contributor.user_id)
                             except:
-                                return make_response(jsonify({"err": "Database Connection Error"}),500)
+                                return make_response(jsonify({"error": "Database Connection Error"}),500)
                             contributor_list.append({
                                     "id": user.id,
                                     "name": user.name,
@@ -305,7 +304,7 @@ class WorkspaceSearchAPI(Resource):
                         try:
                             creator_info = User.query.filter(User.id == workspace[1]).first()
                         except:
-                            return make_response(jsonify({"err": "Database Connection Error"}),500)
+                            return make_response(jsonify({"error": "Database Connection Error"}),500)
                         result_list.append({"id":workspace[0], "title": workspace[3], "is_private": int(workspace[2]), 
                                             "description" : workspace[6], "state": workspace[4], "deadline" : workspace[7],
                                             "creation_time": workspace[5], "max_contributors": workspace[8],"contributor_list":contributor_list,
@@ -323,7 +322,7 @@ class WorkspaceSearchAPI(Resource):
                     try:
                         ws_skills = WorkspaceSkill.query.filter(WorkspaceSkill.workspace_id == ws_id).all()
                     except:
-                        return make_response(jsonify({"err": "Database Connection Error"}),500)
+                        return make_response(jsonify({"error": "Database Connection Error"}),500)
 
                     skill_ids = []
                     for ws_skill in ws_skills:
@@ -334,7 +333,7 @@ class WorkspaceSearchAPI(Resource):
                         try:
                             skill_info = Skills.query.filter(Skills.id == skill_id).first()
                         except:
-                            return make_response(jsonify({"err": "Database Connection Error"}),500)
+                            return make_response(jsonify({"error": "Database Connection Error"}),500)
                         
                         skill_names_of_ws.append(skill_info.name)
                     

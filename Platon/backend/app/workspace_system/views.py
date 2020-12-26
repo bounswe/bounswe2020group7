@@ -1275,7 +1275,8 @@ class GetSelfWorkspaces(Resource):
                 "description": ws.description,
                 "deadline": ws.deadline,
                 "max_collaborators": ws.max_collaborators,
-                "contributors": contributor_list
+                "contributors": contributor_list,
+                "creator_id": ws.creator_id
             }
             workspaces.append(ws_dict)
         return make_response(jsonify({"workspaces": workspaces}),200)
@@ -1440,7 +1441,7 @@ class CollaborationInvitationsAPI(Resource):
                 # If no invitations found with the given input, an error gets raised.
                 # If not, found invitations are returned.
                 if len(invitations_list) == 0:
-                    return make_response(jsonify({"error" : "Invitation(s) not found."}), 404)
+                    return make_response(jsonify([]), 200)
                 else:
                     response = []
                     for invitation in invitations_list:
@@ -1637,7 +1638,7 @@ class CollaborationApplicationsAPI(Resource):
                         # If no applications found with the given input, an error gets raised.
                         # If not, found applications are returned. 
                         if len(applications_list) == 0:
-                            return make_response(jsonify({"error" : "Application(s) not found."}), 404)
+                            return make_response(jsonify([]), 200)
                         else:
                             response = []
                             for application in applications_list:
