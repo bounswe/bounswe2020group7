@@ -102,6 +102,19 @@ function handleLogout() {
   document.location.href = "/";
 }
 
+function handleProfile() {
+  const token = localStorage.getItem("jwtToken");
+  const decoded = jwt_decode(token);
+  document.location.href = "/" + decoded.id;
+}
+
+function onKeyUp(event) {
+  var edValue = document.getElementById("searchBox").value;
+  if (event.charCode === 13) {
+    document.location.href = "/search/" + edValue;
+  }
+}
+
 const NavBar = ({ itemsPerPage = 3, width = "500px" }) => {
   const classes = useStyles();
   const token = localStorage.getItem("jwtToken");
@@ -191,7 +204,6 @@ const NavBar = ({ itemsPerPage = 3, width = "500px" }) => {
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
-
   return (
     <div className={classes.root}>
       <AppBar style={{ background: colors.primaryDark }} position="static">
@@ -205,12 +217,14 @@ const NavBar = ({ itemsPerPage = 3, width = "500px" }) => {
               <SearchIcon />
             </div>
             <InputBase
+              id = "searchBox"
               placeholder="Search…"
               classes={{
                 root: classes.inputRoot,
                 input: classes.inputInput,
               }}
               inputProps={{ "aria-label": "search" }}
+              onKeyPress = {onKeyUp}
             />
           </div>
 

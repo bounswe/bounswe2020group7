@@ -26,6 +26,7 @@ import Button from "@material-ui/core/Button";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import MuiAlert from "@material-ui/lab/Alert";
 import Snackbar from "@material-ui/core/Snackbar";
+import jwt_decode from "jwt-decode";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -43,10 +44,11 @@ const StyledButton = withStyles({
 })(Button);
 const useStyles = (theme) => ({
   root: {
-    width: "auto",
+    width: '620px',
     marginBottom: theme.spacing(3),
   },
   demo: {
+    minWidth: "400px",
     backgroundColor: colors.secondary,
   },
   title: {
@@ -58,6 +60,7 @@ class WorkspaceViewFileSection extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      profileId: null,
       success: false,
       error: false,
       cwd: ".",
@@ -113,12 +116,17 @@ class WorkspaceViewFileSection extends Component {
       })
       .catch((err) => {
         this.setState({
-        error: "Error occured. " + err.message,
-      })
+          error: "Error occured. " + err.response.data.err,
+        });
         console.log(err);
       });
   };
   componentDidMount() {
+    const token = localStorage.getItem("jwtToken");
+    const decoded = jwt_decode(token);
+    this.setState({
+      profileId: decoded.id,
+    });
     this.fetchFileStructure();
   }
 
@@ -161,8 +169,8 @@ class WorkspaceViewFileSection extends Component {
       })
       .catch((err) => {
         this.setState({
-        error: "Error occured. " + err.message,
-      })
+          error: "Error occured. " + err.message,
+        });
         console.log(err);
       });
   };
@@ -191,8 +199,8 @@ class WorkspaceViewFileSection extends Component {
       })
       .catch((err) => {
         this.setState({
-        error: "Error occured. " + err.message,
-      })
+          error: "Error occured. " + err.message,
+        });
         console.log(err);
       });
   };
@@ -223,8 +231,8 @@ class WorkspaceViewFileSection extends Component {
       })
       .catch((err) => {
         this.setState({
-            error: "Error occured."
-          });
+          error: "Error occured.",
+        });
         console.log(err);
       });
   };
@@ -250,8 +258,8 @@ class WorkspaceViewFileSection extends Component {
       })
       .catch((err) => {
         this.setState({
-            error: "Error occured.",
-          })
+          error: "Error occured.",
+        });
         console.log(err);
       });
   };
@@ -359,9 +367,12 @@ class WorkspaceViewFileSection extends Component {
       })
       .then((response) => {
         if (response.status === 200) {
-          let oldIsFileEdited = this.state.isFileEditedArray
-          oldIsFileEdited[index] = !this.state.isFileEditedArray[index]
-          this.setState({success: "Successfully updated.", isFileEditedArray: oldIsFileEdited})
+          let oldIsFileEdited = this.state.isFileEditedArray;
+          oldIsFileEdited[index] = !this.state.isFileEditedArray[index];
+          this.setState({
+            success: "Successfully updated.",
+            isFileEditedArray: oldIsFileEdited,
+          });
         }
       })
       .catch((err) => {
@@ -414,15 +425,15 @@ class WorkspaceViewFileSection extends Component {
       .then((response) => {
         if (response.status === 200) {
           this.setState({
-            success: "Succesfully deleted."
-          })
+            success: "Succesfully deleted.",
+          });
           this.fetchFileStructure();
         }
       })
       .catch((err) => {
         this.setState({
-          error: "Error occurred."
-        })
+          error: "Error occurred.",
+        });
         console.log(err);
       });
   };
@@ -516,38 +527,42 @@ class WorkspaceViewFileSection extends Component {
                   >
                     <ArrowForwardIcon />
                   </IconButton>
-                  <IconButton edge="end" aria-label="renameFolder">
-                    <TextFieldsIcon
-                      style={{ color: colors.quaternary }}
-                      onClick={() => this.handleRenameFolderDialogOpen(index)}
-                    />
-                    <WorkspaceViewFileSectionRenameConfirmation
-                      type="folder"
-                      element={element}
-                      renameFolder={this.renameFolder}
-                      renameDialog={this.state.renameFolderDialogArray[index]}
-                      handleRenameDialogClose={
-                        this.handleRenameFolderDialogClose
-                      }
-                      index={index}
-                    />
-                  </IconButton>
-                  <IconButton edge="end" aria-label="delete">
-                    <DeleteIcon
-                      style={{ color: colors.quinary }}
-                      onClick={() => this.handleDeleteFolderDialogOpen(index)}
-                    />
-                    <WorkspaceViewFileSectionDeleteConfirmation
-                      type="folder"
-                      element={element}
-                      deleteFolder={this.deleteFolder}
-                      deleteDialog={this.state.deleteFolderDialogArray[index]}
-                      handleDeleteDialogClose={
-                        this.handleDeleteFolderDialogClose
-                      }
-                      index={index}
-                    />
-                  </IconButton>
+                  {this.props.collaboratorIds.includes(this.state.profileId) ? (
+                    <IconButton edge="end" aria-label="renameFolder">
+                      <TextFieldsIcon
+                        style={{ color: colors.quaternary }}
+                        onClick={() => this.handleRenameFolderDialogOpen(index)}
+                      />
+                      <WorkspaceViewFileSectionRenameConfirmation
+                        type="folder"
+                        element={element}
+                        renameFolder={this.renameFolder}
+                        renameDialog={this.state.renameFolderDialogArray[index]}
+                        handleRenameDialogClose={
+                          this.handleRenameFolderDialogClose
+                        }
+                        index={index}
+                      />
+                    </IconButton>
+                  ) : null}
+                  {this.props.collaboratorIds.includes(this.state.profileId) ? (
+                    <IconButton edge="end" aria-label="delete">
+                      <DeleteIcon
+                        style={{ color: colors.quinary }}
+                        onClick={() => this.handleDeleteFolderDialogOpen(index)}
+                      />
+                      <WorkspaceViewFileSectionDeleteConfirmation
+                        type="folder"
+                        element={element}
+                        deleteFolder={this.deleteFolder}
+                        deleteDialog={this.state.deleteFolderDialogArray[index]}
+                        handleDeleteDialogClose={
+                          this.handleDeleteFolderDialogClose
+                        }
+                        index={index}
+                      />
+                    </IconButton>
+                  ) : null}
                 </ListItemSecondaryAction>
               </ListItem>
             ))}
@@ -564,9 +579,11 @@ class WorkspaceViewFileSection extends Component {
                   primary={element}
                 />
                 <ListItemSecondaryAction>
-                  <IconButton edge="end" aria-label="download">
-                    <GetAppIcon onClick={() => this.downloadFile(element)} />
-                  </IconButton>
+                  {this.props.collaboratorIds.includes(this.state.profileId) ? (
+                    <IconButton edge="end" aria-label="download">
+                      <GetAppIcon onClick={() => this.downloadFile(element)} />
+                    </IconButton>
+                  ) : null}
                   <IconButton edge="end" aria-label="download">
                     <VisibilityIcon
                       style={{ color: colors.tertiary }}
@@ -587,39 +604,45 @@ class WorkspaceViewFileSection extends Component {
                       c_workspace_id={this.props.workspaceId}
                     />
                   </IconButton>
-
-                  <IconButton edge="end" aria-label="download">
-                    <EditIcon
-                      style={{ color: colors.quaternary }}
-                      onClick={() => this.handleEditFileDialogOpen(index)}
-                    />
-                    <WorkspaceViewFileSectionEditConfirmation
-                      type="file"
-                      element={element}
-                      editFile={this.editFile}
-                      pls={this.state.files.length}
-                      editDialog={this.state.editFileDialogArray[index]}
-                      handleEditFileDialogClose={this.handleEditFileDialogClose}
-                      index={index}
-                      cwd={this.state.cwd}
-                      c_workspace_id={this.props.workspaceId}
-                    />
-                    <div>{index}</div>
-                  </IconButton>
-                  <IconButton edge="end" aria-label="delete">
-                    <DeleteIcon
-                      style={{ color: colors.quinary }}
-                      onClick={() => this.handleDeleteFileDialogOpen(index)}
-                    />
-                    <WorkspaceViewFileSectionDeleteConfirmation
-                      type="file"
-                      deleteDialog={this.state.deleteFileDialogArray[index]}
-                      handleDeleteDialogClose={this.handleDeleteFileDialogClose}
-                      element={element}
-                      index={index}
-                      deleteFile={this.deleteFile}
-                    />
-                  </IconButton>
+                  {this.props.collaboratorIds.includes(this.state.profileId) ? (
+                    <IconButton edge="end" aria-label="download">
+                      <EditIcon
+                        style={{ color: colors.quaternary }}
+                        onClick={() => this.handleEditFileDialogOpen(index)}
+                      />
+                      <WorkspaceViewFileSectionEditConfirmation
+                        type="file"
+                        element={element}
+                        editFile={this.editFile}
+                        pls={this.state.files.length}
+                        editDialog={this.state.editFileDialogArray[index]}
+                        handleEditFileDialogClose={
+                          this.handleEditFileDialogClose
+                        }
+                        index={index}
+                        cwd={this.state.cwd}
+                        c_workspace_id={this.props.workspaceId}
+                      />
+                    </IconButton>
+                  ) : null}
+                  {this.props.collaboratorIds.includes(this.state.profileId) ? (
+                    <IconButton edge="end" aria-label="delete">
+                      <DeleteIcon
+                        style={{ color: colors.quinary }}
+                        onClick={() => this.handleDeleteFileDialogOpen(index)}
+                      />
+                      <WorkspaceViewFileSectionDeleteConfirmation
+                        type="file"
+                        deleteDialog={this.state.deleteFileDialogArray[index]}
+                        handleDeleteDialogClose={
+                          this.handleDeleteFileDialogClose
+                        }
+                        element={element}
+                        index={index}
+                        deleteFile={this.deleteFile}
+                      />
+                    </IconButton>
+                  ) : null}
                 </ListItemSecondaryAction>
               </ListItem>
             ))}
@@ -639,60 +662,70 @@ class WorkspaceViewFileSection extends Component {
           </List>
           <hr />
           <div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <input
-                style={{ marginRight: "8px" }}
-                value={this.state.folderName}
-                onChange={(e) => this.setState({ folderName: e.target.value })}
-                name="folderName"
-                label="FolderName"
-              />
+            {this.props.collaboratorIds.includes(this.state.profileId) ? (
+              <div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <input
+                    style={{ marginRight: "8px" }}
+                    value={this.state.folderName}
+                    onChange={(e) =>
+                      this.setState({ folderName: e.target.value })
+                    }
+                    name="folderName"
+                    label="FolderName"
+                  />
 
-              <StyledButton onClick={this.createFolder}>
-                Create folder
-              </StyledButton>
-            </div>
-            <hr />
+                  <StyledButton onClick={this.createFolder}>
+                    Create folder
+                  </StyledButton>
+                </div>
+                <hr />
 
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <input
-                type="text"
-                placeholder="Rename"
-                disabled={this.state.selectedFile === null}
-                value={this.state.fileName}
-                onChange={(e) => this.setState({ fileName: e.target.value })}
-                name="fileuploadedrename"
-                label="fileuploadedrename"
-              />
-              <input
-                type="file"
-                onClick={(e) => {
-                  e.target.value = null;
-                  this.setState({ selectedFile: null, fileName: "" });
-                }}
-                onChange={(e) =>
-                  this.setState({
-                    selectedFile: e.target.files[0],
-                    fileName: e.target.files[0].name,
-                  })
-                }
-                name="fileuploaded"
-                label="fileuploaded"
-              />
-              <StyledButton onClick={this.uploadFile}>Upload File</StyledButton>
-            </div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <input
+                    type="text"
+                    placeholder="Rename"
+                    disabled={this.state.selectedFile === null}
+                    value={this.state.fileName}
+                    onChange={(e) =>
+                      this.setState({ fileName: e.target.value })
+                    }
+                    name="fileuploadedrename"
+                    label="fileuploadedrename"
+                  />
+                  <input
+                    type="file"
+                    onClick={(e) => {
+                      e.target.value = null;
+                      this.setState({ selectedFile: null, fileName: "" });
+                    }}
+                    onChange={(e) =>
+                      this.setState({
+                        selectedFile: e.target.files[0],
+                        fileName: e.target.files[0].name,
+                      })
+                    }
+                    name="fileuploaded"
+                    label="fileuploaded"
+                  />
+                  <StyledButton onClick={this.uploadFile}>
+                    Upload File
+                  </StyledButton>
+                </div>
+              </div>
+            ) : null}
             {this.state.error && (
               <Snackbar
                 open={this.state.error}
@@ -723,7 +756,7 @@ class WorkspaceViewFileSection extends Component {
                 </Alert>
               </Snackbar>
             )}
-            <hr />
+
           </div>
         </div>
       </div>

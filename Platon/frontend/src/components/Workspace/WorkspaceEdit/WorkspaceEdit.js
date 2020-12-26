@@ -177,11 +177,7 @@ class WorkspaceEdit extends Component {
 
     // deadline handler
     let deadlineEdited = this.state.workspace.deadline
-
-    if(typeof this.state.workspace.deadline == 'string'){
-      deadlineEdited = new Date(this.state.workspace.deadline).toISOString().slice(0, 10);
-    }
-    formData.append("deadline", deadlineEdited);
+    formData.append("deadline", this.state.workspace.deadline);
 
     const url = config.BASE_URL;
     const token = localStorage.getItem("jwtToken");
@@ -258,9 +254,7 @@ class WorkspaceEdit extends Component {
                   handleSkills={this.handleSkills}
                 />
                 <WorkspaceInputDate
-                  deadline={new Date(this.state.workspace.deadline)
-                    .toISOString()
-                    .slice(0, 10)}
+                  deadline={this.state.workspace.deadline.replaceAll(".", "-")}
                   handleDeadline={this.handleDeadline}
                 />
                 <hr/>
