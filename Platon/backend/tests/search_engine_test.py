@@ -271,12 +271,17 @@ class UpcomingEventsSearchTest(BaseTest):
     def setUp(self):
         upcoming_events = [
             UpcomingEvent("1st CFP 19th Annual Industrial Simulation Conference, June 2-4, 2021, University of Malta, Valletta, Malta",
-                          "ISC 2021", "Valletta, Malta", "Jun 2, 2021 - Jun 4, 2021", "Feb 26, 2021",
+                          "ISC 2021", "Valletta, Malta", "Jun 20, 2021 - Jun 24, 2021", "Feb 26, 2021",
                           "http://www.wikicfp.com/cfp/servlet/event.showcfp?eventid=120540&amp;copyownerid=10532"),
             UpcomingEvent(
                 "4th Workshop on Animation in Virtual and Augmented Environments (ANIVAE)",
                 "ANIVAE 2021", "Lisbon, Portugal", "Mar 28, 2021 - Mar 28, 2021", "Jan 10, 2021",
-                "http://www.wikicfp.com/cfp/servlet/event.showcfp?eventid=120539&amp;copyownerid=106130"),        ]
+                "http://www.wikicfp.com/cfp/servlet/event.showcfp?eventid=120539&amp;copyownerid=106130"),
+            UpcomingEvent(
+                "Simulation Example",
+                "SE", "Istanbul, Turkey", "Jun 3, 2021 - Jun 4, 2021", "Jun 26, 2021",
+                "http://www.wikicfp.com/cfp/servlet/event.showcfp?eventid=120540&amp;copyownerid=10532")
+        ]
 
         for upcoming_event in upcoming_events:
             db.session.add(upcoming_event)
@@ -291,12 +296,21 @@ class UpcomingEventsSearchTest(BaseTest):
             "result_list": [
                 {
                     "acronym": "ISC 2021",
-                    "date": "Jun 2, 2021 - Jun 4, 2021",
+                    "date": "Jun 20, 2021 - Jun 24, 2021",
                     "deadline": "Feb 26, 2021",
                     "id": 1,
                     "link": "http://www.wikicfp.com/cfp/servlet/event.showcfp?eventid=120540&amp;copyownerid=10532",
                     "location": "Valletta, Malta",
                     "title": "1st CFP 19th Annual Industrial Simulation Conference, June 2-4, 2021, University of Malta, Valletta, Malta"
+                },
+                {
+                    "acronym": "SE",
+                    "date": "Jun 3, 2021 - Jun 4, 2021",
+                    "deadline": "Jun 26, 2021",
+                    "id": 3,
+                    "link": "http://www.wikicfp.com/cfp/servlet/event.showcfp?eventid=120540&amp;copyownerid=10532",
+                    "location": "Istanbul, Turkey",
+                    "title": "Simulation Example"
                 }
             ]
         }
@@ -310,7 +324,7 @@ class UpcomingEventsSearchTest(BaseTest):
             "result_list": [
                 {
                     "acronym": "ISC 2021",
-                    "date": "Jun 2, 2021 - Jun 4, 2021",
+                    "date": "Jun 20, 2021 - Jun 24, 2021",
                     "deadline": "Feb 26, 2021",
                     "id": 1,
                     "link": "http://www.wikicfp.com/cfp/servlet/event.showcfp?eventid=120540&amp;copyownerid=10532",
@@ -323,18 +337,46 @@ class UpcomingEventsSearchTest(BaseTest):
         self.assertEqual(expected_result, json.loads(actual_response.data))
 
     def test_deadline_search(self):
-        actual_response = self.client.get("/api/search_engine/upcoming_events", query_string={"search_query": "Jan 10"})
+        actual_response = self.client.get("/api/search_engine/upcoming_events", query_string={"search_query": "simulation", "deadline_filter": "Jun 10"})
         expected_result = {
             "number_of_pages": 1,
             "result_list": [
                 {
-                    "acronym": "ANIVAE 2021",
-                    "date": "Mar 28, 2021 - Mar 28, 2021",
-                    "deadline": "Jan 10, 2021",
-                    "id": 2,
-                    "link": "http://www.wikicfp.com/cfp/servlet/event.showcfp?eventid=120539&amp;copyownerid=106130",
-                    "location": "Lisbon, Portugal",
-                    "title": "4th Workshop on Animation in Virtual and Augmented Environments (ANIVAE)"
+                    "acronym": "SE",
+                    "date": "Jun 3, 2021 - Jun 4, 2021",
+                    "deadline": "Jun 26, 2021",
+                    "id": 3,
+                    "link": "http://www.wikicfp.com/cfp/servlet/event.showcfp?eventid=120540&amp;copyownerid=10532",
+                    "location": "Istanbul, Turkey",
+                    "title": "Simulation Example"
+                }
+            ]
+        }
+        self.assertEqual(200, actual_response.status_code)
+        self.assertEqual(expected_result, json.loads(actual_response.data))
+
+    def test_sort(self):
+        actual_response = self.client.get("/api/search_engine/upcoming_events", query_string={"search_query": "simulation", "sorting_criteria": "1"})
+        expected_result = {
+            "number_of_pages": 1,
+            "result_list": [
+                {
+                    "acronym": "SE",
+                    "date": "Jun 3, 2021 - Jun 4, 2021",
+                    "deadline": "Jun 26, 2021",
+                    "id": 3,
+                    "link": "http://www.wikicfp.com/cfp/servlet/event.showcfp?eventid=120540&amp;copyownerid=10532",
+                    "location": "Istanbul, Turkey",
+                    "title": "Simulation Example"
+                },
+                {
+                    "acronym": "ISC 2021",
+                    "date": "Jun 20, 2021 - Jun 24, 2021",
+                    "deadline": "Feb 26, 2021",
+                    "id": 1,
+                    "link": "http://www.wikicfp.com/cfp/servlet/event.showcfp?eventid=120540&amp;copyownerid=10532",
+                    "location": "Valletta, Malta",
+                    "title": "1st CFP 19th Annual Industrial Simulation Conference, June 2-4, 2021, University of Malta, Valletta, Malta"
                 }
             ]
         }

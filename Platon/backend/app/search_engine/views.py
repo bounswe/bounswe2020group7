@@ -12,6 +12,8 @@ from app.search_engine.forms import WorkspaceSearchForm,ws_search_parser
 from app.workspace_system.models import Contribution
 from app.upcoming_events.models import UpcomingEvent
 from app.search_engine.forms import UpcomingEventsSearchForm, upcoming_events_search_parser
+from string import digits
+from datetime import datetime
 
 from app import api, db
 import math
@@ -351,13 +353,14 @@ class UpcomingEventsSearchAPI(Resource):
             result_list = []
             # Score of each user record
             result_id_score = []
+
+            # Search tokens for title, acronym, location, date or deadline match
             for token, score in tokens:
                 try:
-                    query = '(LOWER(id) REGEXP ".*{0}.*" OR LOWER(title) REGEXP ".*{0}.*" \
-                    OR LOWER(acronym) REGEXP ".*{0}.*" OR LOWER(location) REGEXP ".*{0}.*") \
-                    OR LOWER(date) REGEXP ".*{0}.*" OR LOWER(deadline) REGEXP ".*{0}.*" OR LOWER(link) REGEXP ".*{0}.*"'  \
+                    query = '(LOWER(title) REGEXP ".*{0}.*" \
+                    OR LOWER(acronym) REGEXP ".*{0}.*" OR LOWER(location) REGEXP ".*{0}.*")'  \
                     .format(token)
-                    sql_statement = "SELECT id,title,acronym,location,date,deadline,link FROM upcoming_events WHERE {}".format(query)
+                    sql_statement = "SELECT * FROM upcoming_events WHERE {}".format(query)
                     result = db.engine.execute(sql_statement)
                     for upcoming_event in result:
                         id_list = [i[0] for i in result_id_score]
@@ -374,27 +377,63 @@ class UpcomingEventsSearchAPI(Resource):
                 except:
                     return make_response(jsonify({"error": "Database Connection Problem."}), 500)
 
-                # Sort result ids according to their scores
-                sorted_id_list = SearchEngine.sort_ids(result_id_score)
-                sorted_result_list = []
-                for upcoming_event_id, score in sorted_id_list:
-                    index = [upcoming_event["id"] for upcoming_event in result_list].index(upcoming_event_id)
-                    sorted_result_list.append(result_list[index])
-                number_of_pages = 1
-                # Apply Pagination
-                if form.page.data is not None and form.per_page.data is not None:
-                    per_page = form.per_page.data
-                    number_of_pages = math.ceil(len(sorted_id_list) / per_page)
-                    page = form.page.data if form.page.data < number_of_pages else number_of_pages - 1
-                    sorted_result_list = sorted_result_list[page * per_page:(page + 1) * per_page]
-                # Add Search History Item
-                try:
-                    auth_token = request.headers.get('auth_token')
-                    SearchEngine.add_search_history_item(decode_token(auth_token), search_query, int(SearchType.UPCOMING_EVENT))
-                except:
-                    pass
-                # Remove Non-Valid Users
-                return make_response(jsonify({"number_of_pages": number_of_pages, "result_list": sorted_result_list}))
+            # Search tokens for deadline match
+            deadline_filter_list = []
+            if form.deadline_filter.data != '':
+                for result in result_list:
+                    event_deadline = result.get("deadline")
+                    event_deadline = SearchEngine.remove_punctuation(event_deadline)
+                    remove_digits = str.maketrans('', '', digits)
+                    filter_data = form.deadline_filter.data.translate(remove_digits)
+                    filter_data = SearchEngine.remove_punctuation(filter_data)
+                    if filter_data in event_deadline:
+                        deadline_filter_list.append(result)
+                    result_list = deadline_filter_list
+            # Search tokens for date match
+            date_filter_list = []
+            if form.date_filter.data != '':
+                for result in result_list:
+                    event_date = result.get("date")
+                    event_date = SearchEngine.remove_punctuation(event_date)
+                    remove_digits = str.maketrans('', '', digits)
+                    filter_data = form.date_filter.data.translate(remove_digits)
+                    filter_data = SearchEngine.remove_punctuation(filter_data)
+                    if filter_data in event_date:
+                        date_filter_list.append(result)
+                    result_list = date_filter_list
+            sorted_result_list = []
+            # Sort result ids according to their scores
+            if form.sorting_criteria.data is not None:
+                # Sort Results according to Sorting Criteria
+                if form.sorting_criteria.data == 0:
+                    sorted_result_list = SearchEngine.sort_results(result_list, ["title"], False)
+                    result_list = sorted_result_list
+                else:
+                    dates = []
+                    for result in result_list:
+                        date = result.get("date")
+                        if date != "N/A":
+                            dates.append(date)
+
+                    dates.sort(key = lambda date: datetime.strptime(date[0:12].strip(), '%b %d, %Y'))
+                    for date in dates:
+                        for result in result_list:
+                            if result.get("date") == date:
+                                sorted_result_list.append(result)
+                    result_list = sorted_result_list
+
+            number_of_pages = 1
+            if form.page.data is not None and form.per_page.data is not None:
+                per_page = form.per_page.data
+                number_of_pages = math.ceil(len(result_list) / per_page)
+                page = form.page.data if form.page.data < number_of_pages else number_of_pages - 1
+                result_list = result_list[page * per_page:(page + 1) * per_page]
+            try:
+                auth_token = request.headers.get('auth_token')
+                SearchEngine.add_search_history_item(decode_token(auth_token), search_query, int(SearchType.WORKSPACE))
+            except:
+                pass
+            return make_response(jsonify({"number_of_pages": number_of_pages, "result_list": result_list}))
 
         else:
             return make_response(jsonify({"error": "Missing data fields or invalid data."}), 400)
