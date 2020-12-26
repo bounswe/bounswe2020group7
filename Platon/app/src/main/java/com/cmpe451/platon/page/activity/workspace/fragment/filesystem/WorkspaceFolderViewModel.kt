@@ -9,6 +9,8 @@ class WorkspaceFolderViewModel:ViewModel() {
     var getFolderResourceResponse = repository.foldersResourceResponse
     var getAddUpdateDeleteFolderResourceResponse = repository.addUpdateDeleteFolderResourceResponse
 
+    var getAddUpdateDeleteFileResourceResponse = repository.addUpdateDeleteFileResourceResponse
+
     var getAddFileToWorkspaceResourceResponse=repository.addFileToWorkspaceResourceResponse
 
     fun getFolder(workspaceId:Int, path:String, token:String){
@@ -29,6 +31,10 @@ class WorkspaceFolderViewModel:ViewModel() {
 
     fun uploadFile(workspaceId: Int, path: RequestBody, fileName:RequestBody, file: RequestBody, token: String){
         repository.uploadFile(workspaceId, path,fileName ,file ,token)
+    }
+
+    fun deleteFile(workspaceId: Int, cwd: String, file: String, token: String) {
+        repository.deleteFile(workspaceId, cwd, file, token)
     }
 
 }

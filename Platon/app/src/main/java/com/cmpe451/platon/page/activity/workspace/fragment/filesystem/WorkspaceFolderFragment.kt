@@ -4,17 +4,14 @@ import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
-import android.content.Intent.ACTION_GET_CONTENT
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -134,8 +131,31 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
                         dialog.dismiss()
                     }
                 }
-
             })
+
+        mWorkspaceFolderViewModel.getAddUpdateDeleteFileResourceResponse.observe(viewLifecycleOwner, {
+            when (it.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    getFolder(cwd)
+                    mWorkspaceFolderViewModel.getAddUpdateDeleteFileResourceResponse.value =
+                        Resource.Done()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
+                    mWorkspaceFolderViewModel.getAddUpdateDeleteFileResourceResponse.value =
+                        Resource.Done()
+
+                }
+                Resource.Done::class.java -> {
+                    dialog.dismiss()
+                }
+            }
+
+
+        })
+
+
 
     }
 
@@ -351,16 +371,25 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
         )
     }
 
-    override fun onEditFileClicked(folder: String) {
+    override fun onEditFileClicked(fileName: String) {
         findNavController().navigate(WorkspaceFolderFragmentDirections.actionWorkspaceFolderFragmentToWorkspaceEditorFragment())
     }
 
-    override fun onFileNameClicked(folder: String) {
-        TODO("Not yet implemented")
+    override fun onFileNameClicked(fileName: String) {
+        //TODO("Not yet implemented")
     }
 
-    override fun onDeleteFileClicked(folder: String) {
-        TODO("Not yet implemented")
+    override fun onDeleteFileClicked(fileName: String) {
+        AlertDialog.Builder(requireContext()).setMessage("This cannot be undone!").setPositiveButton("Delete") {_,_->
+            mWorkspaceFolderViewModel.deleteFile(
+                (activity as WorkspaceActivity).workspace_id!!,
+                cwd,
+                fileName,
+                (activity as WorkspaceActivity).token!!
+            )
+        }.setCancelable(true).setNegativeButton("No", null).show()
+
+
     }
 
 }

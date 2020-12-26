@@ -38,9 +38,9 @@ class FilesAdapter(private val data: ArrayList<String>, private val filesButtonC
     }
 
     interface FilesButtonClickListener{
-        fun onEditFileClicked(folder:String)
-        fun onFileNameClicked(folder: String)
-        fun onDeleteFileClicked(folder: String)
+        fun onEditFileClicked(fileName:String)
+        fun onFileNameClicked(fileName: String)
+        fun onDeleteFileClicked(fileName: String)
     }
 
     // Create new views (invoked by the layout manager)

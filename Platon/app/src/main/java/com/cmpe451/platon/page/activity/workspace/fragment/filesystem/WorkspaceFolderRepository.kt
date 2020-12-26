@@ -18,6 +18,8 @@ class WorkspaceFolderRepository {
     val addUpdateDeleteFolderResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
 
     val addFileToWorkspaceResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
+    val addUpdateDeleteFileResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
+
 
 
     fun uploadFile(workspaceId: Int, path: RequestBody, fileName:RequestBody, file:RequestBody, token: String){
@@ -121,6 +123,27 @@ class WorkspaceFolderRepository {
                     response.errorBody() != null -> addUpdateDeleteFolderResourceResponse.value = Resource.Error(
                         JSONObject(response.errorBody()!!.string()).get("error").toString())
                     else -> addUpdateDeleteFolderResourceResponse.value = Resource.Error("Unknown error!")
+                }
+                response.errorBody()?.close()
+            }
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+        })
+    }
+
+
+    fun deleteFile(workspaceId: Int, cwd: String, file: String, token: String) {
+        addUpdateDeleteFileResourceResponse.value =Resource.Loading()
+        val service = RetrofitClient.getService()
+        val call = service.deleteFile(workspaceId, cwd, file, token)
+        call.enqueue(object : Callback<JsonObject?> {
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when{
+                    response.isSuccessful -> addUpdateDeleteFileResourceResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> addUpdateDeleteFileResourceResponse.value = Resource.Error(
+                        JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> addUpdateDeleteFileResourceResponse.value = Resource.Error("Unknown error!")
                 }
                 response.errorBody()?.close()
             }

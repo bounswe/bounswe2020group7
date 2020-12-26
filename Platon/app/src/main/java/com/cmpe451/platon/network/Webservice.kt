@@ -335,4 +335,12 @@ interface Webservice {
     fun quitWorkspace(@Field("workspace_id") workspace_id: Int,
                      @Header("auth_token") token: String): Call<JsonObject?>
 
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "api/file_system/file",hasBody = true)
+    fun deleteFile(
+        @Field("workspace_id") workspaceId: Int,
+        @Field("path") cwd: String,
+        @Field("filename") file: String,
+        @Header("auth_token") token: String):Call<JsonObject?>
+
 }
