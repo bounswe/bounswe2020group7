@@ -378,29 +378,39 @@ class UpcomingEventsSearchAPI(Resource):
                     return make_response(jsonify({"error": "Database Connection Problem."}), 500)
 
             # Search tokens for deadline match
-            deadline_filter_list = []
-            if form.deadline_filter.data != '':
+            deadline_filter_start_list = []
+            if form.deadline_filter_start.data is not None:
                 for result in result_list:
                     event_deadline = result.get("deadline")
-                    event_deadline = SearchEngine.remove_punctuation(event_deadline)
-                    remove_digits = str.maketrans('', '', digits)
-                    filter_data = form.deadline_filter.data.translate(remove_digits)
-                    filter_data = SearchEngine.remove_punctuation(filter_data)
-                    if filter_data in event_deadline:
-                        deadline_filter_list.append(result)
-                    result_list = deadline_filter_list
-            # Search tokens for date match
-            date_filter_list = []
-            if form.date_filter.data != '':
+                    filter_data = form.deadline_filter_start.data
+                    if datetime.strptime(event_deadline, '%b %d, %Y') >= filter_data:
+                        deadline_filter_start_list.append(result)
+                    result_list = deadline_filter_start_list
+            deadline_filter_end_list = []
+            if form.deadline_filter_end.data is not None:
                 for result in result_list:
-                    event_date = result.get("date")
-                    event_date = SearchEngine.remove_punctuation(event_date)
-                    remove_digits = str.maketrans('', '', digits)
-                    filter_data = form.date_filter.data.translate(remove_digits)
-                    filter_data = SearchEngine.remove_punctuation(filter_data)
-                    if filter_data in event_date:
-                        date_filter_list.append(result)
-                    result_list = date_filter_list
+                    event_deadline = result.get("deadline")
+                    filter_data = form.deadline_filter_end.data
+                    if datetime.strptime(event_deadline, '%b %d, %Y') < filter_data:
+                        deadline_filter_end_list.append(result)
+                    result_list = deadline_filter_end_list
+            # Search tokens for date match
+            date_filter_start_list = []
+            if form.date_filter_start.data is not None:
+                for result in result_list:
+                    event_deadline = result.get("date")
+                    filter_data = form.date_filter_start.data
+                    if datetime.strptime(event_deadline[0:12].strip(), '%b %d, %Y') >= filter_data:
+                        date_filter_start_list.append(result)
+                    result_list = date_filter_start_list
+            date_filter_end_list = []
+            if form.date_filter_end.data is not None:
+                for result in result_list:
+                    event_deadline = result.get("date")
+                    filter_data = form.date_filter_end.data
+                    if datetime.strptime(event_deadline[0:12].strip(), '%b %d, %Y') < filter_data:
+                        date_filter_end_list.append(result)
+                    result_list = date_filter_end_list
             sorted_result_list = []
             # Sort result ids according to their scores
             if form.sorting_criteria.data is not None:

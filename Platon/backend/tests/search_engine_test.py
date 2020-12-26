@@ -9,6 +9,7 @@ from app.upcoming_events.models import UpcomingEvent
 
 from app import db
 import json
+import datetime
 
 class SearchHistoryTests(BaseTest):
     
@@ -337,10 +338,19 @@ class UpcomingEventsSearchTest(BaseTest):
         self.assertEqual(expected_result, json.loads(actual_response.data))
 
     def test_deadline_search(self):
-        actual_response = self.client.get("/api/search_engine/upcoming_events", query_string={"search_query": "simulation", "deadline_filter": "Jun 10"})
+        actual_response = self.client.get("/api/search_engine/upcoming_events", query_string={"search_query": "simulation", "deadline_filter_start": datetime.datetime(2020,12,1,23,59,59)})
         expected_result = {
             "number_of_pages": 1,
             "result_list": [
+                {
+                    "acronym": "ISC 2021",
+                    "date": "Jun 20, 2021 - Jun 24, 2021",
+                    "deadline": "Feb 26, 2021",
+                    "id": 1,
+                    "link": "http://www.wikicfp.com/cfp/servlet/event.showcfp?eventid=120540&amp;copyownerid=10532",
+                    "location": "Valletta, Malta",
+                    "title": "1st CFP 19th Annual Industrial Simulation Conference, June 2-4, 2021, University of Malta, Valletta, Malta"
+                },
                 {
                     "acronym": "SE",
                     "date": "Jun 3, 2021 - Jun 4, 2021",

@@ -1,5 +1,6 @@
-from wtforms import Form, StringField, IntegerField, BooleanField, validators
+from wtforms import Form, StringField, IntegerField, BooleanField, validators, DateTimeField
 from flask_restplus import reqparse
+import datetime
 
 class UserSearchForm(Form):
     search_query = StringField("search_query",validators=[validators.DataRequired()])
@@ -38,16 +39,20 @@ ws_search_parser.add_argument('auth_token', type=str,help="Authantication Token(
 
 class UpcomingEventsSearchForm(Form):
     search_query = StringField("search_query",validators=[validators.DataRequired()])
-    date_filter = StringField("date_filter")
-    deadline_filter = StringField("deadline_filter")
+    date_filter_start = DateTimeField("date_filter_start", default=None)
+    date_filter_end = DateTimeField("date_filter_end", default=None)
+    deadline_filter_start = DateTimeField("deadline_filter_start", default=None)
+    deadline_filter_end = DateTimeField("deadline_filter_end", default=None)
     sorting_criteria = IntegerField("sorting_criteria",validators=[validators.NumberRange(min=0, max=1),validators.optional()])
     page = IntegerField("page")
     per_page = IntegerField("per_page")
 
 upcoming_events_search_parser = reqparse.RequestParser()
 upcoming_events_search_parser.add_argument('search_query',required=True,type=str,help="Search Query",location='args')
-upcoming_events_search_parser.add_argument('date_filter',type=str,help="Date Filter",location='args')
-upcoming_events_search_parser.add_argument('deadline_filter',type=str,help="Deadline Filter",location='args')
+upcoming_events_search_parser.add_argument('date_filter_start',type=datetime.datetime,help="Inclusive.",location='args')
+upcoming_events_search_parser.add_argument('date_filter_end',type=datetime.datetime,help="Exclusive.",location='args')
+upcoming_events_search_parser.add_argument('deadline_filter_start',type=datetime.datetime,help="Inclusive.",location='args')
+upcoming_events_search_parser.add_argument('deadline_filter_end',type=datetime.datetime,help="Exclusive.",location='args')
 upcoming_events_search_parser.add_argument('sorting_criteria',type=int,help="None => Semantic Rating // 0 => Alphabetical Order(A=>Z) // 1 => Date Order",location='args')
 upcoming_events_search_parser.add_argument('page',type=int,help="Page ID(0-Indexed)",location='args')
 upcoming_events_search_parser.add_argument('per_page',type=int,help="Number of Records in a Page",location='args')
