@@ -28,3 +28,9 @@ class Comments(db.Model):
     timestamp = db.Column(db.DateTime,default=db.func.now(),nullable=False)
     rate = db.Column(db.SmallInteger,nullable=False)
     text = db.Column(db.String(300))
+    
+    def __init__(self, owner_id, commented_user_id, rate, text):
+        self.owner_id = owner_id
+        self.commented_user_id = commented_user_id
+        self.rate = rate
+        self.text = text
