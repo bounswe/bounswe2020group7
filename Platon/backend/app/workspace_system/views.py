@@ -1185,7 +1185,7 @@ class GetUserWorkspaces(Resource):
             try:
                 contributions = Contribution.query.filter(Contribution.user_id==form.user_id.data).all()
             except:
-                return make_response(jsonify({"err": "Database Connection Error"}),500)
+                return make_response(jsonify({"error": "Database Connection Error"}),500)
             workspaces = []
             for contribution in contributions:
                 if contribution.is_active == 0:
@@ -1193,19 +1193,19 @@ class GetUserWorkspaces(Resource):
                 try:
                     ws = Workspace.query.filter((Workspace.id == contribution.workspace_id)&(Workspace.is_private == False)).first()
                 except:
-                    return make_response(jsonify({"err": "Database Connection Error"}),500)
+                    return make_response(jsonify({"error": "Database Connection Error"}),500)
                 if ws is None:
                     continue
                 try:
                     contributors = Contribution.query.filter(Contribution.workspace_id == ws.id).all()
                 except:
-                    return make_response(jsonify({"err": "Database Connection Error"}),500)
+                    return make_response(jsonify({"error": "Database Connection Error"}),500)
                 contributor_list = []
                 for contributor in contributors:
                     try:
                         user = User.query.get(contributor.user_id)
                     except:
-                        return make_response(jsonify({"err": "Database Connection Error"}),500)
+                        return make_response(jsonify({"error": "Database Connection Error"}),500)
                     contributor_list.append({
                             "id": user.id,
                             "name": user.name,
@@ -1242,7 +1242,7 @@ class GetSelfWorkspaces(Resource):
         try:
             contributions = Contribution.query.filter(Contribution.user_id==user_id).all()
         except:
-            return make_response(jsonify({"err": "Database Connection Error"}),500)
+            return make_response(jsonify({"error": "Database Connection Error"}),500)
         workspaces = []
         for contribution in contributions:
             if contribution.is_active == 0:
@@ -1250,17 +1250,17 @@ class GetSelfWorkspaces(Resource):
             try:
                 ws = Workspace.query.get(contribution.workspace_id)
             except:
-                return make_response(jsonify({"err": "Database Connection Error"}),500)
+                return make_response(jsonify({"error": "Database Connection Error"}),500)
             try:
                 contributors = Contribution.query.filter(Contribution.workspace_id == ws.id).all()
             except:
-                return make_response(jsonify({"err": "Database Connection Error"}),500)
+                return make_response(jsonify({"error": "Database Connection Error"}),500)
             contributor_list = []
             for contributor in contributors:
                 try:
                     user = User.query.get(contributor.user_id)
                 except:
-                    return make_response(jsonify({"err": "Database Connection Error"}),500)
+                    return make_response(jsonify({"error": "Database Connection Error"}),500)
                 contributor_list.append({
                         "id": user.id,
                         "name": user.name,
@@ -1293,7 +1293,7 @@ class TrendingWorkspacesAPI(Resource):
             try:
                 all_workspaces = Workspace.query.order_by(Workspace.trending_score.desc()).all()
             except:
-                return make_response(jsonify({"err": "Database Connection Error"}),500)
+                return make_response(jsonify({"error": "Database Connection Error"}),500)
             all_workspaces = all_workspaces[:form.number_of_workspaces.data]
             workspace_response = [{
                 "id": workspace.id,
@@ -1306,13 +1306,13 @@ class TrendingWorkspacesAPI(Resource):
                 try:
                     contributors = Contribution.query.filter(Contribution.workspace_id == workspace["id"]).all()
                 except:
-                    return make_response(jsonify({"err": "Database Connection Error"}),500)
+                    return make_response(jsonify({"error": "Database Connection Error"}),500)
                 contributor_list = []
                 for contributor in contributors:
                     try:
                         user = User.query.get(contributor.user_id)
                     except:
-                        return make_response(jsonify({"err": "Database Connection Error"}),500)
+                        return make_response(jsonify({"error": "Database Connection Error"}),500)
                     contributor_list.append({
                         "id": user.id,
                         "name": user.name,
@@ -1321,7 +1321,7 @@ class TrendingWorkspacesAPI(Resource):
                 workspace_response[index]["contributor_list"] = contributor_list
             return make_response(jsonify({"trending_projects": workspace_response}),200)
         else:
-            return make_response(jsonify({"err": "Invalid Input Format"}),400)
+            return make_response(jsonify({"error": "Invalid Input Format"}),400)
 
 
 @workspace_system_ns.route("/invitations")
@@ -1379,8 +1379,15 @@ class CollaborationInvitationsAPI(Resource):
                         active_contribution = Contribution.query.filter_by(workspace_id=requested_workspace.id, user_id=invitee_user.id, is_active=True).first()
                         invitation = CollaborationInvitation.query.filter_by(workspace_id=requested_workspace.id, invitee_id=invitee_user.id).first()
                         contributions = Contribution.query.filter_by(workspace_id=requested_workspace.id, is_active=True).all()
-                        if (active_contribution is None) and (invitation is None) and \
-                        (len(contributions) < requested_workspace.max_collaborators) and (requested_workspace.state == 0):
+                        if active_contribution:
+                            return make_response(jsonify({"error" : "Invitee user is already an active contributor of this workspace."}), 409)
+                        elif invitation:
+                            return make_response(jsonify({"error" : "There is already an invitation sent to this workspace."}), 409)
+                        elif not (len(contributions) < requested_workspace.max_collaborators):
+                            return make_response(jsonify({"error" : "The workspace has already reached its maximum number of collaborators."}), 409)
+                        elif requested_workspace.state != 0:
+                            return make_response(jsonify({"error" : "This workspace is not in 'search for collaborators' state."}), 409)
+                        else:
                             new_invitation = CollaborationInvitation(workspace_id=requested_workspace.id, invitee_id=invitee_user.id, invitor_id=invitor_id)
                             try:
                                 db.session.add(new_invitation)
@@ -1389,11 +1396,6 @@ class CollaborationInvitationsAPI(Resource):
                                 return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
                             else:
                                 return make_response(jsonify({"message" : "Invitation has been successfully created."}), 201)
-                        else:
-                            return make_response(jsonify({"error" : "Invitee user is already an active contributor of this workspace OR \
-                                there is already an invitation sent to the invitee user for this workspace. OR \
-                                the workspace has already reached its maximum number of collaborators OR \
-                                this workspace is not in 'search for collaborators' state."}), 409)
                     else:
                         return make_response(jsonify({"error" : "You are not the creator of this workspace, you cannot invite users to this workspace."}), 401)
                 else:
@@ -1566,8 +1568,15 @@ class CollaborationApplicationsAPI(Resource):
                     active_contribution = Contribution.query.filter_by(workspace_id=requested_workspace.id, user_id=applicant_id, is_active=True).first()
                     application = CollaborationApplication.query.filter_by(workspace_id=requested_workspace.id, applicant_id=applicant_id).first()
                     contributions = Contribution.query.filter_by(workspace_id=requested_workspace.id, is_active=True).all()
-                    if (active_contribution is None) and (application is None) and \
-                    (len(contributions) < requested_workspace.max_collaborators) and (requested_workspace.state == 0):
+                    if active_contribution:
+                        return make_response(jsonify({"error" : "Applicant user is already an active contributor of this workspace."}), 409)
+                    elif application:
+                        return make_response(jsonify({"error" : "There is already an application sent to this workspace."}), 409)
+                    elif not (len(contributions) < requested_workspace.max_collaborators):
+                        return make_response(jsonify({"error" : "The workspace has already reached its maximum number of collaborators."}), 409)
+                    elif requested_workspace.state != 0:
+                        return make_response(jsonify({"error" : "This workspace is not in 'search for collaborators' state."}), 409)
+                    else:
                         new_application = CollaborationApplication(workspace_id=requested_workspace.id, applicant_id=applicant_id)
                         try:
                             db.session.add(new_application)
@@ -1576,11 +1585,6 @@ class CollaborationApplicationsAPI(Resource):
                             return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
                         else:
                             return make_response(jsonify({"message" : "Application has been successfully created."}), 201)
-                    else:
-                        return make_response(jsonify({"error" : "Invitee user is already an active contributor of this workspace OR \
-                            there is already an application sent to the invitee user for this workspace. OR \
-                            the workspace has already reached its maximum number of collaborators OR \
-                            this workspace is not in 'search for collaborators' state."}), 409)
                 else:
                     return make_response(jsonify({"error" : "The workspace does not exist."}), 404)
         else:
@@ -1621,7 +1625,7 @@ class CollaborationApplicationsAPI(Resource):
                 # If no, an error gets raised.
                 if requester_id in [contribution.user_id for contribution in active_contributors]:
                     try:
-                        # Checks whether the requester want to view a specific single application or all the invitations sent to them.
+                        # Checks whether the requester want to view a specific single application or all the applications sent to the given workspace.
                         # Depending on the case, application(s) is retrieved from the database.
                         if form.application_id.data is not None:
                             applications_list = CollaborationApplication.query.filter_by(id=form.application_id.data, workspace_id=form.workspace_id.data).all()
