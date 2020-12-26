@@ -1269,7 +1269,8 @@ class GetSelfWorkspaces(Resource):
                 "description": ws.description,
                 "deadline": ws.deadline,
                 "max_collaborators": ws.max_collaborators,
-                "contributors": contributor_list
+                "contributors": contributor_list,
+                "creator_id": ws.creator_id
             }
             workspaces.append(ws_dict)
         return make_response(jsonify({"workspaces": workspaces}),200)
