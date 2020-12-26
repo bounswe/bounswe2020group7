@@ -51,7 +51,7 @@ class WorkspaceInvitationsAdapter(private val data: ArrayList<WorkspaceInvitatio
         // - replace the contents of the view with that element
 
         holder.binding.tvDateTime.visibility  =View.GONE
-        holder.binding.nameBlock.text = data[position].description
+        holder.binding.nameBlock.text = data[position].inviter_fullname
 
         holder.bindData(data[position], invitationButtonClickListener, position)
     }

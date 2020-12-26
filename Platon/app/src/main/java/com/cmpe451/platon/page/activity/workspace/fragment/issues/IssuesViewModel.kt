@@ -26,15 +26,11 @@ class IssuesViewModel: ViewModel(){
     }
 
     fun getIssues(workSpaceId: Int, page: Int, paginationSize: Int, authToken: String) {
-        if(authToken != null){
-            repository.getIssues(workSpaceId, page, paginationSize, authToken)
-        }
+        repository.getIssues(workSpaceId, page, paginationSize, authToken)
     }
 
     fun addIssues(workSpaceId: Int, title: String, description: String,deadline: String, authToken: String) {
-        if(authToken != null){
-            repository.addIssues(workSpaceId, title, description, deadline, authToken)
-        }
+        repository.addIssues(workSpaceId, title, description, deadline, authToken)
     }
 
 

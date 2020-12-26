@@ -363,7 +363,7 @@ interface Webservice {
                  @Field("title") title: String,
                  @Field("description") description: String,
                  @Field("deadline") deadline: String ,
-                 @Field("auth_token") authToken: String): Call<JsonObject?>
+                 @Header("auth_token") authToken: String): Call<JsonObject?>
 
     @FormUrlEncoded
     @PUT("api/workspaces/issue")

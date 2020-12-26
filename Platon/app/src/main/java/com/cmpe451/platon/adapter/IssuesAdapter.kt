@@ -83,7 +83,6 @@ class IssuesAdapter(private val data: ArrayList<Issue>, private val context: Con
     }
 
     fun submitElements(newList:ArrayList<Issue>){
-        data.clear()
         data.addAll(newList)
         this.notifyDataSetChanged()
     }
