@@ -69,24 +69,25 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
             binding.addSkillIv.visibility = View.GONE
             binding.infoTitle.setCompoundDrawables(null,null,null,null)
             binding.milestoneTitleTv.setCompoundDrawables(null,null,null,null)
+            binding.workspaceTitleTv.setCompoundDrawables(null,null,binding.workspaceTitleTv.compoundDrawablesRelative[2],null)
         }
         else {
-            binding.workspaceTitleTv.setCompoundDrawables(null,null,null,null)
-
+            binding.workspaceTitleTv.setCompoundDrawables(binding.workspaceTitleTv.compoundDrawablesRelative[0],null,null,null)
         }
+        //TODO
         binding.collabTitleTv.setCompoundDrawables(null,null,null,null)
         mWorkspaceViewModel.fetchWorkspace((activity as WorkspaceActivity).workspace_id!!, (activity as WorkspaceActivity).token!!)
         getMilestones()
     }
 
     private fun getMilestones() {
+        //pagination will be added late TODO
         mWorkspaceViewModel.getMilestones((activity as WorkspaceActivity).workspace_id!!, null, null, (activity as WorkspaceActivity).token!!)
     }
 
     private fun setListeners() {
         if((activity as WorkspaceActivity).isOwner!!){
             binding.infoTitle.setOnClickListener{
-//            findNavController().navigate(WorkspaceFragmentDirections.actionWorkspaceFragmentToEditWorkspaceFragment())
                 onUpdateButtonClicked()
             }
             binding.addSkillIv.setOnClickListener {
@@ -129,8 +130,10 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
                 binding.skillLl.visibility = View.GONE
             }
         }
-        binding.milestoneTitleTv.setOnClickListener {
-            onAddMilestoneClicked()
+        if((activity as WorkspaceActivity).isOwner!!) {
+            binding.milestoneTitleTv.setOnClickListener {
+                onAddMilestoneClicked()
+            }
         }
 
     }

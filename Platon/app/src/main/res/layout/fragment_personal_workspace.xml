@@ -22,8 +22,8 @@
             android:textColor="@color/primary_light"
             android:background="@drawable/view_back_darker"
             android:textSize="@dimen/title_text_size"
-            app:drawableRightCompat="@drawable/ic_add_24dp"
-            app:drawableLeftCompat="@drawable/ic_remove_24px"
+            app:drawableEndCompat="@drawable/ic_add_24dp"
+            app:drawableStartCompat="@drawable/ic_remove_24px"
             />
 
             <TextView
@@ -42,7 +42,7 @@
                 android:textColor="@color/secondary_green"
                 android:textSize="@dimen/project_title_text_size"
                 android:drawablePadding="@dimen/xx_small"
-                app:drawableRightCompat="@drawable/ic_editprofile_24px"
+                app:drawableEndCompat="@drawable/ic_editprofile_24px"
                 />
 
 
@@ -62,7 +62,7 @@
             android:textColor="@color/secondary_orange_transparent"
             android:textSize="18sp"
             android:drawablePadding="@dimen/xx_small"
-            app:drawableRightCompat="@drawable/ic_expand_more_white_24dp" />
+            app:drawableEndCompat="@drawable/ic_expand_more_white_24dp" />
 
 
             <LinearLayout
@@ -142,7 +142,7 @@
                 android:textColor="@color/secondary_orange_transparent"
                 android:textSize="18sp"
                 android:drawablePadding="@dimen/xx_small"
-                app:drawableRightCompat="@drawable/ic_expand_more_white_24dp"
+                app:drawableEndCompat="@drawable/ic_expand_more_white_24dp"
                 />
 
         <LinearLayout
@@ -187,7 +187,7 @@
             android:textColor="@color/secondary_orange_transparent"
             android:textSize="18sp"
             android:drawablePadding="@dimen/xx_small"
-            app:drawableRightCompat="@drawable/ic_expand_more_white_24dp"
+            app:drawableEndCompat="@drawable/ic_expand_more_white_24dp"
             />
         <LinearLayout
             android:layout_width="match_parent"
@@ -234,7 +234,7 @@
             android:textColor="@color/secondary_yellow"
             android:textSize="@dimen/project_title_text_size"
             android:drawablePadding="@dimen/xx_small"
-            app:drawableRightCompat="@drawable/ic_add_24dp"
+            app:drawableEndCompat="@drawable/ic_add_24dp"
             />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -264,7 +264,7 @@
                 android:textColor="@color/secondary_purple"
                 android:textSize="@dimen/project_title_text_size"
                 android:drawablePadding="@dimen/xx_small"
-                app:drawableRightCompat="@drawable/ic_add_24dp"
+                app:drawableEndCompat="@drawable/ic_add_24dp"
                 />
 
         <androidx.recyclerview.widget.RecyclerView

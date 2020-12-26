@@ -23,16 +23,20 @@ class MilestoneAdapter(private val data: ArrayList<Milestone>, private val miles
         fun bindData(binding: MilestoneCellBinding, milestone: Milestone, buttonClickListener: MilestoneButtonClickListener, isOwner: Boolean) {
             if(!isOwner){
                 binding.editMilestoneIv.visibility = View.GONE
+                binding.deleteMilestoneIv.visibility = View.GONE
+            }else{
+                binding.editMilestoneIv.setOnClickListener {
+                    buttonClickListener.onEditMilestoneClicked(milestone)
+                }
+                binding.deleteMilestoneIv.setOnClickListener {
+                    buttonClickListener.onDeleteMilestoneClicked(milestone)
+                }
             }
+
             binding.milestoneTitle.setOnClickListener{
                 buttonClickListener.onMilestoneNameClicked(binding)
             }
-            binding.editMilestoneIv.setOnClickListener {
-                buttonClickListener.onEditMilestoneClicked(milestone)
-            }
-            binding.deleteMilestoneIv.setOnClickListener {
-                buttonClickListener.onDeleteMilestoneClicked(milestone)
-            }
+
             binding.milestoneTitle.text = milestone.title
             binding.milestoneDesc.text = milestone.description
             binding.milestoneDeadline.text = "Deadline: ${milestone.deadline}"
