@@ -115,6 +115,7 @@
     <string name="state_finished_str">Finished</string>
     <string name="is_private_str">Is Private</string>
     <string name="requirement_str">Requirement</string>
+
     <string name="filter_by_skill_str">Filter by Skill</string>
     <string name="filter_by_event_str">Filter by Event</string>
     <string name="link_scholar_str">Link Scholar</string>
@@ -129,4 +130,6 @@
     <string name="issue_add_str">Add Issue</string>
     <string name="assignee">Assignee</string>
     <string name="issue_edit">Edit Issue</string>
+    <string name="folders">Folders</string>
+    <string name="files_str">Files</string>
 </resources>

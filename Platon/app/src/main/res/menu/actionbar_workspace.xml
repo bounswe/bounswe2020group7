@@ -16,5 +16,9 @@
         android:visible="true"
         app:showAsAction="ifRoom" />
 
-
+        android:id="@+id/workspaceFolderFragment"
+        android:icon="@drawable/ic_folder_24px"
+        android:title="@string/register_str"
+        android:visible="true"
+        app:showAsAction="ifRoom" />
 </menu>

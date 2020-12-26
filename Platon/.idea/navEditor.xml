@@ -314,12 +314,15 @@
                     </value>
                   </entry>
                   <entry key="issueDetailFragment">
+                  <entry key="workspaceFolderFragment">
                     <value>
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
                             <option name="x" value="433" />
                             <option name="y" value="908" />
+                            <option name="x" value="530" />
+                            <option name="y" value="-770" />
                           </Point>
                         </option>
                       </LayoutPositions>
@@ -368,6 +371,7 @@
                               </value>
                             </entry>
                             <entry key="action_workspaceFragment_to_issuesFragment">
+                            <entry key="action_workspaceFragment_to_workspaceFolderFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
