@@ -99,7 +99,7 @@ class SearchEngine():
 
     @staticmethod
     def sort_ids(related_id_score_list):
-        return sorted(related_id_score_list, key=lambda tup: tup[1],reverse=True)
+        return sorted(related_id_score_list, key=lambda tup: tup[1])
 
     @staticmethod
     def sort_results(results_list, key_list, reverse):

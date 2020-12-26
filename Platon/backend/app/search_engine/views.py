@@ -430,7 +430,7 @@ class UpcomingEventsSearchAPI(Resource):
                 result_list = result_list[page * per_page:(page + 1) * per_page]
             try:
                 auth_token = request.headers.get('auth_token')
-                SearchEngine.add_search_history_item(decode_token(auth_token), search_query, int(SearchType.WORKSPACE))
+                SearchEngine.add_search_history_item(decode_token(auth_token), search_query, int(SearchType.UPCOMING_EVENT))
             except:
                 pass
             return make_response(jsonify({"number_of_pages": number_of_pages, "result_list": result_list}))
