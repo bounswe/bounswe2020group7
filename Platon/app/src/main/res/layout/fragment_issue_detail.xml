@@ -101,16 +101,6 @@
                 android:textColor="@color/primary_light"
                 android:textSize="@dimen/details_text_size" />
 
-            <TextView
-                android:id="@+id/issue_creator_surname"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/xx_small"
-                android:text="@string/deadline_str"
-                android:textAlignment="center"
-                android:textColor="@color/primary_light"
-                android:textSize="@dimen/details_text_size" />
-
 
         </LinearLayout>
 

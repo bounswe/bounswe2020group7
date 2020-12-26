@@ -129,6 +129,11 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
 
 
     override fun onIssueButtonClicked(binding: IssueCellBinding, position: Int) {
+        sharedPreferences.edit().putString("issue_title", issue[position].title).apply()
+        sharedPreferences.edit().putString("issue_description", issue[position].description).apply()
+        sharedPreferences.edit().putString("issue_id", issue[position].issue_id.toString()).apply()
+        sharedPreferences.edit().putString("issue_deadline", issue[position].deadline).apply()
+        sharedPreferences.edit().putString("issue_creator_name", issue[position].creator_name + " " + issue[position].creator_surname).apply()
         findNavController().navigate(IssuesFragmentDirections.actionIssuesFragmentToIssueDetailFragment())
     }
 

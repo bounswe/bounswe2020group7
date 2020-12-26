@@ -24,12 +24,19 @@ import com.cmpe451.platon.network.models.Comment
 import com.cmpe451.platon.network.models.Issue
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.util.Definitions
+import com.google.android.play.core.assetpacks.t
 import java.util.*
 
 class IssueDetailFragment: Fragment() {
     private lateinit var dialog: AlertDialog
     private val mIssueDetailViewModel: IssueDetailViewModel by viewModels()
     private lateinit var sharedPreferences: SharedPreferences
+    lateinit var issue_id: String
+    lateinit var issue_title: String
+    lateinit var issue_description: String
+    lateinit var issue_creator_name: String
+    lateinit var issue_deadline: String
+
 
     lateinit var binding: FragmentIssueDetailBinding
 
@@ -43,6 +50,11 @@ class IssueDetailFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        issue_id = sharedPreferences.getString("issue_id", null).toString()
+        issue_title = sharedPreferences.getString("issue_title", null).toString()
+        issue_description = sharedPreferences.getString("issue_description", null).toString()
+        issue_creator_name = sharedPreferences.getString("issue_creator_name", null).toString()
+        issue_deadline = sharedPreferences.getString("issue_deadline", null).toString()
         initViews()
         setListeners()
         setObservers()
@@ -80,6 +92,10 @@ class IssueDetailFragment: Fragment() {
 
         val height = resources.displayMetrics.heightPixels
         val width = resources.displayMetrics.widthPixels
+        binding.issueTitle.text = issue_title
+        binding.issueDescriptionTextView.text = issue_description
+        binding.issueCreatorName.text = issue_creator_name
+        binding.issueDeadline.text = issue_deadline
 
         /*
         issueRecyclerView = binding.issuesRecyclerView
@@ -176,22 +192,12 @@ class IssueDetailFragment: Fragment() {
             requireView().parent as ViewGroup,
             false
         )
-        /*
-        tmpBinding.wsTitleEt.setText(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.title)
-        tmpBinding.wsDescriptionEt.setText(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.description)
-        tmpBinding.privateSwitch.isChecked =
-            mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.is_private
-        tmpBinding.wsMaxCollabNumberEt.setText(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.max_collaborators.toString())
-        val x = ArrayAdapter(requireContext(), R.layout.spinner_item, mutableListOf("Loading..."))
-        x.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        tmpBinding.spState.adapter = x
-        (tmpBinding.spState.adapter as ArrayAdapter<String>).clear()
-        (tmpBinding.spState.adapter as ArrayAdapter<String>).add(getString(R.string.state_search_for_collab_str))
-        (tmpBinding.spState.adapter as ArrayAdapter<String>).add(getString(R.string.state_ongoing_str))
-        (tmpBinding.spState.adapter as ArrayAdapter<String>).add(getString(R.string.state_finished_str))
-        tmpBinding.spState.setSelection(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.state)
 
-         */
+        tmpBinding.issueDeadlineEt.setText(issue_deadline)
+        tmpBinding.issueDescriptionEt.setText(issue_description)
+        tmpBinding.issueTitleEt.setText(issue_title)
+
+
         tmpBinding.issueDeadlineEt.setOnTouchListener { _, event ->
 
             if (event.action == MotionEvent.ACTION_DOWN) {
@@ -222,7 +228,6 @@ class IssueDetailFragment: Fragment() {
                     .setMessage("Are you sure you want to delete ?")
                     .setPositiveButton("Delete"
                     ) { _, _ ->
-                        val ert = 0
                         /*
                         mWorkspaceViewModel.deleteWorkspace(
                             (activity as WorkspaceActivity).workspace_id!!,
@@ -254,7 +259,6 @@ class IssueDetailFragment: Fragment() {
                         val deadline =
                             if (tmpBinding.issueDeadlineEt.text.isNullOrEmpty()) null else tmpBinding.issueDeadlineEt.text.toString()
 
-                        val ert = 0
                         /*
                         mWorkspaceViewModel.updateWorkspace(
                             (activity as WorkspaceActivity).workspace_id!!,
@@ -275,6 +279,11 @@ class IssueDetailFragment: Fragment() {
             })
 
             .create().show()
+
+    }
+
+    private fun onAddAssigneeClicked() {
+
 
     }
 
