@@ -20,6 +20,7 @@ class CreateWorkspaceForm(Form):
 	deadline = StringField("Deadline of the new workspace", validators=[validators.optional(), validators.Regexp(regex=date_regex)], filters = [lambda x: x or None])
 	requirements = StringField("The list of the requirements to be able to join the new workspace", validators=[validators.optional(), validate_json], default="null")
 	skills = StringField("The list of the skills required to be able to join the new workspace", validators=[validators.optional(), validate_json], default="null")
+	upcoming_events = StringField("The list of the upcoming events that are related to the new workspace", validators=[validators.optional(), validate_json], default="null")
 create_workspace_parser = reqparse.RequestParser()
 create_workspace_parser.add_argument("title", required=True, type=str, help="Title of the new workspace", location="form")
 create_workspace_parser.add_argument("description", required=True, type=str, help="Description of the new workspace", location="form")
@@ -28,6 +29,7 @@ create_workspace_parser.add_argument("max_collaborators", required=False, type=i
 create_workspace_parser.add_argument("deadline", required=False, type=str, help="Deadline of the new workspace", location="form")
 create_workspace_parser.add_argument("requirements", required=False, type=str, help="The list of the requirements to be able to join the new workspace", location="form")
 create_workspace_parser.add_argument("skills", required=False, type=str, help="The list of the skills required to be able to join the new workspace", location="form")
+create_workspace_parser.add_argument("upcoming_events",required=False, type=str, help="The list of the upcoming events that are related to the new workspace", location="form")
 create_workspace_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
 
 
@@ -48,6 +50,7 @@ class UpdateWorkspaceForm(Form):
 	requirements = StringField("Updated list of the requirements to be able to join the workspace", validators=[validators.optional(), validate_json], default="null")
 	skills = StringField("Updated list of the skills required to be able to join the workspace", validators=[validators.optional(), validate_json], default="null")
 	state = IntegerField("Updated state of the workspace", validators=[validators.optional(), validators.NumberRange(min=0, max=2)])
+	upcoming_events = StringField("Updated list of the upcoming events that are related to the workspace", validators=[validators.optional(), validate_json], default="null")
 update_workspace_parser = reqparse.RequestParser()
 update_workspace_parser.add_argument("workspace_id", required=True, type=int, help="ID of the workspace to be updated", location="form")
 update_workspace_parser.add_argument("title", required=False, type=str, help="Updated title of the new workspace", location="form")
@@ -58,6 +61,7 @@ update_workspace_parser.add_argument("deadline", required=False, type=str, help=
 update_workspace_parser.add_argument("requirements", required=False, type=str, help="Updated list of the requirements to be able to join the new workspace", location="form")
 update_workspace_parser.add_argument("skills", required=False, type=str, help="Updated list of the skills required to be able to join the new workspace", location="form")
 update_workspace_parser.add_argument("state", required=False, type=int, help="Updated state of the workspace", location="form")
+update_workspace_parser.add_argument("upcoming_events",required=False, type=str, help="The list of the upcoming events that are related to the new workspace", location="form")
 update_workspace_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
 
 
@@ -88,7 +92,7 @@ post_issue_parser = reqparse.RequestParser()
 post_issue_parser.add_argument("workspace_id",required=True,type=int,help="ID of the requested workspace", location="form")
 post_issue_parser.add_argument("title", required=True, type=str, help="Title of the new issue", location="form")
 post_issue_parser.add_argument("description", required=True, type=str, help="Description of the new issue", location="form")
-post_issue_parser.add_argument("deadline", required=False, type=datetime.datetime, help="Deadline of the new issue", location="form")
+post_issue_parser.add_argument("deadline", required=False, type=datetime.datetime, help="Should be in DateTime form. e.g. 2015-12-20 10:01:00", location="form")
 post_issue_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
 
 class PutIssuesForm(Form):
@@ -209,7 +213,7 @@ post_milestone_parser = reqparse.RequestParser()
 post_milestone_parser.add_argument("workspace_id",required=True,type=int,help="ID of the requested workspace", location="form")
 post_milestone_parser.add_argument("title", required=True, type=str, help="Title of the new milestone", location="form")
 post_milestone_parser.add_argument("description", required=True, type=str, help="Description of the new milestone", location="form")
-post_milestone_parser.add_argument("deadline", required=True, type=datetime.datetime, help="Deadline of the new Milestone", location="form")
+post_milestone_parser.add_argument("deadline", required=True, type=datetime.datetime, help="Should be in DateTime form. e.g. 2015-12-20 10:01:00", location="form")
 post_milestone_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
 
 class PutMilestoneForm(Form):
@@ -240,3 +244,61 @@ class GetUserWorkspacesForm(Form):
 get_users_workspaces = reqparse.RequestParser()
 get_users_workspaces.add_argument("user_id",required=True,type=int,help="ID of the user", location="args")
 get_users_workspaces.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
+
+
+class CreateCollaborationInvitationForm(Form):
+	workspace_id = IntegerField('workspace_id', validators=[validators.DataRequired()])
+	invitee_id = IntegerField('invitee_id', validators=[validators.DataRequired()])
+create_collaboration_invitation_parser = reqparse.RequestParser()
+create_collaboration_invitation_parser.add_argument("workspace_id",required=True,type=int,help="ID of the workspace that the invitation is sent for",location="form")
+create_collaboration_invitation_parser.add_argument("invitee_id",required=True,type=int,help="ID of the user that the invitation is sent to",location="form")
+create_collaboration_invitation_parser.add_argument("auth_token",required=True,type=str,help="Authentication token",location="headers")
+
+
+class ReadCollaborationInvitationForm(Form):
+	invitation_id = IntegerField('invitation_id', validators=[validators.optional()])
+read_collaboration_invitation_parser = reqparse.RequestParser()
+read_collaboration_invitation_parser.add_argument("invitation_id",required=False,type=int,help="ID of the invitation to be retrieved from the database",location="args")
+read_collaboration_invitation_parser.add_argument("auth_token",required=True,type=str,help="Authentication token",location="headers")
+
+
+class DeleteCollaborationInvitationForm(Form):
+	invitation_id = IntegerField('invitation_id', validators=[validators.DataRequired()])
+	is_accepted = IntegerField('is_accepted', validators=[validators.optional(), validators.NumberRange(min=0, max=1)])
+delete_collaboration_invitation_parser = reqparse.RequestParser()
+delete_collaboration_invitation_parser.add_argument("invitation_id",required=True,type=int,help="ID of the invitation sent",location="form")
+delete_collaboration_invitation_parser.add_argument("is_accepted",required=True,type=str,help="Acceptance status of the collaboration invitation",location="form")
+delete_collaboration_invitation_parser.add_argument("auth_token",required=True,type=str,help="Authentication token",location="headers")
+
+
+class CreateCollaborationApplicationForm(Form):
+	workspace_id = IntegerField('workspace_id', validators=[validators.DataRequired()])
+create_collaboration_application_parser = reqparse.RequestParser()
+create_collaboration_application_parser.add_argument("workspace_id",required=True,type=int,help="ID of the workspace that the application is sent to",location="form")
+create_collaboration_application_parser.add_argument("auth_token",required=True,type=str,help="Authentication token",location="headers")
+
+
+class ReadCollaborationApplicationForm(Form):
+	application_id = IntegerField('application_id', validators=[validators.optional()])
+	workspace_id = IntegerField('invitee_id', validators=[validators.DataRequired()])
+read_collaboration_application_parser = reqparse.RequestParser()
+read_collaboration_application_parser.add_argument("application_id",required=False,type=int,help="ID of the application to be retrieved from the database",location="args")
+read_collaboration_application_parser.add_argument("workspace_id",required=True,type=int,help="ID of the workspace that the application(s) is sent to",location="args")
+read_collaboration_application_parser.add_argument("auth_token",required=True,type=str,help="Authentication token",location="headers")
+
+
+class DeleteCollaborationApplicationForm(Form):
+	application_id = IntegerField('application_id', validators=[validators.DataRequired()])
+	is_accepted = IntegerField('is_accepted', validators=[validators.optional(), validators.NumberRange(min=0, max=1)])
+delete_collaboration_application_parser = reqparse.RequestParser()
+delete_collaboration_application_parser.add_argument("application_id",required=True,type=int,help="ID of the application sent",location="form")
+delete_collaboration_application_parser.add_argument("is_accepted",required=True,type=str,help="Acceptance status of the collaboration application",location="form")
+delete_collaboration_application_parser.add_argument("auth_token",required=True,type=str,help="Authentication token",location="headers")
+
+class QuitWorkspaceForm(Form):
+	workspace_id = IntegerField('workspace_id', validators=[validators.DataRequired()])
+
+quit_workspace_parser = reqparse.RequestParser()
+quit_workspace_parser.add_argument("workspace_id",required=True,type=int,help="ID of the Workspace",location="form")
+quit_workspace_parser.add_argument("auth_token",required=True,type=str,help="Authentication token",location="headers")
+

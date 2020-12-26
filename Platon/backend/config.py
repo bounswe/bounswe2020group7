@@ -60,6 +60,8 @@ WORKSPACE_FILE_PATH = BASE_DIR + os.path.sep + "data" + os.path.sep + "workspace
 
 PROFILE_PHOTO_PATH = BASE_DIR + os.path.sep + "data" + os.path.sep +"profile_photos"
 
+LOGO_PATH = BASE_DIR + os.path.sep + "data"
+
 # Maximum file size for file uploads (Megabytes)
 MAX_UPLOAD_LIMIT = 500
 

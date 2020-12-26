@@ -38,7 +38,7 @@ class SearchEngine():
     wrong_stopwords = ["can"]
 
     @staticmethod
-    def semantic_related_list(search_tokens,max_num_of_related=8):
+    def semantic_related_list(search_tokens,max_num_of_related=40):
         """
             where 'search_tokens': List of tokens that are given in a search string
             where 'max_num_of_related': Number of words that will be chosen for a token
@@ -99,7 +99,11 @@ class SearchEngine():
 
     @staticmethod
     def sort_ids(related_id_score_list):
-        return sorted(related_id_score_list, key=lambda tup: tup[1])
+        return sorted(related_id_score_list, key=lambda tup: tup[1],reverse=True)
+    
+    @staticmethod
+    def sort_results(results_list,key_list,reverse):
+        return sorted(results_list,key = lambda x: " ".join([x[key].lower() for key in key_list]),reverse=reverse)
 
     @staticmethod
     def sort_results(results_list, key_list, reverse):

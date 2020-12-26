@@ -4,9 +4,10 @@ from flask import make_response,jsonify,request
 import atexit, json
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from app.workspace_system.models import Workspace,WorkspaceSkill, WorkspaceRequirement, Contribution, Requirement
+from app.workspace_system.models import *
 from app.profile_management.models import Skills
 from app.auth_system.models import User
+from app.upcoming_events.models import UpcomingEvent
 from enum import IntEnum
 
 class WorkspaceState(IntEnum):
@@ -46,6 +47,18 @@ def add_workspace_requirements(workspace_id, workspace_requirements_list):
 		db.session.commit()	
 
 
+def add_workspace_upcoming_events(workspace_id, workspace_upcoming_events_list):
+    '''
+    This method adds the upcoming events in the "workspace_upcoming_events_list" to the workspace with the given ID.
+    '''
+    for upcoming_event_id in (workspace_upcoming_events_list or []):
+        upcoming_event = UpcomingEvent.query.filter_by(id=upcoming_event_id).first()
+        if upcoming_event is not None:
+            workspace_upcoming_event = WSUpcomingEvent(workspace_id=workspace_id, upcoming_event_id=upcoming_event_id)
+            db.session.add(workspace_upcoming_event)
+            db.session.commit()
+
+
 def add_workspace_contribution(workspace_id, user_id):
 	'''
 	This method adds the contribution of the user with the ID "user_id"
@@ -81,6 +94,27 @@ def get_workspace_requirements_list(workspace_id):
         requirement_text = (Requirement.query.filter_by(id=workspace_requirement.requirement_id).first()).text
         workspace_requirement_texts.append(requirement_text)
     return workspace_requirement_texts
+
+
+def get_workspace_upcoming_events_list(workspace_id):
+    # Upcoming events list of the requested workspace is retrieved from the database.
+    requested_workspace_upcoming_events = WSUpcomingEvent.query.filter_by(workspace_id=workspace_id)
+    
+    # After the list is retrieved, details of each upcoming event of that workspace is retrieved from the database
+    # and gets appended to "workspace_upcoming_events_details"
+    workspace_upcoming_events_details = list()
+    for workspace_upcoming_event in requested_workspace_upcoming_events:
+        upcoming_event = UpcomingEvent.query.filter_by(id=workspace_upcoming_event.upcoming_event_id).first()
+        workspace_upcoming_events_details.append({
+                                                    "id": upcoming_event.id,
+                                                    "title": upcoming_event.title,
+                                                    "acronym": upcoming_event.acronym,
+                                                    "location": upcoming_event.location,
+                                                    "date": upcoming_event.date,
+                                                    "deadline": upcoming_event.deadline,
+                                                    "link": upcoming_event.link
+                                                    })
+    return workspace_upcoming_events_details
 
 
 def get_workspace_active_contributors_list(workspace_id):
@@ -126,6 +160,33 @@ def update_workspace_requirements(workspace_id, workspace_updated_requirements_l
         add_workspace_requirements(workspace_id, workspace_updated_requirements_list)
 
 
+def update_workspace_upcoming_events(workspace_id, workspace_updated_upcoming_events_list):
+    '''
+    This method updates the upcoming events of a workspace.
+    '''
+    if workspace_updated_upcoming_events_list is None:
+        return
+    else:
+        workspace_upcoming_events_list = WSUpcomingEvent.query.filter_by(workspace_id=workspace_id)
+        workspace_upcoming_events_list.delete()
+        db.session.commit()
+        add_workspace_upcoming_events(workspace_id, workspace_updated_upcoming_events_list)
+
+
+def add_new_collaboration(workspace_id, new_contributor_id):
+    '''
+    This method adds the new collaboration relations for the new contributor of a workspace.
+    '''
+    workspace_contributors = Contribution.query.filter_by(workspace_id=workspace_id, is_active=True).all()
+    contributors_id_list = [contributor.user_id for contributor in workspace_contributors]
+    contributors_id_list.remove(new_contributor_id)
+    for contributor_id in contributors_id_list:
+        pair_1 = Collaboration(user_1_id=new_contributor_id, user_2_id=contributor_id)
+        pair_2 = Collaboration(user_1_id=contributor_id, user_2_id=new_contributor_id)
+        db.session.merge(pair_1)
+        db.session.merge(pair_2)
+
+
 def workspace_exists(param_loc,workspace_id_key):
     """
         param_loc: it only can be "args" or "form" which specifies the location of the requested wokspace id in the request
@@ -157,6 +218,17 @@ def workspace_exists(param_loc,workspace_id_key):
         return workspace_check
     return workspace_exists_inner
 
+def active_contribution_check(workspace_id,user_id,func,*args,**kwargs):
+    try:
+        contribution = Contribution.query.filter((Contribution.workspace_id == workspace_id) & (Contribution.user_id == user_id)).first()
+    except:
+        return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
+    if contribution is None:
+        return make_response(jsonify({'error': 'You have to contribute the Workspace'}),404)
+    if int(contribution.is_active) != 1:
+        return make_response(jsonify({'error': 'You have to contribute the Workspace actively'}),404)
+    return func(*args,**kwargs)
+
 def active_contribution_required(param_loc,workspace_id_key):
     """
         param_loc: it only can be "args" or "form" which specifies the location of the requested wokspace id in the request
@@ -179,17 +251,46 @@ def active_contribution_required(param_loc,workspace_id_key):
                 except:
                     return make_response(jsonify({'error':'Wrong input format'}),400)
             user_id = args[0]
-            try:
-                contribution = Contribution.query.filter((Contribution.workspace_id == workspace_id) & (Contribution.user_id == user_id)).first()
-            except:
-                return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
-            if contribution is None:
-                return make_response(jsonify({'error': 'You have to contribute the Workspace'}),404)
-            if int(contribution.is_active) != 1:
-                return make_response(jsonify({'error': 'You have to contribute the Workspace actively'}),404)
-            return func(*args,**kwargs)
+            return active_contribution_check(workspace_id,user_id,func,*args,**kwargs)
         return contribution_check
     return active_contribution_required_inner
+
+def visibility_required(param_loc,workspace_id_key):
+    """
+        param_loc: it only can be "args" or "form" which specifies the location of the requested wokspace id in the request
+        workspace_id_key: key of the parameter that represents the requested wokspace id in the request
+        If a Workspace is visible, it must be public and in SFC or PS
+    """
+    def visibility_required_inner(func):
+        """
+            Checks the privacy of the user before giving the user data
+        """
+        @wraps(func)
+        def visibilitiy_check(*args,**kwargs):
+            if param_loc == 'args':
+                try:
+                    workspace_id = int(request.args.get(workspace_id_key))
+                except:
+                    return make_response(jsonify({'error':'Wrong input format'}),400) 
+            elif param_loc == 'form':
+                try:
+                    workspace_id = int(request.form.get(workspace_id_key))
+                except:
+                    return make_response(jsonify({'error':'Wrong input format'}),400)
+            # Take Workspace record from database
+            try:
+                workspace = Workspace.query.get(workspace_id)
+            except:
+                return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
+            if workspace.is_private:
+                user_id = args[0]
+                return active_contribution_check(workspace.id,user_id,func,*args,**kwargs)
+            else:
+                if workspace.state == int(WorkspaceState.ongoing):
+                    return make_response(jsonify({"err": "You are note allowed to see the content of this workspace"}),403)
+            return func(*args,**kwargs)
+        return visibilitiy_check
+    return visibility_required_inner
 
 
 class TredingProjectManager():
