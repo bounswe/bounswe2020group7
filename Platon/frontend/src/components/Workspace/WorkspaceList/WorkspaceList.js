@@ -132,15 +132,13 @@ class WorkspaceList extends Component {
         }
       })
       .catch((err) => {
-        console.log(err);
         this.setState({
-          error: "Error occured. " + err.message,
+          error: "Error occured. " + err.response.data.error,
         });
       });
   };
   render() {
     const { classes } = this.props;
-    console.log(this.state.workspaces)
     return (
       <div className="WorkspaceListContainer">
         <Navbar />
