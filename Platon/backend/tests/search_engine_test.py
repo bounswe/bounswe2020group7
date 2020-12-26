@@ -395,6 +395,15 @@ class UpcomingEventsSearchTest(BaseTest):
         self.assertEqual(200, actual_response.status_code)
         self.assertEqual(expected_result, json.loads(actual_response.data))
 
+    def test_no_deadline_search(self):
+        actual_response = self.client.get("/api/search_engine/upcoming_events", query_string={"search_query": "simulation", "deadline_filter_start": datetime.datetime(2021,12,1,23,59,59)})
+        expected_result = {
+            "number_of_pages": 1,
+            "result_list": []
+        }
+        self.assertEqual(200, actual_response.status_code)
+        self.assertEqual(expected_result, json.loads(actual_response.data))
+
 class WorkspaceSearchTests(BaseTest):
     '''
         Tests for workspace search.
