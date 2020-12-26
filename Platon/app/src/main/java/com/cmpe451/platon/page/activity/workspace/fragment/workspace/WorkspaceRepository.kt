@@ -20,6 +20,7 @@ class WorkspaceRepository {
     var deleteResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
     var getMilestoneResponse: MutableLiveData<Resource<Milestones>> = MutableLiveData()
     var addDeleteUpdateMilestoneResponse: MutableLiveData<Resource<JsonObject>> = MutableLiveData()
+    var applyWorksppaceResourceResponse: MutableLiveData<Resource<JsonObject>> = MutableLiveData()
     fun fetchWorkspace(workspace_id:Int, token:String) {
         val service = RetrofitClient.getService()
         val call = service.getWorkspace(workspace_id,token)
@@ -164,6 +165,25 @@ class WorkspaceRepository {
         })
     }
 
+    fun applyToWorkspace(workspaceId: Int,token: String) {
+        val service = RetrofitClient.getService()
+        val call = service.applyToWorkspace(workspaceId,token)
+        applyWorksppaceResourceResponse.value = Resource.Loading()
+        call.enqueue(object: Callback<JsonObject?> {
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when {
+                    response.isSuccessful && response.body() != null -> applyWorksppaceResourceResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> applyWorksppaceResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> applyWorksppaceResourceResponse.value = Resource.Error("Unknown error!")
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
 
 
 }

@@ -21,7 +21,9 @@
             android:text="@string/loading_str"
             android:textColor="@color/primary_light"
             android:background="@drawable/view_back_darker"
-            android:textSize="@dimen/title_text_size" />
+            android:textSize="@dimen/title_text_size"
+            app:drawableRightCompat="@drawable/ic_add_24dp"
+            />
 
             <TextView
                 android:id="@+id/info_title"

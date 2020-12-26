@@ -15,6 +15,7 @@ class WorkspaceViewModel : ViewModel() {
     var getDeleteResourceResponse = repository.deleteResourceResponse
     var getMilestoneResponse = repository.getMilestoneResponse
     var getAddDeleteUpdateMilestoneResponse=repository.addDeleteUpdateMilestoneResponse
+    var getApplyWorksppaceResourceResponse = repository.applyWorksppaceResourceResponse
 
     fun fetchWorkspace(workspace_id:Int, token:String){
         repository.fetchWorkspace(workspace_id, token)
@@ -37,6 +38,10 @@ class WorkspaceViewModel : ViewModel() {
     }
     fun deleteMilestone(workspace_id: Int, milestone_id: Int, token: String){
         repository.deleteMilestone(workspace_id, milestone_id, token)
+    }
+
+    fun applyToWorkpace(workspaceId: Int, token: String) {
+        repository.applyToWorkspace(workspaceId,  token)
     }
 
 }

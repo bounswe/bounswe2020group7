@@ -68,6 +68,9 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
             binding.infoTitle.setCompoundDrawables(null,null,null,null)
             binding.milestoneTitleTv.setCompoundDrawables(null,null,null,null)
         }
+        else {
+            binding.workspaceTitleTv.setCompoundDrawables(null,null,null,null)
+        }
         binding.collabTitleTv.setCompoundDrawables(null,null,null,null)
         mWorkspaceViewModel.fetchWorkspace((activity as WorkspaceActivity).workspace_id!!, (activity as WorkspaceActivity).token!!)
         getMilestones()
@@ -88,6 +91,11 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
             }
             binding.addRequirementIv.setOnClickListener {
                 onAddRequirementClicked()
+            }
+        }
+        else {
+            binding.workspaceTitleTv.setOnClickListener {
+                mWorkspaceViewModel.applyToWorkpace((activity as WorkspaceActivity).workspace_id!!, (activity as WorkspaceActivity).token!!)
             }
         }
 
@@ -215,6 +223,22 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
                     getMilestones()
                     mWorkspaceViewModel.getMilestoneResponse.value = Resource.Done()
 
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    mWorkspaceViewModel.getMilestoneResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java ->{
+                    dialog.dismiss()
+                }
+            }
+        })
+        mWorkspaceViewModel.getApplyWorksppaceResourceResponse.observe(viewLifecycleOwner, {
+            when (it.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    Toast.makeText(requireContext(), it.data.toString(), Toast.LENGTH_LONG)
+                    mWorkspaceViewModel.getMilestoneResponse.value = Resource.Done()
                 }
                 Resource.Error::class.java -> {
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()

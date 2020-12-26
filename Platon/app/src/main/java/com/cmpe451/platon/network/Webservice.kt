@@ -323,4 +323,11 @@ interface Webservice {
                       @Field("milestone_id") milestone_id:Int,
                      @Header("auth_token") token: String): Call<JsonObject?>
 
+    @FormUrlEncoded
+    @POST("api/workspaces/applications")
+    fun applyToWorkspace(
+        @Field("workspace_id") workspace_id:Int,
+        @Header("auth_token") auth_token: String
+    ) : Call<JsonObject?>
+
 }
