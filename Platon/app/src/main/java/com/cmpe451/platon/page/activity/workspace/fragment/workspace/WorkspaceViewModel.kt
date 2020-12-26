@@ -32,7 +32,7 @@ class WorkspaceViewModel : ViewModel() {
     fun getMilestones(workspace_id: Int, page:Int?, per_page:Int?, token: String){
         repository.getMilestones(workspace_id, page, per_page, token)
     }
-    fun updateMilestone(workspace_id: Int,milestone_id:Int, title: String, description: String,deadline: String, token: String){
+    fun updateMilestone(workspace_id: Int,milestone_id:Int, title: String?, description: String?,deadline: String?, token: String){
         repository.updateMilestone(workspace_id,milestone_id, title, description, deadline, token)
     }
     fun deleteMilestone(workspace_id: Int, milestone_id: Int, token: String){
