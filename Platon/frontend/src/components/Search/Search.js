@@ -28,29 +28,10 @@ class Search extends React.Component {
       }),
     ]).then(() => {
       this.setState({ isLoading: false });
-      console.log(this.state.searchResult);
     });
   }
 
   render() {
-    const items = [];
-
-    for (const [index, value] of this.state.searchResult.entries()) {
-      items.push(
-        <Link to={`/`+ value.id}>
-        <Row className="mb-3 UserCardToSearch">
-          <Col sm={2}>
-          <Avatar src={"http://18.185.75.161:5000/api" + value.profile_photo} className="SearchAvatar" />
-          </Col>
-          <Col sm={6} className="SearchInformation">
-            <p className="GeneralMediumFont">
-              {value.name} {value.surname}
-            </p>
-          </Col>
-        </Row>
-        </Link>
-      );
-    }
 
     return (
       <div className="SearchLanding">
@@ -64,7 +45,28 @@ class Search extends React.Component {
         ) : (
           <div>
             <Container className="SearchContainer pb-4">
-                {items}
+              {this.state.searchResult.map((value, index) => {
+                return (
+                  <Link to={`/` + value.id}>
+                    <Row className="mb-3 UserCardToSearch">
+                      <Col sm={2}>
+                        <Avatar
+                          src={
+                            "http://18.185.75.161:5000/api" +
+                            value.profile_photo
+                          }
+                          className="SearchAvatar"
+                        />
+                      </Col>
+                      <Col sm={6} className="SearchInformation">
+                        <p className="GeneralMediumFont">
+                          {value.name} {value.surname}
+                        </p>
+                      </Col>
+                    </Row>
+                  </Link>
+                );
+              })}
             </Container>
           </div>
         )}
