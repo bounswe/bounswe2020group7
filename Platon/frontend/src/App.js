@@ -9,6 +9,7 @@ import Login from './components/Login/Login'
 import Register from './components/Register/Register'
 import ProfilePage from './components/ProfilePage/ProfilePage'
 import EditProfile from './components/EditProfile/EditProfile';
+import Search from './components/Search/Search'
 import Activation from './components/Activation/Activation';
 import WorkspaceCreate from './components/Workspace/WorkspaceCreate/WorkspaceCreate';
 import WorkspaceList from './components/Workspace/WorkspaceList/WorkspaceList';
@@ -69,6 +70,7 @@ class App extends Component {
       <Route path='/register' exact  component={Register}/>
       <Route path='/forgotpassword' exact component={ForgotPassword}/>
       <Route path='/resetpassword'  component={ResetPassword}/>
+      <Route path='/search/:searchQuery'  component={Search}/>
 
 
 
