@@ -227,7 +227,6 @@ const getProfilePhoto = (endpoint) => {
 const putUser = (
   name,
   surname,
-  e_mail,
   job,
   is_private,
   profile_photo,
@@ -243,16 +242,95 @@ const putUser = (
   let formData = new FormData();
   formData.append("name", name);
   formData.append("surname", surname);
-  formData.append("e_mail", e_mail);
   formData.append("job", job);
-  formData.append("is_private", is_private);
-  formData.append("profile_photo", profile_photo);
+  if(is_private === true){
+    formData.append("is_private", 1);
+  }
+  else{
+    formData.append("is_private", 0);
+  }
+  if(profile_photo !== undefined){
+    formData.append("profile_photo", profile_photo);
+  }
   formData.append("google_scholar_name", google_scholar_name);
   formData.append("researchgate_name", researchgate_name);
   formData.append("institution", institution);
 
   return axios
-    .post(url + "/api/auth_system/user", formData)
+    .put(url + "/api/auth_system/user", formData)
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => {
+      return err.response;
+    });
+};
+
+const getSkillList = () => {
+  const url = config.BASE_URL;
+  return axios
+    .get(url + "/api/profile/skills")
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => {
+      return err.response;
+    });
+};
+
+const getPersonalSkillList = (user_id) => {
+  const url = config.BASE_URL;
+
+  const token = localStorage.getItem("jwtToken");
+  const decoded = jwt_decode(token);
+  axios.defaults.headers.common["auth_token"] = `${token}`;
+
+  const params = {
+    user_id: user_id,
+  };
+
+  return axios
+    .get(url + "/api/auth_system/skills", {params})
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => {
+      return err.response;
+    });
+};
+
+const postSkill = (skillName) => {
+  const url = config.BASE_URL;
+
+  const token = localStorage.getItem("jwtToken");
+  axios.defaults.headers.common["auth_token"] = `${token}`;
+
+  let formData = new FormData();
+  formData.append("skill", skillName);
+
+  return axios
+    .post(url + "/api/auth_system/skills", formData)
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => {
+      return err.response;
+    });
+};
+
+const deleteSkill = (skillName) => {
+  const url = config.BASE_URL;
+  const token = localStorage.getItem("jwtToken");
+
+  let formData = new FormData();
+  formData.append("skill", skillName);
+
+  axios.defaults.headers.common["auth_token"] = `${token}`;
+
+  return axios
+    .delete(url + "/api/auth_system/skills", {
+      data: formData,
+    })
     .then((response) => {
       return response;
     })
@@ -275,4 +353,9 @@ export default {
   deleteUnfollow,
   getJobList,
   getProfilePhoto,
+  putUser,
+  getSkillList,
+  getPersonalSkillList,
+  postSkill,
+  deleteSkill
 };

@@ -7,6 +7,7 @@ import Spinner from "../Spinner/Spinner";
 
 import { Container, Col, Row, Button, Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import Avatar from "@material-ui/core/Avatar";
 
 class Search extends React.Component {
   constructor(props) {
@@ -39,15 +40,9 @@ class Search extends React.Component {
         <Link to={`/`+ value.id}>
         <Row className="mb-3 UserCardToSearch">
           <Col sm={2}>
-            <img
-              className="ProfilePhoto"
-              src={
-                "http://18.185.75.161:5000/api" + value.profile_photo
-              }
-              alt="UserImage"
-            />
+          <Avatar src={"http://18.185.75.161:5000/api" + value.profile_photo} className="SearchAvatar" />
           </Col>
-          <Col sm={6}>
+          <Col sm={6} className="SearchInformation">
             <p className="GeneralMediumFont">
               {value.name} {value.surname}
             </p>
@@ -68,7 +63,7 @@ class Search extends React.Component {
           </div>
         ) : (
           <div>
-            <Container className="SearchContainer">
+            <Container className="SearchContainer pb-4">
                 {items}
             </Container>
           </div>

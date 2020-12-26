@@ -23,6 +23,7 @@ import Autocomplete, {
   createFilterOptions,
 } from "@material-ui/lab/Autocomplete";
 import InputLabel from "@material-ui/core/InputLabel";
+import Chip from "@material-ui/core/Chip";
 
 const filter = createFilterOptions();
 
@@ -66,14 +67,15 @@ class EditProfile extends Component {
     this.state = {
       name: "",
       surname: "",
-      email: "",
       job: "",
       is_private: false,
       profile_photo: undefined,
       google_scholar_name: "",
       researchgate_name: "",
       institution: "",
-      skills: "",
+      skills: [],
+      personalSkills: [],
+      newSkill: "",
       showSuccess: false,
       fieldEmptyError: false,
       user: null,
@@ -90,21 +92,40 @@ class EditProfile extends Component {
       profileId: decoded.id,
     });
 
-    requestService.getJobList().then((response) => {
-      if (response) {
-        let jobArray = [];
-        for (var key in response.data) {
-          jobArray.push(response.data[key].name);
+    Promise.all([
+      requestService.getJobList().then((response) => {
+        if (response) {
+          let jobArray = [];
+          for (var key in response.data) {
+            jobArray.push(response.data[key].name);
+          }
+          this.setState({
+            jobList: jobArray,
+          });
         }
-        this.setState({
-          jobList: jobArray,
-        });
-      }
-    });
+      }),
 
-    requestService
-      .getUser(decoded.id)
-      .then((response) => {
+      requestService.getSkillList().then((response) => {
+        if (response) {
+          this.setState({
+            skills: response.data,
+          });
+        }
+      }),
+
+      requestService.getPersonalSkillList(decoded.id).then((response) => {
+        if (response) {
+          let skillArray = [];
+          for (var key in response.data.skills) {
+            skillArray.push(response.data.skills[key].name);
+          }
+          this.setState({
+            personalSkills: skillArray,
+          });
+        }
+      }),
+
+      requestService.getUser(decoded.id).then((response) => {
         this.setState({
           user: response.data,
         });
@@ -112,17 +133,16 @@ class EditProfile extends Component {
           name: this.state.user.name,
           surname: this.state.user.surname,
           job: this.state.user.job,
-          profile_photo: this.state.user.profile_photo,
           google_scholar_name: this.state.user.google_scholar_name,
           researchgate_name: this.state.user.researchgate_name,
           is_private: this.state.user.is_private,
         });
-      })
-      .then(() => {
-        this.setState({
-          isLoading: false,
-        });
+      }),
+    ]).then(() => {
+      this.setState({
+        isLoading: false,
       });
+    });
   }
 
   handleCloseFieldEmpty = (event, reason) => {
@@ -148,71 +168,28 @@ class EditProfile extends Component {
   };
 
   handleSubmit = () => {
-    const token = localStorage.getItem("jwtToken");
-    const decoded = jwt_decode(token);
-
-    let formData = new FormData();
-    let dbcheck = false;
-
-    if (this.state.name !== this.state.user.name) {
-      formData.append("name", this.state.name);
-      dbcheck = true;
-    }
-    if (this.state.surname !== this.state.user.surname) {
-      formData.append("surname", this.state.surname);
-      dbcheck = true;
-    }
-    if (this.state.job !== this.state.user.job) {
-      formData.append("job", this.state.job);
-      dbcheck = true;
-    }
-    
-    formData.append("profile_photo", this.state.profile_photo_file);
-
-    if (
-      this.state.google_scholar_name !== this.state.user.google_scholar_name
-    ) {
-      formData.append("google_scholar_name", this.state.google_scholar_name);
-      dbcheck = true;
-    }
-    if (this.state.researchgate_name !== this.state.user.researchgate_name) {
-      formData.append("researchgate_name", this.state.researchgate_name);
-      dbcheck = true;
-    }
-    if (this.state.is_private !== this.state.user.is_private) {
-      formData.append("is_private", this.state.is_private);
-      dbcheck = true;
-    }
-
-    if (!dbcheck) {
-      return;
-    }
-
-    for (var pair of formData.entries()) {
-      console.log(pair[0]+ ', ' + pair[1]); 
-  }
-
-    const url = config.BASE_URL;
-    axios
-      .put(url + "/api/auth_system/user", formData, {
-        headers: {
-          auth_token: token, //the token is a variable which holds the token
-        },
-      })
+    requestService
+      .putUser(
+        this.state.name,
+        this.state.surname,
+        this.state.job,
+        this.state.is_private,
+        this.state.profile_photo,
+        this.state.google_scholar_name,
+        this.state.researchgate_name,
+        this.state.institution
+      )
       .then((response) => {
-        console.log(response);
         if (response.status === 200) {
           this.setState({
-            showSuccess: "Your profile is successfully edited.",
+            showSuccess: "You have updated your profile successfully!",
           });
         }
-        return response;
       })
       .catch((err) => {
         this.setState({
-          fieldEmptyError: "A problem is occurred",
+          fieldEmptyError: "An error occured!",
         });
-        console.log(err);
       });
   };
 
@@ -224,7 +201,85 @@ class EditProfile extends Component {
 
   handleKeyDown = (event) => {
     this.handleJob(event.target.value);
-    console.log(this.state.job);
+  };
+
+  handleKeyDownSkill = (event) => {
+    this.handleSkill(event.target.value);
+  };
+
+  handleSkill = (value) => {
+    this.setState({
+      newSkill: value,
+    });
+  };
+
+  handlePostSkills = () => {
+    const token = localStorage.getItem("jwtToken");
+    const decoded = jwt_decode(token);
+    requestService.postSkill(this.state.newSkill).then((response) => {
+      if (response) {
+        this.setState({
+          showSuccess: "You have added your skill successfully",
+        });
+        requestService
+          .getPersonalSkillList(decoded.id)
+          .then((resp) => {
+            if (resp) {
+              let skillArray = [];
+              for (var key in resp.data.skills) {
+                skillArray.push(resp.data.skills[key].name);
+              }
+              this.setState({
+                personalSkills: skillArray,
+                newSkill: "",
+              });
+            }
+          })
+          .then(() => {
+            requestService.getSkillList().then((response) => {
+              if (response) {
+                this.setState({
+                  skills: response.data,
+                });
+              }
+            });
+          });
+      }
+    });
+  };
+
+  handleDeleteSkill = (value) => {
+    const token = localStorage.getItem("jwtToken");
+    const decoded = jwt_decode(token);
+    requestService.deleteSkill(value).then((response) => {
+      if (response) {
+        this.setState({
+          showSuccess: "You have deleted your skill successfully",
+        });
+        requestService
+          .getPersonalSkillList()
+          .then((resp) => {
+            if (resp) {
+              let skillArray = [];
+              for (var key in resp.data.skills) {
+                skillArray.push(resp.data.skills[key].name);
+              }
+              this.setState({
+                personalSkills: skillArray,
+              });
+            }
+          })
+          .then(() => {
+            requestService.getSkillList(decoded.id).then((response) => {
+              if (response) {
+                this.setState({
+                  skills: response.data,
+                });
+              }
+            });
+          });
+      }
+    });
   };
 
   render() {
@@ -238,7 +293,7 @@ class EditProfile extends Component {
             <Spinner />
           </div>
         ) : (
-          <Container className="ProfilePageContainer">
+          <Container className="EditPageContainer">
             <Row className="mb-3 justify-content-center">
               <Col sm={6}>
                 <a href={`/${this.state.profileId}`}>Back to profile</a>
@@ -313,35 +368,8 @@ class EditProfile extends Component {
 
             <Row className="mb-3 justify-content-center">
               <Col sm={6}>
-                <StyledTextField
-                  defaultValue={this.state.user.skills}
-                  className="EditProfileTextInput"
-                  id="outlined-basic"
-                  label="Email"
-                  variant="outlined"
-                  fullWidth
-                  onChange={(e) => this.setState({ email: e.target.value })}
-                />
-              </Col>
-            </Row>
-
-            <Row className="mb-3 justify-content-center">
-              <Col sm={6}>
-                <StyledTextField
-                  defaultValue={this.state.user.skills}
-                  className="EditProfileTextInput"
-                  id="outlined-basic"
-                  label="Skills"
-                  variant="outlined"
-                  fullWidth
-                  onChange={(e) => this.setState({ skills: e.target.value })}
-                />
-              </Col>
-            </Row>
-            <Row className="mb-3 justify-content-center">
-              <Col sm={6}>
                 <InputLabel htmlFor="component-simple">
-                  Profile Photo Url
+                  Profile Photo
                 </InputLabel>
                 <StyledTextField
                   type="file"
@@ -350,11 +378,12 @@ class EditProfile extends Component {
                   variant="outlined"
                   fullWidth
                   onChange={(e) =>
-                    this.setState({ profile_photo_file: e.target.files })
+                    this.setState({ profile_photo: e.target.files[0] })
                   }
                 />
               </Col>
             </Row>
+
             <Row className="mb-3 justify-content-center">
               <Col sm={6}>
                 <StyledTextField
@@ -388,6 +417,22 @@ class EditProfile extends Component {
 
             <Row className="mb-3 justify-content-center">
               <Col sm={6}>
+                <StyledTextField
+                  defaultValue={this.state.user.institution}
+                  className="EditProfileTextInput"
+                  id="outlined-basic"
+                  label="Institutiton"
+                  variant="outlined"
+                  fullWidth
+                  onChange={(e) =>
+                    this.setState({ institution: e.target.value })
+                  }
+                />
+              </Col>
+            </Row>
+
+            <Row className="mb-3 justify-content-center">
+              <Col sm={6}>
                 <FormControlLabel
                   control={
                     <Switch
@@ -412,6 +457,71 @@ class EditProfile extends Component {
                   onClick={this.handleSubmit}
                 >
                   Update
+                </Button>
+              </Col>
+            </Row>
+
+            <Row className="mb-3 justify-content-center">
+              <Col sm={6}>
+                <h2 className="ProfileLargeFont">Edit Skills</h2>
+                <hr className="ProfilePageLine" />
+              </Col>
+            </Row>
+
+            <Row className="mb-3 justify-content-center">
+              <Col sm={6}>
+                {this.state.personalSkills.map((value, index) => {
+                  return (
+                    <Chip
+                      className="ProfileSkillChip mr-1 mb-1"
+                      label={value}
+                      onDelete={() => this.handleDeleteSkill(value)}
+                      variant="outlined"
+                    />
+                  );
+                })}
+              </Col>
+            </Row>
+
+            <Row className="mb-3 justify-content-center">
+              <Col sm={6}>
+                <Autocomplete
+                  freeSolo
+                  id="tags-outlined"
+                  options={this.state.skills}
+                  getOptionLabel={(option) => option}
+                  value={this.state.newSkill}
+                  onChange={(event, newValue) => this.handleSkill(newValue)}
+                  filterSelectedOptions
+                  renderInput={(params) => {
+                    params.inputProps.onChange = this.handleKeyDownSkill;
+                    return (
+                      <StyledTextField
+                        {...params}
+                        variant="outlined"
+                        required
+                        name="affinities"
+                        label="Skill"
+                        id="Skill"
+                        ffullWidth
+                        margin="normal"
+                      />
+                    );
+                  }}
+                />
+              </Col>
+            </Row>
+
+            <Row className="mb-3 justify-content-center">
+              <Col sm={6}>
+                <Button
+                  className="ProfileUpdateButton"
+                  variant="primary"
+                  size="lg"
+                  block
+                  onClick={this.handlePostSkills}
+                >
+                  Add
                 </Button>
               </Col>
             </Row>

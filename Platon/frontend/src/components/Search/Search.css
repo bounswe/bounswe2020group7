@@ -34,3 +34,13 @@
     border: 2px solid #E0DFD5;
     background-color: #646D93;
 }
+
+.SearchAvatar{
+    width: 7vw !important;
+    height: 7vw !important;
+}
+
+.SearchInformation{
+    display: flex;
+    align-items: center;
+}

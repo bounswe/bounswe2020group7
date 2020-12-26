@@ -80,3 +80,9 @@
     position: absolute;
     right: 0;
 }
+
+.ProfileSkillChip{
+    color: #E0DFD5 !important;
+    font-family: 'Rubik', sans-serif !important;
+    border: #B0DB06 2px solid !important;
+}

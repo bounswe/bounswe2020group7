@@ -31,6 +31,7 @@ import PersonIcon from "@material-ui/icons/Person";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 import Avatar from "@material-ui/core/Avatar";
+import Chip from "@material-ui/core/Chip";
 import colors from "../../utils/colors";
 import config from "../../utils/config";
 import axios from "axios";
@@ -91,6 +92,7 @@ class ProfilePage extends React.Component {
       selectedFollowButton: [],
       followings_id_arr: [],
       follow_requests: [],
+      personalSkills: [],
       user: null,
       value: 0,
       job: "",
@@ -146,6 +148,17 @@ class ProfilePage extends React.Component {
               this.setState({
                 researchs: response.data.research_info,
               });
+            }),
+            requestService.getPersonalSkillList(profileId).then((response) => {
+              if (response) {
+                let skillArray = [];
+                for (var key in response.data.skills) {
+                  skillArray.push(response.data.skills[key].name);
+                }
+                this.setState({
+                  personalSkills: skillArray,
+                });
+              }
             }),
           ]);
         }
@@ -207,6 +220,15 @@ class ProfilePage extends React.Component {
               user: response.data,
             });
           }
+        })
+        .then(() => {
+          if (this.state.isProfilePrivate === false) {
+            requestService.followers(this.props.match.params.profileId).then((response) => {
+              this.setState({
+                followers: response.data.followers,
+              });
+            });
+          }
         });
     });
   };
@@ -228,6 +250,15 @@ class ProfilePage extends React.Component {
           } else {
             this.setState({
               user: response.data,
+            });
+          }
+        })
+        .then(() => {
+          if (this.state.isProfilePrivate === false) {
+            requestService.followers(this.props.match.params.profileId).then((response) => {
+              this.setState({
+                followers: response.data.followers,
+              });
             });
           }
         });
@@ -322,8 +353,21 @@ class ProfilePage extends React.Component {
                     </p>
                   )}
                   {this.state.user && (
-                    <p className="GeneralSmallFont">{this.state.user.job}</p>
+                    <p className="GeneralSmallFont">
+                      {this.state.user.job} {this.state.user.institution && " - "} {this.state.user.institution}
+                    </p>
                   )}
+                  {this.state.isProfilePrivate
+                    ? null
+                    : this.state.personalSkills.map((value, index) => {
+                        return (
+                          <Chip
+                            className="mr-1 mb-1 ProfileSkillChip"
+                            label={value}
+                            variant="outlined"
+                          />
+                        );
+                      })}
                 </Col>
                 <Col>
                   {this.state.isProfilePrivate ? null : (
@@ -406,21 +450,15 @@ class ProfilePage extends React.Component {
                       onChange={this.handleChange}
                       aria-label="simple tabs example"
                     >
-                      <Tab label="Workspaces" {...a11yProps(0)} />
-                      <Tab label="Researchs" {...a11yProps(1)} />
-                      <Tab label="Followers" {...a11yProps(2)} />
-                      <Tab label="Following" {...a11yProps(3)} />
+                      <Tab label="Researchs" {...a11yProps(0)} />
+                      <Tab label="Followers" {...a11yProps(1)} />
+                      <Tab label="Following" {...a11yProps(2)} />
                       {!this.state.isMyProfile ? null : (
-                        <Tab label="Requests" {...a11yProps(4)} />
+                        <Tab label="Requests" {...a11yProps(3)} />
                       )}
                     </Tabs>
                   </AppBar>
                   <TabPanel value={this.state.value} index={0}>
-                    <Row>
-                      <Col></Col>
-                    </Row>
-                  </TabPanel>
-                  <TabPanel value={this.state.value} index={1}>
                     {!this.state.isMyProfile ? null : (
                       <Row className="mb-3">
                         <EditResearchDialog
@@ -488,16 +526,19 @@ class ProfilePage extends React.Component {
                       );
                     })}
                   </TabPanel>
-                  <TabPanel value={this.state.value} index={2}>
+                  <TabPanel value={this.state.value} index={1}>
                     <List>
                       {this.state.followers.map((value, index) => {
                         return (
                           <Link onClick={() => this.handleProfile(value.id)}>
                             <ListItem>
                               <ListItemAvatar>
-                                <Avatar>
-                                  <PersonIcon />
-                                </Avatar>
+                                <Avatar
+                                  src={
+                                    "http://18.185.75.161:5000/api" +
+                                    value.profile_photo
+                                  }
+                                ></Avatar>
                               </ListItemAvatar>
                               <ListItemText
                                 style={{ color: colors.secondary }}
@@ -509,16 +550,19 @@ class ProfilePage extends React.Component {
                       })}
                     </List>
                   </TabPanel>
-                  <TabPanel value={this.state.value} index={3}>
+                  <TabPanel value={this.state.value} index={2}>
                     <List>
                       {this.state.followings.map((value, index) => {
                         return (
                           <Link onClick={() => this.handleProfile(value.id)}>
                             <ListItem>
                               <ListItemAvatar>
-                                <Avatar>
-                                  <PersonIcon />
-                                </Avatar>
+                                <Avatar
+                                  src={
+                                    "http://18.185.75.161:5000/api" +
+                                    value.profile_photo
+                                  }
+                                ></Avatar>
                               </ListItemAvatar>
                               <ListItemText
                                 style={{ color: colors.secondary }}
@@ -531,7 +575,7 @@ class ProfilePage extends React.Component {
                     </List>
                   </TabPanel>
                   {!this.state.isMyProfile ? null : (
-                    <TabPanel value={this.state.value} index={4}>
+                    <TabPanel value={this.state.value} index={3}>
                       <List>
                         {this.state.follow_requests.map((value, index) => {
                           return (

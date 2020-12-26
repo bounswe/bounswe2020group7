@@ -1,5 +1,6 @@
-.ProfilePageContainer{
+.EditPageContainer{
     padding-top: 2%;
+    padding-bottom: 5%;
 }
 
 .GeneralSmallFont{
@@ -55,4 +56,10 @@
 .MuiTypography-body1{
     color: #E0DFD5 !important;
 
+}
+
+.ProfileSkillChip{
+    color: #E0DFD5 !important;
+    font-family: 'Rubik', sans-serif !important;
+    border: #B0DB06 2px solid !important;
 }
