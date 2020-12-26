@@ -29,6 +29,12 @@ const StyledButton = withStyles({
     },
   },
 })(Button);
+
+function showDeadline(deadline) {
+  let newDeadlineArray = deadline;
+  //newDeadlineArray
+  //newDeadlineArray
+}
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -130,8 +136,8 @@ class WorkspaceView extends Component {
       })
       .catch((err) => {
         this.setState({
-        error: "Error occured. " + err.message,
-      });
+          error: "Error occured. " + err.message,
+        });
         console.log(err);
       });
   }
@@ -140,7 +146,6 @@ class WorkspaceView extends Component {
       value: newValue,
     });
   };
-
 
   render() {
     const { classes } = this.props;
@@ -326,15 +331,14 @@ class WorkspaceView extends Component {
                             >
                               Deadline
                             </Typography>
-                            {this.state.workspace.deadline ? (
-                              <div style={{ color: colors.quinaryDark }}>
-                                {new Date(this.state.workspace.deadline)
-                                  .toLocaleString()
-                                  .substring(0, 10)}
-                              </div>
-                            ) : (
-                              "Not specified"
-                            )}
+                            <div style={{ color: colors.quinaryDark }}>
+                              {this.state.workspace.deadline
+                                ? this.state.workspace.deadline
+                                    .split(".")
+                                    .reverse()
+                                    .join(".")
+                                : "Not specified"}
+                            </div>
                           </Grid>
                         </Grid>
 
@@ -420,7 +424,10 @@ class WorkspaceView extends Component {
                             (element) => (
                               <Link
                                 to={`/${element.id}/`}
-                                style={{ textDecoration: "none", color: colors.quinaryDark }}
+                                style={{
+                                  textDecoration: "none",
+                                  color: colors.quinaryDark,
+                                }}
                               >
                                 <div>
                                   {element.name} {element.surname}
@@ -429,27 +436,26 @@ class WorkspaceView extends Component {
                             )
                           )}
                         </div>
-
                       </div>
                       <Divider
-                          className={classes.divider}
-                          variant="middle"
-                          style={{
-                            width: "100%",
-                            backgroundColor: colors.primaryLight,
-                          }}
-                        />
-                        <Typography
-                          gutterBottom
-                          variant="body1"
-                          align="center"
-                          style={{ color: colors.quaternaryDark }}
-                        >
-                          State
-                        </Typography>
-                        <WorkspaceViewStateTimeline
-                          state={this.state.workspace.state}
-                        />
+                        className={classes.divider}
+                        variant="middle"
+                        style={{
+                          width: "100%",
+                          backgroundColor: colors.primaryLight,
+                        }}
+                      />
+                      <Typography
+                        gutterBottom
+                        variant="body1"
+                        align="center"
+                        style={{ color: colors.quaternaryDark }}
+                      >
+                        State
+                      </Typography>
+                      <WorkspaceViewStateTimeline
+                        state={this.state.workspace.state}
+                      />
                       <div className={classes.section3}>
                         <Link
                           to={`/${this.state.profileId}/workspace/${this.props.match.params.workspaceId}/edit`}
