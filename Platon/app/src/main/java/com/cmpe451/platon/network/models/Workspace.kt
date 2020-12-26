@@ -13,15 +13,10 @@ data class WorkspaceInvitation(
 )
 
 data class WorkspaceApplications(
-        val application_list:List<WorkspaceApplication>
+        val application_list:List<WorkspaceInvitation>
 
 )
 
-
-data class WorkspaceApplication(
-        val id: Int,
-        val description: String
-)
 
 
 

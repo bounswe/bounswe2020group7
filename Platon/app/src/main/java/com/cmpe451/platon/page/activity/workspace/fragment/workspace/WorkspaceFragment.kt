@@ -15,25 +15,24 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.cmpe451.platon.R
-import com.cmpe451.platon.adapter.CollaboratorAdapter
-import com.cmpe451.platon.adapter.FollowerFollowingAdapter
-import com.cmpe451.platon.adapter.MilestoneAdapter
-import com.cmpe451.platon.adapter.SkillsAdapter
+import com.cmpe451.platon.adapter.*
 import com.cmpe451.platon.databinding.*
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.Contributor
 import com.cmpe451.platon.network.models.Milestone
+import com.cmpe451.platon.network.models.WorkspaceInvitation
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.page.activity.workspace.fragment.addworkspace.AddWorkspaceViewModel
 import com.cmpe451.platon.util.Definitions
 import java.util.*
 import kotlin.collections.ArrayList
 
-class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListener{
+class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListener,WorkspaceInvitationsApplicationsAdapter.InvitationButtonClickListener{
 
     private lateinit var binding: FragmentPersonalWorkspaceBinding
     private lateinit var dialog:AlertDialog
@@ -48,6 +47,50 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
         binding = FragmentPersonalWorkspaceBinding.inflate(inflater)
         setHasOptionsMenu(true)
         return binding.root
+    }
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.btn_WorkspaceApplications->{
+                onSeeWorkspaceApplicationsClicked()
+            }
+        }
+        return item.onNavDestinationSelected(findNavController()) || super.onOptionsItemSelected(item)
+    }
+
+    private fun onSeeWorkspaceApplicationsClicked() {
+        val tmpBinding = DialogWsApplicationsBinding.inflate(layoutInflater, requireView().parent as ViewGroup, false)
+
+        mWorkspaceViewModel.getWorkspaceApplicationsResourceResponse.observe(viewLifecycleOwner, {
+            when(it.javaClass){
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    tmpBinding.rvWsApplication.layoutManager =LinearLayoutManager(requireContext())
+                    tmpBinding.rvWsApplication.adapter =
+                        WorkspaceInvitationsApplicationsAdapter(it.data!!.application_list as ArrayList<WorkspaceInvitation>, requireContext(), this)
+
+                    mWorkspaceViewModel.fetchWorkspace((activity as WorkspaceActivity).workspace_id!!, (activity as WorkspaceActivity).token!!)
+                    mWorkspaceViewModel.getWorkspaceApplicationsResourceResponse.value = Resource.Done()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    mWorkspaceViewModel.getWorkspaceApplicationsResourceResponse.value = Resource.Done()
+
+                }
+                Resource.Done::class.java ->{
+                    dialog.dismiss()
+                    mWorkspaceViewModel.getWorkspaceApplicationsResourceResponse.removeObservers(viewLifecycleOwner)
+                }
+            }
+        })
+
+        mWorkspaceViewModel.getWorkspaceApplications((activity as WorkspaceActivity).token!!, (activity as WorkspaceActivity).workspace_id!!, 0, 10)
+
+        AlertDialog.Builder(requireContext())
+            .setView(tmpBinding.root)
+            .setCancelable(true)
+            .show()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -773,6 +816,14 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
                 dialog.dismiss()
             }
             .create().show()
+    }
+
+    override fun onInvitationAcceptClicked(request: WorkspaceInvitation, position: Int) {
+        //TODO("Not yet implemented")
+    }
+
+    override fun onInvitationRejectClicked(request: WorkspaceInvitation, position: Int) {
+        //TODO("Not yet implemented")
     }
 
 

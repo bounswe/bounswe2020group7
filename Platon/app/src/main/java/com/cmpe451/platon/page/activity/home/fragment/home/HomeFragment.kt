@@ -58,7 +58,7 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
         setListeners()
 
         setObservers()
-        mHomeViewModel.getActivities((activity as HomeActivity).currUserToken!!, 0, 5)
+        mHomeViewModel.getActivities((activity as HomeActivity).currUserToken, 0, 5)
         mHomeViewModel.getTrendingProjects(10)
         mHomeViewModel.getUpcomingEvents(0, 5)
 

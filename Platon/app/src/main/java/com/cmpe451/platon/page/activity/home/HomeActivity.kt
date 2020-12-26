@@ -362,9 +362,6 @@ class HomeActivity : BaseActivity(),
                                 R.id.workspace_inv_ntf_rb->{
                                     mActivityViewModel.getInvitationsFromWs(currUserToken,currentPage, PAGE_SIZE)
                                 }
-                                R.id.workspace_app_ntf_rb->{
-                                    mActivityViewModel.getApplicationsToWs(currUserToken,currentPage, PAGE_SIZE)
-                                }
                             }
                         }
                         View.VISIBLE->{
@@ -641,9 +638,6 @@ class HomeActivity : BaseActivity(),
                         }
                         R.id.workspace_inv_ntf_rb->{
                             mActivityViewModel.getInvitationsFromWs(currUserToken,0, toolbarPageSize)
-                        }
-                        R.id.workspace_app_ntf_rb->{
-                            mActivityViewModel.getApplicationsToWs(currUserToken,0, toolbarPageSize)
                         }
                     }
                 }

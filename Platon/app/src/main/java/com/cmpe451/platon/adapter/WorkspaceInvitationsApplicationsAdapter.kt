@@ -14,6 +14,8 @@ import com.cmpe451.platon.databinding.NotificationElementCellBinding
 import com.cmpe451.platon.network.models.WorkspaceInvitation
 import com.cmpe451.platon.page.activity.home.HomeActivity
 
+
+
 class WorkspaceInvitationsApplicationsAdapter(private val data: ArrayList<WorkspaceInvitation>, private val context: Context, private val invitationButtonClickListener: InvitationButtonClickListener) :
         RecyclerView.Adapter<WorkspaceInvitationsApplicationsAdapter.MyViewHolder>(), ToolbarElementsAdapter {
 

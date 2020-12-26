@@ -18,6 +18,8 @@ class WorkspaceViewModel : ViewModel() {
     var getApplyWorksppaceResourceResponse = repository.applyWorksppaceResourceResponse
     var getQuitWorkspaceResponse = repository.quitWorkspaceResponse
 
+    var getWorkspaceApplicationsResourceResponse = repository.workspaceApplicationsResourceResponse
+
     fun fetchWorkspace(workspace_id:Int, token:String){
         repository.fetchWorkspace(workspace_id, token)
     }
@@ -47,6 +49,10 @@ class WorkspaceViewModel : ViewModel() {
 
     fun quitWorkspace(workspaceId: Int, token: String) {
         repository.quitWorkspace(workspaceId, token)
+    }
+
+    fun getWorkspaceApplications(token: String, workspaceId: Int, i: Int, i1: Int) {
+        repository.getWorkspaceApplications(token, workspaceId)
     }
 
 }
