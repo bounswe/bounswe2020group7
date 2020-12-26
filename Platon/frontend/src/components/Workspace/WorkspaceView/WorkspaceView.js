@@ -19,6 +19,10 @@ import axios from "axios";
 import WorkspaceViewStateTimeline from "./WorkspaceViewStateTimeline/WorkspaceViewStateTimeline";
 import Tabs from "@material-ui/core/Tabs";
 import { Link } from "react-router-dom";
+import CancelOutlinedIcon from "@material-ui/icons/CancelOutlined";
+import CheckCircleOutlinedIcon from "@material-ui/icons/CheckCircleOutlined";
+import IconButton from "@material-ui/core/IconButton";
+
 const StyledButton = withStyles({
   root: {
     background: colors.tertiary,
@@ -30,11 +34,28 @@ const StyledButton = withStyles({
   },
 })(Button);
 
-function showDeadline(deadline) {
-  let newDeadlineArray = deadline;
-  //newDeadlineArray
-  //newDeadlineArray
-}
+const StyledButtonApply = withStyles({
+  root: {
+    background: colors.quaternaryDark,
+    color: colors.secondary,
+
+    "&:hover": {
+      backgroundColor: colors.quaternary,
+    },
+  },
+})(Button);
+
+const StyledButtonQuit = withStyles({
+  root: {
+    background: colors.quinary,
+    color: colors.secondary,
+
+    "&:hover": {
+      backgroundColor: colors.quinaryDark,
+    },
+  },
+})(Button);
+
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -106,6 +127,9 @@ class WorkspaceView extends Component {
       workspaceId: null,
       value: 0,
       workspace: {},
+      collaboratorIds: [],
+      applicants: [],
+      unauthorized: false
     };
   }
   componentDidMount() {
@@ -117,36 +141,198 @@ class WorkspaceView extends Component {
       workspaceId: workspaceId,
     });
 
-    axios.defaults.headers.common["auth_token"] = `${token}`;
-    const url = config.BASE_URL;
+    this.promise()
+  }
 
-    axios
-      .get(url + "/api/workspaces", {
-        params: {
-          workspace_id: workspaceId,
-        },
-      })
-      .then((response) => {
-        if (response.status === 200) {
-          this.setState({
-            workspace: response.data,
-            loaded: true,
-          });
-        }
-      })
-      .catch((err) => {
-        this.setState({
-          error: "Error occured. " + err.message,
-        });
-        console.log(err);
+  promise = () => {
+    Promise.all([
+      this.fetchWorkspace(),
+      this.fetchWorkspaceApplications(),
+    ]).then(() => {
+      this.setState({
+        loaded: true,
       });
+    });
   }
   handleChange = (event, newValue) => {
     this.setState({
       value: newValue,
     });
   };
+  fetchWorkspace = () => {
+    const token = localStorage.getItem("jwtToken");
 
+    axios.defaults.headers.common["auth_token"] = `${token}`;
+    const url = config.BASE_URL;
+    return axios
+      .get(url + "/api/workspaces", {
+        params: {
+          workspace_id: this.props.match.params.workspaceId,
+        },
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          let tempArray = [];
+          for (var key in response.data.active_contributors) {
+            tempArray.push(response.data.active_contributors[key].id);
+          }
+          this.setState({
+            workspace: response.data,
+            collaboratorIds: tempArray,
+          });
+        }
+      })
+      .catch((err) => {
+        if(err.response.status=401){
+          this.setState({
+            unauthorized: true
+          })
+        }
+        this.setState({
+          error: "Error occured. " + err.response.data.error,
+        });
+        console.log(err);
+      });
+  };
+  fetchWorkspaceApplications = () => {
+    const token = localStorage.getItem("jwtToken");
+    axios.defaults.headers.common["auth_token"] = `${token}`;
+    const url = config.BASE_URL;
+    return axios
+      .get(url + "/api/workspaces/applications", {
+        params: {
+          workspace_id: this.props.match.params.workspaceId,
+        },
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          this.setState({
+            applicants: response.data,
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  handleCloseError = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    this.setState({ error: false });
+  };
+
+  handleCloseSuccess = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    this.setState({ success: false });
+  };
+  handleAcceptApplication = (id) => {
+    const token = localStorage.getItem("jwtToken");
+    const url = config.BASE_URL;
+    let formData = new FormData();
+    formData.append("is_accepted", "1");
+    formData.append("application_id", id);
+    axios
+      .delete(url + "/api/workspaces/applications", {
+        headers: {
+          auth_token: token, //the token is a variable which holds the token
+        },
+        data: formData,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          this.setState({
+            success: "Successfully accepted.",
+          });
+          this.promise();
+        }
+      })
+      .catch((err) => {
+        this.setState({
+          error: "Error occured. " + err.response.data.error,
+        });
+      });
+  };
+  handleApply = () => {
+    axios.defaults.headers.common["auth_token"] = localStorage.getItem(
+      "jwtToken"
+    );
+    const url = config.BASE_URL;
+    let formData = new FormData();
+    formData.append("workspace_id", this.props.match.params.workspaceId);
+    axios
+      .post(url + "/api/workspaces/applications", formData)
+      .then((response) => {
+        if (response.status === 201) {
+          this.setState({ success: "You have successfully applied." });
+          this.promise()
+        }
+      })
+      .catch((err) => {
+        this.setState({
+          error: "Error occured. " + err.response.data.error,
+        });
+        console.log(err);
+      });
+  };
+  handleQuit = () => {
+    const token = localStorage.getItem("jwtToken");
+    const url = config.BASE_URL;
+    let formData = new FormData();
+    formData.append("workspace_id", this.props.match.params.workspaceId);
+    axios
+      .delete(url + "/api/workspaces/quit", {
+        headers: {
+          auth_token: token,
+        },
+        data: formData,
+      })
+      .then((response) => {
+        if (response.status === 201) {
+
+          this.setState({
+            success: "Successfully quited.",
+          });
+          this.promise()
+        }
+      })
+      .catch((err) => {
+        this.setState({
+          error: "Error occured. " + err.response.data.error,
+        });
+      });
+  };
+  handleRejectApplication = (id) => {
+    const token = localStorage.getItem("jwtToken");
+    const url = config.BASE_URL;
+    let formData = new FormData();
+    formData.append("is_accepted", "0");
+    formData.append("application_id", id);
+    axios
+      .delete(url + "/api/workspaces/applications", {
+        headers: {
+          auth_token: token, //the token is a variable which holds the token
+        },
+        data: formData,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          this.setState({
+            success: "Successfully rejected.",
+          });
+          this.fetchWorkspaceApplications();
+        }
+      })
+      .catch((err) => {
+        this.setState({
+          error: "Error occured. " + err.response.data.error,
+        });
+      });
+  };
   render() {
     const { classes } = this.props;
     return (
@@ -170,12 +356,14 @@ class WorkspaceView extends Component {
               >
                 View Workspace
               </Typography>
-              <Link
-                to={`/${this.state.profileId}/workspace`}
-                style={{ textDecoration: "none" }}
-              >
-                Back to workspaces
-              </Link>
+              {this.state.collaboratorIds.includes(this.state.profileId) ? (
+                <Link
+                  to={`/${this.state.profileId}/workspace`}
+                  style={{ textDecoration: "none" }}
+                >
+                  Back to workspaces
+                </Link>
+              ) : null}
             </div>
           </div>
         </div>
@@ -210,22 +398,26 @@ class WorkspaceView extends Component {
               label="Files"
               {...a11yProps(1)}
             />
-            <Tab
-              style={{
-                backgroundColor: colors.secondary,
-                borderRadius: "5px 5px 0px 0px",
-              }}
-              label="Issues"
-              {...a11yProps(2)}
-            />
-            <Tab
-              style={{
-                backgroundColor: colors.secondary,
-                borderRadius: "5px 5px 0px 0px",
-              }}
-              label="Milestones"
-              {...a11yProps(3)}
-            />
+            {this.state.collaboratorIds.includes(this.state.profileId) ? (
+              <Tab
+                style={{
+                  backgroundColor: colors.secondary,
+                  borderRadius: "5px 5px 0px 0px",
+                }}
+                label="Issues"
+                {...a11yProps(2)}
+              />
+            ) : null}
+            {this.state.collaboratorIds.includes(this.state.profileId) ? (
+              <Tab
+                style={{
+                  backgroundColor: colors.secondary,
+                  borderRadius: "5px 5px 0px 0px",
+                }}
+                label="Milestones"
+                {...a11yProps(3)}
+              />
+            ) : null}
           </Tabs>
           <div style={{ backgroundColor: colors.secondary, width: "100%" }}>
             <div
@@ -237,7 +429,7 @@ class WorkspaceView extends Component {
                 backgroundColor: colors.secondary,
               }}
             >
-              {this.state.loaded ? (
+              {this.state.loaded && !this.state.unauthorized ? (
                 <div
                   style={{
                     display: "flex",
@@ -389,7 +581,7 @@ class WorkspaceView extends Component {
                             >
                               Skills
                             </Typography>
-                            {this.state.workspace.skills.length !== 0 ? (
+                            {this.state.workspace.skills && this.state.workspace.skills.length !== 0 ? (
                               <div>
                                 {this.state.workspace.skills.map((element) => (
                                   <Chip
@@ -420,7 +612,7 @@ class WorkspaceView extends Component {
                           Collaborators
                         </Typography>
                         <div>
-                          {this.state.workspace.active_contributors.map(
+                          {this.state.workspace.active_contributors && this.state.workspace.active_contributors.map(
                             (element) => (
                               <Link
                                 to={`/${element.id}/`}
@@ -436,6 +628,77 @@ class WorkspaceView extends Component {
                             )
                           )}
                         </div>
+                        {!this.state.collaboratorIds.includes(
+                          this.state.profileId
+                        ) ? (
+                          <div>
+                            <br />
+                            <StyledButtonApply onClick={this.handleApply}>
+                              Apply Workspace
+                            </StyledButtonApply>
+                          </div>
+                        ) : null}
+                        {this.state.collaboratorIds.includes(
+                          this.state.profileId
+                        ) &&
+                        this.state.profileId !==
+                          this.state.workspace.creator_id ? (
+                          <div>
+                            <br />
+                            <StyledButtonQuit onClick={this.handleQuit}>
+                              Quit Workspace
+                            </StyledButtonQuit>
+                          </div>
+                        ) : null}
+                        {this.state.collaboratorIds.includes(
+                          this.state.profileId
+                        ) ? (
+                          <div style={{ textAlign: "center" }}>
+                            <hr />
+                            <Typography
+                              gutterBottom
+                              variant="body1"
+                              align="center"
+                              style={{ color: colors.quaternaryDark }}
+                            >
+                              Incoming Requests
+                            </Typography>
+                            {this.state.applicants && this.state.applicants.length === 0
+                              ? "Nothing to show"
+                              : null}
+                            {this.state.applicants.map((applicant, index) => (
+                              <div style={{ display: "flex" }}>
+                                <h6 style={{ margin: "auto 0px" }}>
+                                  {applicant.applicant_fullname}
+                                </h6>
+                                <div>
+                                  <IconButton
+                                    onClick={() =>
+                                      this.handleRejectApplication(
+                                        applicant.application_id
+                                      )
+                                    }
+                                  >
+                                    <CancelOutlinedIcon
+                                      style={{ color: colors.quinary }}
+                                    />
+                                  </IconButton>
+                                  <IconButton
+                                    onClick={() =>
+                                      this.handleAcceptApplication(
+                                        applicant.application_id
+                                      )
+                                    }
+                                  >
+                                    <CheckCircleOutlinedIcon
+                                      style={{ color: colors.quaternary }}
+                                    />
+                                  </IconButton>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : null}
                       </div>
                       <Divider
                         className={classes.divider}
@@ -456,21 +719,26 @@ class WorkspaceView extends Component {
                       <WorkspaceViewStateTimeline
                         state={this.state.workspace.state}
                       />
-                      <div className={classes.section3}>
-                        <Link
-                          to={`/${this.state.profileId}/workspace/${this.props.match.params.workspaceId}/edit`}
-                          style={{ textDecoration: "none" }}
-                        >
-                          <StyledButton color="primary">
-                            Edit Workspace
-                          </StyledButton>
-                        </Link>
-                      </div>
+                      {this.state.collaboratorIds.includes(
+                        this.state.profileId
+                      ) ? (
+                        <div className={classes.section3}>
+                          <Link
+                            to={`/${this.props.match.params.profileId}/workspace/${this.props.match.params.workspaceId}/edit`}
+                            style={{ textDecoration: "none" }}
+                          >
+                            <StyledButton color="primary">
+                              Edit Workspace
+                            </StyledButton>
+                          </Link>
+                        </div>
+                      ) : null}
                     </div>
                   </TabPanel>
                   <TabPanel value={this.state.value} index={1}>
                     <WorkspaceViewFileSection
                       workspaceId={this.props.match.params.workspaceId}
+                      collaboratorIds={this.state.collaboratorIds}
                     />
                   </TabPanel>
                   <TabPanel value={this.state.value} index={2}>
