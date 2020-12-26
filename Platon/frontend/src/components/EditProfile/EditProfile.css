@@ -1,5 +1,6 @@
-.ProfilePageContainer{
+.EditPageContainer{
     padding-top: 2%;
+    padding-bottom: 5%;
 }
 
 .GeneralSmallFont{
@@ -51,4 +52,10 @@
     justify-content: center;
     align-items: center;
 
+}
+
+.ProfileSkillChip{
+    color: #E0DFD5 !important;
+    font-family: 'Rubik', sans-serif !important;
+    border: #B0DB06 2px solid !important;
 }
