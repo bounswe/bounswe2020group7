@@ -333,6 +333,15 @@ class UpcomingEventsSearchTest(BaseTest):
                     "link": "http://www.wikicfp.com/cfp/servlet/event.showcfp?eventid=120540&amp;copyownerid=10532",
                     "location": "Valletta, Malta",
                     "title": "1st CFP 19th Annual Industrial Simulation Conference, June 2-4, 2021, University of Malta, Valletta, Malta"
+                },
+                {
+                    "acronym": "ANIVAE 2021",
+                    "date": "Mar 28, 2021 - Mar 28, 2021",
+                    "deadline": "Jan 10, 2021",
+                    "id": 2,
+                    "link": "http://www.wikicfp.com/cfp/servlet/event.showcfp?eventid=120539&amp;copyownerid=106130",
+                    "location": "Lisbon, Portugal",
+                    "title": "4th Workshop on Animation in Virtual and Augmented Environments (ANIVAE)"
                 }
             ]
         }
