@@ -673,7 +673,18 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
     }
 
     override fun onDeleteMilestoneClicked(milestone: Milestone) {
-        TODO("Not yet implemented")
+        AlertDialog.Builder(context)
+            .setMessage("Are you sure you want to delete ${milestone.title}? You will not be able to undo.")
+            .setPositiveButton("Delete"
+            ) { _, _ ->
+                mWorkspaceViewModel.deleteMilestone((activity as WorkspaceActivity).workspace_id!!,
+                milestone.milestone_id, (activity as WorkspaceActivity).token!!)
+            }
+            .setNegativeButton("Cancel"
+            ) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create().show()
     }
 
 
