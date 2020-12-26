@@ -234,6 +234,7 @@ interface Webservice {
         @Field("requirements") requirements:String?,
         @Field("skills") skills:String?,
         @Field("state") state:Int?,
+        @Field("upcoming_events") upcoming_events:String?,
         @Header("auth_token") auth_token: String
     ) : Call<JsonObject?>
     @FormUrlEncoded

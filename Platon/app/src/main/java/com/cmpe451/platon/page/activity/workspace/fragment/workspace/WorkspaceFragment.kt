@@ -18,16 +18,18 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.*
+import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.*
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.*
+import com.cmpe451.platon.page.activity.home.fragment.home.HomeViewModel
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.page.activity.workspace.fragment.addworkspace.AddWorkspaceViewModel
 import com.cmpe451.platon.util.Definitions
 import java.util.*
 import kotlin.collections.ArrayList
 
-class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListener,WorkspaceApplicationsAdapter.ApplicationsButtonClickListener{
+class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListener,WorkspaceApplicationsAdapter.ApplicationsButtonClickListener, UpcomingEventsAdapter.UpcomingButtonClickListener{
 
     private lateinit var binding: FragmentPersonalWorkspaceBinding
     private lateinit var dialog:AlertDialog
@@ -35,8 +37,10 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
     private lateinit var reqAdapter: SkillsAdapter
     private val mWorkspaceViewModel:WorkspaceViewModel by activityViewModels()
     private val mAddWorkspaceViewModel:AddWorkspaceViewModel by viewModels()
+    private val mHomeViewModel:HomeViewModel by viewModels()
     private var skillsArray:ArrayList<String> = ArrayList()
     private var requirementsArray:ArrayList<String> = ArrayList()
+    private var upcomingArray:ArrayList<Int> = ArrayList()
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         binding = FragmentPersonalWorkspaceBinding.inflate(inflater)
@@ -106,6 +110,7 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
             binding.infoTitle.setCompoundDrawables(null,null,null,null)
             binding.milestoneTitleTv.setCompoundDrawables(null,null,null,null)
             binding.workspaceTitleTv.setCompoundDrawables(null,null,binding.workspaceTitleTv.compoundDrawablesRelative[2],null)
+            binding.upcomingTitleTv.setCompoundDrawables(null,null,null,null)
         }
         else {
             binding.workspaceTitleTv.setCompoundDrawables(binding.workspaceTitleTv.compoundDrawablesRelative[0],null,null,null)
@@ -135,11 +140,15 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
             binding.workspaceTitleTv.setOnClickListener {
                 onQuitButtonClicked()
             }
+            binding.upcomingTitleTv.setOnClickListener {
+                onAddUpcomingEventClicked()
+            }
         }
         else {
             binding.workspaceTitleTv.setOnClickListener {
                 mWorkspaceViewModel.applyToWorkpace((activity as WorkspaceActivity).workspace_id!!, (activity as WorkspaceActivity).token!!)
             }
+
         }
 
         binding.descTitleTv.setOnClickListener{
@@ -172,6 +181,49 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
             }
         }
 
+    }
+
+    private fun onAddUpcomingEventClicked() {
+        mHomeViewModel.getUpcomingEvents(null, null)
+        mHomeViewModel.getUpcomingEventsResourceResponse.observe(viewLifecycleOwner,  { t ->
+            when (t.javaClass) {
+                Resource.Success::class.java -> {
+                    val upcomingList:List<Int> = mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.upcoming_events.map { it.id }
+                    upcomingArray.clear()
+                    upcomingArray.addAll(upcomingList)
+                    val bArray = t.data!!.upcoming_events!!.map { it.id }.map { upcomingList.contains(it) }.toBooleanArray()
+                    AlertDialog.Builder(context)
+                        .setNeutralButton("Cancel") { _, _ ->
+
+                        }
+                        .setNegativeButton("Completed") { _, _ ->
+                            val upcomingArrayString: String = if(upcomingArray.isNotEmpty()) upcomingArray.map{ it}.toString() else "[]"
+                            mWorkspaceViewModel.updateWorkspace((activity as WorkspaceActivity).workspace_id!!,null, null,
+                                null, null, null, null,null,null, upcomingArrayString, (activity as WorkspaceActivity).token!!)
+                            mAddWorkspaceViewModel.allSkills.removeObservers(viewLifecycleOwner)
+                        }
+                        .setMultiChoiceItems(
+                            t.data!!.upcoming_events!!.map { it.acronym }.toTypedArray(),
+                            bArray
+                        ) { _, which, isChecked ->
+                            if (isChecked) {
+                                if(t.data!!.upcoming_events!!.map { it.id }[which] !in upcomingArray) upcomingArray.add(t.data!!.upcoming_events!!.map { it.id }[which])
+                            } else {
+                                upcomingArray.remove(t.data!!.upcoming_events!!.map { it.id }[which])
+                            }
+                        }
+                        .create().show()
+                    dialog.dismiss()
+                    mHomeViewModel.getUpcomingEventsResourceResponse.removeObservers(viewLifecycleOwner)
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
+                Resource.Loading::class.java ->
+                    dialog.show()
+            }
+        })
     }
 
     private fun onQuitButtonClicked() {
@@ -239,7 +291,7 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
                         else -> getString(R.string.state_finished_str)
                     }
                     (binding.collaboratorsRv.adapter as CollaboratorAdapter).submitElements(it.data?.active_contributors ?:ArrayList())
-
+                    (binding.upcomingRv.adapter as UpcomingEventsAdapter).replaceList(it.data!!.upcoming_events as ArrayList<UpcomingEvent>)
                 }
                 Resource.Error::class.java ->{
                     dialog.dismiss()
@@ -369,6 +421,9 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
         binding.milestoneRv.adapter = MilestoneAdapter(ArrayList(),this, (activity as WorkspaceActivity).isOwner!!)
         binding.milestoneRv.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
+        binding.upcomingRv.adapter = UpcomingEventsAdapter(ArrayList(), requireContext(),this)
+        binding.upcomingRv.layoutManager =LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+
     }
     private fun onAddRequirementClicked() {
         requirementsArray.clear()
@@ -389,7 +444,7 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
                     .setNegativeButton("Completed",DialogInterface.OnClickListener { dialog, _ ->
                         val requirementsArrayString:String?= if(requirementsArray.isNotEmpty()) requirementsArray.map{e-> "\"$e\""}.toString() else "[]"
                         mWorkspaceViewModel.updateWorkspace((activity as WorkspaceActivity).workspace_id!!,null, null,
-                            null, null, null, requirementsArrayString,null,null, (activity as WorkspaceActivity).token!!)
+                            null, null, null, requirementsArrayString,null,null,null, (activity as WorkspaceActivity).token!!)
                     })
                     .create().show()
                 tmpBinding.btnAddRequirement.setOnClickListener {
@@ -403,7 +458,7 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
             .setNegativeButton("Completed") { _, _ ->
                 val requirementsArrayString:String?= if(requirementsArray.isNotEmpty()) requirementsArray.map{e-> "\"$e\""}.toString() else "[]"
                 mWorkspaceViewModel.updateWorkspace((activity as WorkspaceActivity).workspace_id!!,null, null,
-                    null, null, null, requirementsArrayString,null,null, (activity as WorkspaceActivity).token!!)
+                    null, null, null, requirementsArrayString,null,null, null, (activity as WorkspaceActivity).token!!)
 
             }
             .setMultiChoiceItems(
@@ -511,6 +566,7 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
                         null,
                         null,
                         state,
+                        null,
                         (activity as WorkspaceActivity).token!!
 
                     )
@@ -744,7 +800,7 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
                                 .setNegativeButton("Completed") { _, _ ->
                                     val skillsArrayString: String = if(skillsArray.isNotEmpty()) skillsArray.map{ e-> "\"$e\""}.toString() else "[]"
                                     mWorkspaceViewModel.updateWorkspace((activity as WorkspaceActivity).workspace_id!!,null, null,
-                                        null, null, null, null,skillsArrayString,null, (activity as WorkspaceActivity).token!!)
+                                        null, null, null, null,skillsArrayString,null, null, (activity as WorkspaceActivity).token!!)
                                     mAddWorkspaceViewModel.allSkills.removeObservers(viewLifecycleOwner)
                                 }
                                 .create().show()
@@ -759,7 +815,7 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
                         .setNegativeButton("Completed") { _, _ ->
                             val skillsArrayString: String = if(skillsArray.isNotEmpty()) skillsArray.map{ e-> "\"$e\""}.toString() else "[]"
                             mWorkspaceViewModel.updateWorkspace((activity as WorkspaceActivity).workspace_id!!,null, null,
-                                null, null, null, null,skillsArrayString,null, (activity as WorkspaceActivity).token!!)
+                                null, null, null, null,skillsArrayString,null, null,(activity as WorkspaceActivity).token!!)
                             mAddWorkspaceViewModel.allSkills.removeObservers(viewLifecycleOwner)
                         }
                         .setMultiChoiceItems(
@@ -825,6 +881,17 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.add_issue_btn)?.isVisible = false
         super.onPrepareOptionsMenu(menu)
+    }
+
+    override fun onUpcomingButtonClicked(binding: UpcomingEventCellBinding, position: Int) {
+        if (binding.expandLl.visibility == View.GONE){
+            binding.expandLl.visibility = View.VISIBLE
+        }else{
+            binding.expandLl.visibility = View.GONE
+        }
+        binding.expandLl.refreshDrawableState()
+
+        Definitions().vibrate(50, activity as BaseActivity)
     }
 
 

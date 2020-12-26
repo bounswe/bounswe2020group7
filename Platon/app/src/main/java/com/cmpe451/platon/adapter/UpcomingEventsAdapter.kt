@@ -99,5 +99,9 @@ class UpcomingEventsAdapter(private val data: ArrayList<UpcomingEvent>, private 
         data.addAll(list)
         this.notifyDataSetChanged()
     }
-
+    fun replaceList(list:ArrayList<UpcomingEvent>){
+        data.clear()
+        data.addAll(list)
+        this.notifyDataSetChanged()
+    }
 }

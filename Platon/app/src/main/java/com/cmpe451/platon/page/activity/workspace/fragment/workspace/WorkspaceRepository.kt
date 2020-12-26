@@ -44,10 +44,11 @@ class WorkspaceRepository {
 
         })
     }
-    fun updateWorkspace(workspace_id: Int,title: String?, description: String?, private: Int?, maxCollaborators: Int?, deadline: String?, requirements: String?, skills: String?,state:Int?, authToken: String) {
+    fun updateWorkspace(workspace_id: Int,title: String?, description: String?, private: Int?, maxCollaborators: Int?, deadline: String?, requirements: String?, skills: String?,
+                        state:Int?,upcomingEvent:String?, authToken: String) {
         val service = RetrofitClient.getService()
         val call = service.updateWorkspace(workspace_id, title, description, private, maxCollaborators,
-            deadline, requirements, skills, state,authToken)
+            deadline, requirements, skills, state,upcomingEvent,authToken)
         updateResourceResponse.value = Resource.Loading()
         call.enqueue(object: Callback<JsonObject?> {
             override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {

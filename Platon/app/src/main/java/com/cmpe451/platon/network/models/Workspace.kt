@@ -41,6 +41,7 @@ data class Workspace(
         val timestamp:String,
         val skills:List<String>,
         val state: Int,
+        val upcoming_events:List<UpcomingEvent>
 )
 data class Folder(
         val cwd:String,

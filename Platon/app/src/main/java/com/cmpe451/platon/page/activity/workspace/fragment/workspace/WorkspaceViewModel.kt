@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.Milestones
+import com.cmpe451.platon.network.models.UpcomingEvents
 import com.cmpe451.platon.util.Definitions
 import com.google.gson.JsonObject
 
@@ -23,9 +24,10 @@ class WorkspaceViewModel : ViewModel() {
     fun fetchWorkspace(workspace_id:Int, token:String){
         repository.fetchWorkspace(workspace_id, token)
     }
-    fun updateWorkspace(workspace_id: Int,title: String?, description: String?, private: Int?, maxCollaborators: Int?, deadline: String?, requirements: String?, skills: String?,state:Int?, authToken: String){
+    fun updateWorkspace(workspace_id: Int,title: String?, description: String?, private: Int?, maxCollaborators: Int?, deadline: String?, requirements: String?,
+                        skills: String?,state:Int?, upcomingEvents: String?,authToken: String){
         repository.updateWorkspace(workspace_id, title, description, private, maxCollaborators,
-            deadline, requirements, skills, state,authToken)
+            deadline, requirements, skills, state, upcomingEvents,authToken)
     }
     fun deleteWorkspace(workspace_id: Int, authToken: String){
         repository.deleteWorkspace(workspace_id, authToken)
