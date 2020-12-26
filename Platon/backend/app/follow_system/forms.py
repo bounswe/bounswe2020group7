@@ -88,3 +88,32 @@ unfollow_parser.add_argument('following_id', required=True, type=int,
                                   help="ID of the unfollowed user",
                                   location='form')
 unfollow_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
+
+class GetCommentsForm(Form):
+    commented_user_id = IntegerField('commented_user_id', validators=[validators.DataRequired()])
+    page = IntegerField("page")
+    per_page = IntegerField("per_page")
+
+get_comment_parser = reqparse.RequestParser()
+get_comment_parser.add_argument('commented_user_id',required=True,type=int,help="ID of the commented user", location="args")
+get_comment_parser.add_argument('page',type=int,help="Page index that you want(Starts from 0)",location='args')
+get_comment_parser.add_argument('per_page',type=int,help="Number of items in a page",location='args')
+get_comment_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
+
+class PostCommentForm(Form):
+    commented_user_id = IntegerField('commented_user_id', validators=[validators.DataRequired()])
+    rate = IntegerField('rate', validators=[validators.DataRequired()])
+    text = StringField("text")
+
+post_comment_parser = reqparse.RequestParser()
+post_comment_parser.add_argument('commented_user_id',required=True,type=int,help="ID of the commented user", location="form")
+post_comment_parser.add_argument('rate',required=True,type=int,help="Rate for the User", location="form")
+post_comment_parser.add_argument('text',type=str,help="Comment for the User", location="form")
+post_comment_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
+
+class DeleteCommentForm(Form):
+    comment_id = IntegerField('comment_id', validators=[validators.DataRequired()])
+
+delete_comment_parser = reqparse.RequestParser()
+delete_comment_parser.add_argument('comment_id',required=True,type=int,help="ID of the commented user", location="args")
+delete_comment_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
