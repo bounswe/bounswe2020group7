@@ -224,11 +224,13 @@ class ProfilePage extends React.Component {
         })
         .then(() => {
           if (this.state.isProfilePrivate === false) {
-            requestService.followers(this.props.match.params.profileId).then((response) => {
-              this.setState({
-                followers: response.data.followers,
+            requestService
+              .followers(this.props.match.params.profileId)
+              .then((response) => {
+                this.setState({
+                  followers: response.data.followers,
+                });
               });
-            });
           }
         });
     });
@@ -256,11 +258,13 @@ class ProfilePage extends React.Component {
         })
         .then(() => {
           if (this.state.isProfilePrivate === false) {
-            requestService.followers(this.props.match.params.profileId).then((response) => {
-              this.setState({
-                followers: response.data.followers,
+            requestService
+              .followers(this.props.match.params.profileId)
+              .then((response) => {
+                this.setState({
+                  followers: response.data.followers,
+                });
               });
-            });
           }
         });
     });
@@ -355,7 +359,9 @@ class ProfilePage extends React.Component {
                   )}
                   {this.state.user && (
                     <p className="GeneralSmallFont">
-                      {this.state.user.job} {this.state.user.institution && " - "} {this.state.user.institution}
+                      {this.state.user.job}{" "}
+                      {this.state.user.institution && " - "}{" "}
+                      {this.state.user.institution}
                     </p>
                   )}
                   {this.state.isProfilePrivate
@@ -425,6 +431,16 @@ class ProfilePage extends React.Component {
                       block
                     >
                       Unfollow
+                    </Button>
+                  )}
+                  {this.state.isMyProfile ? null : (
+                    <Button
+                      className="ProfileFollowButton"
+                      variant="primary"
+                      size="lg"
+                      block
+                    >
+                      Invite
                     </Button>
                   )}
                   {this.state.isProfilePrivate ? null : (
