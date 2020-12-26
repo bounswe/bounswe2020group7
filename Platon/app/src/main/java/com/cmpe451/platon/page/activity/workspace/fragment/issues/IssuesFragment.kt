@@ -154,7 +154,7 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
         sharedPreferences.edit().putString("issue_id", issue[position].issue_id.toString()).apply()
         sharedPreferences.edit().putString("issue_deadline", issue[position].deadline).apply()
         sharedPreferences.edit().putString("issue_creator_name", issue[position].creator_name + " " + issue[position].creator_surname).apply()
-        findNavController().navigate(IssuesFragmentDirections.actionİssuesFragmentToİssueDetailFragment())
+        findNavController().navigate(IssuesFragmentDirections.actionIssuesFragmentToIssueDetailFragment())
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
