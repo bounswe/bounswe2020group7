@@ -102,12 +102,12 @@ get_comment_parser.add_argument("auth_token",required=True, type=str, help="Auth
 
 class PostCommentForm(Form):
     commented_user_id = IntegerField('commented_user_id', validators=[validators.DataRequired()])
-    rate = IntegerField('rate', validators=[validators.DataRequired()])
+    rate = IntegerField('rate', validators=[validators.DataRequired(),validators.NumberRange(min=1, max=5)])
     text = StringField("text")
 
 post_comment_parser = reqparse.RequestParser()
 post_comment_parser.add_argument('commented_user_id',required=True,type=int,help="ID of the commented user", location="form")
-post_comment_parser.add_argument('rate',required=True,type=int,help="Rate for the User", location="form")
+post_comment_parser.add_argument('rate',required=True,type=int,help="Rate for the User(Between 1 and 5)", location="form")
 post_comment_parser.add_argument('text',type=str,help="Comment for the User", location="form")
 post_comment_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
 

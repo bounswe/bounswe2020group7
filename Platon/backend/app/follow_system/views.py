@@ -13,7 +13,7 @@ from app.follow_system.forms import get_followings_parser, get_followers_parser,
 from app.follow_system.models import Follow, FollowRequests, Comments
 from app.auth_system.models import User
 from app.auth_system.views import login_required
-from app.follow_system.helpers import follow_required
+from app.follow_system.helpers import follow_required, previous_collaboration_required, update_rate
 from app.profile_management.helpers import NotificationManager
 from app.auth_system.helpers import profile_photo_link
 from app.follow_system.forms import GetCommentsForm, PostCommentForm, DeleteCommentForm
@@ -374,7 +374,7 @@ class FollowRequestAPI(Resource):
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
 
 @follow_system_ns.route("/comment")
-class FollowRequestAPI(Resource):
+class CommentRateAPI(Resource):
     '''
         Endpoints for User Comment Model.
     '''
@@ -383,14 +383,15 @@ class FollowRequestAPI(Resource):
     @api.response(200, 'Success', comment_list_model)
     @api.expect(get_comment_parser)
     @login_required
-    def get(self):
+    @follow_required(param_loc='args',requested_user_id_key='commented_user_id')
+    def get(user_id,self):
         '''
             Get Comments.
         '''
         form = GetCommentsForm(request.args)
         if form.validate():
             try:
-                user_comments = Comments.query.filter(Comments.commented_user_id == form.commented_user_id.data).all()
+                user_comments = Comments.query.filter(Comments.commented_user_id == form.commented_user_id.data).order_by(Comments.timestamp.desc()).all()
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
             if len(user_comments)==0:
@@ -427,6 +428,7 @@ class FollowRequestAPI(Resource):
                         404: 'Not found'})
     @api.expect(post_comment_parser)
     @login_required
+    @previous_collaboration_required(param_loc="form",requested_user_id_key="commented_user_id")
     def post(user_id, self):
         '''
             Create user comment
@@ -434,7 +436,15 @@ class FollowRequestAPI(Resource):
         form = PostCommentForm(request.form)
         if form.validate():
             try:
-                comment = Comments(user_id, form.commented_user_id.data, datetime.datetime.now(), form.rate.data, form.text.data)
+                prev_comment = Comments.query.filter_by(owner_id=user_id,commented_user_id=form.commented_user_id.data).first()
+            except:
+                return make_response(jsonify({'error': 'DB connection error'}), 500)
+
+            if prev_comment is not None:
+                return make_response(jsonify({'error': 'You are not allowed to send more than 1 comment to a user'}), 403)
+
+            try:
+                comment = Comments(user_id, form.commented_user_id.data, form.rate.data, form.text.data)
             except:
                 return make_response(jsonify({'error': 'DB connection error'}), 500)
             try:
@@ -442,8 +452,10 @@ class FollowRequestAPI(Resource):
                 db.session.commit()
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
-
-            return make_response(jsonify({'msg': 'Comment is successfully created'}), 200)
+            if update_rate(form.commented_user_id.data):
+                return make_response(jsonify({'msg': 'Comment is successfully created'}), 201)
+            else:
+                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
 
@@ -471,8 +483,12 @@ class FollowRequestAPI(Resource):
                 db.session.commit()
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+            
+            if update_rate(comment.commented_user_id):
+                return make_response(jsonify({'msg': 'Issue Comment is successfully deleted'}), 201)
+            else:
+                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
-            return make_response(jsonify({'msg': 'Issue Comment is successfully deleted'}), 200)
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
 
