@@ -505,34 +505,38 @@ class UpcomingEventsSearchAPI(Resource):
             if form.deadline_filter_start.data is not None:
                 for result in result_list:
                     event_deadline = result.get("deadline")
-                    filter_data = form.deadline_filter_start.data
-                    if datetime.strptime(event_deadline, '%b %d, %Y') >= filter_data:
-                        deadline_filter_start_list.append(result)
+                    if event_deadline != "N/A":
+                        filter_data = form.deadline_filter_start.data
+                        if datetime.strptime(event_deadline, '%b %d, %Y') >= filter_data:
+                            deadline_filter_start_list.append(result)
                     result_list = deadline_filter_start_list
             deadline_filter_end_list = []
             if form.deadline_filter_end.data is not None:
                 for result in result_list:
                     event_deadline = result.get("deadline")
-                    filter_data = form.deadline_filter_end.data
-                    if datetime.strptime(event_deadline, '%b %d, %Y') < filter_data:
-                        deadline_filter_end_list.append(result)
+                    if event_deadline != "N/A":
+                        filter_data = form.deadline_filter_end.data
+                        if datetime.strptime(event_deadline, '%b %d, %Y') < filter_data:
+                            deadline_filter_end_list.append(result)
                     result_list = deadline_filter_end_list
             # Search tokens for date match
             date_filter_start_list = []
             if form.date_filter_start.data is not None:
                 for result in result_list:
                     event_deadline = result.get("date")
-                    filter_data = form.date_filter_start.data
-                    if datetime.strptime(event_deadline[0:12].strip(), '%b %d, %Y') >= filter_data:
-                        date_filter_start_list.append(result)
+                    if event_deadline != "N/A":
+                        filter_data = form.date_filter_start.data
+                        if datetime.strptime(event_deadline[0:12].strip(), '%b %d, %Y') >= filter_data:
+                            date_filter_start_list.append(result)
                     result_list = date_filter_start_list
             date_filter_end_list = []
             if form.date_filter_end.data is not None:
                 for result in result_list:
                     event_deadline = result.get("date")
-                    filter_data = form.date_filter_end.data
-                    if datetime.strptime(event_deadline[0:12].strip(), '%b %d, %Y') < filter_data:
-                        date_filter_end_list.append(result)
+                    if event_deadline != "N/A":
+                        filter_data = form.date_filter_end.data
+                        if datetime.strptime(event_deadline[0:12].strip(), '%b %d, %Y') < filter_data:
+                            date_filter_end_list.append(result)
                     result_list = date_filter_end_list
             sorted_result_list = []
             # Sort result ids according to their scores
