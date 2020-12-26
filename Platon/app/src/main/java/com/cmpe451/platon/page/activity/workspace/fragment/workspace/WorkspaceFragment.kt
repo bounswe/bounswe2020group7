@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -61,6 +62,7 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
         super.onViewCreated(view, savedInstanceState)
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private fun initViews() {
         if(!(activity as WorkspaceActivity).isOwner!!){
             binding.addRequirementIv.visibility = View.GONE
@@ -70,6 +72,7 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
         }
         else {
             binding.workspaceTitleTv.setCompoundDrawables(null,null,null,null)
+
         }
         binding.collabTitleTv.setCompoundDrawables(null,null,null,null)
         mWorkspaceViewModel.fetchWorkspace((activity as WorkspaceActivity).workspace_id!!, (activity as WorkspaceActivity).token!!)
@@ -91,6 +94,9 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
             }
             binding.addRequirementIv.setOnClickListener {
                 onAddRequirementClicked()
+            }
+            binding.workspaceTitleTv.setOnClickListener {
+                onQuitButtonClicked()
             }
         }
         else {
@@ -128,6 +134,44 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
         }
 
     }
+
+    private fun onQuitButtonClicked() {
+        if(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.creator_id == (activity as WorkspaceActivity).user_id){
+            AlertDialog.Builder(context)
+                .setMessage("You cannot quit since you are the creator of ${mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.title}," +
+                        "you can only delete it. Are you sure you want to delete " + mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.title + "?" +
+                        "You will not be able to undo it.")
+                .setPositiveButton("Delete"
+                ) { _, _ ->
+                    mWorkspaceViewModel.deleteWorkspace(
+                        (activity as WorkspaceActivity).workspace_id!!,
+                        (activity as WorkspaceActivity).token!!
+                    )
+                }
+                .setNegativeButton("Cancel"
+                ) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create().show()
+        }
+        else {
+            AlertDialog.Builder(context)
+                .setMessage("Are you sure you want to quit ${mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.title}?")
+                .setPositiveButton("Quit"
+                ) { _, _ ->
+                    mWorkspaceViewModel.quitWorkspace(
+                        (activity as WorkspaceActivity).workspace_id!!,
+                        (activity as WorkspaceActivity).token!!
+                    )
+                }
+                .setNegativeButton("Cancel"
+                ) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create().show()
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     private fun setObservers() {
         dialog = Definitions().createProgressBar(requireContext())
@@ -163,7 +207,6 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
                 }
             }
-
         })
         mWorkspaceViewModel.getUpdateResourceResponse.observe(viewLifecycleOwner,{
             when(it.javaClass){
@@ -247,6 +290,23 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
                 }
                 Resource.Done::class.java ->{
                     dialog.dismiss()
+                }
+            }
+        })
+        mWorkspaceViewModel.getQuitWorkspaceResponse.observe(viewLifecycleOwner,{
+            when (it.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    activity?.finish()
+                    mWorkspaceViewModel.getMilestoneResponse.value = Resource.Done()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    mWorkspaceViewModel.getMilestoneResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java ->{
+                    dialog.dismiss()
+
                 }
             }
         })

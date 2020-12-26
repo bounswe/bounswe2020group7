@@ -23,6 +23,7 @@
             android:background="@drawable/view_back_darker"
             android:textSize="@dimen/title_text_size"
             app:drawableRightCompat="@drawable/ic_add_24dp"
+            app:drawableLeftCompat="@drawable/ic_remove_24px"
             />
 
             <TextView
