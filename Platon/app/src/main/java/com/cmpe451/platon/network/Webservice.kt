@@ -269,4 +269,12 @@ interface Webservice {
                          @Query("page") page: Int,
                          @Query("per_page") perPage: Int,
                          @Header("auth_token") authToken: String ): Call<IssueComment?>
+
+    @GET("api/workspaces/issue/assignee")
+    fun getIssueAssignee(@Query("workspace_id") workspaceId: Int,
+                         @Query("issue_id") issueId: Int,
+                         @Query("page") page: Int?,
+                         @Query("per_page") perPage: Int?,
+                         @Header("auth_token") authToken: String ): Call<IssueAssignee?>
+
 }

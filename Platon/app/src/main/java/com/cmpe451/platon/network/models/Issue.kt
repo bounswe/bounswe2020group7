@@ -27,7 +27,17 @@ data class Issue(
 
 data class IssueAssignee(
     val number_of_pages: Int,
-    val result: ArrayList<Issue>
+    val result: ArrayList<Assignee>
+)
+
+data class Assignee(
+    val assignee_e_mail: String,
+    val assignee_id: Int,
+    val assignee_institution: String,
+    val assignee_job_name: String,
+    val assignee_name: String,
+    val assignee_rate: Double,
+    val assignee_surname: String
 )
 
 data class IssueComment(
@@ -44,6 +54,7 @@ data class Comments(
     val owner_e_mail: String,
     val owner_rate: Int
 )
+
 
 
 

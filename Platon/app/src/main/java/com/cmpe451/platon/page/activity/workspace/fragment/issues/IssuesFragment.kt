@@ -8,6 +8,7 @@ class IssuesFragment {
 package com.cmpe451.platon.page.activity.workspace.fragment.issues
 
 import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Color
@@ -27,6 +28,8 @@ import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.Issue
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.util.Definitions
+import java.util.*
+import kotlin.collections.ArrayList
 
 class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
 
@@ -66,6 +69,7 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
 
 
     private fun setObservers(){
+
         mIssuesViewModel.issuesResponse.observe(viewLifecycleOwner, { t->
             when(t.javaClass){
                 Resource.Success::class.java ->{
@@ -82,6 +86,8 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
                 }
             }
         })
+
+
 
     }
     private fun initViews() {
@@ -148,6 +154,27 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
             .setView(addBinding.root)
             .show()
         addDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        addBinding.issueDeadline.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                val calendar = Calendar.getInstance()
+                val year = calendar.get(Calendar.YEAR)
+                val month = calendar.get(Calendar.MONTH)
+                val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+                val datePickerDialog = DatePickerDialog(
+                    requireContext(),
+                    { _, years, months, day ->
+                        val monthString = String.format("%02d", months+1)
+                        val dayString = String.format("%02d", day)
+                        addBinding.issueDeadline.setText("$years.$monthString.$dayString")
+                    }, year, month, dayOfMonth
+
+                )
+
+                datePickerDialog.show()
+            }
+            true
+        }
 
         addBinding.buttonIssueAdd.setOnClickListener {
             // check if the title and year is empty

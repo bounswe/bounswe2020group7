@@ -2,7 +2,7 @@
 <ScrollView     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/primary_dark"
+    android:background="@color/very_light_brown"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
@@ -31,15 +31,15 @@
             android:fontFamily="@font/dm_sans_bold"
             android:padding="@dimen/x_small"
             android:paddingHorizontal="@dimen/title_logo_padding"
-            android:shadowColor="@color/primary_dark"
+            android:shadowColor="@color/primary_dark_darker"
             android:shadowDx="1"
             android:shadowDy="1"
             android:shadowRadius="2"
             android:text="@string/your_info"
-            android:textColor="@color/secondary_green"
+            android:textColor="@color/primary_dark_lighter"
             android:textSize="@dimen/project_title_text_size"
             android:drawablePadding="@dimen/xx_small"
-            app:drawableRightCompat="@drawable/ic_editprofile_24px"
+            app:drawableRightCompat="@drawable/ic_editprofile_dark_24px"
             />
 
 
@@ -59,7 +59,7 @@
             android:textColor="@color/secondary_orange_transparent"
             android:textSize="18sp"
             android:drawablePadding="@dimen/xx_small"
-            app:drawableRightCompat="@drawable/ic_expand_more_white_24dp" />
+            app:drawableRightCompat="@drawable/ic_expand_more_black_24dp" />
 
 
         <LinearLayout
@@ -121,7 +121,7 @@
             android:textColor="@color/secondary_orange_transparent"
             android:textSize="18sp"
             android:drawablePadding="@dimen/xx_small"
-            app:drawableRightCompat="@drawable/ic_comment_24dp"
+            app:drawableRightCompat="@drawable/ic_comment_black_24dp"
             />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -147,10 +147,10 @@
             android:shadowRadius="2"
             android:text="@string/assignee"
             android:textAllCaps="false"
-            android:textColor="@color/secondary_purple"
+            android:textColor="@color/secondary_green"
             android:textSize="@dimen/project_title_text_size"
             android:drawablePadding="@dimen/xx_small"
-            app:drawableRightCompat="@drawable/ic_add_24dp"
+            app:drawableRightCompat="@drawable/ic_add_black_24dp"
             />
 
         <androidx.recyclerview.widget.RecyclerView

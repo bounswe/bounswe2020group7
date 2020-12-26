@@ -128,4 +128,5 @@
     <string name="issue_description_str">Description of Issue</string>
     <string name="issue_add_str">Add Issue</string>
     <string name="assignee">Assignee</string>
+    <string name="issue_edit">Edit Issue</string>
 </resources>

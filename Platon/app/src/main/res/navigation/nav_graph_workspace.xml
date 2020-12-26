@@ -28,7 +28,7 @@
     <fragment
         android:id="@+id/issuesFragment"
         android:name="com.cmpe451.platon.page.activity.workspace.fragment.issues.IssuesFragment"
-        android:label="IssuesFragment" >
+        android:label="Issues" >
         <action
             android:id="@+id/action_issuesFragment_to_issueDetailFragment"
             app:destination="@id/issueDetailFragment" />
@@ -36,5 +36,5 @@
     <fragment
         android:id="@+id/issueDetailFragment"
         android:name="com.cmpe451.platon.page.activity.workspace.fragment.issuedetail.IssueDetailFragment"
-        android:label="IssueDetailFragment" />
+        android:label="Issue Detail" />
 </navigation>

@@ -16,10 +16,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmpe451.platon.R
+import com.cmpe451.platon.adapter.AssigneeAdapter
+import com.cmpe451.platon.adapter.CollaboratorAdapter
 import com.cmpe451.platon.adapter.CommentsAdapter
 import com.cmpe451.platon.adapter.IssuesAdapter
 import com.cmpe451.platon.databinding.*
 import com.cmpe451.platon.network.Resource
+import com.cmpe451.platon.network.models.Assignee
 import com.cmpe451.platon.network.models.Comment
 import com.cmpe451.platon.network.models.Issue
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
@@ -58,8 +61,8 @@ class IssueDetailFragment: Fragment() {
         initViews()
         setListeners()
         setObservers()
-        //mIssueDetailViewModel.getIssues((activity as WorkspaceActivity).workspace_id!!,0, maxPageNumberIssue, (activity as WorkspaceActivity).token!!)
-
+        mIssueDetailViewModel.getIssueAssignee((activity as WorkspaceActivity).workspace_id!!,issue_id.toInt(), null, null, (activity as WorkspaceActivity).token!!)
+        mIssueDetailViewModel.fetchWorkspace((activity as WorkspaceActivity).workspace_id!!, (activity as WorkspaceActivity).token!!)
     }
 
 
@@ -67,24 +70,28 @@ class IssueDetailFragment: Fragment() {
 
 
     private fun setObservers(){
-        /*
-         mIssueDetailViewModel.issuesResponse.observe(viewLifecycleOwner, { t->
+
+
+        mIssueDetailViewModel.assigneeResponse.observe(viewLifecycleOwner, { t->
             when(t.javaClass){
                 Resource.Success::class.java ->{
-
-                    val issue = t.data!!.result as ArrayList<Issue>
-                    //adapter.addElement(0, issue[0])
-                    adapter.submitElements(issue)
-                    //var issueArray = issue
-                    //TODO: add element
+                    (binding.issueAssignee.adapter as AssigneeAdapter).submitElements(t.data!!.result)
 
                 }
                 Resource.Error::class.java ->{
                     Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
                 }
+                Resource.Loading::class.java -> {
+                    Toast.makeText(requireContext(), "Loading", Toast.LENGTH_SHORT).show()
+
+                }
             }
         })
-         */
+
+
+
+
+
 
 
     }
@@ -95,7 +102,9 @@ class IssueDetailFragment: Fragment() {
         binding.issueTitle.text = issue_title
         binding.issueDescriptionTextView.text = issue_description
         binding.issueCreatorName.text = issue_creator_name
-        binding.issueDeadline.text = issue_deadline
+
+        binding.issueAssignee.adapter = AssigneeAdapter(ArrayList(), requireContext())
+        binding.issueAssignee.layoutManager = LinearLayoutManager(requireContext())
 
         /*
         issueRecyclerView = binding.issuesRecyclerView
@@ -221,6 +230,7 @@ class IssueDetailFragment: Fragment() {
 
 
         }
+
         AlertDialog.Builder(context).setView(tmpBinding.root)
             .setCancelable(true)
             .setNeutralButton("Delete Issue") { _: DialogInterface, _: Int ->
