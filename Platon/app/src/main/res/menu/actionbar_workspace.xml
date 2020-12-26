@@ -3,6 +3,19 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/issue_btn"
+        android:title="@string/issue_str"
+        android:icon="@drawable/ic_issue_white_24dp"
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/add_issue_btn"
+        android:title="@string/add_str"
+        android:icon="@drawable/ic_add_24dp"
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+
         android:id="@+id/workspaceFolderFragment"
         android:icon="@drawable/ic_folder_24px"
         android:title="@string/register_str"
