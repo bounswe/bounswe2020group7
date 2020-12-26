@@ -108,3 +108,9 @@ class Requirement(db.Model):
     id = db.Column(db.Integer,primary_key=True,autoincrement=True)
     text = db.Column(db.String(200))
 
+
+class WSUpcomingEvent(db.Model):
+    __tablename__ = "workspace_upcoming_events"
+    id = db.Column(db.Integer,primary_key=True,autoincrement=True)
+    workspace_id = db.Column(db.Integer,db.ForeignKey('workspaces.id',ondelete="CASCADE"))
+    upcoming_event_id = db.Column(db.Integer,db.ForeignKey('upcoming_events.id',ondelete="CASCADE"))
