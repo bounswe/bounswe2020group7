@@ -3,3 +3,22 @@
     border-radius: 0.5em;
     padding: 16px;
  }
+
+ .TrendingProjectsSpinner{
+   margin: 20vh 0px;
+   height: 20vh;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+ }
+
+ .paginationContainerTrending {
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     align-items: center;
+ }
+
+ .paginationContainerTrending .Mui-selected {
+     background-color: #646D93!important;
+ }

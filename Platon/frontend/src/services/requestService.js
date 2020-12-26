@@ -53,36 +53,42 @@ const getUser = (id) => {
     });
 };
 const getResearchs = (id) => {
-  const url = config.BASE_URL;
-  const params = {
-    user_id: id,
-  };
-  const token = localStorage.getItem("jwtToken");
-  axios.defaults.headers.common["auth_token"] = `${token}`;
-  return axios
-    .get(url + "/api/profile/research_information", { params })
-    .then((response) => {
-      return response;
-    })
-    .catch((err) => {
-      return err.response;
-    });
-};
-const getNotifications = (page) => {
-  const url = config.BASE_URL;
-  const token = localStorage.getItem("jwtToken");
-  axios.defaults.headers.common["auth_token"] = `${token}`;
-  return axios
-    .get(url + "/api/profile/notifications", {
-      params: { per_page: 1, page: page },
-    })
-    .then((response) => {
-      return response;
-    })
-    .catch((err) => {
-      return err.response;
-    });
-};
+    const url = config.BASE_URL;
+    const params = {
+        user_id: id,
+    };
+    const token = localStorage.getItem("jwtToken");
+    axios.defaults.headers.common["auth_token"] = `${token}`;
+    return axios.get(url + "/api/profile/research_information", {params})
+        .then(response => {
+            //eğer kullanıcı bulunursa (user.data.status = true)
+            if (response) {
+            }
+            return response;
+        })
+        .catch(err => {
+            console.log(err)
+            return err.response;
+        });
+
+}
+const getNotifications = () => {
+    const url = config.BASE_URL;
+    const token = localStorage.getItem("jwtToken");
+    axios.defaults.headers.common["auth_token"] = `${token}`;
+    return axios.get(url + "/api/profile/notifications")
+        .then(response => {
+            if (response) {
+            console.log('NEKIBURASI')
+            }
+            return response;
+        })
+        .catch(err => {
+            console.log(err)
+            return err.response;
+        });
+
+}
 
 const getFeed = () => {
   const url = config.BASE_URL;

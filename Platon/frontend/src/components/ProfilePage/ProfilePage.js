@@ -17,6 +17,7 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
+import Grid from "@material-ui/core/Grid";
 import NavBar from "../NavBar/NavBar";
 import jwt_decode from "jwt-decode";
 import requestService from "../../services/requestService";
