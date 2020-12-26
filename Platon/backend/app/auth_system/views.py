@@ -21,6 +21,7 @@ from app.follow_system.models import Follow, FollowRequests
 from app.auth_system.helpers import generate_token,send_email,login_required, hashed, allowed_file, profile_photo_link
 from app.profile_management.helpers import ResearchInfoFetch
 from app.follow_system.helpers import follow_required_user
+from app.workspace_system.models import Collaboration
 
 from hashlib import sha256
 import datetime
@@ -223,6 +224,10 @@ class UserAPI(Resource):
                         following_status = -1 # Represents that the requester user does not follow the requested user and has not yet sent a request to follow them.
                     
                     user_job = Jobs.query.filter(Jobs.id == existing_user.job_id).first()
+                    try:
+                        collaboration = Collaboration.query.filter_by(user_1_id=requester_id,user_2_id=form.user_id.data).first()
+                    except:
+                        return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
                     account_information = { 
                                         "id": existing_user.id,
                                         "name": existing_user.name,
@@ -235,7 +240,8 @@ class UserAPI(Resource):
                                         "google_scholar_name": existing_user.google_scholar_name,
                                         "researchgate_name": existing_user.researchgate_name,
                                         "job": user_job.name,
-                                        "institution": existing_user.institution
+                                        "institution": existing_user.institution,
+                                        "can_comment": collaboration is not None
                                         }
                     return make_response(jsonify(account_information), 200)
                 else:
