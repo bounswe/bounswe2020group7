@@ -1029,7 +1029,7 @@ class WorkspacesAPI(Resource):
                                                     "state": requested_workspace.state,
                                                     "timestamp": requested_workspace.timestamp,
                                                     "description": requested_workspace.description,
-                                                    "deadline": requested_workspace.deadline.strftime("%d.%m.%Y") if requested_workspace.deadline is not None else None,
+                                                    "deadline": requested_workspace.deadline.strftime("%Y.%m.%d") if requested_workspace.deadline is not None else None,
                                                     "max_collaborators": requested_workspace.max_collaborators,
                                                     "skills": get_workspace_skills_list(form.workspace_id.data),
                                                     "requirements": get_workspace_requirements_list(form.workspace_id.data),
