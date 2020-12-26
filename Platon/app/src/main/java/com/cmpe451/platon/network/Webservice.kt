@@ -343,4 +343,8 @@ interface Webservice {
         @Field("filename") file: String,
         @Header("auth_token") token: String):Call<JsonObject?>
 
+
+    @GET("api/workspaces/invitations")
+    fun getInvitationsFromWs(@Header("auth_token") currUserToken: String): Call<WorkspaceInvitations>
+
 }

@@ -283,6 +283,20 @@
             android:layout_height="wrap_content"
             android:text="@string/personal_str"
             android:textColor="@color/primary_light" />
+        <RadioButton
+            android:textSize="@dimen/subtitle_text_size"
+            android:id="@+id/workspace_inv_ntf_rb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/invitations_str"
+            android:textColor="@color/primary_light" />
+        <RadioButton
+            android:textSize="@dimen/subtitle_text_size"
+            android:id="@+id/workspace_app_ntf_rb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/applications_str"
+            android:textColor="@color/primary_light" />
     </RadioGroup>
 
 

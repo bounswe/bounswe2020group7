@@ -19,18 +19,12 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmpe451.platon.R
-import com.cmpe451.platon.adapter.FollowRequestElementsAdapter
-import com.cmpe451.platon.adapter.NotificationElementsAdapter
-import com.cmpe451.platon.adapter.SearchElementsAdapter
-import com.cmpe451.platon.adapter.ToolbarElementsAdapter
+import com.cmpe451.platon.adapter.*
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.ActivityHomeBinding
 import com.cmpe451.platon.listener.PaginationListener
 import com.cmpe451.platon.network.Resource
-import com.cmpe451.platon.network.models.FollowRequest
-import com.cmpe451.platon.network.models.Notification
-import com.cmpe451.platon.network.models.SearchElement
-import com.cmpe451.platon.network.models.SearchHistoryElement
+import com.cmpe451.platon.network.models.*
 import com.cmpe451.platon.page.activity.home.fragment.home.HomeFragmentDirections
 import com.cmpe451.platon.page.activity.home.fragment.workspace.WorkspaceListFragmentDirections
 import com.cmpe451.platon.page.activity.login.LoginActivity
@@ -43,7 +37,8 @@ import kotlin.collections.ArrayList
 class HomeActivity : BaseActivity(),
         SearchElementsAdapter.SearchButtonClickListener,
         FollowRequestElementsAdapter.FollowRequestButtonClickListener,
-        NotificationElementsAdapter.NotificationButtonClickListener {
+        NotificationElementsAdapter.NotificationButtonClickListener,
+        WorkspaceInvitationsApplicationsAdapter.InvitationButtonClickListener{
 
     private lateinit var navController: NavController
     lateinit var binding : ActivityHomeBinding
@@ -151,6 +146,28 @@ class HomeActivity : BaseActivity(),
     }
 
     private fun setObserversForNotifications() {
+        mActivityViewModel.getInvitationsFromWsResourceResponse.observe(this, {t->
+            when (t.javaClass) {
+                Resource.Success::class.java -> {
+                    //maxPageNumberToolbarElements = t.data!!.number_of_pages
+                    if(binding.toolbarRecyclerview.adapter?.javaClass == WorkspaceInvitationsApplicationsAdapter::class.java){
+                        (binding.toolbarRecyclerview.adapter as WorkspaceInvitationsApplicationsAdapter).submitElements(t.data!!.invitation_list)
+                    }else{
+                        binding.toolbarRecyclerview.adapter = WorkspaceInvitationsApplicationsAdapter(t.data!!.invitation_list as ArrayList<WorkspaceInvitation>, this, this)
+                    }
+                    mActivityViewModel.getInvitationsFromWsResourceResponse.value = Resource.Done()
+                }
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Error::class.java -> {
+                    mActivityViewModel.getInvitationsFromWsResourceResponse.value = Resource.Done()
+                    Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
+
+                }
+                Resource.Done::class.java->dialog.dismiss()
+            }
+        })
+
+
         mActivityViewModel.getUserNotificationsResourceResponse.observe(this, { t ->
             when (t.javaClass) {
                 Resource.Success::class.java -> {
@@ -341,6 +358,12 @@ class HomeActivity : BaseActivity(),
                                 }
                                 R.id.general_ntf_rb->{
                                     mActivityViewModel.getNotifications(currUserToken,currentPage, PAGE_SIZE)
+                                }
+                                R.id.workspace_inv_ntf_rb->{
+                                    mActivityViewModel.getInvitationsFromWs(currUserToken,currentPage, PAGE_SIZE)
+                                }
+                                R.id.workspace_app_ntf_rb->{
+                                    mActivityViewModel.getApplicationsToWs(currUserToken,currentPage, PAGE_SIZE)
                                 }
                             }
                         }
@@ -616,6 +639,12 @@ class HomeActivity : BaseActivity(),
                         R.id.personal_ntf_rb ->{
                             mActivityViewModel.getFollowRequests(currUserId, currUserToken, 0, toolbarPageSize)
                         }
+                        R.id.workspace_inv_ntf_rb->{
+                            mActivityViewModel.getInvitationsFromWs(currUserToken,0, toolbarPageSize)
+                        }
+                        R.id.workspace_app_ntf_rb->{
+                            mActivityViewModel.getApplicationsToWs(currUserToken,0, toolbarPageSize)
+                        }
                     }
                 }
 
@@ -800,6 +829,14 @@ class HomeActivity : BaseActivity(),
         }
 
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onInvitationAcceptClicked(request: WorkspaceInvitation, position: Int) {
+        //TODO("Not yet implemented")
+    }
+
+    override fun onInvitationRejectClicked(request: WorkspaceInvitation, position: Int) {
+        //TODO("Not yet implemented")
     }
 
 }

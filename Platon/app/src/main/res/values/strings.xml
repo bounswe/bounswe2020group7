@@ -142,5 +142,7 @@
     <string name="add_milestone_str">Add Milestone</string>
     <string name="milestone_title_str">Milestone</string>
     <string name="milestone_title_str_title">Milestone Title</string>
+    <string name="invitations_str">Invitations</string>
+    <string name="applications_str">Applications</string>
 
 </resources>
