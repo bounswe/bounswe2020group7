@@ -12,12 +12,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.databinding.NotificationElementCellBinding
 import com.cmpe451.platon.network.models.WorkspaceInvitation
-import com.cmpe451.platon.page.activity.home.HomeActivity
 
 
-
-class WorkspaceInvitationsApplicationsAdapter(private val data: ArrayList<WorkspaceInvitation>, private val context: Context, private val invitationButtonClickListener: InvitationButtonClickListener) :
-        RecyclerView.Adapter<WorkspaceInvitationsApplicationsAdapter.MyViewHolder>(), ToolbarElementsAdapter {
+class WorkspaceInvitationsAdapter(private val data: ArrayList<WorkspaceInvitation>, private val context: Context, private val invitationButtonClickListener: InvitationButtonClickListener) :
+        RecyclerView.Adapter<WorkspaceInvitationsAdapter.MyViewHolder>(), ToolbarElementsAdapter {
 
     interface InvitationButtonClickListener{
         fun onInvitationAcceptClicked(request: WorkspaceInvitation, position: Int)
@@ -51,8 +49,10 @@ class WorkspaceInvitationsApplicationsAdapter(private val data: ArrayList<Worksp
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
+
         holder.binding.tvDateTime.visibility  =View.GONE
         holder.binding.nameBlock.text = data[position].description
+
         holder.bindData(data[position], invitationButtonClickListener, position)
     }
 

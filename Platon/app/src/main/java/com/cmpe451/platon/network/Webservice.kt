@@ -345,10 +345,10 @@ interface Webservice {
 
 
     @GET("api/workspaces/invitations")
-    fun getInvitationsFromWs(@Header("auth_token") currUserToken: String): Call<WorkspaceInvitations?>
+    fun getInvitationsFromWs(@Header("auth_token") currUserToken: String): Call<List<WorkspaceInvitation>?>
 
     @GET("api/workspaces/applications")
     fun getWorkspaceApplications(@Query("workspace_id") workspace_id: Int,
-                                 @Header("auth_token") currUserToken: String): Call<WorkspaceApplications?>
+                                 @Header("auth_token") currUserToken: String): Call<List<WorkspaceApplication>?>
 
 }

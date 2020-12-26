@@ -1,24 +1,16 @@
 package com.cmpe451.platon.network.models
 
 
-data class WorkspaceInvitations(
-        val invitation_list:List<WorkspaceInvitation>
-
-)
-
-
 data class WorkspaceInvitation(
         val id: Int,
         val description: String
 )
 
-data class WorkspaceApplications(
-        val application_list:List<WorkspaceInvitation>
-
+data class WorkspaceApplication(
+        val applicant_id: Int,
+        val application_id:Int,
+        val applicant_fullname: String
 )
-
-
-
 
 data class WorkspaceListItems(
         val workspaces :List<WorkspaceListItem>

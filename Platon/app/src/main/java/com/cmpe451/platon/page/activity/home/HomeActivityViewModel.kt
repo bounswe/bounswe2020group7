@@ -22,7 +22,7 @@ class HomeActivityViewModel(application: Application):AndroidViewModel(applicati
 
     val getJobListResourceResponse: MutableLiveData<Resource<List<Job>>>
 
-    val getInvitationsFromWsResourceResponse:MutableLiveData<Resource<WorkspaceInvitations>> = repository.invitationsFromWsResourceResponse
+    val getInvitationsFromWsResourceResponse:MutableLiveData<Resource<List<WorkspaceInvitation>>> = repository.invitationsFromWsResourceResponse
     val getUserDeleteNotificationResourceResponse:MutableLiveData<Resource<JsonObject>>
 
     init {
@@ -85,9 +85,4 @@ class HomeActivityViewModel(application: Application):AndroidViewModel(applicati
     fun getInvitationsFromWs(currUserToken: String, currentPage: Int, pageSize: Int) {
         repository.getInvitationsFromWs(currUserToken, currentPage, pageSize)
     }
-
-    fun getApplicationsToWs(currUserToken: String, currentPage: Int, pageSize: Int) {
-
-    }
-
 }

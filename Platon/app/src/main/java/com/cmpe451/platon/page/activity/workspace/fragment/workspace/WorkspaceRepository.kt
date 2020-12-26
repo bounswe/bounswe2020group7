@@ -203,21 +203,21 @@ class WorkspaceRepository {
     }
 
 
-    val workspaceApplicationsResourceResponse:MutableLiveData<Resource<WorkspaceApplications>> = MutableLiveData()
+    val workspaceApplicationsResourceResponse:MutableLiveData<Resource<List<WorkspaceApplication>>> = MutableLiveData()
 
     fun getWorkspaceApplications(token: String, workspaceId: Int) {
         val service = RetrofitClient.getService()
         val call = service.getWorkspaceApplications(workspaceId,token)
         workspaceApplicationsResourceResponse.value = Resource.Loading()
-        call.enqueue(object: Callback<WorkspaceApplications?> {
-            override fun onResponse(call: Call<WorkspaceApplications?>, response: Response<WorkspaceApplications?>) {
+        call.enqueue(object: Callback<List<WorkspaceApplication>?> {
+            override fun onResponse(call: Call<List<WorkspaceApplication>?>, response: Response<List<WorkspaceApplication>?>) {
                 when {
                     response.isSuccessful && response.body() != null -> workspaceApplicationsResourceResponse.value = Resource.Success(response.body()!!)
                     response.errorBody() != null -> workspaceApplicationsResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
                     else -> workspaceApplicationsResourceResponse.value = Resource.Error("Unknown error!")
                 }
             }
-            override fun onFailure(call: Call<WorkspaceApplications?>, t: Throwable) {
+            override fun onFailure(call: Call<List<WorkspaceApplication>?>, t: Throwable) {
                 call.clone().enqueue(this)
             }
         })

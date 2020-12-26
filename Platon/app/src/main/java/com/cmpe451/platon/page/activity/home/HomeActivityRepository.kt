@@ -241,15 +241,15 @@ class HomeActivityRepository {
         })
     }
 
-    val invitationsFromWsResourceResponse:MutableLiveData<Resource<WorkspaceInvitations>> = MutableLiveData()
+    val invitationsFromWsResourceResponse:MutableLiveData<Resource<List<WorkspaceInvitation>>> = MutableLiveData()
 
     fun getInvitationsFromWs(currUserToken: String, currentPage: Int, pageSize: Int) {
         val service = RetrofitClient.getService()
         val call = service.getInvitationsFromWs(currUserToken)
 
         invitationsFromWsResourceResponse.value = Resource.Loading()
-        call.enqueue(object :Callback<WorkspaceInvitations?>{
-            override fun onResponse(call: Call<WorkspaceInvitations?>, response: Response<WorkspaceInvitations?>) {
+        call.enqueue(object :Callback<List<WorkspaceInvitation>?>{
+            override fun onResponse(call: Call<List<WorkspaceInvitation>?>, response: Response<List<WorkspaceInvitation>?>) {
                 when{
                     response.isSuccessful && response.body() != null -> invitationsFromWsResourceResponse.value =  Resource.Success(response.body()!!)
                     response.errorBody() != null -> invitationsFromWsResourceResponse.value =  Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
@@ -257,7 +257,7 @@ class HomeActivityRepository {
                 }
             }
 
-            override fun onFailure(call: Call<WorkspaceInvitations?>, t: Throwable) {
+            override fun onFailure(call: Call<List<WorkspaceInvitation>?>, t: Throwable) {
                 call.clone().enqueue(this)
             }
         })

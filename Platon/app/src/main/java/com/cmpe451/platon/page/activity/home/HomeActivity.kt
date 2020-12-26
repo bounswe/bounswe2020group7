@@ -38,7 +38,7 @@ class HomeActivity : BaseActivity(),
         SearchElementsAdapter.SearchButtonClickListener,
         FollowRequestElementsAdapter.FollowRequestButtonClickListener,
         NotificationElementsAdapter.NotificationButtonClickListener,
-        WorkspaceInvitationsApplicationsAdapter.InvitationButtonClickListener{
+        WorkspaceInvitationsAdapter.InvitationButtonClickListener{
 
     private lateinit var navController: NavController
     lateinit var binding : ActivityHomeBinding
@@ -150,10 +150,10 @@ class HomeActivity : BaseActivity(),
             when (t.javaClass) {
                 Resource.Success::class.java -> {
                     //maxPageNumberToolbarElements = t.data!!.number_of_pages
-                    if(binding.toolbarRecyclerview.adapter?.javaClass == WorkspaceInvitationsApplicationsAdapter::class.java){
-                        (binding.toolbarRecyclerview.adapter as WorkspaceInvitationsApplicationsAdapter).submitElements(t.data!!.invitation_list)
+                    if(binding.toolbarRecyclerview.adapter?.javaClass == WorkspaceInvitationsAdapter::class.java){
+                        (binding.toolbarRecyclerview.adapter as WorkspaceInvitationsAdapter).submitElements(t.data!!)
                     }else{
-                        binding.toolbarRecyclerview.adapter = WorkspaceInvitationsApplicationsAdapter(t.data!!.invitation_list as ArrayList<WorkspaceInvitation>, this, this)
+                            binding.toolbarRecyclerview.adapter = WorkspaceInvitationsAdapter(t.data!! as ArrayList<WorkspaceInvitation>, this, this)
                     }
                     mActivityViewModel.getInvitationsFromWsResourceResponse.value = Resource.Done()
                 }

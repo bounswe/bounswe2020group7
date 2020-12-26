@@ -9,30 +9,25 @@ import android.os.Bundle
 import android.view.*
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.*
 import com.cmpe451.platon.databinding.*
 import com.cmpe451.platon.network.Resource
-import com.cmpe451.platon.network.models.Contributor
-import com.cmpe451.platon.network.models.Milestone
-import com.cmpe451.platon.network.models.WorkspaceInvitation
+import com.cmpe451.platon.network.models.*
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.page.activity.workspace.fragment.addworkspace.AddWorkspaceViewModel
 import com.cmpe451.platon.util.Definitions
 import java.util.*
 import kotlin.collections.ArrayList
 
-class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListener,WorkspaceInvitationsApplicationsAdapter.InvitationButtonClickListener{
+class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListener,WorkspaceApplicationsAdapter.ApplicationsButtonClickListener{
 
     private lateinit var binding: FragmentPersonalWorkspaceBinding
     private lateinit var dialog:AlertDialog
@@ -68,9 +63,7 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
                 Resource.Success::class.java -> {
                     tmpBinding.rvWsApplication.layoutManager =LinearLayoutManager(requireContext())
                     tmpBinding.rvWsApplication.adapter =
-                        WorkspaceInvitationsApplicationsAdapter(it.data!!.application_list as ArrayList<WorkspaceInvitation>, requireContext(), this)
-
-                    mWorkspaceViewModel.fetchWorkspace((activity as WorkspaceActivity).workspace_id!!, (activity as WorkspaceActivity).token!!)
+                        WorkspaceApplicationsAdapter(it.data!! as ArrayList<WorkspaceApplication>, requireContext(), this)
                     mWorkspaceViewModel.getWorkspaceApplicationsResourceResponse.value = Resource.Done()
                 }
                 Resource.Error::class.java -> {
@@ -818,11 +811,12 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
             .create().show()
     }
 
-    override fun onInvitationAcceptClicked(request: WorkspaceInvitation, position: Int) {
+
+    override fun onApplicationAcceptClicked(request: WorkspaceApplication, position: Int) {
         //TODO("Not yet implemented")
     }
 
-    override fun onInvitationRejectClicked(request: WorkspaceInvitation, position: Int) {
+    override fun onApplicationRejectClicked(request: WorkspaceApplication, position: Int) {
         //TODO("Not yet implemented")
     }
 
