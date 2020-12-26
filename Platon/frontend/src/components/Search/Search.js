@@ -42,9 +42,7 @@ class Search extends React.Component {
             <img
               className="ProfilePhoto"
               src={
-                value.profile_photo
-                  ? value.profile_photo
-                  : "https://picsum.photos/500/500"
+                "http://18.185.75.161:5000/api" + value.profile_photo
               }
               alt="UserImage"
             />

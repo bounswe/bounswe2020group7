@@ -211,6 +211,29 @@ class ProfilePage extends React.Component {
     });
   };
 
+  handleUnFollowRequest = () => {
+    const following_id = this.props.match.params.profileId;
+    requestService.deleteUnfollow(following_id).then((resp) => {
+      this.setState({
+        showSuccess: "User unfollowed",
+      });
+      requestService
+        .getUser(this.props.match.params.profileId)
+        .then((response) => {
+          if (response.status == 206) {
+            this.setState({
+              isProfilePrivate: true,
+              user: response.data,
+            });
+          } else {
+            this.setState({
+              user: response.data,
+            });
+          }
+        });
+    });
+  };
+
   handleChange = (event, newValue) => {
     this.setState({
       value: newValue,
@@ -225,12 +248,11 @@ class ProfilePage extends React.Component {
 
   handlePersonalFollowRequests = (id, switchCase) => {
     requestService.deleteFollowRequests(id, switchCase).then((resp) => {
-      if(switchCase == 1){
+      if (switchCase == 1) {
         this.setState({
           showSuccess: "Accepted Follow Request",
         });
-      }
-      else{
+      } else {
         this.setState({
           showSuccess: "Rejected Follow Request",
         });
@@ -256,6 +278,12 @@ class ProfilePage extends React.Component {
             followers: response.data.followers,
           });
         });
+
+      requestService.getFollowRequests().then((response) => {
+        this.setState({
+          follow_requests: response.data.follow_requests,
+        });
+      });
     });
   };
 
@@ -281,9 +309,8 @@ class ProfilePage extends React.Component {
                   <img
                     className="ProfilePhoto"
                     src={
+                      "http://18.185.75.161:5000/api" +
                       this.state.user.profile_photo
-                        ? this.state.user.profile_photo != ""
-                        : "https://picsum.photos/500/500"
                     }
                     alt="UserImage"
                   />
@@ -346,6 +373,7 @@ class ProfilePage extends React.Component {
                     </Button>
                   ) : (
                     <Button
+                      onClick={() => this.handleUnFollowRequest()}
                       className="ProfileFollowButton"
                       variant="primary"
                       size="lg"
@@ -393,16 +421,18 @@ class ProfilePage extends React.Component {
                     </Row>
                   </TabPanel>
                   <TabPanel value={this.state.value} index={1}>
-                    <Row className="mb-3">
-                      <EditResearchDialog
-                        type="NEW"
-                        dialogTitle="Add New Research"
-                        id={""}
-                        title={""}
-                        description={""}
-                        year={""}
-                      />
-                    </Row>
+                    {!this.state.isMyProfile ? null : (
+                      <Row className="mb-3">
+                        <EditResearchDialog
+                          type="NEW"
+                          dialogTitle="Add New Research"
+                          id={""}
+                          title={""}
+                          description={""}
+                          year={""}
+                        />
+                      </Row>
+                    )}
                     {this.state.researchs.map((value, index) => {
                       return (
                         <Row className="mb-3">
@@ -431,24 +461,28 @@ class ProfilePage extends React.Component {
                                 {value.year}
                               </Card.Text>
                             </Card.Body>
-                            <EditResearchDialog
-                              className="mb-3 allign-items-center"
-                              type="EDIT"
-                              dialogTitle="Edit Research"
-                              id={value.id}
-                              title={value.title}
-                              description={value.description}
-                              year={value.year}
-                            />
-                            <Button
-                              className="mt-3"
-                              onClick={() =>
-                                this.handleDeleteResearchInformation(value.id)
-                              }
-                              style={{ backgroundColor: colors.quinary }}
-                            >
-                              Delete
-                            </Button>
+                            {!this.state.isMyProfile ? null : (
+                              <EditResearchDialog
+                                className="mb-3 allign-items-center"
+                                type="EDIT"
+                                dialogTitle="Edit Research"
+                                id={value.id}
+                                title={value.title}
+                                description={value.description}
+                                year={value.year}
+                              />
+                            )}
+                            {!this.state.isMyProfile ? null : (
+                              <Button
+                                className="mt-3"
+                                onClick={() =>
+                                  this.handleDeleteResearchInformation(value.id)
+                                }
+                                style={{ backgroundColor: colors.quinary }}
+                              >
+                                Delete
+                              </Button>
+                            )}
                           </Card>
                         </Row>
                       );
