@@ -3,6 +3,7 @@ package com.cmpe451.platon.page.activity.workspace.fragment.workspace
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.*
@@ -114,6 +115,9 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
                 binding.skillLl.visibility = View.GONE
             }
         }
+        binding.milestoneTitleTv.setOnClickListener {
+            onAddMilestoneClicked()
+        }
 
     }
     @SuppressLint("SetTextI18n")
@@ -204,6 +208,23 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
                 }
             }
         })
+        mWorkspaceViewModel.getAddDeleteUpdateMilestoneResponse.observe(viewLifecycleOwner, {
+            when (it.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    getMilestones()
+                    mWorkspaceViewModel.getMilestoneResponse.value = Resource.Done()
+
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    mWorkspaceViewModel.getMilestoneResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java ->{
+                    dialog.dismiss()
+                }
+            }
+        })
 
 
     }
@@ -222,7 +243,7 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
         binding.collaboratorsRv.layoutManager = GridLayoutManager(requireContext(),2)
 
         binding.milestoneRv.adapter = MilestoneAdapter(ArrayList(),this, (activity as WorkspaceActivity).isOwner!!)
-        binding.milestoneRv.layoutManager = LinearLayoutManager(requireContext())
+        binding.milestoneRv.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
     }
     private fun onAddRequirementClicked() {
@@ -377,6 +398,98 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
 
 
     }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun onAddMilestoneClicked(){
+        val tmpBinding = DialogAddMilestoneBinding.inflate(
+            layoutInflater,
+            requireView().parent as ViewGroup,
+            false
+        )
+        val addDialog = AlertDialog.Builder(context).setView(tmpBinding.root)
+            .setCancelable(true)
+            .show()
+        tmpBinding.milestoneDeadlineEt.setOnTouchListener { _, event ->
+
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                val calendar = Calendar.getInstance()
+                val year = calendar.get(Calendar.YEAR)
+                val month = calendar.get(Calendar.MONTH)
+                val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+                val datePickerDialog = DatePickerDialog(
+                    requireContext(),
+                    { _, years, months, day ->
+                        val monthString = String.format("%02d", months+1)
+                        val dayString = String.format("%02d", day)
+                        tmpBinding.milestoneDeadlineEt.setText("$years-$monthString-$dayString")
+                    }, year, month, dayOfMonth
+
+                )
+
+                datePickerDialog.show()
+            }
+            true
+
+
+        }
+
+        tmpBinding.milestoneDateEt.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                val calendar = Calendar.getInstance()
+                val hour = calendar.get(Calendar.HOUR_OF_DAY)
+                val minute = calendar.get(Calendar.MINUTE)
+                val datePickerDialog = TimePickerDialog(
+                    requireContext(),
+                    { _, hours, minutes ->
+                        val h = String.format("%02d", hours)
+                        val m = String.format("%02d", minutes)
+                        tmpBinding.milestoneDateEt.setText("$h:$m:00")
+                    }, hour, minute, true
+
+                )
+
+                datePickerDialog.show()
+            }
+            true
+
+        }
+        tmpBinding.buttonMilestoneAdd.setOnClickListener {
+            if(tmpBinding.milestoneTitleEt.text.isNullOrEmpty()){
+                Toast.makeText(requireContext(), "Title cannot be left empty", Toast.LENGTH_LONG).show()
+            }
+            else {
+                if(tmpBinding.milestoneDescriptionEt.text.isNullOrEmpty()){
+                    Toast.makeText(requireContext(), "Description cannot be left empty", Toast.LENGTH_LONG).show()
+                }
+                else {
+                    if(tmpBinding.milestoneDeadlineEt.text.isNullOrEmpty()){
+                        Toast.makeText(requireContext(), "Date cannot be left empty", Toast.LENGTH_LONG).show()
+                    }
+                    else {
+                        if(tmpBinding.milestoneDateEt.text.isNullOrEmpty()){
+                            Toast.makeText(requireContext(), "Time cannot be left empty", Toast.LENGTH_LONG).show()
+                        }
+                        else {
+                            val title = tmpBinding.milestoneTitleEt.text.toString().trim()
+                            val desc = tmpBinding.milestoneDescriptionEt.text.toString().trim()
+                            val date = tmpBinding.milestoneDeadlineEt.text.toString().trim()
+                            val time = tmpBinding.milestoneDateEt.text.toString().trim()
+                            val deadline = "$date $time"
+                            val token = (activity as WorkspaceActivity).token!!
+                            mWorkspaceViewModel.addMilestone((activity as WorkspaceActivity).workspace_id!!,
+                                title,desc, deadline, token)
+                            addDialog.dismiss()
+                        }
+                    }
+                }
+            }
+        }
+
+
+    }
+
+
+
 
     private fun onAddDeleteSkillClicked() {
         mAddWorkspaceViewModel.getAllSkills()

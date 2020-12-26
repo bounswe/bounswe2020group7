@@ -33,6 +33,7 @@ class MilestoneAdapter(private val data: ArrayList<Milestone>, private val miles
             binding.deleteMilestoneIv.setOnClickListener {
                 buttonClickListener.onDeleteMilestoneClicked(milestone)
             }
+            binding.milestoneTitle.text = milestone.title
             binding.milestoneDesc.text = milestone.description
             binding.milestoneDeadline.text = "Deadline: ${milestone.deadline}"
             binding.upcomingEventDate.text = milestone.deadline
