@@ -4,7 +4,9 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -72,10 +74,26 @@ class WorkspaceActivity : BaseActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.actionbar_workspace, menu)
+
+        /*
+        search = (menu?.findItem(R.id.search_btn)?.actionView as SearchView)
+        search.setOnSearchClickListener{
+            onSearchBarClicked()
+        }
+        */
         return super.onCreateOptionsMenu(menu)
     }
 
+    private fun onIssueClicked() {
+        //Toast.makeText(applicationContext,"Issue clicked",Toast.LENGTH_SHORT).show()
+        navController.navigate(WorkspaceFragmentDirections.actionWorkspaceFragmentToIssuesFragment())
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.issue_btn -> onIssueClicked()
+        }
+
         return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
     }
 

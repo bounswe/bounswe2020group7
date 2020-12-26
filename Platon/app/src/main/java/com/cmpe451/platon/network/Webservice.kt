@@ -350,5 +350,49 @@ interface Webservice {
     @GET("api/workspaces/applications")
     fun getWorkspaceApplications(@Query("workspace_id") workspace_id: Int,
                                  @Header("auth_token") currUserToken: String): Call<List<WorkspaceApplication>?>
+  
+    @GET("api/workspaces/issue")
+    fun getIssues(@Query("workspace_id") workspaceId: Int,
+                  @Query("page") page: Int,
+                  @Query("per_page") perPage: Int,
+                  @Header("auth_token") authToken: String ): Call<Issues?>
 
+    @FormUrlEncoded
+    @POST("api/workspaces/issue")
+    fun addIssue(@Field("workspace_id") workspaceId: Int,
+                 @Field("title") title: String,
+                 @Field("description") description: String,
+                 @Field("deadline") deadline: String ,
+                 @Field("auth_token") authToken: String): Call<JsonObject?>
+
+    @FormUrlEncoded
+    @PUT("api/workspaces/issue")
+    fun editIssue(@Field("workspace_id") workspaceId:String,
+                  @Field("issue_id") issueId:String,
+                  @Field("title") title:String?,
+                  @Field("description") description:String?,
+                  @Field("deadline") deadline:String?,
+                  @Header("auth_token") authToken:String?): Call<JsonObject?>
+
+    @FormUrlEncoded
+    @HTTP(method = "DELETE" , path = "api/workspaces/issue", hasBody = true)
+    fun deleteIssue(@Field("workspace_id") workspaceId:Int,
+                    @Field("issue_id") issueId:Int,
+                    @Header("auth_token") auth_token :String) : Call<JsonObject?>
+
+
+
+    @GET("api/workspaces/issue/comment")
+    fun getIssueComments(@Query("workspace_id") workspaceId: Int,
+                         @Query("issue_id") issueId: Int,
+                         @Query("page") page: Int,
+                         @Query("per_page") perPage: Int,
+                         @Header("auth_token") authToken: String ): Call<IssueComment?>
+
+    @GET("api/workspaces/issue/assignee")
+    fun getIssueAssignee(@Query("workspace_id") workspaceId: Int,
+                         @Query("issue_id") issueId: Int,
+                         @Query("page") page: Int?,
+                         @Query("per_page") perPage: Int?,
+                         @Header("auth_token") authToken: String ): Call<IssueAssignee?>
 }

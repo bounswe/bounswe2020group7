@@ -786,6 +786,7 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
         })
     }
 
+
     override fun onMilestoneNameClicked(binding: MilestoneCellBinding) {
         if(binding.expandLl.visibility == View.GONE) binding.expandLl.visibility = View.VISIBLE
         else binding.expandLl.visibility = View.GONE
@@ -818,6 +819,12 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
 
     override fun onApplicationRejectClicked(request: WorkspaceApplication, position: Int) {
         //TODO("Not yet implemented")
+    }
+
+  
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        menu.findItem(R.id.add_issue_btn)?.isVisible = false
+        super.onPrepareOptionsMenu(menu)
     }
 
 

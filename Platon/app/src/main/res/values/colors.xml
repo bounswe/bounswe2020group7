@@ -29,5 +29,6 @@
     <color name="primary_dark_lighter">#5D6160</color>
     <color name="primary_dark_lighter_transparent">#885D6160</color>
     <color name="secondary_purple2">#B8BED4</color>
+    <color name="very_light_brown">#F8EBD1</color>
     <color name="secondary_yellow">#D2C687</color>
 </resources>
