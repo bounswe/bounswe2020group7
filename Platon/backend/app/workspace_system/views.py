@@ -950,6 +950,8 @@ class WorkspacesAPI(Resource):
             new_workspace_skills = json.loads(new_workspace_information.pop("skills"))
             # The list of requirements is popped from the dictionary, as the requirements will be added to the database through a separate operation.
             new_workspace_requirements = json.loads(new_workspace_information.pop("requirements"))
+            # The list of upcoming events is popped from the dictionary, as the upcoming events will be added to the database through a separate operation.
+            new_workspace_upcoming_events = json.loads(new_workspace_information.pop("upcoming_events"))
 
             # A new workspace with the given fields gets created.
             new_workspace = Workspace(creator_id=requester_id, **new_workspace_information)
@@ -967,6 +969,7 @@ class WorkspacesAPI(Resource):
                 try:
                     add_workspace_skills(new_workspace.id, new_workspace_skills)
                     add_workspace_requirements(new_workspace.id, new_workspace_requirements)
+                    add_workspace_upcoming_events(new_workspace.id, new_workspace_upcoming_events)
                     add_workspace_contribution(new_workspace.id, requester_id)
                 except:
                     return make_response(jsonify({"error" : "The server is not connected to the database. (Workspace skills/requirements/contributions could not get created.)"}), 500)
@@ -1026,10 +1029,11 @@ class WorkspacesAPI(Resource):
                                                     "state": requested_workspace.state,
                                                     "timestamp": requested_workspace.timestamp,
                                                     "description": requested_workspace.description,
-                                                    "deadline": requested_workspace.deadline.strftime("%d.%m.%Y"),
+                                                    "deadline": requested_workspace.deadline.strftime("%d.%m.%Y") if requested_workspace.deadline is not None else None,
                                                     "max_collaborators": requested_workspace.max_collaborators,
                                                     "skills": get_workspace_skills_list(form.workspace_id.data),
                                                     "requirements": get_workspace_requirements_list(form.workspace_id.data),
+                                                    "upcoming_events": get_workspace_upcoming_events_list(form.workspace_id.data),
                                                     "active_contributors": get_workspace_active_contributors_list(form.workspace_id.data)
                                                 }
                         requested_workspace.view_count = requested_workspace.view_count + 1
@@ -1090,13 +1094,15 @@ class WorkspacesAPI(Resource):
                         # If empty, skips the database operations.
                         # If not, the workspace gets updated as requested.
                         is_updated = False
-                        if new_attributes["skills"] != 'null' or new_attributes["requirements"] != 'null':
+                        if new_attributes["skills"] != 'null' or new_attributes["requirements"] != 'null' or new_attributes["upcoming_events"] != 'null':
                             is_updated = True
                             update_workspace_skills(form.workspace_id.data, json.loads(new_attributes.pop("skills")))
                             update_workspace_requirements(form.workspace_id.data, json.loads(new_attributes.pop("requirements")))
+                            update_workspace_upcoming_events(form.workspace_id.data, json.loads(new_attributes.pop("upcoming_events")))
                         else:
                             new_attributes.pop("skills")
                             new_attributes.pop("requirements")
+                            new_attributes.pop("upcoming_events")
                         if new_attributes:
                             requested_workspace.update(new_attributes)
                             db.session.commit()

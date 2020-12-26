@@ -7,6 +7,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from app.workspace_system.models import *
 from app.profile_management.models import Skills
 from app.auth_system.models import User
+from app.upcoming_events.models import UpcomingEvent
 from enum import IntEnum
 
 class WorkspaceState(IntEnum):
@@ -46,6 +47,18 @@ def add_workspace_requirements(workspace_id, workspace_requirements_list):
 		db.session.commit()	
 
 
+def add_workspace_upcoming_events(workspace_id, workspace_upcoming_events_list):
+    '''
+    This method adds the upcoming events in the "workspace_upcoming_events_list" to the workspace with the given ID.
+    '''
+    for upcoming_event_id in (workspace_upcoming_events_list or []):
+        upcoming_event = UpcomingEvent.query.filter_by(id=upcoming_event_id).first()
+        if upcoming_event is not None:
+            workspace_upcoming_event = WSUpcomingEvent(workspace_id=workspace_id, upcoming_event_id=upcoming_event_id)
+            db.session.add(workspace_upcoming_event)
+            db.session.commit()
+
+
 def add_workspace_contribution(workspace_id, user_id):
 	'''
 	This method adds the contribution of the user with the ID "user_id"
@@ -81,6 +94,27 @@ def get_workspace_requirements_list(workspace_id):
         requirement_text = (Requirement.query.filter_by(id=workspace_requirement.requirement_id).first()).text
         workspace_requirement_texts.append(requirement_text)
     return workspace_requirement_texts
+
+
+def get_workspace_upcoming_events_list(workspace_id):
+    # Upcoming events list of the requested workspace is retrieved from the database.
+    requested_workspace_upcoming_events = WSUpcomingEvent.query.filter_by(workspace_id=workspace_id)
+    
+    # After the list is retrieved, details of each upcoming event of that workspace is retrieved from the database
+    # and gets appended to "workspace_upcoming_events_details"
+    workspace_upcoming_events_details = list()
+    for workspace_upcoming_event in requested_workspace_upcoming_events:
+        upcoming_event = UpcomingEvent.query.filter_by(id=workspace_upcoming_event.upcoming_event_id).first()
+        workspace_upcoming_events_details.append({
+                                                    "id": upcoming_event.id,
+                                                    "title": upcoming_event.title,
+                                                    "acronym": upcoming_event.acronym,
+                                                    "location": upcoming_event.location,
+                                                    "date": upcoming_event.date,
+                                                    "deadline": upcoming_event.deadline,
+                                                    "link": upcoming_event.link
+                                                    })
+    return workspace_upcoming_events_details
 
 
 def get_workspace_active_contributors_list(workspace_id):
@@ -124,6 +158,19 @@ def update_workspace_requirements(workspace_id, workspace_updated_requirements_l
         workspace_requirements_list.delete()
         db.session.commit()
         add_workspace_requirements(workspace_id, workspace_updated_requirements_list)
+
+
+def update_workspace_upcoming_events(workspace_id, workspace_updated_upcoming_events_list):
+    '''
+    This method updates the upcoming events of a workspace.
+    '''
+    if workspace_updated_upcoming_events_list is None:
+        return
+    else:
+        workspace_upcoming_events_list = WSUpcomingEvent.query.filter_by(workspace_id=workspace_id)
+        workspace_upcoming_events_list.delete()
+        db.session.commit()
+        add_workspace_upcoming_events(workspace_id, workspace_updated_upcoming_events_list)
 
 
 def add_new_collaboration(workspace_id, new_contributor_id):

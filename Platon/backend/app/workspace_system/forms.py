@@ -20,6 +20,7 @@ class CreateWorkspaceForm(Form):
 	deadline = StringField("Deadline of the new workspace", validators=[validators.optional(), validators.Regexp(regex=date_regex)], filters = [lambda x: x or None])
 	requirements = StringField("The list of the requirements to be able to join the new workspace", validators=[validators.optional(), validate_json], default="null")
 	skills = StringField("The list of the skills required to be able to join the new workspace", validators=[validators.optional(), validate_json], default="null")
+	upcoming_events = StringField("The list of the upcoming events that are related to the new workspace", validators=[validators.optional(), validate_json], default="null")
 create_workspace_parser = reqparse.RequestParser()
 create_workspace_parser.add_argument("title", required=True, type=str, help="Title of the new workspace", location="form")
 create_workspace_parser.add_argument("description", required=True, type=str, help="Description of the new workspace", location="form")
@@ -28,6 +29,7 @@ create_workspace_parser.add_argument("max_collaborators", required=False, type=i
 create_workspace_parser.add_argument("deadline", required=False, type=str, help="Deadline of the new workspace", location="form")
 create_workspace_parser.add_argument("requirements", required=False, type=str, help="The list of the requirements to be able to join the new workspace", location="form")
 create_workspace_parser.add_argument("skills", required=False, type=str, help="The list of the skills required to be able to join the new workspace", location="form")
+create_workspace_parser.add_argument("upcoming_events",required=False, type=str, help="The list of the upcoming events that are related to the new workspace", location="form")
 create_workspace_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
 
 
@@ -48,6 +50,7 @@ class UpdateWorkspaceForm(Form):
 	requirements = StringField("Updated list of the requirements to be able to join the workspace", validators=[validators.optional(), validate_json], default="null")
 	skills = StringField("Updated list of the skills required to be able to join the workspace", validators=[validators.optional(), validate_json], default="null")
 	state = IntegerField("Updated state of the workspace", validators=[validators.optional(), validators.NumberRange(min=0, max=2)])
+	upcoming_events = StringField("Updated list of the upcoming events that are related to the workspace", validators=[validators.optional(), validate_json], default="null")
 update_workspace_parser = reqparse.RequestParser()
 update_workspace_parser.add_argument("workspace_id", required=True, type=int, help="ID of the workspace to be updated", location="form")
 update_workspace_parser.add_argument("title", required=False, type=str, help="Updated title of the new workspace", location="form")
@@ -58,6 +61,7 @@ update_workspace_parser.add_argument("deadline", required=False, type=str, help=
 update_workspace_parser.add_argument("requirements", required=False, type=str, help="Updated list of the requirements to be able to join the new workspace", location="form")
 update_workspace_parser.add_argument("skills", required=False, type=str, help="Updated list of the skills required to be able to join the new workspace", location="form")
 update_workspace_parser.add_argument("state", required=False, type=int, help="Updated state of the workspace", location="form")
+update_workspace_parser.add_argument("upcoming_events",required=False, type=str, help="The list of the upcoming events that are related to the new workspace", location="form")
 update_workspace_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
 
 
