@@ -20,7 +20,6 @@ class IssueDetailRepository {
     val commentsResponse:MutableLiveData<Resource<IssueComment>> = MutableLiveData()
 
 
-
     fun getIssuesComment(workSpaceId: Int,issueId: Int, page: Int, paginationSize: Int, authToken: String) {
         val service = RetrofitClient.getService()
         val call = service.getIssueComments(workSpaceId, issueId , page, paginationSize, authToken)

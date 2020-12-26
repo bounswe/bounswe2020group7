@@ -1,25 +1,30 @@
 package com.cmpe451.platon.page.activity.workspace.fragment.issuedetail
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmpe451.platon.R
+import com.cmpe451.platon.adapter.CommentsAdapter
 import com.cmpe451.platon.adapter.IssuesAdapter
-import com.cmpe451.platon.databinding.DialogAddIssueBinding
-import com.cmpe451.platon.databinding.FragmentIssueDetailBinding
-import com.cmpe451.platon.databinding.IssueCellBinding
+import com.cmpe451.platon.databinding.*
 import com.cmpe451.platon.network.Resource
+import com.cmpe451.platon.network.models.Comment
 import com.cmpe451.platon.network.models.Issue
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.util.Definitions
+import java.util.*
 
 class IssueDetailFragment: Fragment() {
     private lateinit var dialog: AlertDialog
@@ -101,6 +106,24 @@ class IssueDetailFragment: Fragment() {
                 binding.issueInfoLinearLayout.visibility = View.GONE
             }
         }
+
+        binding.infoTitle.setOnClickListener{
+            onUpdateButtonClicked()
+        }
+
+        binding.issueCommentsTitle.setOnClickListener{
+            when(binding.issueCommentsRecyclerView.visibility){
+                View.GONE->{
+                    //getComments
+                    binding.issueCommentsRecyclerView.adapter = CommentsAdapter(arrayListOf(Comment(0,"hehe", "haha", "today", 2.5)), requireContext())
+                    binding.issueCommentsRecyclerView.visibility = View.VISIBLE
+                }
+                View.VISIBLE->{
+                    binding.issueCommentsRecyclerView.visibility = View.GONE
+                }
+            }
+
+        }
     }
 
 
@@ -143,6 +166,120 @@ class IssueDetailFragment: Fragment() {
          */
 
     }
+
+
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun onUpdateButtonClicked(){
+        val tmpBinding = FragmentEditIssueBinding.inflate(
+            layoutInflater,
+            requireView().parent as ViewGroup,
+            false
+        )
+        /*
+        tmpBinding.wsTitleEt.setText(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.title)
+        tmpBinding.wsDescriptionEt.setText(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.description)
+        tmpBinding.privateSwitch.isChecked =
+            mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.is_private
+        tmpBinding.wsMaxCollabNumberEt.setText(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.max_collaborators.toString())
+        val x = ArrayAdapter(requireContext(), R.layout.spinner_item, mutableListOf("Loading..."))
+        x.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        tmpBinding.spState.adapter = x
+        (tmpBinding.spState.adapter as ArrayAdapter<String>).clear()
+        (tmpBinding.spState.adapter as ArrayAdapter<String>).add(getString(R.string.state_search_for_collab_str))
+        (tmpBinding.spState.adapter as ArrayAdapter<String>).add(getString(R.string.state_ongoing_str))
+        (tmpBinding.spState.adapter as ArrayAdapter<String>).add(getString(R.string.state_finished_str))
+        tmpBinding.spState.setSelection(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.state)
+
+         */
+        tmpBinding.issueDeadlineEt.setOnTouchListener { _, event ->
+
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                val calendar = Calendar.getInstance()
+                val year = calendar.get(Calendar.YEAR)
+                val month = calendar.get(Calendar.MONTH)
+                val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+                val datePickerDialog = DatePickerDialog(
+                    requireContext(),
+                    { _, years, months, day ->
+                        val monthString = String.format("%02d", months+1)
+                        val dayString = String.format("%02d", day)
+                        tmpBinding.issueDeadlineEt.setText("$years.$monthString.$dayString")
+                    }, year, month, dayOfMonth
+
+                )
+
+                datePickerDialog.show()
+            }
+            true
+
+
+        }
+        AlertDialog.Builder(context).setView(tmpBinding.root)
+            .setCancelable(true)
+            .setNeutralButton("Delete Issue") { _: DialogInterface, _: Int ->
+                AlertDialog.Builder(context)
+                    .setMessage("Are you sure you want to delete ?")
+                    .setPositiveButton("Delete"
+                    ) { _, _ ->
+                        val ert = 0
+                        /*
+                        mWorkspaceViewModel.deleteWorkspace(
+                            (activity as WorkspaceActivity).workspace_id!!,
+                            (activity as WorkspaceActivity).token!!
+                        )
+
+                         */
+                    }
+                    .setNegativeButton("Cancel"
+                    ) { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .create().show()
+            }
+            .setNegativeButton("Update", DialogInterface.OnClickListener { dialog, _ ->
+                if (tmpBinding.issueTitleEt.text.isNullOrEmpty()) {
+                    Toast.makeText(requireContext(), "Title cannot be left empty", Toast.LENGTH_LONG)
+                        .show()
+                } else {
+                    if (tmpBinding.issueDescriptionEt.text.isNullOrEmpty()) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Description cannot be left empty",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else {
+                        val title: String = tmpBinding.issueTitleEt.text.toString().trim()
+                        val description: String = tmpBinding.issueDescriptionEt.text.toString().trim()
+                        val deadline =
+                            if (tmpBinding.issueDeadlineEt.text.isNullOrEmpty()) null else tmpBinding.issueDeadlineEt.text.toString()
+
+                        val ert = 0
+                        /*
+                        mWorkspaceViewModel.updateWorkspace(
+                            (activity as WorkspaceActivity).workspace_id!!,
+                            title,
+                            description,
+                            isPrivate,
+                            max_collaborators,
+                            deadline,
+                            null,
+                            null,
+                            state,
+                            (activity as WorkspaceActivity).token!!
+                        )
+
+                         */
+                    }
+                }
+            })
+
+            .create().show()
+
+    }
+
+
+
 
 
 

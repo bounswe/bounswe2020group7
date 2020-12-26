@@ -7,7 +7,6 @@ class IssuesFragment {
 
 package com.cmpe451.platon.page.activity.workspace.fragment.issues
 
-import com.cmpe451.platon.page.activity.login.fragment.landing.LandingFragmentDirections
 import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
@@ -15,29 +14,18 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
-import com.cmpe451.platon.adapter.FollowerFollowingAdapter
 import com.cmpe451.platon.adapter.IssuesAdapter
-import com.cmpe451.platon.adapter.TrendingProjectsAdapter
-import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.*
-import com.cmpe451.platon.listener.PaginationListener
 import com.cmpe451.platon.network.Resource
-import com.cmpe451.platon.network.models.FollowPerson
 import com.cmpe451.platon.network.models.Issue
-import com.cmpe451.platon.network.models.Issues
-import com.cmpe451.platon.network.models.TrendingProject
-import com.cmpe451.platon.page.activity.home.fragment.profilepage.ProfilePageFragmentDirections
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
-import com.cmpe451.platon.page.activity.workspace.fragment.workspace.WorkspaceFragmentDirections
 import com.cmpe451.platon.util.Definitions
 
 class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
@@ -50,6 +38,8 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
     lateinit var binding: FragmentIssuesBinding
     private lateinit var adapter: IssuesAdapter
     private lateinit var issueRecyclerView: RecyclerView
+
+    lateinit var issue: ArrayList<Issue>
 
     private var maxPageNumberIssue:Int=10
 
@@ -80,7 +70,7 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
             when(t.javaClass){
                 Resource.Success::class.java ->{
 
-                    val issue = t.data!!.result as ArrayList<Issue>
+                    issue = t.data!!.result as ArrayList<Issue>
                     //adapter.addElement(0, issue[0])
                     adapter.submitElements(issue)
                     //var issueArray = issue
