@@ -3,6 +3,7 @@ package com.cmpe451.platon.page.activity.workspace.fragment.workspace
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.*
@@ -11,28 +12,22 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import com.cmpe451.platon.R
-import com.cmpe451.platon.adapter.CollaboratorAdapter
-import com.cmpe451.platon.adapter.FollowerFollowingAdapter
-import com.cmpe451.platon.adapter.SkillsAdapter
-import com.cmpe451.platon.databinding.AddRequirementBinding
-import com.cmpe451.platon.databinding.AddSkillBinding
-import com.cmpe451.platon.databinding.FragmentEditWorkspaceBinding
-import com.cmpe451.platon.databinding.FragmentPersonalWorkspaceBinding
+import com.cmpe451.platon.adapter.*
+import com.cmpe451.platon.databinding.*
 import com.cmpe451.platon.network.Resource
-import com.cmpe451.platon.network.models.Contributor
+import com.cmpe451.platon.network.models.*
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.page.activity.workspace.fragment.addworkspace.AddWorkspaceViewModel
 import com.cmpe451.platon.util.Definitions
 import java.util.*
 import kotlin.collections.ArrayList
 
-class WorkspaceFragment : Fragment(){
+class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListener,WorkspaceApplicationsAdapter.ApplicationsButtonClickListener{
 
     private lateinit var binding: FragmentPersonalWorkspaceBinding
     private lateinit var dialog:AlertDialog
@@ -49,22 +44,104 @@ class WorkspaceFragment : Fragment(){
         return binding.root
     }
 
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.btn_WorkspaceApplications->{
+                onSeeWorkspaceApplicationsClicked()
+            }
+        }
+        return item.onNavDestinationSelected(findNavController()) || super.onOptionsItemSelected(item)
+    }
+
+    private fun onSeeWorkspaceApplicationsClicked() {
+        val tmpBinding = DialogWsApplicationsBinding.inflate(layoutInflater, requireView().parent as ViewGroup, false)
+
+        mWorkspaceViewModel.getWorkspaceApplicationsResourceResponse.observe(viewLifecycleOwner, {
+            when(it.javaClass){
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    tmpBinding.rvWsApplication.layoutManager =LinearLayoutManager(requireContext())
+                    tmpBinding.rvWsApplication.adapter =
+                        WorkspaceApplicationsAdapter(it.data!! as ArrayList<WorkspaceApplication>, requireContext(), this)
+                    mWorkspaceViewModel.getWorkspaceApplicationsResourceResponse.value = Resource.Done()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    mWorkspaceViewModel.getWorkspaceApplicationsResourceResponse.value = Resource.Done()
+
+                }
+                Resource.Done::class.java ->{
+                    dialog.dismiss()
+                    mWorkspaceViewModel.getWorkspaceApplicationsResourceResponse.removeObservers(viewLifecycleOwner)
+                }
+            }
+        })
+
+        mWorkspaceViewModel.getWorkspaceApplications((activity as WorkspaceActivity).token!!, (activity as WorkspaceActivity).workspace_id!!, 0, 10)
+
+        AlertDialog.Builder(requireContext())
+            .setView(tmpBinding.root)
+            .setCancelable(true)
+            .show()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if((activity as WorkspaceActivity).addClicked != null && !(activity as WorkspaceActivity).addClicked!!){
             initializeAdapters()
             setObservers()
             setListeners()
-            mWorkspaceViewModel.fetchWorkspace((activity as WorkspaceActivity).workspace_id!!, (activity as WorkspaceActivity).token!!)
+            initViews()
+
         }
 
         super.onViewCreated(view, savedInstanceState)
     }
 
-    private fun setListeners() {
-        binding.infoTitle.setOnClickListener{
-//            findNavController().navigate(WorkspaceFragmentDirections.actionWorkspaceFragmentToEditWorkspaceFragment())
-            onUpdateButtonClicked()
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private fun initViews() {
+        if(!(activity as WorkspaceActivity).isOwner!!){
+            binding.addRequirementIv.visibility = View.GONE
+            binding.addSkillIv.visibility = View.GONE
+            binding.infoTitle.setCompoundDrawables(null,null,null,null)
+            binding.milestoneTitleTv.setCompoundDrawables(null,null,null,null)
+            binding.workspaceTitleTv.setCompoundDrawables(null,null,binding.workspaceTitleTv.compoundDrawablesRelative[2],null)
         }
+        else {
+            binding.workspaceTitleTv.setCompoundDrawables(binding.workspaceTitleTv.compoundDrawablesRelative[0],null,null,null)
+        }
+        //TODO
+        binding.collabTitleTv.setCompoundDrawables(null,null,null,null)
+        mWorkspaceViewModel.fetchWorkspace((activity as WorkspaceActivity).workspace_id!!, (activity as WorkspaceActivity).token!!)
+        getMilestones()
+    }
+
+    private fun getMilestones() {
+        //pagination will be added late TODO
+        mWorkspaceViewModel.getMilestones((activity as WorkspaceActivity).workspace_id!!, null, null, (activity as WorkspaceActivity).token!!)
+    }
+
+    private fun setListeners() {
+        if((activity as WorkspaceActivity).isOwner!!){
+            binding.infoTitle.setOnClickListener{
+                onUpdateButtonClicked()
+            }
+            binding.addSkillIv.setOnClickListener {
+                onAddDeleteSkillClicked()
+            }
+            binding.addRequirementIv.setOnClickListener {
+                onAddRequirementClicked()
+            }
+            binding.workspaceTitleTv.setOnClickListener {
+                onQuitButtonClicked()
+            }
+        }
+        else {
+            binding.workspaceTitleTv.setOnClickListener {
+                mWorkspaceViewModel.applyToWorkpace((activity as WorkspaceActivity).workspace_id!!, (activity as WorkspaceActivity).token!!)
+            }
+        }
+
         binding.descTitleTv.setOnClickListener{
             if(binding.projectInfoLl.visibility == View.GONE){
                 binding.projectInfoLl.visibility = View.VISIBLE
@@ -74,30 +151,63 @@ class WorkspaceFragment : Fragment(){
             }
         }
         binding.requirementsTitleTv.setOnClickListener{
-            if(binding.rvWorkspaceRequirements.visibility == View.GONE){
-                binding.rvWorkspaceRequirements.visibility = View.VISIBLE
-                binding.addRequirementIv.visibility = View.VISIBLE
+            if(binding.requirementLl.visibility == View.GONE){
+                binding.requirementLl.visibility = View.VISIBLE
             }
             else{
-                binding.rvWorkspaceRequirements.visibility = View.GONE
-                binding.addRequirementIv.visibility = View.GONE
+                binding.requirementLl.visibility = View.GONE
             }
         }
         binding.skillsTitleTv.setOnClickListener{
-            if(binding.rvWorkspaceSkills.visibility == View.GONE){
-                binding.rvWorkspaceSkills.visibility = View.VISIBLE
-                binding.addSkillIv.visibility = View.VISIBLE
+            if(binding.skillLl.visibility == View.GONE){
+                binding.skillLl.visibility = View.VISIBLE
             }
             else{
-                binding.rvWorkspaceSkills.visibility = View.GONE
-                binding.addSkillIv.visibility = View.GONE
+                binding.skillLl.visibility = View.GONE
             }
         }
-        binding.addSkillIv.setOnClickListener {
-            onAddDeleteSkillClicked()
+        if((activity as WorkspaceActivity).isOwner!!) {
+            binding.milestoneTitleTv.setOnClickListener {
+                onAddMilestoneClicked()
+            }
         }
-        binding.addRequirementIv.setOnClickListener {
-            onAddRequirementClicked()
+
+    }
+
+    private fun onQuitButtonClicked() {
+        if(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.creator_id == (activity as WorkspaceActivity).user_id){
+            AlertDialog.Builder(context)
+                .setMessage("You cannot quit since you are the creator of ${mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.title}," +
+                        "you can only delete it. Are you sure you want to delete " + mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.title + "?" +
+                        "You will not be able to undo it.")
+                .setPositiveButton("Delete"
+                ) { _, _ ->
+                    mWorkspaceViewModel.deleteWorkspace(
+                        (activity as WorkspaceActivity).workspace_id!!,
+                        (activity as WorkspaceActivity).token!!
+                    )
+                }
+                .setNegativeButton("Cancel"
+                ) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create().show()
+        }
+        else {
+            AlertDialog.Builder(context)
+                .setMessage("Are you sure you want to quit ${mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.title}?")
+                .setPositiveButton("Quit"
+                ) { _, _ ->
+                    mWorkspaceViewModel.quitWorkspace(
+                        (activity as WorkspaceActivity).workspace_id!!,
+                        (activity as WorkspaceActivity).token!!
+                    )
+                }
+                .setNegativeButton("Cancel"
+                ) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create().show()
         }
     }
 
@@ -115,10 +225,11 @@ class WorkspaceFragment : Fragment(){
                     if(it.data?.max_collaborators == null)
                         binding.maxCollabTv.visibility = View.GONE
                     else
-                        binding.maxCollabTv.text = getString(R.string.max_collab_str) + " " + it.data?.max_collaborators.toString()
+                        binding.maxCollabTv.text = getString(R.string.max_collab_str) + ": " + it.data?.max_collaborators.toString()
                     if(it.data?.deadline==null)
                         binding.deadlineTv.visibility = View.GONE
                     else
+                        binding.deadlineTv.visibility = View.VISIBLE
                         binding.deadlineTv.text = "Due "  + it.data?.deadline
                     skillsAdapter.submitElements(it.data?.skills ?: ArrayList())
                     reqAdapter.submitElements(it.data?.requirements ?: ArrayList())
@@ -135,7 +246,6 @@ class WorkspaceFragment : Fragment(){
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
                 }
             }
-
         })
         mWorkspaceViewModel.getUpdateResourceResponse.observe(viewLifecycleOwner,{
             when(it.javaClass){
@@ -172,6 +282,73 @@ class WorkspaceFragment : Fragment(){
                 }
             }
         })
+        mWorkspaceViewModel.getMilestoneResponse.observe(viewLifecycleOwner, {
+            when (it.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    (binding.milestoneRv.adapter as MilestoneAdapter).replaceElements(it.data!!.result)
+                    mWorkspaceViewModel.getMilestoneResponse.value = Resource.Done()
+
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    mWorkspaceViewModel.getMilestoneResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java ->{
+                    dialog.dismiss()
+                }
+            }
+        })
+        mWorkspaceViewModel.getAddDeleteUpdateMilestoneResponse.observe(viewLifecycleOwner, {
+            when (it.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    getMilestones()
+                    mWorkspaceViewModel.getMilestoneResponse.value = Resource.Done()
+
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    mWorkspaceViewModel.getMilestoneResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java ->{
+                    dialog.dismiss()
+                }
+            }
+        })
+        mWorkspaceViewModel.getApplyWorksppaceResourceResponse.observe(viewLifecycleOwner, {
+            when (it.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    Toast.makeText(requireContext(), it.data.toString(), Toast.LENGTH_LONG)
+                    mWorkspaceViewModel.getMilestoneResponse.value = Resource.Done()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    mWorkspaceViewModel.getMilestoneResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java ->{
+                    dialog.dismiss()
+                }
+            }
+        })
+        mWorkspaceViewModel.getQuitWorkspaceResponse.observe(viewLifecycleOwner,{
+            when (it.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    activity?.finish()
+                    mWorkspaceViewModel.getMilestoneResponse.value = Resource.Done()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    mWorkspaceViewModel.getMilestoneResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java ->{
+                    dialog.dismiss()
+
+                }
+            }
+        })
 
 
     }
@@ -187,7 +364,10 @@ class WorkspaceFragment : Fragment(){
         binding.rvWorkspaceRequirements.layoutManager = LinearLayoutManager(requireContext())
 
         binding.collaboratorsRv.adapter = CollaboratorAdapter(ArrayList(), requireContext())
-        binding.collaboratorsRv.layoutManager = LinearLayoutManager(requireContext())
+        binding.collaboratorsRv.layoutManager = GridLayoutManager(requireContext(),2)
+
+        binding.milestoneRv.adapter = MilestoneAdapter(ArrayList(),this, (activity as WorkspaceActivity).isOwner!!)
+        binding.milestoneRv.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
     }
     private fun onAddRequirementClicked() {
@@ -198,7 +378,7 @@ class WorkspaceFragment : Fragment(){
         val bArray = mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.requirements.map { requirementsList.contains(it) }.toBooleanArray()
         AlertDialog.Builder(context)
             .setCancelable(false)
-            .setNeutralButton("Add Nonexistent Requirement") { _, _ ->
+            .setNeutralButton("Add Nonexistent") { _, _ ->
                 val tmpBinding = AddRequirementBinding.inflate(
                     layoutInflater,
                     requireView().parent as ViewGroup,
@@ -245,6 +425,9 @@ class WorkspaceFragment : Fragment(){
             requireView().parent as ViewGroup,
             false
         )
+        val editDialog = AlertDialog.Builder(context).setView(tmpBinding.root)
+            .setCancelable(true)
+            .show()
         tmpBinding.wsTitleEt.setText(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.title)
         tmpBinding.wsDescriptionEt.setText(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.description)
         tmpBinding.privateSwitch.isChecked =
@@ -281,64 +464,265 @@ class WorkspaceFragment : Fragment(){
 
 
         }
-        AlertDialog.Builder(context).setView(tmpBinding.root)
-            .setCancelable(true)
-            .setNeutralButton("Delete Workspace") { _: DialogInterface, _: Int ->
-                AlertDialog.Builder(context)
-                    .setMessage("Are you sure you want to delete " + mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.title + "?")
-                    .setPositiveButton("Delete"
-                    ) { _, _ ->
-                        mWorkspaceViewModel.deleteWorkspace(
-                            (activity as WorkspaceActivity).workspace_id!!,
-                            (activity as WorkspaceActivity).token!!
-                        )
-                    }
-                    .setNegativeButton("Cancel"
-                    ) { dialog, _ ->
-                        dialog.dismiss()
-                    }
-                    .create().show()
-            }
-            .setNegativeButton("Update",DialogInterface.OnClickListener { dialog, _ ->
-                if (tmpBinding.wsTitleEt.text.isNullOrEmpty()) {
-                    Toast.makeText(requireContext(), "Title cannot be left empty", Toast.LENGTH_LONG)
-                        .show()
-                } else {
-                    if (tmpBinding.wsDescriptionEt.text.isNullOrEmpty()) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Description cannot be left empty",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    } else {
-                        val title: String = tmpBinding.wsTitleEt.text.toString().trim()
-                        val description: String = tmpBinding.wsDescriptionEt.text.toString().trim()
-                        val isPrivate: Int = if (tmpBinding.privateSwitch.isChecked) 1 else 0
-                        val max_collaborators =
-                            if (tmpBinding.wsMaxCollabNumberEt.text.isNullOrEmpty()) null else tmpBinding.wsMaxCollabNumberEt.text.toString()
-                                .toInt()
-                        val deadline =
-                            if (tmpBinding.wsDeadlineEt.text.isNullOrEmpty()) null else tmpBinding.wsDeadlineEt.text.toString()
-                        val state = tmpBinding.spState.selectedItemPosition
-                        mWorkspaceViewModel.updateWorkspace(
-                            (activity as WorkspaceActivity).workspace_id!!,
-                            title,
-                            description,
-                            isPrivate,
-                            max_collaborators,
-                            deadline,
-                            null,
-                            null,
-                            state,
-                            (activity as WorkspaceActivity).token!!
-                        )
-                    }
+        tmpBinding.deleteWsBtn.setOnClickListener {
+            AlertDialog.Builder(context)
+                .setMessage("Are you sure you want to delete " + mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.title + "?")
+                .setPositiveButton("Delete"
+                ) { _, _ ->
+                    mWorkspaceViewModel.deleteWorkspace(
+                        (activity as WorkspaceActivity).workspace_id!!,
+                        (activity as WorkspaceActivity).token!!
+                    )
                 }
-            })
+                .setNegativeButton("Cancel"
+                ) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create().show()
+        }
+        tmpBinding.updateWsBtn.setOnClickListener {
+            if (tmpBinding.wsTitleEt.text.isNullOrEmpty()) {
+                Toast.makeText(requireContext(), "Title cannot be left empty", Toast.LENGTH_LONG)
+                    .show()
+            } else {
+                if (tmpBinding.wsDescriptionEt.text.isNullOrEmpty()) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Description cannot be left empty",
+                        Toast.LENGTH_LONG
+                    ).show()
+                } else {
+                    val title: String = tmpBinding.wsTitleEt.text.toString().trim()
+                    val description: String = tmpBinding.wsDescriptionEt.text.toString().trim()
+                    val isPrivate: Int = if (tmpBinding.privateSwitch.isChecked) 1 else 0
+                    val max_collaborators =
+                        if (tmpBinding.wsMaxCollabNumberEt.text.isNullOrEmpty()) null else tmpBinding.wsMaxCollabNumberEt.text.toString()
+                            .toInt()
+                    val deadline =
+                        if (tmpBinding.wsDeadlineEt.text.isNullOrEmpty()) null else tmpBinding.wsDeadlineEt.text.toString()
+                    val state = tmpBinding.spState.selectedItemPosition
+                    mWorkspaceViewModel.updateWorkspace(
+                        (activity as WorkspaceActivity).workspace_id!!,
+                        title,
+                        description,
+                        isPrivate,
+                        max_collaborators,
+                        deadline,
+                        null,
+                        null,
+                        state,
+                        (activity as WorkspaceActivity).token!!
 
-            .create().show()
+                    )
+
+                }
+            }
+            editDialog.dismiss()
+        }
+
 
     }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun onAddMilestoneClicked(){
+        val tmpBinding = DialogAddMilestoneBinding.inflate(
+            layoutInflater,
+            requireView().parent as ViewGroup,
+            false
+        )
+        val addDialog = AlertDialog.Builder(context).setView(tmpBinding.root)
+            .setCancelable(true)
+            .show()
+        tmpBinding.milestoneDeadlineEt.setOnTouchListener { _, event ->
+
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                val calendar = Calendar.getInstance()
+                val year = calendar.get(Calendar.YEAR)
+                val month = calendar.get(Calendar.MONTH)
+                val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+                val datePickerDialog = DatePickerDialog(
+                    requireContext(),
+                    { _, years, months, day ->
+                        val monthString = String.format("%02d", months+1)
+                        val dayString = String.format("%02d", day)
+                        tmpBinding.milestoneDeadlineEt.setText("$years-$monthString-$dayString")
+                    }, year, month, dayOfMonth
+
+                )
+
+                datePickerDialog.show()
+            }
+            true
+
+
+        }
+
+        tmpBinding.milestoneDateEt.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                val calendar = Calendar.getInstance()
+                val hour = calendar.get(Calendar.HOUR_OF_DAY)
+                val minute = calendar.get(Calendar.MINUTE)
+                val datePickerDialog = TimePickerDialog(
+                    requireContext(),
+                    { _, hours, minutes ->
+                        val h = String.format("%02d", hours)
+                        val m = String.format("%02d", minutes)
+                        tmpBinding.milestoneDateEt.setText("$h:$m:00")
+                    }, hour, minute, true
+
+                )
+
+                datePickerDialog.show()
+            }
+            true
+
+        }
+        tmpBinding.buttonMilestoneAdd.setOnClickListener {
+            if(tmpBinding.milestoneTitleEt.text.isNullOrEmpty()){
+                Toast.makeText(requireContext(), "Title cannot be left empty", Toast.LENGTH_LONG).show()
+            }
+            else {
+                if(tmpBinding.milestoneDescriptionEt.text.isNullOrEmpty()){
+                    Toast.makeText(requireContext(), "Description cannot be left empty", Toast.LENGTH_LONG).show()
+                }
+                else {
+                    if(tmpBinding.milestoneDeadlineEt.text.isNullOrEmpty()){
+                        Toast.makeText(requireContext(), "Date cannot be left empty", Toast.LENGTH_LONG).show()
+                    }
+                    else {
+                        if(tmpBinding.milestoneDateEt.text.isNullOrEmpty()){
+                            Toast.makeText(requireContext(), "Time cannot be left empty", Toast.LENGTH_LONG).show()
+                        }
+                        else {
+                            val title = tmpBinding.milestoneTitleEt.text.toString().trim()
+                            val desc = tmpBinding.milestoneDescriptionEt.text.toString().trim()
+                            val date = tmpBinding.milestoneDeadlineEt.text.toString().trim()
+                            val time = tmpBinding.milestoneDateEt.text.toString().trim()
+                            val deadline = "$date $time"
+                            val token = (activity as WorkspaceActivity).token!!
+                            mWorkspaceViewModel.addMilestone((activity as WorkspaceActivity).workspace_id!!,
+                                title,desc, deadline, token)
+                            addDialog.dismiss()
+                        }
+                    }
+                }
+            }
+        }
+
+
+    }
+
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun onUpdateMilestoneClicked(milestone:Milestone){
+        val tmpBinding = DialogAddMilestoneBinding.inflate(
+            layoutInflater,
+            requireView().parent as ViewGroup,
+            false
+        )
+        val editMSDialog = AlertDialog.Builder(context).setView(tmpBinding.root)
+            .setCancelable(true)
+            .show()
+
+        tmpBinding.milestoneTitleEt.setText(milestone.title)
+        tmpBinding.milestoneDescriptionEt.setText(milestone.description)
+        tmpBinding.buttonMilestoneAdd.text = getString(R.string.update_str)
+        tmpBinding.milestoneDeadlineEt.setOnTouchListener { _, event ->
+
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                val calendar = Calendar.getInstance()
+                val year = calendar.get(Calendar.YEAR)
+                val month = calendar.get(Calendar.MONTH)
+                val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+                val datePickerDialog = DatePickerDialog(
+                    requireContext(),
+                    { _, years, months, day ->
+                        val monthString = String.format("%02d", months+1)
+                        val dayString = String.format("%02d", day)
+                        tmpBinding.milestoneDeadlineEt.setText("$years-$monthString-$dayString")
+                    }, year, month, dayOfMonth
+
+                )
+
+                datePickerDialog.show()
+            }
+            true
+
+
+        }
+
+        tmpBinding.milestoneDateEt.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                val calendar = Calendar.getInstance()
+                val hour = calendar.get(Calendar.HOUR_OF_DAY)
+                val minute = calendar.get(Calendar.MINUTE)
+                val datePickerDialog = TimePickerDialog(
+                    requireContext(),
+                    { _, hours, minutes ->
+                        val h = String.format("%02d", hours)
+                        val m = String.format("%02d", minutes)
+                        tmpBinding.milestoneDateEt.setText("$h:$m:00")
+                    }, hour, minute, true
+
+                )
+
+                datePickerDialog.show()
+            }
+            true
+
+        }
+        tmpBinding.buttonMilestoneAdd.setOnClickListener {
+
+
+            if(tmpBinding.milestoneTitleEt.text.isNullOrEmpty()){
+                Toast.makeText(requireContext(), "Title cannot be left empty", Toast.LENGTH_LONG).show()
+            }
+            else {
+                if(tmpBinding.milestoneDescriptionEt.text.isNullOrEmpty()){
+                    Toast.makeText(requireContext(), "Description cannot be left empty", Toast.LENGTH_LONG).show()
+                }
+                else {
+                    if(tmpBinding.milestoneDeadlineEt.text.isNullOrEmpty() && tmpBinding.milestoneDateEt.text.isNullOrEmpty()){
+
+                        val title = tmpBinding.milestoneTitleEt.text.toString().trim()
+                        val desc = tmpBinding.milestoneDescriptionEt.text.toString().trim()
+                        val deadline = null
+                        val token = (activity as WorkspaceActivity).token!!
+                        mWorkspaceViewModel.updateMilestone((activity as WorkspaceActivity).workspace_id!!,milestone.milestone_id,
+                            title,desc, deadline, token)
+                        editMSDialog.dismiss()
+
+                    }
+                    else {
+                        if(tmpBinding.milestoneDeadlineEt.text.isNullOrEmpty()){
+                            Toast.makeText(requireContext(), "Date cannot be left empty", Toast.LENGTH_LONG).show()
+                        }
+                        else{
+                            if(tmpBinding.milestoneDateEt.text.isNullOrEmpty()){
+                                Toast.makeText(requireContext(), "Time cannot be left empty", Toast.LENGTH_LONG).show()
+                            }
+                            else {
+                                val title = tmpBinding.milestoneTitleEt.text.toString().trim()
+                                val desc = tmpBinding.milestoneDescriptionEt.text.toString().trim()
+                                val date = tmpBinding.milestoneDeadlineEt.text.toString().trim()
+                                val time = tmpBinding.milestoneDateEt.text.toString().trim()
+                                val deadline = "$date $time"
+                                val token = (activity as WorkspaceActivity).token!!
+                                mWorkspaceViewModel.updateMilestone((activity as WorkspaceActivity).workspace_id!!,milestone.milestone_id,
+                                    title,desc, deadline, token)
+                                editMSDialog.dismiss()
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
+
+    }
+
+
 
     private fun onAddDeleteSkillClicked() {
         mAddWorkspaceViewModel.getAllSkills()
@@ -402,11 +786,46 @@ class WorkspaceFragment : Fragment(){
         })
     }
 
+
+    override fun onMilestoneNameClicked(binding: MilestoneCellBinding) {
+        if(binding.expandLl.visibility == View.GONE) binding.expandLl.visibility = View.VISIBLE
+        else binding.expandLl.visibility = View.GONE
+
+    }
+
+    override fun onEditMilestoneClicked(milestone: Milestone) {
+        onUpdateMilestoneClicked(milestone)
+    }
+
+    override fun onDeleteMilestoneClicked(milestone: Milestone) {
+        AlertDialog.Builder(context)
+            .setMessage("Are you sure you want to delete ${milestone.title}? You will not be able to undo.")
+            .setPositiveButton("Delete"
+            ) { _, _ ->
+                mWorkspaceViewModel.deleteMilestone((activity as WorkspaceActivity).workspace_id!!,
+                milestone.milestone_id, (activity as WorkspaceActivity).token!!)
+            }
+            .setNegativeButton("Cancel"
+            ) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create().show()
+    }
+
+
+    override fun onApplicationAcceptClicked(request: WorkspaceApplication, position: Int) {
+        //TODO("Not yet implemented")
+    }
+
+    override fun onApplicationRejectClicked(request: WorkspaceApplication, position: Int) {
+        //TODO("Not yet implemented")
+    }
+
+  
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.add_issue_btn)?.isVisible = false
         super.onPrepareOptionsMenu(menu)
     }
-
 
 
 }

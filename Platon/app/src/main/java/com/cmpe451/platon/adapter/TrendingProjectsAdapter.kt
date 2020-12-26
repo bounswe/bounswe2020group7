@@ -23,16 +23,16 @@ class TrendingProjectsAdapter(private val data: ArrayList<TrendingProject>, priv
     // Each data item is just a string in this case that is shown in a TextView.
     class TrendProjectViewHolder(private val view: View, var binding: TrendProjectCellBinding) : RecyclerView.ViewHolder(view){
 
-        fun bindData(binding: TrendProjectCellBinding, position: Int,buttonClickListener: TrendingProjectButtonClickListener) {
+        fun bindData(binding: TrendProjectCellBinding, project:TrendingProject,buttonClickListener: TrendingProjectButtonClickListener) {
 
             view.setOnClickListener{
-                buttonClickListener.onTrendingProjectButtonClicked(binding,position)
+                buttonClickListener.onTrendingProjectButtonClicked(binding,project)
             }
         }
     }
 
     interface TrendingProjectButtonClickListener{
-        fun onTrendingProjectButtonClicked(binding: TrendProjectCellBinding, position: Int)
+        fun onTrendingProjectButtonClicked(binding: TrendProjectCellBinding, project:TrendingProject)
     }
 
     // Create new views (invoked by the layout manager)
@@ -53,7 +53,7 @@ class TrendingProjectsAdapter(private val data: ArrayList<TrendingProject>, priv
         holder.binding.titleTrendProjectTv.text = data[position].title
         holder.binding.whyTrendProjectTv.text = "Popular"
 
-        holder.bindData(holder.binding, position, trendingProjectsButtonClickListener)
+        holder.bindData(holder.binding, data[position], trendingProjectsButtonClickListener)
     }
 
 

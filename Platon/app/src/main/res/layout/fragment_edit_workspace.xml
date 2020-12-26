@@ -8,7 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@drawable/view_back_darker"
+        android:background="@color/primary_dark_darker"
         android:gravity="center"
         android:orientation="vertical"
         android:padding="@dimen/inner_frame_layout_padding_2"
@@ -49,7 +49,7 @@
 
         <EditText
             android:id="@+id/ws_max_collab_number_et"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:autofillHints=""
@@ -108,6 +108,31 @@
             tools:ignore="UseSwitchCompatOrMaterialXml"
 
             />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/delete_ws_btn"
+                android:background="@color/secondary_blue_transparent"
+                android:text="@string/delete_workspace_str"
+                android:textColor="@color/primary_light"
+                android:layout_margin="@dimen/x_small"
+                android:padding="@dimen/xx_small"/>
+
+            <Button
+                android:id="@+id/update_ws_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/x_small"
+                android:textColor="@color/primary_light"
+                android:background="@color/secondary_blue_transparent"
+                android:padding="@dimen/xx_small"
+                android:text="@string/edit_workspace_str" />
+
+        </LinearLayout>
 
 
 

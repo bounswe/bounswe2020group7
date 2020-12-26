@@ -153,7 +153,7 @@ class LandingFragment : Fragment(),TrendingProjectsAdapter.TrendingProjectButton
     }
 
 
-    override fun onTrendingProjectButtonClicked(binding: TrendProjectCellBinding, position:Int) {
+    override fun onTrendingProjectButtonClicked(binding: TrendProjectCellBinding, project:TrendingProject) {
         if (binding.descTrendProjectTv.visibility == View.GONE){
             binding.descTrendProjectTv.visibility = View.VISIBLE
         }else{

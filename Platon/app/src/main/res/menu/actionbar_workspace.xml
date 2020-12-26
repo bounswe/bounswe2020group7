@@ -21,4 +21,11 @@
         android:title="@string/register_str"
         android:visible="true"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/btn_WorkspaceApplications"
+        android:icon="@drawable/ic_notifications_24px"
+        android:title="@string/applications_str"
+        android:visible="true"
+        app:showAsAction="ifRoom" />
 </menu>

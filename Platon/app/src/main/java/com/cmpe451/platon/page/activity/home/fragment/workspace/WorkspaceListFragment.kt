@@ -94,6 +94,7 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
         bnd.putInt("user_id", (activity as HomeActivity).currUserId!!)
         bnd.putBoolean("add", false)
         bnd.putInt("workspace_id", projectId)
+        bnd.putBoolean("isOwner", true)
         startActivity(Intent(activity, WorkspaceActivity::class.java).putExtras(bnd))
     }
 

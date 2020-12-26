@@ -50,9 +50,9 @@
     <string name="action_str">action</string>
     <string name="who_str">Who</string>
     <string name="toWhom_str">to whom</string>
-    <string name="time_str">time</string>
+    <string name="time_str">Time</string>
     <string name="project_title_str">Project Title</string>
-    <string name="desc_str">Description of project</string>
+    <string name="desc_str">Description</string>
     <string name="why_str">The reason of trending</string>
     <string name="todo_str">TODO</string>
     <string name="trending_projects_str">Trending Projects</string>
@@ -132,4 +132,21 @@
     <string name="issue_edit">Edit Issue</string>
     <string name="folders">Folders</string>
     <string name="files_str">Files</string>
+    <string name="folder_name_str">Folder Name</string>
+    <string name="update_str">Update</string>
+    <string name="milestone_str">Milestone</string>
+    <string name="creator_str">Created by</string>
+    <string name="sort_by_Str">Sort by:</string>
+    <string name="creator_name_str">Creator Name</string>
+    <string name="creator_surname_str">Creator Surname</string>
+    <string name="starting_from_str">Starting from</string>
+    <string name="starting_to_str">Starting to</string>
+    <string name="deadline_from_str">Deadline from</string>
+    <string name="deadline_to_str">Deadline To</string>
+    <string name="due_to_str">Due to</string>
+    <string name="add_milestone_str">Add Milestone</string>
+    <string name="milestone_title_str">Milestone</string>
+    <string name="milestone_title_str_title">Milestone Title</string>
+    <string name="invitations_str">Invitations</string>
+    <string name="applications_str">Applications</string>
 </resources>

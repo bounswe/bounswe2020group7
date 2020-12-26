@@ -194,16 +194,21 @@ class HomeActivityRepository {
     }
 
 
-    fun searchUser(token: String?, query:String, jobs:Int?, page:Int?, perPage:Int?){
+    fun searchUser(token: String?, query:String, jobs:Int?, sortBy:Int?, page:Int?, perPage:Int?){
         val service = RetrofitClient.getService()
-        val call = service.searchUser(token, query,jobs, page, perPage)
+        val call = service.searchUser(token, query,jobs, sortBy, page, perPage)
+        Log.i("token", token!!)
+        Log.i("token", query)
+        Log.i("token", jobs.toString())
+        Log.i("token", sortBy!!.toString())
+
 
         searchUserResourceResponse.value = Resource.Loading()
         call.enqueue(object :Callback<Search?>{
             override fun onResponse(call: Call<Search?>, response: Response<Search?>) {
                 when{
                     response.isSuccessful && response.body() != null -> searchUserResourceResponse.value =  Resource.Success(response.body()!!)
-                    response.errorBody() != null -> searchUserResourceResponse.value =  Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    response.errorBody() != null -> searchUserResourceResponse.value =  Resource.Error(JSONObject(response.errorBody()!!.string()).get("err").toString())
                     else -> searchUserResourceResponse.value =  Resource.Error("Unknown error!")
                 }
             }
@@ -215,9 +220,10 @@ class HomeActivityRepository {
     }
 
 
-    fun searchWorkspace(token: String?, query:String, skill:String?, event:String?, page:Int?, perPage:Int?){
+    fun searchWorkspace(token: String?, query:String, skill:String?, creatorName:String?,
+         creatorSurname:String?, startDateS:String?, startDateE:String?, deadlineS:String?, deadlineE: String?, sortBy:Int?, event:String?,page:Int?, perPage:Int?){
         val service = RetrofitClient.getService()
-        val call = service.searchWorkspace(token, query,skill, event, page, perPage)
+        val call = service.searchWorkspace(token, query,skill, creatorName, creatorSurname, startDateS, startDateE, deadlineS, deadlineE, sortBy, event, page, perPage)
 
         searchUserResourceResponse.value = Resource.Loading()
         call.enqueue(object :Callback<Search?>{
@@ -230,6 +236,28 @@ class HomeActivityRepository {
             }
 
             override fun onFailure(call: Call<Search?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+        })
+    }
+
+    val invitationsFromWsResourceResponse:MutableLiveData<Resource<List<WorkspaceInvitation>>> = MutableLiveData()
+
+    fun getInvitationsFromWs(currUserToken: String, currentPage: Int, pageSize: Int) {
+        val service = RetrofitClient.getService()
+        val call = service.getInvitationsFromWs(currUserToken)
+
+        invitationsFromWsResourceResponse.value = Resource.Loading()
+        call.enqueue(object :Callback<List<WorkspaceInvitation>?>{
+            override fun onResponse(call: Call<List<WorkspaceInvitation>?>, response: Response<List<WorkspaceInvitation>?>) {
+                when{
+                    response.isSuccessful && response.body() != null -> invitationsFromWsResourceResponse.value =  Resource.Success(response.body()!!)
+                    response.errorBody() != null -> invitationsFromWsResourceResponse.value =  Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> invitationsFromWsResourceResponse.value =  Resource.Error("Unknown error!")
+                }
+            }
+
+            override fun onFailure(call: Call<List<WorkspaceInvitation>?>, t: Throwable) {
                 call.clone().enqueue(this)
             }
         })

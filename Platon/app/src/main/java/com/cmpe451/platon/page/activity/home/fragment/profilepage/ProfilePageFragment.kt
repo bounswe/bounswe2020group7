@@ -9,7 +9,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -22,8 +21,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
-import androidx.navigation.compose.navArgument
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -39,12 +36,13 @@ import com.cmpe451.platon.databinding.*
 import com.cmpe451.platon.listener.PaginationListener
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.Comment
-import com.cmpe451.platon.network.models.Job
 import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.activity.home.HomeActivityViewModel
+import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.util.Definitions
+import droidninja.filepicker.FilePickerBuilder
+import droidninja.filepicker.FilePickerConst
 import okhttp3.MediaType
-import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
 import java.text.SimpleDateFormat
@@ -57,6 +55,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     private lateinit var binding: FragmentProfilePageBinding
     private val mProfilePageViewModel: ProfilePageViewModel by activityViewModels()
     private val mActivityViewModel: HomeActivityViewModel by activityViewModels()
+    private lateinit var paginationListener:PaginationListener
 
     private lateinit var dialog:AlertDialog
     private var maxPageNumberResearch:Int=0
@@ -78,22 +77,8 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     }
 
     private fun initializeAdapters() {
-        val height = resources.displayMetrics.heightPixels
-
-        val layoutManagerComments = LinearLayoutManager(this.activity, LinearLayoutManager.HORIZONTAL, false)
-        binding.rvProfilePageComments.layoutManager = layoutManagerComments
-        
         val layoutManagerProjects = LinearLayoutManager(this.activity)
-
-        binding.rvProfilePageProjects.adapter = UserProjectsAdapter(ArrayList(), requireContext(), this)
-        binding.rvProfilePageProjects.layoutManager = layoutManagerProjects
-
-        binding.rvProfilePageProjects.layoutParams =
-            LinearLayout.LayoutParams(binding.rvProfilePageProjects.layoutParams.width, height / 3)
-
-
-        binding.rvProfilePageProjects.addOnScrollListener(object :
-            PaginationListener(layoutManagerProjects) {
+        paginationListener = object:PaginationListener(layoutManagerProjects) {
             override fun loadMoreItems() {
                 if (maxPageNumberResearch - 1 > currentPage) {
                     currentPage++
@@ -104,13 +89,29 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                         5
                     )
                 }
+
             }
 
             override var isLastPage: Boolean = false
             override var isLoading: Boolean = false
             override var currentPage: Int = 0
-        })
+        }
 
+        val height = resources.displayMetrics.heightPixels
+
+        val layoutManagerComments = LinearLayoutManager(this.activity, LinearLayoutManager.HORIZONTAL, false)
+        binding.rvProfilePageComments.layoutManager = layoutManagerComments
+        
+
+
+        binding.rvProfilePageProjects.adapter = UserProjectsAdapter(ArrayList(), requireContext(), this)
+        binding.rvProfilePageProjects.layoutManager = layoutManagerProjects
+
+        binding.rvProfilePageProjects.layoutParams =
+            LinearLayout.LayoutParams(binding.rvProfilePageProjects.layoutParams.width, height / 3)
+
+
+        binding.rvProfilePageProjects.addOnScrollListener(paginationListener)
         binding.rvProfilePageSkills.adapter = SkillsAdapter(ArrayList(), requireContext())
         binding.rvProfilePageSkills.layoutManager = GridLayoutManager(this.activity, 3)
 
@@ -251,7 +252,9 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                 Resource.Success::class.java ->{
                     Toast.makeText(activity, "Research Information is added!", Toast.LENGTH_SHORT).show()
                     mProfilePageViewModel.getAddResearchResourceResponse.value  = Resource.Done()
+                    paginationListener.currentPage =0
                     mActivityViewModel.fetchUser((activity as HomeActivity).currUserToken)
+
                 }
                 Resource.Error::class.java ->{
                     Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
@@ -266,6 +269,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java ->{
                     mProfilePageViewModel.getDeleteResearchResourceResponse.value = Resource.Done()
+                    paginationListener.currentPage =0
                     mActivityViewModel.fetchUser((activity as HomeActivity).currUserToken)
                 }
                 Resource.Error::class.java ->{
@@ -283,6 +287,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java ->{
                     mProfilePageViewModel.getEditResearchResourceResponse.value = Resource.Done()
+                    paginationListener.currentPage =0
                     mActivityViewModel.fetchUser((activity as HomeActivity).currUserToken)
                 }
                 Resource.Error::class.java ->{
@@ -295,29 +300,55 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
     }
 
 
-    private fun setButtonListeners() {
-        val someActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult())
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode)
         {
-            if(it.resultCode == Activity.RESULT_OK && it.data != null && it.data!!.data != null) {
-                Glide.with(this)
-                    .load(it.data!!.data)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .circleCrop()
-                    .into(binding.profilePhoto)
-                uploadProfilePhoto(it.data!!.data)
-            }
+            FilePickerConst.REQUEST_CODE_PHOTO->
+                if(resultCode== Activity.RESULT_OK && data!=null)
+                {
+                    val ls = data.getParcelableArrayListExtra<Uri>(FilePickerConst.KEY_SELECTED_MEDIA)
+                    if(!ls.isNullOrEmpty()){
+                        uploadProfilePhoto(ls[0])
+                    }
+                }
         }
+    }
 
+    private fun setButtonListeners() {
         binding.profilePhoto.setOnClickListener{
-            ActivityCompat.requestPermissions(
-                activity as HomeActivity,
-                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1
-            )
 
-            val photoPickerIntent = Intent(Intent.ACTION_PICK)
-            photoPickerIntent.type = "image/*"
+            ActivityCompat.requestPermissions(requireActivity(),
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                PackageManager.PERMISSION_GRANTED)
 
-            someActivityResultLauncher.launch(photoPickerIntent)
+            if(requireActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+                /*
+                val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult())
+                {
+                    if (it.resultCode == Activity.RESULT_OK && it.data != null && it.data!!.data != null) {
+                        uploadProfilePhoto(it.data!!.data!!)
+                    }
+                }
+
+                var chooseFile = Intent(Intent.ACTION_GET_CONTENT)
+                chooseFile.type ="image/*"
+                chooseFile = Intent.createChooser(chooseFile, "Choose a profile photo")
+                startForResult.launch(chooseFile)
+
+                 */*/
+
+                FilePickerBuilder.instance
+                    .setMaxCount(1)
+                    .pickPhoto(this);
+
+
+            }else{
+                Toast.makeText(
+                    requireContext(),
+                    "Please give read permissions!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
 
         binding.tvCommentsTitle.setOnClickListener{
@@ -499,34 +530,23 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
 
 
 
-    private fun uploadProfilePhoto(data: Uri?) {
-        if(data != null){
+    private fun uploadProfilePhoto(data: Uri) {
             if((activity as HomeActivity).checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
-                val file = File(Definitions().getRealPathFromUri(requireContext(), data))
+                val path = Definitions().getRealPathFromUri(requireContext(), data)
+                val file = File(path)
                 val fBody = RequestBody.create(
-                    MediaType.parse("image/*"),
+                    MediaType.parse(requireContext().contentResolver.getType(data)!!),
                     file
                 )
 
-                val body = MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)
-                    .addFormDataPart("profile_photo", file.name, fBody)
-                    .build()
-
-                mProfilePageViewModel.uploadPhoto(body, (activity as HomeActivity).currUserToken)
-            }else{
-                Toast.makeText(
-                    requireContext(),
-                    "Please give read permissions!",
-                    Toast.LENGTH_SHORT
-                ).show()
+                mProfilePageViewModel.uploadPhoto(fBody, (activity as HomeActivity).currUserToken)
+                Glide.with(this)
+                    .load(data)
+                    .placeholder(R.drawable.ic_o_logo)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .circleCrop()
+                    .into(binding.profilePhoto)
             }
-
-
-        }
-
-        
-
     }
 
     private fun onAddDeleteSkillClicked(){
@@ -545,7 +565,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                                 false
                             )
                             AlertDialog.Builder(context).setView(tmpBinding.root)
-                                .setCancelable(false)
+                                .setCancelable(true)
                                 .setNegativeButton("Completed") { _, _ ->
                                     mProfilePageViewModel.getAddDeleteSkillResourceResponse.removeObservers(
                                         viewLifecycleOwner
@@ -558,6 +578,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                                         tmpBinding.etNewSkill.text.toString().trim(),
                                         (activity as HomeActivity).currUserToken
                                     )
+                                    tmpBinding.etNewSkill.text.clear()
                                 }
                             }
                         }

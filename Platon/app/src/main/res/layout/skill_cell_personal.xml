@@ -22,7 +22,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:maxLines="1"
             android:text="@string/skills"
             android:textColor="@color/primary_dark"
             android:textSize="@dimen/desc_text_size"/>

@@ -67,8 +67,9 @@ interface Webservice {
                      @Field("researchgate_name") researchgate_name:String?,
                      @Header("auth_token") auth_token :String) : Call<JsonObject?>
 
+    @Multipart
     @PUT("api/auth_system/user")
-    fun uploadPhoto(@Body image: RequestBody,
+    fun uploadPhoto(@Part("profile_photo\"; filename=\"profile_photo.png\" ") profile_photo: RequestBody,
                     @Header("auth_token") auth_token :String): Call<JsonObject?>
 
     @FormUrlEncoded
@@ -166,6 +167,7 @@ interface Webservice {
     fun searchUser(@Header("auth_token") token: String?,
                    @Query("search_query") query:String,
                     @Query("job_filter") job:Int?,
+                   @Query("sorting_criteria") sortBy:Int?,
                    @Query("page") page:Int?,
                    @Query("per_page") perPage:Int?):Call<Search?>
 
@@ -174,6 +176,13 @@ interface Webservice {
     fun searchWorkspace(@Header("auth_token") token: String?,
                    @Query("search_query") query:String,
                    @Query("skill_filter") skill:String?,
+                    @Query("creator_name") creatorName:String?,
+                    @Query("creator_surname") creatorSurname:String?,
+                    @Query("starting_date_start") startDateS:String?,
+                    @Query("starting_date_end") startDateE:String?,
+                    @Query("deadline_start") deadlineS:String?,
+                    @Query("deadline_end") deadlineE:String?,
+                    @Query("sorting_criteria") sortBy:Int?,
                    @Query("event_filter") event:String?,
                    @Query("page") page:Int?,
                    @Query("per_page") perPage:Int?):Call<Search?>
@@ -232,6 +241,116 @@ interface Webservice {
     fun deleteWorkspace(@Field("workspace_id") workspace_id: Int,
                         @Header("auth_token") token: String): Call<JsonObject?>
 
+    @GET("api/file_system/folder")
+    fun getFolder(
+        @Query("workspace_id") workspace_id:Int,
+        @Query("path") path:String,
+        @Header("auth_token") auth_token: String
+    ) : Call<Folder?>
+
+    @FormUrlEncoded
+    @POST("api/file_system/folder")
+    fun addFolder(
+        @Field("workspace_id") workspace_id:Int,
+        @Field("path") path:String,
+        @Field("new_folder_name") new_folder_name:String,
+        @Header("auth_token") auth_token: String
+    ) : Call<JsonObject?>
+
+
+    @FormUrlEncoded
+    @PUT("api/file_system/folder")
+    fun changeFolderName(
+        @Field("workspace_id") workspace_id:Int,
+        @Field("path") path:String,
+        @Field("new_folder_name") new_folder_name:String,
+        @Header("auth_token") auth_token: String
+    ) : Call<JsonObject?>
+
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "api/file_system/folder",hasBody = true)
+    fun deleteFolder(@Field("workspace_id") workspace_id: Int,
+                     @Field("path") path:String,
+                     @Field("new_folder_name") new_folder_name:String,
+                     @Header("auth_token") token: String): Call<JsonObject?>
+
+
+
+    @Multipart
+    @POST("api/file_system/file")
+    fun uploadFileToWorkspace(
+        @Part("workspace_id") workspace_id:Int,
+        @Part("path") path:RequestBody,
+        @Part("filename") fileName:RequestBody,
+        @Part("new_file\"; filename=\"new_file\" ") new_file: RequestBody,
+        @Header("auth_token") token: String): Call<JsonObject?>
+
+
+
+    @GET("api/workspaces/milestone")
+    fun getMilestones(
+        @Query("workspace_id") workspace_id:Int,
+        @Query("page") page:Int?,
+        @Query("per_page") per_page:Int?,
+        @Header("auth_token") auth_token: String
+    ) : Call<Milestones?>
+
+    @FormUrlEncoded
+    @POST("api/workspaces/milestone")
+    fun addMilestone(
+        @Field("workspace_id") workspace_id:Int,
+        @Field("title") title:String,
+        @Field("description") description: String,
+        @Field("deadline") deadline: String,
+        @Header("auth_token") auth_token: String
+    ) : Call<JsonObject?>
+
+
+    @FormUrlEncoded
+    @PUT("api/workspaces/milestone")
+    fun updateMilestone(
+        @Field("workspace_id") workspace_id:Int,
+        @Field("milestone_id") milestone_id:Int,
+        @Field("title") title:String?,
+        @Field("description") description: String?,
+        @Field("deadline") deadline: String?,
+        @Header("auth_token") auth_token: String
+    ) : Call<JsonObject?>
+
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "api/workspaces/milestone",hasBody = true)
+    fun deleteMilestone( @Field("workspace_id") workspace_id:Int,
+                      @Field("milestone_id") milestone_id:Int,
+                     @Header("auth_token") token: String): Call<JsonObject?>
+
+    @FormUrlEncoded
+    @POST("api/workspaces/applications")
+    fun applyToWorkspace(
+        @Field("workspace_id") workspace_id:Int,
+        @Header("auth_token") auth_token: String
+    ) : Call<JsonObject?>
+
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "api/workspaces/quit",hasBody = true)
+    fun quitWorkspace(@Field("workspace_id") workspace_id: Int,
+                     @Header("auth_token") token: String): Call<JsonObject?>
+
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "api/file_system/file",hasBody = true)
+    fun deleteFile(
+        @Field("workspace_id") workspaceId: Int,
+        @Field("path") cwd: String,
+        @Field("filename") file: String,
+        @Header("auth_token") token: String):Call<JsonObject?>
+
+
+    @GET("api/workspaces/invitations")
+    fun getInvitationsFromWs(@Header("auth_token") currUserToken: String): Call<List<WorkspaceInvitation>?>
+
+    @GET("api/workspaces/applications")
+    fun getWorkspaceApplications(@Query("workspace_id") workspace_id: Int,
+                                 @Header("auth_token") currUserToken: String): Call<List<WorkspaceApplication>?>
+  
     @GET("api/workspaces/issue")
     fun getIssues(@Query("workspace_id") workspaceId: Int,
                   @Query("page") page: Int,
@@ -276,5 +395,4 @@ interface Webservice {
                          @Query("page") page: Int?,
                          @Query("per_page") perPage: Int?,
                          @Header("auth_token") authToken: String ): Call<IssueAssignee?>
-
 }

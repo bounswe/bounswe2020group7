@@ -1,6 +1,8 @@
 package com.cmpe451.platon.page.activity.home
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.database.MatrixCursor
 import android.os.Bundle
@@ -17,29 +19,26 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmpe451.platon.R
-import com.cmpe451.platon.adapter.FollowRequestElementsAdapter
-import com.cmpe451.platon.adapter.NotificationElementsAdapter
-import com.cmpe451.platon.adapter.SearchElementsAdapter
-import com.cmpe451.platon.adapter.ToolbarElementsAdapter
+import com.cmpe451.platon.adapter.*
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.ActivityHomeBinding
 import com.cmpe451.platon.listener.PaginationListener
 import com.cmpe451.platon.network.Resource
-import com.cmpe451.platon.network.models.FollowRequest
-import com.cmpe451.platon.network.models.Notification
-import com.cmpe451.platon.network.models.SearchElement
-import com.cmpe451.platon.network.models.SearchHistoryElement
+import com.cmpe451.platon.network.models.*
 import com.cmpe451.platon.page.activity.home.fragment.home.HomeFragmentDirections
 import com.cmpe451.platon.page.activity.home.fragment.workspace.WorkspaceListFragmentDirections
 import com.cmpe451.platon.page.activity.login.LoginActivity
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.util.Definitions
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class HomeActivity : BaseActivity(),
         SearchElementsAdapter.SearchButtonClickListener,
         FollowRequestElementsAdapter.FollowRequestButtonClickListener,
-        NotificationElementsAdapter.NotificationButtonClickListener {
+        NotificationElementsAdapter.NotificationButtonClickListener,
+        WorkspaceInvitationsAdapter.InvitationButtonClickListener{
 
     private lateinit var navController: NavController
     lateinit var binding : ActivityHomeBinding
@@ -74,10 +73,10 @@ class HomeActivity : BaseActivity(),
 
         //make GONE the views
         binding.layWorkspaceFilter.visibility = View.GONE
-        binding.layJobQuery.visibility=View.GONE
-        binding.notificationRg.visibility = View.GONE
-        binding.rgSearchAmong.visibility = View.GONE
+        binding.laySearchUser.visibility=View.GONE
         binding.toolbarRecyclerview.visibility = View.GONE
+        binding.rgSearchAmong.visibility = View.GONE
+        binding.notificationRg.visibility = View.GONE
 
         binding.rgSearchAmong.setOnCheckedChangeListener(null)
         binding.notificationRg.setOnCheckedChangeListener(null)
@@ -147,6 +146,28 @@ class HomeActivity : BaseActivity(),
     }
 
     private fun setObserversForNotifications() {
+        mActivityViewModel.getInvitationsFromWsResourceResponse.observe(this, {t->
+            when (t.javaClass) {
+                Resource.Success::class.java -> {
+                    //maxPageNumberToolbarElements = t.data!!.number_of_pages
+                    if(binding.toolbarRecyclerview.adapter?.javaClass == WorkspaceInvitationsAdapter::class.java){
+                        (binding.toolbarRecyclerview.adapter as WorkspaceInvitationsAdapter).submitElements(t.data!!)
+                    }else{
+                            binding.toolbarRecyclerview.adapter = WorkspaceInvitationsAdapter(t.data!! as ArrayList<WorkspaceInvitation>, this, this)
+                    }
+                    mActivityViewModel.getInvitationsFromWsResourceResponse.value = Resource.Done()
+                }
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Error::class.java -> {
+                    mActivityViewModel.getInvitationsFromWsResourceResponse.value = Resource.Done()
+                    Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
+
+                }
+                Resource.Done::class.java->dialog.dismiss()
+            }
+        })
+
+
         mActivityViewModel.getUserNotificationsResourceResponse.observe(this, { t ->
             when (t.javaClass) {
                 Resource.Success::class.java -> {
@@ -321,6 +342,7 @@ class HomeActivity : BaseActivity(),
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initListeners() {
         // pagination listener define
         paginationListener = object: PaginationListener(toolbarLayoutManager, toolbarPageSize){
@@ -337,27 +359,43 @@ class HomeActivity : BaseActivity(),
                                 R.id.general_ntf_rb->{
                                     mActivityViewModel.getNotifications(currUserToken,currentPage, PAGE_SIZE)
                                 }
+                                R.id.workspace_inv_ntf_rb->{
+                                    mActivityViewModel.getInvitationsFromWs(currUserToken,currentPage, PAGE_SIZE)
+                                }
                             }
                         }
                         View.VISIBLE->{
                             when(binding.rgSearchAmong.checkedRadioButtonId){
                                 R.id.rb_searchUser->{
+                                    val sortBy = binding.spSortByUser.selectedItemPosition
                                     mActivityViewModel.searchUser(
                                         currUserToken,
                                         search.query.toString().trim(),
                                         if (jobIdList[binding.spJobQuery.selectedItemPosition] == -1) null else jobIdList[binding.spJobQuery.selectedItemPosition],
-                                        currentPage,
+                                        if(sortBy != 0) sortBy-1 else null,currentPage,
                                         PAGE_SIZE)
                                 }
                                 R.id.rb_searchUpcoming->{
                                 }
                                 R.id.rb_searchWorkspace->{
+                                    val sortBy = binding.spSortByWorkspace.selectedItemPosition
+                                    val name = binding.etFilterName.text.toString().trim()
+                                    val surname = binding.etFilterSurname.text.toString().trim()
+                                    val startDateE = binding.etStartDateE.text.toString().trim()
+                                    val startDateS=binding.etDeadlineS.text.toString().trim()
+                                    val deadlineS=binding.etStartDateS.text.toString().trim()
+                                    val deadlineE = binding.etDeadlineE.text.toString().trim()
+                                    val event = binding.etFilterEvent.text.toString().trim()
+
                                     mActivityViewModel.searchWorkspace(
                                         currUserToken,
-                                        search.query.toString().trim(),
-                                        null,null,
-                                        currentPage,
-                                        PAGE_SIZE)
+                                        search.query.toString().trim(), binding.etFilterSkill.text.toString().trim(),
+                                        if(name.isNotEmpty()) name else null, if(surname.isNotEmpty()) surname else null,
+                                        if(startDateS.isNotEmpty()) startDateS else null,if(startDateE.isNotEmpty()) startDateE else null,
+                                        if(deadlineS.isNotEmpty()) deadlineS else null,if(deadlineE.isNotEmpty()) deadlineE else null ,if(sortBy!=0) sortBy-1 else null,
+                                        if(event.isNotEmpty()) event else null,
+                                        0,
+                                        toolbarPageSize)
                                 }
                                 }
                             }
@@ -370,6 +408,100 @@ class HomeActivity : BaseActivity(),
         }
 
         binding.toolbarRecyclerview.addOnScrollListener(paginationListener)
+
+
+        binding.spSortByUser.adapter = ArrayAdapter(this, R.layout.spinner_item, arrayOf("Semantic Rating", "Alphabetical Order(A=>Z)","Alphabetical Order (Z=>A)"))
+        binding.spSortByWorkspace.adapter = ArrayAdapter(this, R.layout.spinner_item,
+            arrayOf("Semantic Rating", "Ascending Date","Descending Date","Ascending Number of Collaborators Needed", "Descending Number of Collaborators Needed",
+            "Ascending Alphabetical Order","Descending Alphabetical Order"))
+        binding.etStartDateS.setOnTouchListener { _, event ->
+            if(event.action == MotionEvent.ACTION_DOWN){
+                val calendar = Calendar.getInstance()
+                val year = calendar.get(Calendar.YEAR)
+                val month = calendar.get(Calendar.MONTH)
+                val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+                val datePickerDialog = DatePickerDialog(
+                    this,
+                    { _, years, months, day ->
+                        val monthString = String.format("%02d", months+1)
+                        val dayString = String.format("%02d", day)
+                        binding.etStartDateS.setText("$years.$monthString.$dayString")
+                    }, year, month, dayOfMonth
+                )
+                datePickerDialog.setOnCancelListener{
+                    binding.etStartDateS.setText("")
+                }
+                datePickerDialog.show()
+            }
+            true
+        }
+
+        binding.etStartDateE.setOnTouchListener { _, event ->
+            if(event.action == MotionEvent.ACTION_DOWN){
+                val calendar = Calendar.getInstance()
+                val year = calendar.get(Calendar.YEAR)
+                val month = calendar.get(Calendar.MONTH)
+                val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+                val datePickerDialog = DatePickerDialog(
+                    this,
+                    { _, years, months, day ->
+                        val monthString = String.format("%02d", months+1)
+                        val dayString = String.format("%02d", day)
+                        binding.etStartDateE.setText("$years.$monthString.$dayString")
+                    }, year, month, dayOfMonth
+                )
+                datePickerDialog.setOnCancelListener{
+                    binding.etStartDateE.setText("")
+                }
+                datePickerDialog.show()
+            }
+            true
+        }
+
+        binding.etDeadlineE.setOnTouchListener { _, event ->
+            if(event.action == MotionEvent.ACTION_DOWN){
+                val calendar = Calendar.getInstance()
+                val year = calendar.get(Calendar.YEAR)
+                val month = calendar.get(Calendar.MONTH)
+                val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+                val datePickerDialog = DatePickerDialog(
+                    this,
+                    { _, years, months, day ->
+                        val monthString = String.format("%02d", months+1)
+                        val dayString = String.format("%02d", day)
+                        binding.etDeadlineE.setText("$years.$monthString.$dayString")
+                    }, year, month, dayOfMonth
+                )
+                datePickerDialog.setOnCancelListener{
+                    binding.etDeadlineE.setText("")
+                }
+                datePickerDialog.show()
+            }
+            true
+        }
+
+        binding.etDeadlineS.setOnTouchListener { _, event ->
+            if(event.action == MotionEvent.ACTION_DOWN){
+                val calendar = Calendar.getInstance()
+                val year = calendar.get(Calendar.YEAR)
+                val month = calendar.get(Calendar.MONTH)
+                val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+                val datePickerDialog = DatePickerDialog(
+                    this,
+                    { _, years, months, day ->
+                        val monthString = String.format("%02d", months+1)
+                        val dayString = String.format("%02d", day)
+                        binding.etDeadlineS.setText("$years.$monthString.$dayString")
+                    }, year, month, dayOfMonth
+                )
+                datePickerDialog.setOnCancelListener{
+                    binding.etDeadlineS.setText("")
+                }
+                datePickerDialog.show()
+            }
+            true
+        }
+
 
         dialog = Definitions().createProgressBar(this as BaseActivity)
     }
@@ -402,18 +534,18 @@ class HomeActivity : BaseActivity(),
                     when (id) {
                         R.id.rb_searchUser -> {
                             binding.layWorkspaceFilter.visibility = View.GONE
-                            binding.layJobQuery.visibility = View.VISIBLE
+                            binding.laySearchUser.visibility = View.VISIBLE
                             mActivityViewModel.fetchSearchHistory(currUserToken, 0)
                             mActivityViewModel.getAllJobs()
                         }
                         R.id.rb_searchWorkspace -> {
                             binding.layWorkspaceFilter.visibility = View.VISIBLE
-                            binding.layJobQuery.visibility = View.GONE
+                            binding.laySearchUser.visibility = View.GONE
                             mActivityViewModel.fetchSearchHistory(currUserToken, 1)
                         }
                         R.id.rb_searchUpcoming -> {
                             binding.layWorkspaceFilter.visibility = View.GONE
-                            binding.layJobQuery.visibility = View.GONE
+                            binding.laySearchUser.visibility = View.GONE
                             mActivityViewModel.fetchSearchHistory(currUserToken, 2)
                         }
                     }
@@ -447,16 +579,29 @@ class HomeActivity : BaseActivity(),
 
                 when (binding.rgSearchAmong.checkedRadioButtonId) {
                     R.id.rb_searchUser -> {
+                        val sortBy = binding.spSortByUser.selectedItemPosition
                         mActivityViewModel.searchUser(
                             currUserToken, query,
                             if (jobIdList[binding.spJobQuery.selectedItemPosition] == -1) null else jobIdList[binding.spJobQuery.selectedItemPosition],
-                            0, toolbarPageSize)
+                            if(sortBy!=0) sortBy-1 else null,0, toolbarPageSize)
                     }
                     R.id.rb_searchWorkspace -> {
+                        val sortBy = binding.spSortByWorkspace.selectedItemPosition
+                        val name = binding.etFilterName.text.toString().trim()
+                        val surname = binding.etFilterSurname.text.toString().trim()
+                        val startDateE = binding.etStartDateE.text.toString().trim()
+                        val startDateS=binding.etDeadlineS.text.toString().trim()
+                        val deadlineS=binding.etStartDateS.text.toString().trim()
+                        val deadlineE = binding.etDeadlineE.text.toString().trim()
+                        val event = binding.etFilterEvent.text.toString().trim()
+
                         mActivityViewModel.searchWorkspace(
                             currUserToken,
-                            search.query.toString().trim(),
-                            binding.etFilterSkill.text.toString().trim(),binding.etFilterSkill.text.toString().trim(),
+                            search.query.toString().trim(), binding.etFilterSkill.text.toString().trim(),
+                            if(name.isNotEmpty()) name else null, if(surname.isNotEmpty()) surname else null,
+                            if(startDateS.isNotEmpty()) startDateS else null,if(startDateE.isNotEmpty()) startDateE else null,
+                            if(deadlineS.isNotEmpty()) deadlineS else null,if(deadlineE.isNotEmpty()) deadlineE else null ,if(sortBy!=0) sortBy-1 else null,
+                            if(event.isNotEmpty()) event else null,
                             0,
                             toolbarPageSize)
                     }
@@ -490,6 +635,9 @@ class HomeActivity : BaseActivity(),
                         }
                         R.id.personal_ntf_rb ->{
                             mActivityViewModel.getFollowRequests(currUserId, currUserToken, 0, toolbarPageSize)
+                        }
+                        R.id.workspace_inv_ntf_rb->{
+                            mActivityViewModel.getInvitationsFromWs(currUserToken,0, toolbarPageSize)
                         }
                     }
                 }
@@ -559,18 +707,56 @@ class HomeActivity : BaseActivity(),
     override fun onSearchButtonClicked(element: SearchElement, position: Int) {
         when(binding.bottomNavBar.selectedItemId) {
             R.id.workspaceListFragment -> {
-                if (element.id != currUserId) {
-                    navController.navigate(WorkspaceListFragmentDirections.actionWorkspaceListFragmentToOtherProfileFragment(element.id))
-                } else {
-                    binding.bottomNavBar.selectedItemId = R.id.profilePageFragment
+                if(element.name!= null){
+                    if (element.id != currUserId) {
+                        navController.navigate(WorkspaceListFragmentDirections.actionWorkspaceListFragmentToOtherProfileFragment(element.id))
+                    } else {
+                        binding.bottomNavBar.selectedItemId = R.id.profilePageFragment
+                    }
                 }
+                else{
+                    val collabIds = element.contributor_list!!.map{it.id}
+                    val bnd = Bundle()
+                    bnd.putString("token", currUserToken)
+                    bnd.putInt("user_id", currUserId)
+                    bnd.putBoolean("add", false)
+                    bnd.putInt("workspace_id", element.id)
+                    bnd.putBoolean("isOwner", true)
+                    if(collabIds.contains(currUserId)){
+                        bnd.putBoolean("isOwner", true)
+                    }
+                    else {
+                        bnd.putBoolean("isOwner", false)
+                    }
+                    startActivity(Intent(this, WorkspaceActivity::class.java).putExtras(bnd))
+                }
+
             }
             R.id.homeFragment -> {
-                if (element.id != currUserId) {
-                    navController.navigate(HomeFragmentDirections.actionHomeFragmentToOtherProfileFragment(element.id))
-                } else {
-                    binding.bottomNavBar.selectedItemId = R.id.profilePageFragment
+                if(element.name != null){
+                    if (element.id != currUserId) {
+                        navController.navigate(HomeFragmentDirections.actionHomeFragmentToOtherProfileFragment(element.id))
+                    } else {
+                        binding.bottomNavBar.selectedItemId = R.id.profilePageFragment
+                    }
                 }
+                else{
+                    val collabIds = element.contributor_list!!.map{it.id}
+                    val bnd = Bundle()
+                    bnd.putString("token", currUserToken)
+                    bnd.putInt("user_id", currUserId)
+                    bnd.putBoolean("add", false)
+                    bnd.putInt("workspace_id", element.id)
+                    bnd.putBoolean("isOwner", true)
+                    if(collabIds.contains(currUserId)){
+                        bnd.putBoolean("isOwner", true)
+                    }
+                    else {
+                        bnd.putBoolean("isOwner", false)
+                    }
+                    startActivity(Intent(this, WorkspaceActivity::class.java).putExtras(bnd))
+                }
+
             }
         }
         destroyToolbar()
@@ -637,6 +823,14 @@ class HomeActivity : BaseActivity(),
         }
 
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onInvitationAcceptClicked(request: WorkspaceInvitation, position: Int) {
+        //TODO("Not yet implemented")
+    }
+
+    override fun onInvitationRejectClicked(request: WorkspaceInvitation, position: Int) {
+        //TODO("Not yet implemented")
     }
 
 }

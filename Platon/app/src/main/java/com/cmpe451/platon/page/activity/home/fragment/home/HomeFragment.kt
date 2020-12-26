@@ -1,6 +1,7 @@
 package com.cmpe451.platon.page.activity.home.fragment.home
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -26,6 +27,7 @@ import com.cmpe451.platon.network.models.ActivityStreamElement
 import com.cmpe451.platon.network.models.TrendingProject
 import com.cmpe451.platon.network.models.UpcomingEvent
 import com.cmpe451.platon.page.activity.home.HomeActivity
+import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.util.Definitions
 
 class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonClickListener, UpcomingEventsAdapter.UpcomingButtonClickListener, ActivityStreamAdapter.ActivityStreamButtonClickListener {
@@ -56,7 +58,7 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
         setListeners()
 
         setObservers()
-        mHomeViewModel.getActivities((activity as HomeActivity).currUserToken!!, 0, 5)
+        mHomeViewModel.getActivities((activity as HomeActivity).currUserToken, 0, 5)
         mHomeViewModel.getTrendingProjects(10)
         mHomeViewModel.getUpcomingEvents(0, 5)
 
@@ -156,15 +158,21 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
     }
 
 
-    override fun onTrendingProjectButtonClicked(binding: TrendProjectCellBinding, position: Int) {
-        if (binding.descTrendProjectTv.visibility == View.GONE){
-            binding.descTrendProjectTv.visibility = View.VISIBLE
-        }else{
-            binding.descTrendProjectTv.visibility = View.GONE
+    override fun onTrendingProjectButtonClicked(binding: TrendProjectCellBinding, project:TrendingProject) {
+        val collabIds = project.contributor_list!!.map{it.id}
+        val bnd = Bundle()
+        bnd.putString("token", (activity as HomeActivity).currUserToken)
+        bnd.putInt("user_id", (activity as HomeActivity).currUserId)
+        bnd.putBoolean("add", false)
+        bnd.putInt("workspace_id", project.id)
+        bnd.putBoolean("isOwner", true)
+        if(collabIds.contains((activity as HomeActivity).currUserId)){
+            bnd.putBoolean("isOwner", true)
         }
-
-        binding.descTrendProjectTv.refreshDrawableState()
-        Definitions().vibrate(50, activity as BaseActivity)
+        else {
+            bnd.putBoolean("isOwner", false)
+        }
+        startActivity(Intent(activity, WorkspaceActivity::class.java).putExtras(bnd))
     }
 
     override fun onUpcomingButtonClicked(binding: UpcomingEventCellBinding, position: Int) {

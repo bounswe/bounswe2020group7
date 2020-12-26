@@ -43,6 +43,13 @@
     <fragment
         android:id="@+id/workspaceFolderFragment"
         android:name="com.cmpe451.platon.page.activity.workspace.fragment.filesystem.WorkspaceFolderFragment"
-        android:label="WorkspaceFolderFragment" />
-
+        android:label="WorkspaceFolderFragment" >
+        <action
+            android:id="@+id/action_workspaceFolderFragment_to_workspaceEditorFragment"
+            app:destination="@id/workspaceEditorFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/workspaceEditorFragment"
+        android:name="com.cmpe451.platon.page.activity.workspace.fragment.filesystem.WorkspaceEditorFragment"
+        android:label="WorkspaceEditorFragment" />
 </navigation>
