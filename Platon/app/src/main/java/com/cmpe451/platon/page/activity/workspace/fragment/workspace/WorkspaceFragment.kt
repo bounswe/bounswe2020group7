@@ -146,6 +146,7 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
                     if(it.data?.deadline==null)
                         binding.deadlineTv.visibility = View.GONE
                     else
+                        binding.deadlineTv.visibility = View.VISIBLE
                         binding.deadlineTv.text = "Due "  + it.data?.deadline
                     skillsAdapter.submitElements(it.data?.skills ?: ArrayList())
                     reqAdapter.submitElements(it.data?.requirements ?: ArrayList())

@@ -177,11 +177,9 @@ class WorkspaceRepository {
                     else -> applyWorksppaceResourceResponse.value = Resource.Error("Unknown error!")
                 }
             }
-
             override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
                 call.clone().enqueue(this)
             }
-
         })
     }
 
