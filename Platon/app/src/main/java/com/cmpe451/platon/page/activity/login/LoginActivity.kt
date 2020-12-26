@@ -74,6 +74,7 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
         binding.layWorkspaceFilter.visibility = View.GONE
         binding.laySearchUser.visibility=View.GONE
         binding.toolbarRecyclerview.visibility = View.GONE
+        binding.rgSearchAmong.visibility = View.GONE
 
         binding.rgSearchAmong.setOnCheckedChangeListener(null)
         binding.rgSearchAmong.clearCheck()
