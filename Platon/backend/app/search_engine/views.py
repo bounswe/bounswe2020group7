@@ -270,13 +270,13 @@ class WorkspaceSearchAPI(Resource):
                         try:
                             contributors = Contribution.query.filter(Contribution.workspace_id == workspace[0]).all()
                         except:
-                            return make_response(jsonify({"err": "Database Connection Error"}),500)
+                            return make_response(jsonify({"error": "Database Connection Error"}),500)
                         contributor_list = []
                         for contributor in contributors:
                             try:
                                 user = User.query.get(contributor.user_id)
                             except:
-                                return make_response(jsonify({"err": "Database Connection Error"}),500)
+                                return make_response(jsonify({"error": "Database Connection Error"}),500)
                             contributor_list.append({
                                     "id": user.id,
                                     "name": user.name,
@@ -285,7 +285,7 @@ class WorkspaceSearchAPI(Resource):
                         try:
                             creator_info = User.query.filter(User.id == workspace[1]).first()
                         except:
-                            return make_response(jsonify({"err": "Database Connection Error"}),500)
+                            return make_response(jsonify({"error": "Database Connection Error"}),500)
                         result_list.append({"id":workspace[0], "title": workspace[3], "is_private": int(workspace[2]), 
                                             "description" : workspace[6], "state": workspace[4], "deadline" : workspace[7],
                                             "creation_time": workspace[5], "max_contributors": workspace[8],"contributor_list":contributor_list,
@@ -303,7 +303,7 @@ class WorkspaceSearchAPI(Resource):
                     try:
                         ws_skills = WorkspaceSkill.query.filter(WorkspaceSkill.workspace_id == ws_id).all()
                     except:
-                        return make_response(jsonify({"err": "Database Connection Error"}),500)
+                        return make_response(jsonify({"error": "Database Connection Error"}),500)
 
                     skill_ids = []
                     for ws_skill in ws_skills:
@@ -314,7 +314,7 @@ class WorkspaceSearchAPI(Resource):
                         try:
                             skill_info = Skills.query.filter(Skills.id == skill_id).first()
                         except:
-                            return make_response(jsonify({"err": "Database Connection Error"}),500)
+                            return make_response(jsonify({"error": "Database Connection Error"}),500)
                         
                         skill_names_of_ws.append(skill_info.name)
                     

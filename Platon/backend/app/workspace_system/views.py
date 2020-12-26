@@ -1179,7 +1179,7 @@ class GetUserWorkspaces(Resource):
             try:
                 contributions = Contribution.query.filter(Contribution.user_id==form.user_id.data).all()
             except:
-                return make_response(jsonify({"err": "Database Connection Error"}),500)
+                return make_response(jsonify({"error": "Database Connection Error"}),500)
             workspaces = []
             for contribution in contributions:
                 if contribution.is_active == 0:
@@ -1187,19 +1187,19 @@ class GetUserWorkspaces(Resource):
                 try:
                     ws = Workspace.query.filter((Workspace.id == contribution.workspace_id)&(Workspace.is_private == False)).first()
                 except:
-                    return make_response(jsonify({"err": "Database Connection Error"}),500)
+                    return make_response(jsonify({"error": "Database Connection Error"}),500)
                 if ws is None:
                     continue
                 try:
                     contributors = Contribution.query.filter(Contribution.workspace_id == ws.id).all()
                 except:
-                    return make_response(jsonify({"err": "Database Connection Error"}),500)
+                    return make_response(jsonify({"error": "Database Connection Error"}),500)
                 contributor_list = []
                 for contributor in contributors:
                     try:
                         user = User.query.get(contributor.user_id)
                     except:
-                        return make_response(jsonify({"err": "Database Connection Error"}),500)
+                        return make_response(jsonify({"error": "Database Connection Error"}),500)
                     contributor_list.append({
                             "id": user.id,
                             "name": user.name,
@@ -1236,7 +1236,7 @@ class GetSelfWorkspaces(Resource):
         try:
             contributions = Contribution.query.filter(Contribution.user_id==user_id).all()
         except:
-            return make_response(jsonify({"err": "Database Connection Error"}),500)
+            return make_response(jsonify({"error": "Database Connection Error"}),500)
         workspaces = []
         for contribution in contributions:
             if contribution.is_active == 0:
@@ -1244,17 +1244,17 @@ class GetSelfWorkspaces(Resource):
             try:
                 ws = Workspace.query.get(contribution.workspace_id)
             except:
-                return make_response(jsonify({"err": "Database Connection Error"}),500)
+                return make_response(jsonify({"error": "Database Connection Error"}),500)
             try:
                 contributors = Contribution.query.filter(Contribution.workspace_id == ws.id).all()
             except:
-                return make_response(jsonify({"err": "Database Connection Error"}),500)
+                return make_response(jsonify({"error": "Database Connection Error"}),500)
             contributor_list = []
             for contributor in contributors:
                 try:
                     user = User.query.get(contributor.user_id)
                 except:
-                    return make_response(jsonify({"err": "Database Connection Error"}),500)
+                    return make_response(jsonify({"error": "Database Connection Error"}),500)
                 contributor_list.append({
                         "id": user.id,
                         "name": user.name,
@@ -1288,7 +1288,7 @@ class TrendingWorkspacesAPI(Resource):
             try:
                 all_workspaces = Workspace.query.order_by(Workspace.trending_score.desc()).all()
             except:
-                return make_response(jsonify({"err": "Database Connection Error"}),500)
+                return make_response(jsonify({"error": "Database Connection Error"}),500)
             all_workspaces = all_workspaces[:form.number_of_workspaces.data]
             workspace_response = [{
                 "id": workspace.id,
@@ -1301,13 +1301,13 @@ class TrendingWorkspacesAPI(Resource):
                 try:
                     contributors = Contribution.query.filter(Contribution.workspace_id == workspace["id"]).all()
                 except:
-                    return make_response(jsonify({"err": "Database Connection Error"}),500)
+                    return make_response(jsonify({"error": "Database Connection Error"}),500)
                 contributor_list = []
                 for contributor in contributors:
                     try:
                         user = User.query.get(contributor.user_id)
                     except:
-                        return make_response(jsonify({"err": "Database Connection Error"}),500)
+                        return make_response(jsonify({"error": "Database Connection Error"}),500)
                     contributor_list.append({
                         "id": user.id,
                         "name": user.name,
@@ -1316,7 +1316,7 @@ class TrendingWorkspacesAPI(Resource):
                 workspace_response[index]["contributor_list"] = contributor_list
             return make_response(jsonify({"trending_projects": workspace_response}),200)
         else:
-            return make_response(jsonify({"err": "Invalid Input Format"}),400)
+            return make_response(jsonify({"error": "Invalid Input Format"}),400)
 
 
 @workspace_system_ns.route("/invitations")
