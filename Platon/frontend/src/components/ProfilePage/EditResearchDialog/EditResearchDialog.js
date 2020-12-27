@@ -1,22 +1,12 @@
 import React from "react";
-import PropTypes from "prop-types";
-import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
-import Avatar from "@material-ui/core/Avatar";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import ListItemText from "@material-ui/core/ListItemText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Dialog from "@material-ui/core/Dialog";
-import PersonIcon from "@material-ui/icons/Person";
-import AddIcon from "@material-ui/icons/Add";
-import Typography from "@material-ui/core/Typography";
-import { blue } from "@material-ui/core/colors";
 import { TextField } from "@material-ui/core";
 import axios from 'axios';
 import MuiAlert from "@material-ui/lab/Alert";
-import jwt_decode from "jwt-decode";
 import config from "../../../utils/config";
 import Snackbar from "@material-ui/core/Snackbar";
 import colors from "../../../utils/colors";
@@ -28,7 +18,6 @@ function SimpleDialog(props) {
   const { onClose, open } = props;
   const { id, title, description, year } = props;
   const { type, dialogTitle } = props;
-  const [newId, setId] = React.useState(id);
   const [newTitle, setTitle] = React.useState(title);
   const [newDescription, setDescription] = React.useState(description);
   const [newYear, setYear] = React.useState(year);
@@ -39,9 +28,6 @@ function SimpleDialog(props) {
     onClose(true);
   };
 
-  const handleListItemClick = (value) => {
-    onClose(value);
-  };
   const handleCloseSuccess = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -60,12 +46,11 @@ function SimpleDialog(props) {
   const url = config.BASE_URL
   const handleUpdate = () => {
     const token = localStorage.getItem("jwtToken");
-    const decoded = jwt_decode(token);
 
     let formData = new FormData();
 
     if(type==="EDIT") {
-      formData.append("research_id", newId)
+      formData.append("research_id", id)
       formData.append("research_title", newTitle)
       formData.append("description", newDescription)
       formData.append("year", newYear)

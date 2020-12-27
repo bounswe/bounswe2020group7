@@ -58,9 +58,7 @@
     padding-bottom: 10px;
 }
 
-.ProfileProjectsCard{
-    background-color: #E0DFD5 !important;
-}
+
 
 .MuiTabs-flexContainer{
     background-color: #313638 !important;
@@ -74,4 +72,15 @@
     align-items: center;
 
 
+}
+
+.RightSideButtons{
+    position: absolute;
+    right: 0;
+}
+
+.ProfileSkillChip{
+    color: #E0DFD5 !important;
+    font-family: 'Rubik', sans-serif !important;
+    border: #B0DB06 2px solid !important;
 }

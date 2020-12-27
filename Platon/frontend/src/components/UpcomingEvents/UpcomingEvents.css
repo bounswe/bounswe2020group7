@@ -2,4 +2,23 @@
     background-color: #5A5E5F;
     border-radius: 0.5em;
     padding: 16px;
- }
+}
+
+.UpcomingEventsSpinner {
+    margin: 20vh 0px;
+    height: 20vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.paginationContainerUpcoming {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.paginationContainerUpcoming .Mui-selected {
+    background-color: #7B9904!important;
+}

@@ -1,65 +1,58 @@
-import AppBar from '../AppBar/AppBar';
-import React from "react";
+import React from 'react'
 import './style.css'
 import moment from 'moment'
 import InfiniteScroller from './InfiniteScroll.js'
-import 'moment/locale/zh-cn';
-import { Layout } from 'antd';
+import 'moment/locale/zh-cn'
+import { Layout } from 'antd'
 import Sider from './Sider'
-import colors from "../../utils/colors";
-import NavBar from '../NavBar/NavBar';
-import Issue from '../Issue/Issue'
 
-const { Header,Footer } = Layout;
+import colors from '../../utils/colors'
+import NavBar from '../NavBar/NavBar'
+import UpcomingEvents from '../UpcomingEvents/UpcomingEvents'
+import TrendingProjects from '../TrendingProjects/TrendingProjects'
+import Box from '@material-ui/core/Box';
+import { Container } from '@material-ui/core'
 
-moment.locale('zh-cn');
+const { Footer } = Layout
+
+moment.locale('zh-cn')
+
 
 class HomePage extends React.Component {
-    state = {
-        data: [],
-        loading: false,
-        hasMore: true,
-    };
-    onPanelChange(value, mode) {
-        console.log(value.format('YYYY-MM-DD'), mode);
-    }
 
-/*
+  state = {
+    data: [],
+    loading: false,
+    hasMore: true,
+  }
 
-  <Layout  style={{
-            background : colors.primaryDark
-        }}>
-            <Layout>
-                <NavBar/>
-            </Layout>
-            <Layout>
-                <Layout
-                    style={{
-                        overflow: 'auto',
-                        position: 'fixed',
-                        left: 0,
-                        top:80,
-                    }}
-                >
-                    <Sider></Sider>
-                </Layout>
-                <Layout className="site-layout" style={{marginLeft:'400px',marginTop:'20px' }}>
-                    <Header className="site-layout-background" style={{ padding: 0 }} />
-                    <Layout><InfiniteScroller></InfiniteScroller>:
-                    </Layout>
-                </Layout>
-            </Layout>
-            <Footer style={{ textAlign: 'center',position:'fixed',marginLeft:200 }}>Ant Design ©2018 Created by Ant UED</Footer>
-        </Layout>
+  onPanelChange(value, mode) {
+    console.log(value.format('YYYY-MM-DD'), mode)
+  }
 
-*/
-    render(){
+  render() {
     return (
+      <Layout
+        style={{
+          background: colors.primary,
+        }}
+      >            <NavBar />
+        <Container style={{maxWidth: "1500px", marginTop: "20px" }}>
+        <Box display="flex" p={1} justifyContent="space-evenly" >
+          <div style={{ width: "30%" }}>
+            <TrendingProjects marginLeft="auto" marginRight="auto" itemsPerPage={3} width='400px' />
+          </div>
+          <div style={{ width: "35%" }}><InfiniteScroller /></div>
+          <div style={{ width: "30%" }}><UpcomingEvents marginLeft="auto" marginRight="auto" itemsPerPage={3} width='400px' /></div>
+        </Box>
+        </Container>
+      </Layout>
 
-<div><Issue /></div>
 
-            );
-    }
+    )
+  }
+
 }
 
-export default HomePage;
+
+export default HomePage

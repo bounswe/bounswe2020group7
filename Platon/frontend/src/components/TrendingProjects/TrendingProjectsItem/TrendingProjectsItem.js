@@ -7,25 +7,27 @@ import Typography from "@material-ui/core/Typography";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import colors from '../../../utils/colors'
+import colors from "../../../utils/colors";
+import { Link } from "react-router-dom";
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
     maxWidth: 500,
-    margin:0,
-    padding:0
+    margin: 0,
+    padding: 0,
   },
-  primary:{
+  primary: {
     color: colors.secondary,
   },
-  secondary:{
-    color: colors.primaryDark ,
+  secondary: {
+    color: colors.primaryDark,
   },
 }));
 
 const Accordion = withStyles({
   root: {
-    backgroundColor:colors.primary,
+    width: "100%",
+    backgroundColor: colors.primary,
     borderRadius: "0.5em",
     "&:not(:last-child)": {
       borderBottom: 0,
@@ -62,12 +64,20 @@ const AccordionSummary = withStyles({
 
 const AccordionDetails = withStyles((theme) => ({
   root: {
-    color:colors.secondary,
+    color: colors.secondary,
     backgroundColor: colors.primary,
     borderRadius: "0.5em",
   },
 }))(MuiAccordionDetails);
-const TrendingProjectsItem = (props) => {
+
+const TrendingProjectsItem = ({
+  id,
+  title,
+  description,
+  contributors,
+  profileId,
+  workspaceId,
+}) => {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState("");
 
@@ -75,32 +85,48 @@ const TrendingProjectsItem = (props) => {
     setExpanded(newExpanded ? panel : false);
   };
 
+  const contributorsText = contributors.reduce((acc, contributor, index) => {
+    const nameSurname = `${contributor.name} ${contributor.surname}`;
+    return index === 0 ? acc + nameSurname : acc + ` - ${nameSurname}`;
+  }, "");
+
   return (
-      <List className={classes.root}>
-        <ListItem>
-          <Accordion
-            square
-            expanded={expanded === "panel"+props.id }
-            onChange={handleChange("panel"+props.id)}
+    <List className={classes.root}>
+      <ListItem disableGutters>
+        <Accordion
+          square
+          expanded={expanded === "panel" + id}
+          onChange={handleChange("panel" + id)}
+        >
+          <AccordionSummary
+            aria-controls={"panel" + id + " d-content "}
+            id={"panel" + id + " d-header "}
           >
-            <AccordionSummary
-              aria-controls={"panel" + props.id +  " d-content "}
-              id={"panel" + props.id +  " d-header "}
-            >
             <ListItemText
-            classes={{ primary: classes.primary, secondary: classes.secondary }}
-            primary={props.project.title} secondary={props.project.authors.join(" - ")} />
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography>
-                {props.project.description}
-              </Typography>
-            </AccordionDetails>
-          </Accordion>
-        </ListItem>
-
-      </List>
-
+              classes={{
+                primary: classes.primary,
+                secondary: classes.secondary,
+              }}
+              primary={title}
+              secondary={contributorsText}
+            />
+          </AccordionSummary>
+          <AccordionDetails
+            style={{ display: "flex", flexDirection: "column" }}
+          >
+            <Typography>{description}</Typography>
+            {localStorage.getItem("jwtToken") ? (
+              <Link
+                to={`/${profileId}/workspace/${workspaceId}`}
+                style={{ textDecoration: "none" }}
+              >
+                See details
+              </Link>
+            ) : null}
+          </AccordionDetails>
+        </Accordion>
+      </ListItem>
+    </List>
   );
 };
 
