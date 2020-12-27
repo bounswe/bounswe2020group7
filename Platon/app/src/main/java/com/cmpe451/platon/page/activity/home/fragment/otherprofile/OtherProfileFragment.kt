@@ -140,7 +140,13 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
             when(t.javaClass){
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java ->{
-                    (binding.rvProfilePageComments.adapter as CommentsAdapter).submitElements(t.data!!.result)
+                    if(t.data!!.result.isNotEmpty()){
+                        (binding.rvProfilePageComments.adapter as CommentsAdapter).submitElements(t.data!!.result)
+                    }else{
+                        Toast.makeText(requireContext(), "No comment found", Toast.LENGTH_SHORT).show()
+                        binding.tvCommentsTitle.performClick()
+                    }
+
                     mOtherProfileViewModel.getUserComments.value = Resource.Done()
                 }
                 Resource.Error::class.java ->{
