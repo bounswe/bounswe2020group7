@@ -7,6 +7,7 @@ class IssuesFragment {
 
 package com.cmpe451.platon.page.activity.workspace.fragment.issues
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
@@ -25,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.IssuesAdapter
 import com.cmpe451.platon.databinding.*
+import com.cmpe451.platon.listener.PaginationListener
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.Issue
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
@@ -40,11 +42,9 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
     private lateinit var sharedPreferences: SharedPreferences
 
     lateinit var binding: FragmentIssuesBinding
-    private lateinit var adapter: IssuesAdapter
-    private lateinit var issueRecyclerView: RecyclerView
+    private val issue: ArrayList<Issue> = arrayListOf()
 
-    lateinit var issue: ArrayList<Issue>
-
+    private lateinit var paginationListener:PaginationListener
     private var maxPageNumberIssue:Int=10
 
 
@@ -73,30 +73,49 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
 
         mIssuesViewModel.issuesResponse.observe(viewLifecycleOwner, { t->
             when(t.javaClass){
+                Resource.Loading::class.java->{
+                    dialog.show()
+                }
                 Resource.Success::class.java ->{
+
                     adapter.clearElements()
                     issue = t.data!!.result as ArrayList<Issue>
-                    //adapter.addElement(0, issue[0])
                     adapter.submitElements(issue)
-                    //var issueArray = issue
-                    //TODO: add element
+
+                    
 
                 }
                 Resource.Error::class.java ->{
                     Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                    mIssuesViewModel.issuesResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java->{
+                    dialog.dismiss()
                 }
             }
         })
 
-        mIssuesViewModel.addIssuesResourceResponse.observe(viewLifecycleOwner, { t->
-            when(t.javaClass){
+
+        mIssuesViewModel.addIssuesResourceResponse.observe(viewLifecycleOwner, {
+            when(it.javaClass){
+                Resource.Loading::class.java->{
+                    dialog.show()
+                }
                 Resource.Success::class.java ->{
-                    mIssuesViewModel.getIssues((activity as WorkspaceActivity).workspace_id!!,0, maxPageNumberIssue, (activity as WorkspaceActivity).token!!)
+                    paginationListener.currentPage = 0
+                    issue.clear()
+                    (binding.issuesRecyclerView.adapter as IssuesAdapter).clearElements()
+                    mIssuesViewModel.getIssues((activity as WorkspaceActivity).workspace_id!!, 0, maxPageNumberIssue,(activity as WorkspaceActivity).token!! )
                 }
                 Resource.Error::class.java ->{
-                    Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    mIssuesViewModel.issuesResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java->{
+                    dialog.dismiss()
                 }
             }
+
         })
 
 
@@ -104,40 +123,26 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
     }
     private fun initViews() {
 
-        val height = resources.displayMetrics.heightPixels
-        val width = resources.displayMetrics.widthPixels
-
-        issueRecyclerView = binding.issuesRecyclerView
         val layoutManagerIssues = LinearLayoutManager(this.activity)
-        issueRecyclerView.layoutManager = layoutManagerIssues
-        adapter = IssuesAdapter(ArrayList(),requireContext(), this)
-        issueRecyclerView.adapter = adapter
 
-        //binding.issuesRecyclerView.layoutManager = layoutManagerIssues
-        //binding.issuesRecyclerView.adapter = IssuesAdapter(ArrayList(),requireContext(), this)
-        /*
-        binding.issuesRecyclerView.addOnScrollListener(object: PaginationListener(layoutManagerIssues){
+        paginationListener = object: PaginationListener(layoutManagerIssues){
             override fun loadMoreItems() {
-                /*
                 if(maxPageNumberIssue-1 > currentPage){
                     currentPage++
-                    mIssuesViewModel.getIssues(1,1,1,"")
-                    Toast.makeText(requireContext(), "Next page", Toast.LENGTH_LONG).show()
+                    mIssuesViewModel.getIssues((activity as WorkspaceActivity).workspace_id!!, currentPage, maxPageNumberIssue,(activity as WorkspaceActivity).token!!)
                 }
-
-                 */
             }
 
             override var isLastPage: Boolean = false
             override var isLoading: Boolean = false
             override var currentPage: Int = 0
-        })
-
-         */
-
-        //binding.issuesRecyclerView.layoutParams = LinearLayout.LayoutParams(width, (height/2))
+        }
 
 
+        binding.issuesRecyclerView.layoutManager = layoutManagerIssues
+        binding.issuesRecyclerView.adapter = IssuesAdapter(ArrayList(),requireContext(), this)
+
+        binding.issuesRecyclerView.addOnScrollListener(paginationListener)
     }
 
 
@@ -152,7 +157,7 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
         sharedPreferences.edit().putString("issue_id", issue[position].issue_id.toString()).apply()
         sharedPreferences.edit().putString("issue_deadline", issue[position].deadline).apply()
         sharedPreferences.edit().putString("issue_creator_name", issue[position].creator_name + " " + issue[position].creator_surname).apply()
-        findNavController().navigate(IssuesFragmentDirections.actionIssuesFragmentToIssueDetailFragment())
+        findNavController().navigate(IssuesFragmentDirections.actionİssuesFragmentToİssueDetailFragment())
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -161,6 +166,7 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
         super.onPrepareOptionsMenu(menu)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun onAddIssueButtonClicked() {
         val addBinding = DialogAddIssueBinding.inflate(layoutInflater, binding.root, false)
         val addDialog = AlertDialog.Builder(requireContext())
@@ -184,6 +190,19 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
                     }, year, month, dayOfMonth
 
                 )
+
+                val hour = calendar.get(Calendar.HOUR_OF_DAY)
+                val minute = calendar.get(Calendar.MINUTE)
+
+                datePickerDialog.setOnDismissListener {
+                    val timePickerDialog = TimePickerDialog(requireContext(), {
+                       _, hour , minute ->
+
+                        addBinding.issueDeadline.setText(addBinding.issueDeadline.text.toString().trim() + " $hour:$minute:00")
+                    }, hour, minute, true )
+                    timePickerDialog.show()
+
+                }
 
                 datePickerDialog.show()
             }
@@ -212,6 +231,7 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
             true
 
         }
+
 
         addBinding.buttonIssueAdd.setOnClickListener {
             // check if the title and year is empty

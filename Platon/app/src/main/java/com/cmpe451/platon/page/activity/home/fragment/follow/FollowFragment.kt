@@ -34,8 +34,10 @@ class FollowFragment:Fragment() {
     private val mFollowViewModel: FollowViewModel by viewModels()
     private val mProfilePageViewModel: ProfilePageViewModel by activityViewModels()
 
+    private lateinit var paginationListener:PaginationListener
+
     private var maxNumOfPages:Int=0
-    private val per_page:Int = 10
+    private val pageSize:Int = 10
 
     private val args: FollowFragmentArgs by navArgs()
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -53,7 +55,7 @@ class FollowFragment:Fragment() {
 
         setObservers()
 
-        setData(0,per_page)
+        setData(0,pageSize)
 
     }
 
@@ -75,6 +77,8 @@ class FollowFragment:Fragment() {
                 Resource.Success::class.java -> {
                     maxNumOfPages = t.data!!.number_of_pages
                     adapter.submitList(t.data?.followings as ArrayList<FollowPerson>)
+                    paginationListener.isLoading = false
+                    mFollowViewModel.getFollowingResource.value = Resource.Done()
                 }
                 Resource.Error::class.java -> Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
             }
@@ -85,6 +89,8 @@ class FollowFragment:Fragment() {
                 Resource.Success::class.java -> {
                     maxNumOfPages = t.data!!.number_of_pages
                     adapter.submitList(t.data?.followers as ArrayList<FollowPerson>)
+                    paginationListener.isLoading = false
+                    mFollowViewModel.getFollowersResource.value = Resource.Done()
                 }
                 Resource.Error::class.java -> Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
             }
@@ -118,28 +124,20 @@ class FollowFragment:Fragment() {
         val layoutManager = LinearLayoutManager(this.activity)
         rvFollowers.layoutManager = layoutManager
 
-        rvFollowers.addOnScrollListener(object: PaginationListener(layoutManager){
+        paginationListener = object: PaginationListener(layoutManager, pageSize){
             override fun loadMoreItems() {
                 if(maxNumOfPages-1 > currentPage){
+                    isLoading = true
                     currentPage++
-                    setData(currentPage, per_page)
-//                    Toast.makeText(requireContext(), "Next page", Toast.LENGTH_LONG).show()
+                    setData(currentPage, PAGE_SIZE)
                 }
             }
 
             override var isLastPage: Boolean = false
             override var isLoading: Boolean = false
             override var currentPage: Int = 0
-        })
-    }
+        }
 
-    override fun onPause() {
-        adapter.clearElements()
-        super.onPause()
-    }
-
-    override fun onResume() {
-        adapter.clearElements()
-        super.onResume()
+        rvFollowers.addOnScrollListener(paginationListener)
     }
 }

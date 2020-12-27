@@ -2,8 +2,13 @@ package com.cmpe451.platon.network.models
 
 
 data class WorkspaceInvitation(
-        val id: Int,
-        val description: String
+        val invitation_id: Int,
+        val workspace_id : Int,
+        val invitor_id : Int,
+        val invitor_fullname:String,
+        val invitee_id:Int,
+        val workspace_description:String,
+        val workspace_title: String
 )
 
 data class WorkspaceApplication(
@@ -39,6 +44,7 @@ data class Workspace(
         val timestamp:String,
         val skills:List<String>,
         val state: Int,
+        val upcoming_events:List<UpcomingEvent>
 )
 data class Folder(
         val cwd:String,

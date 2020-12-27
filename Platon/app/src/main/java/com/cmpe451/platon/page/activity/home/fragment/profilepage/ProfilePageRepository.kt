@@ -26,6 +26,8 @@ class ProfilePageRepository() {
     var editResearchResourceResponse : MutableLiveData<Resource<JsonObject>> = MutableLiveData()
     var deleteResearchResourceResponse: MutableLiveData<Resource<JsonObject>> = MutableLiveData()
 
+    val userComments:MutableLiveData<Resource<AllComments>> = MutableLiveData()
+
 
     fun addResearch(title:String,description:String?,
                     year:Int,authToken: String){
@@ -230,8 +232,8 @@ class ProfilePageRepository() {
                 when {
                     response.isSuccessful && response.body() != null -> addDeleteSkillResourceResponse.value = Resource.Success(response.body()!!)
                     response.errorBody() != null ->  {
-                        Log.i("ERORR",response.errorBody()!!.string().toString())
-                        val obj = JSONObject(response.errorBody()!!.string().toString())
+                        Log.i("ERORR",response.errorBody()!!.string())
+                        val obj = JSONObject(response.errorBody()!!.string())
                         if (obj.has("error"))
                             addDeleteSkillResourceResponse.value = Resource.Error(obj.getString("error"))
                         else addDeleteSkillResourceResponse.value = Resource.Error("Unknown error!")
@@ -265,6 +267,28 @@ class ProfilePageRepository() {
                 }
             }
             override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+
+    fun getComments(id: Int, token: String, page: Int, pageSize: Int) {
+        val service = RetrofitClient.getService()
+        val call = service.getComments(id, page, pageSize, token)
+        userComments.value = Resource.Loading()
+        call.enqueue(object: Callback<AllComments?>{
+            override fun onResponse(call: Call<AllComments?>, response: Response<AllComments?>) {
+                when {
+                    response.isSuccessful && response.body() != null -> {
+                        userComments.value = Resource.Success(response.body()!!)
+                    }
+                    response.errorBody() != null -> userSkills.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> userComments.value = Resource.Error("Unknown error!")
+                }
+            }
+
+            override fun onFailure(call: Call<AllComments?>, t: Throwable) {
                 call.clone().enqueue(this)
             }
 

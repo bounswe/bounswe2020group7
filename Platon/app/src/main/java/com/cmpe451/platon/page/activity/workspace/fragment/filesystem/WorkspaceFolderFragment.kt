@@ -213,6 +213,7 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
                         .addFileSupport("C", arrayOf("c", "cpp", "C", "CPP"))
                         .addFileSupport("PYTHON", arrayOf("PY", "py"))
                         .addFileSupport("README", arrayOf("md", "MD"))
+                        .addFileSupport("PNG", arrayOf("png", "jpg", "jpeg"))
                         .pickFile(this);
 
                 } else {
@@ -296,6 +297,9 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.workspaceFolderFragment).isVisible = false
+        menu.findItem(R.id.add_issue_btn).isVisible = false
+        menu.findItem(R.id.issue_btn).isVisible = false
+        menu.findItem(R.id.btn_WorkspaceApplications).isVisible = false
         super.onPrepareOptionsMenu(menu)
     }
 

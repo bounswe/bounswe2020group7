@@ -39,7 +39,7 @@
                 android:shadowDy="1"
                 android:shadowRadius="2"
                 android:text="@string/your_info"
-                android:textColor="@color/secondary_green"
+                android:textColor="@color/secondary_green_transparent"
                 android:textSize="@dimen/project_title_text_size"
                 android:drawablePadding="@dimen/xx_small"
                 app:drawableEndCompat="@drawable/ic_editprofile_24px"
@@ -239,6 +239,36 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/milestone_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/profile_page_margin"
+            app:layout_constraintBottom_toTopOf="@id/projects_title"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/info_title"
+            app:layout_constraintVertical_bias="0.6" />
+        <TextView
+            android:id="@+id/upcoming_title_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:fontFamily="@font/dm_sans_bold"
+            android:gravity="start"
+            android:padding="@dimen/x_small"
+            android:shadowColor="@color/primary_dark"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"
+            android:text="@string/upcoming_events_str"
+            android:textAllCaps="false"
+            android:textColor="@color/secondary_green"
+            android:textSize="@dimen/project_title_text_size"
+            android:drawablePadding="@dimen/xx_small"
+            app:drawableEndCompat="@drawable/ic_add_24dp"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/upcoming_rv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/profile_page_margin"

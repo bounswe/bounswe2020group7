@@ -172,6 +172,18 @@ interface Webservice {
                    @Query("per_page") perPage:Int?):Call<Search?>
 
 
+    @GET("api/search_engine/upcoming_events")
+    fun searchUpcomingEvent(@Header("auth_token") token: String?,
+                   @Query("search_query") query:String,
+                   @Query("date_filter_start") dateFilterS:String?,
+                   @Query("date_filter_end") dateFilterE:String?,
+                    @Query("deadline_filter_start") deadlineS:String?,
+                    @Query("deadline_filter_end") deadlineE:String?,
+                    @Query("sorting_criteria") sortBy:Int?,
+                   @Query("page") page:Int?,
+                   @Query("per_page") perPage:Int?):Call<Search?>
+
+
     @GET("api/search_engine/workspace")
     fun searchWorkspace(@Header("auth_token") token: String?,
                    @Query("search_query") query:String,
@@ -234,6 +246,7 @@ interface Webservice {
         @Field("requirements") requirements:String?,
         @Field("skills") skills:String?,
         @Field("state") state:Int?,
+        @Field("upcoming_events") upcoming_events:String?,
         @Header("auth_token") auth_token: String
     ) : Call<JsonObject?>
     @FormUrlEncoded
@@ -397,6 +410,7 @@ interface Webservice {
                          @Header("auth_token") authToken: String ): Call<IssueAssignee?>
 
     @FormUrlEncoded
+
     @POST("api/workspaces/issue/assignee")
     fun addIssueAssignee(@Field("workspace_id") workspaceId:Int,
                          @Field("issue_id") issueId:Int,
@@ -409,4 +423,44 @@ interface Webservice {
                          @Field("issue_id") issueId:Int,
                          @Field("assignee_id") assigneeId:Int,
                          @Header("auth_token") authToken:String?): Call<JsonObject?>
+
+    @HTTP(method = "DELETE" , path = "api/workspaces/applications", hasBody = true)
+    fun answerWorkspaceApplication(@Field("application_id") application_id:Int,
+                    @Field("is_accepted") is_accepted:Int,
+                    @Header("auth_token") auth_token :String) : Call<JsonObject?>
+
+
+
+    @GET("api/follow/comment")
+    fun getComments(
+        @Query("commented_user_id") id:Int,
+        @Query("page") page:Int?,
+        @Query("per_page") perPage:Int?,
+        @Header("auth_token") auth_token :String):Call<AllComments?>
+
+    @HTTP(method = "DELETE" , path = "api/follow/comment", hasBody = true)
+    fun deleteComment(@Query("comment_id") id:Int,
+                                   @Header("auth_token") auth_token :String) : Call<JsonObject?>
+
+    @FormUrlEncoded
+    @POST("api/follow/comment")
+    fun addComment(@Field("commented_user_id") userId: Int,
+                 @Field("rate") rate: Int,
+                 @Field("text") text: String?,
+                 @Header("auth_token") authToken: String): Call<JsonObject?>
+    @FormUrlEncoded
+    @POST("api/workspaces/invitations")
+    fun inviteToWorkspace(@Field("workspace_id") workspace_id: Int,
+                   @Field("invitee_id") invitee_id: Int,
+                   @Header("auth_token") authToken: String): Call<JsonObject?>
+
+
+
+    @FormUrlEncoded
+    @HTTP(method = "DELETE" , path = "api/workspaces/invitations", hasBody = true)
+    fun answerWorkspaceInvitation(@Field("invitation_id") application_id:Int,
+                                   @Field("is_accepted") is_accepted:Int,
+                                   @Header("auth_token") auth_token :String) : Call<JsonObject?>
+
+
 }

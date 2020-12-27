@@ -17,7 +17,6 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -38,7 +37,6 @@ import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.Comment
 import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.activity.home.HomeActivityViewModel
-import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.util.Definitions
 import droidninja.filepicker.FilePickerBuilder
 import droidninja.filepicker.FilePickerConst
@@ -50,16 +48,19 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonClickListener{
+class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonClickListener, CommentsAdapter.OnCommentClickedListener{
 
     private lateinit var binding: FragmentProfilePageBinding
     private val mProfilePageViewModel: ProfilePageViewModel by activityViewModels()
     private val mActivityViewModel: HomeActivityViewModel by activityViewModels()
-    private lateinit var paginationListener:PaginationListener
+    private lateinit var paginationListenerResearches:PaginationListener
+    private lateinit var paginationListenerComments:PaginationListener
 
+
+    private val pageSize = 5
     private lateinit var dialog:AlertDialog
     private var maxPageNumberResearch:Int=0
-
+    private var maxPageNumberComment:Int=0
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -78,9 +79,10 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
 
     private fun initializeAdapters() {
         val layoutManagerProjects = LinearLayoutManager(this.activity)
-        paginationListener = object:PaginationListener(layoutManagerProjects) {
+        paginationListenerResearches = object:PaginationListener(layoutManagerProjects) {
             override fun loadMoreItems() {
                 if (maxPageNumberResearch - 1 > currentPage) {
+                    isLoading = true
                     currentPage++
                     mProfilePageViewModel.fetchResearch(
                         (activity as HomeActivity).currUserToken,
@@ -97,21 +99,43 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
             override var currentPage: Int = 0
         }
 
+        val layoutManagerComments = LinearLayoutManager(this.activity)
+        paginationListenerComments = object:PaginationListener(layoutManagerComments, pageSize) {
+            override fun loadMoreItems() {
+                if (maxPageNumberComment - 1 > currentPage) {
+                    isLoading = true
+                    currentPage++
+                    mProfilePageViewModel.getComments(
+                        (activity as HomeActivity).currUserId,
+                        (activity as HomeActivity).currUserToken,
+                        currentPage,
+                        PAGE_SIZE
+                    )
+                }
+
+            }
+
+            override var isLastPage: Boolean = false
+            override var isLoading: Boolean = false
+            override var currentPage: Int = 0
+        }
+
         val height = resources.displayMetrics.heightPixels
-
-        val layoutManagerComments = LinearLayoutManager(this.activity, LinearLayoutManager.HORIZONTAL, false)
-        binding.rvProfilePageComments.layoutManager = layoutManagerComments
-        
-
 
         binding.rvProfilePageProjects.adapter = UserProjectsAdapter(ArrayList(), requireContext(), this)
         binding.rvProfilePageProjects.layoutManager = layoutManagerProjects
-
         binding.rvProfilePageProjects.layoutParams =
             LinearLayout.LayoutParams(binding.rvProfilePageProjects.layoutParams.width, height / 3)
 
 
-        binding.rvProfilePageProjects.addOnScrollListener(paginationListener)
+        binding.rvProfilePageComments.adapter = CommentsAdapter(ArrayList(), requireContext(), this,(activity as HomeActivity).currUserId)
+        binding.rvProfilePageComments.layoutManager = layoutManagerComments
+        binding.rvProfilePageComments.layoutParams =
+            LinearLayout.LayoutParams(binding.rvProfilePageProjects.layoutParams.width, height / 3)
+        binding.rvProfilePageComments.addOnScrollListener(paginationListenerComments)
+
+
+        binding.rvProfilePageProjects.addOnScrollListener(paginationListenerResearches)
         binding.rvProfilePageSkills.adapter = SkillsAdapter(ArrayList(), requireContext())
         binding.rvProfilePageSkills.layoutManager = GridLayoutManager(this.activity, 3)
 
@@ -208,6 +232,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                         (binding.rvProfilePageProjects.adapter as UserProjectsAdapter).submitElements(
                             t.data!!.research_info!!
                         )
+                        paginationListenerResearches.isLoading = false
                     }
                     Resource.Error::class.java -> {
                         Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
@@ -231,6 +256,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
             when(t.javaClass){
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java ->{
+                    paginationListenerResearches.currentPage =0
                     mActivityViewModel.fetchUser((activity as HomeActivity).currUserToken)
                     mProfilePageViewModel.getEditProfileResourceResponse.value = Resource.Done()
                 }
@@ -252,7 +278,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                 Resource.Success::class.java ->{
                     Toast.makeText(activity, "Research Information is added!", Toast.LENGTH_SHORT).show()
                     mProfilePageViewModel.getAddResearchResourceResponse.value  = Resource.Done()
-                    paginationListener.currentPage =0
+                    paginationListenerResearches.currentPage =0
                     mActivityViewModel.fetchUser((activity as HomeActivity).currUserToken)
 
                 }
@@ -269,7 +295,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java ->{
                     mProfilePageViewModel.getDeleteResearchResourceResponse.value = Resource.Done()
-                    paginationListener.currentPage =0
+                    paginationListenerResearches.currentPage =0
                     mActivityViewModel.fetchUser((activity as HomeActivity).currUserToken)
                 }
                 Resource.Error::class.java ->{
@@ -282,12 +308,33 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
         })
 
 
+        mProfilePageViewModel.getUserComments.observe(viewLifecycleOwner, {t ->
+             when(t.javaClass){
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java ->{
+                    if(t.data!!.result.isNotEmpty()){
+                        (binding.rvProfilePageComments.adapter as CommentsAdapter).submitElements(t.data!!.result)
+                    }else{
+                        Toast.makeText(requireContext(), "No comment found", Toast.LENGTH_SHORT).show()
+                        binding.tvCommentsTitle.performClick()
+                    }
+                    paginationListenerComments.isLoading = false
+                    mProfilePageViewModel.getUserComments.value = Resource.Done()
+                }
+                Resource.Error::class.java ->{
+                    Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+                    mProfilePageViewModel.getUserComments.value = Resource.Done()
+                }
+                Resource.Done::class.java->dialog.dismiss()
+            }
+        })
+
     mProfilePageViewModel.getEditResearchResourceResponse.observe(viewLifecycleOwner, {t ->
             when(t.javaClass){
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java ->{
                     mProfilePageViewModel.getEditResearchResourceResponse.value = Resource.Done()
-                    paginationListener.currentPage =0
+                    paginationListenerResearches.currentPage =0
                     mActivityViewModel.fetchUser((activity as HomeActivity).currUserToken)
                 }
                 Resource.Error::class.java ->{
@@ -339,6 +386,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
 
                 FilePickerBuilder.instance
                     .setMaxCount(1)
+                    .enableCameraSupport(false)
                     .pickPhoto(this);
 
 
@@ -355,14 +403,15 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
             when(binding.rvProfilePageComments.visibility){
                 View.GONE->{
                     //getComments
-                    binding.rvProfilePageComments.adapter = CommentsAdapter(arrayListOf(Comment(0,"hehe", "haha", "today", 2.5)), requireContext())
+                    mProfilePageViewModel.getComments((activity as HomeActivity).currUserId, (activity as HomeActivity).currUserToken, 0, pageSize)
+                    //binding.rvProfilePageComments.adapter = CommentsAdapter(arrayListOf(Comment(0,"hehe", "haha", "today", 2.5)), requireContext())
                     binding.rvProfilePageComments.visibility = View.VISIBLE
                 }
                 View.VISIBLE->{
+                    (binding.rvProfilePageComments.adapter as CommentsAdapter).clearElements()
                     binding.rvProfilePageComments.visibility = View.GONE
                 }
             }
-
         }
 
 
@@ -708,6 +757,10 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
             editDialog.dismiss()
         }
 
+    }
+
+    override fun onDeleteCommentClicked(element: Comment, position: Int) {
+        //TODO("Not yet implemented")
     }
 
 }

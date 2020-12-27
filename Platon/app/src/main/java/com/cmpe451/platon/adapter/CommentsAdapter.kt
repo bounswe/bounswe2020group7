@@ -2,22 +2,29 @@ package com.cmpe451.platon.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.databinding.CommentCellBinding
 import com.cmpe451.platon.network.models.Comment
 
-class CommentsAdapter(private val data: ArrayList<Comment>, private val context: Context) :
+
+
+class CommentsAdapter(private val data: ArrayList<Comment>, private val context: Context, private val onCommentClicked:OnCommentClickedListener, private val ownerId:Int) :
 
     RecyclerView.Adapter<CommentsAdapter.CommentsViewHolder>() {
+
+    interface OnCommentClickedListener {
+        fun onDeleteCommentClicked(element:Comment, position: Int)
+    }
+
     class CommentsViewHolder(var binding: CommentCellBinding) : RecyclerView.ViewHolder(binding.root){
-
-
         fun bindData(model:Comment, position: Int) {
+
             binding.rtbRating.rating = model.rate.toFloat()
-            binding.tvDateTime.text = model.dateTime
-            binding.tvTitle.text = model.title
-            binding.tvDescription.text = model.desc
+            binding.tvDateTime.text = model.timestamp
+            binding.tvTitle.text = "Comment: $position"
+            binding.tvDescription.text = model.text
         }
     }
 
@@ -31,6 +38,14 @@ class CommentsAdapter(private val data: ArrayList<Comment>, private val context:
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(holder: CommentsViewHolder, position: Int) {
+        holder.binding.ivDeleteComment.setOnClickListener{
+            onCommentClicked.onDeleteCommentClicked(data[position], position)
+        }
+        if(ownerId == data[position].owner_id){
+            holder.binding.ivDeleteComment.visibility = View.VISIBLE
+        }else{
+            holder.binding.ivDeleteComment.visibility = View.GONE
+        }
         holder.bindData(data[position], position)
     }
 
@@ -65,7 +80,6 @@ class CommentsAdapter(private val data: ArrayList<Comment>, private val context:
         this.notifyDataSetChanged()
     }
     fun submitElements(list: List<Comment>){
-        data.clear()
         data.addAll(list)
         notifyDataSetChanged()
     }

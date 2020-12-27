@@ -28,6 +28,7 @@ class WorkspaceInvitationsAdapter(private val data: ArrayList<WorkspaceInvitatio
     // Each data item is just a string in this case that is shown in a TextView.
     class MyViewHolder(val binding: NotificationElementCellBinding) : RecyclerView.ViewHolder(binding.root){
         fun bindData(request: WorkspaceInvitation, buttonClickListener: InvitationButtonClickListener, position: Int) {
+            binding.nameBlock.text = "${request.invitor_fullname} invited you to join workspace ${request.workspace_title}"
             binding.acceptIcon.setOnClickListener{
                 buttonClickListener.onInvitationAcceptClicked(request, position)
             }
@@ -51,7 +52,8 @@ class WorkspaceInvitationsAdapter(private val data: ArrayList<WorkspaceInvitatio
         // - replace the contents of the view with that element
 
         holder.binding.tvDateTime.visibility  =View.GONE
-        holder.binding.nameBlock.text = data[position].description
+        holder.binding.ivProfilePhoto.visibility = View.GONE
+
 
         holder.bindData(data[position], invitationButtonClickListener, position)
     }

@@ -24,6 +24,7 @@ class ProfilePageViewModel: ViewModel() {
     var getDeleteResearchResourceResponse= repository.deleteResearchResourceResponse
     var getEditResearchResourceResponse = repository.editResearchResourceResponse
 
+    var getUserComments = repository.userComments
 
     fun addResearchInfo(title:String,description:String?,
                         year:Int,authToken: String){
@@ -89,5 +90,9 @@ class ProfilePageViewModel: ViewModel() {
 
     fun uploadPhoto(fBody: RequestBody, token: String) {
         repository.uploadPhoto(fBody, token)
+    }
+
+    fun getComments(id: Int, token: String, page: Int, pageSize: Int) {
+            repository.getComments(id, token, page, pageSize)
     }
 }

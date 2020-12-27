@@ -1,14 +1,21 @@
 package com.cmpe451.platon.network.models
 
+
+
 data class Comment(
-        val id: Int,
-        val title:String,
-        val desc:String,
-        val dateTime:String,
-        val rate:Double
+        val comment_id: Int,
+        val owner_id: Int,
+        val commented_user_id: Int,
+        val text:String,
+        val timestamp:String,
+        val rate:Double,
 )
 
 
+data class AllComments(
+        val number_of_pages:Int,
+        val result:List<Comment>
+)
 data class User (
         val id: Int,
         val e_mail: String,
@@ -24,6 +31,7 @@ data class User (
 )
 
 data class OtherUser(
+        val can_comment:Boolean,
         val id: Int?,
         val e_mail: String?,
         val name: String?,
