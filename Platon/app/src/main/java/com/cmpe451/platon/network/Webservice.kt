@@ -172,6 +172,18 @@ interface Webservice {
                    @Query("per_page") perPage:Int?):Call<Search?>
 
 
+    @GET("api/search_engine/upcoming_events")
+    fun searchUpcomingEvent(@Header("auth_token") token: String?,
+                   @Query("search_query") query:String,
+                   @Query("date_filter_start") dateFilterS:String?,
+                   @Query("date_filter_end") dateFilterE:String?,
+                    @Query("deadline_filter_start") deadlineS:String?,
+                    @Query("deadline_filter_end") deadlineE:String?,
+                    @Query("sorting_criteria") sortBy:Int?,
+                   @Query("page") page:Int?,
+                   @Query("per_page") perPage:Int?):Call<Search?>
+
+
     @GET("api/search_engine/workspace")
     fun searchWorkspace(@Header("auth_token") token: String?,
                    @Query("search_query") query:String,

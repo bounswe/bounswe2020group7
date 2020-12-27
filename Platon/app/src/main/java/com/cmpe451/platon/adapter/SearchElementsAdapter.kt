@@ -51,17 +51,23 @@ class SearchElementsAdapter(private val data: ArrayList<SearchElement>, private 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-
-
-        if(data[position].name != null){
+        when{
+            data[position].name != null ->{
             Glide.with(context).load(Definitions.API_URL + "api" + data[position].profile_photo)
                 .placeholder(R.drawable.ic_o_logo)
                 .circleCrop().diskCacheStrategy(DiskCacheStrategy.NONE).into(holder.binding.iwSearchImage)
+             holder.binding.tvDetail.text = "Privacy: " + if(data[position].is_private == 1) "True" else "False"
             holder.binding.tvSearchElement.text = data[position].name + " " + data[position].surname
-        }else{
+        }
+            (data[position].state != null) ->{
+            holder.binding.tvDetail.text = data[position].creation_time + " / " + data[position].deadline
             holder.binding.tvSearchElement.text = data[position].title
         }
-
+        else ->{
+            holder.binding.tvDetail.text  =data[position].date + " / " + data[position].deadline + " / " + data[position].location
+            holder.binding.tvSearchElement.text = data[position].acronym
+        }
+        }
         holder.bindData(data[position], position,searchButtonClickListener)
     }
 

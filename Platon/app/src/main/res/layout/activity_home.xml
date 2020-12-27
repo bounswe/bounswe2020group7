@@ -125,7 +125,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:padding="@dimen/large"
-        android:id="@+id/lay_workspaceFilter"
+        android:id="@+id/lay_wsAndUeFilters"
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:background="@color/primary_dark_darker"
@@ -133,6 +133,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
+            android:id="@+id/lay_workspaceFilter"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
@@ -140,6 +141,7 @@
             android:layout_weight="1"
             android:id="@+id/et_filterSkill"
             android:layout_width="0dp"
+            android:inputType="text"
             android:layout_height="wrap_content"
             android:textSize="@dimen/subtitle_text_size"
             android:textColor="@color/primary_light"
@@ -148,6 +150,7 @@
 
         <EditText
             android:layout_weight="1"
+            android:inputType="text"
             android:id="@+id/et_filterEvent"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -159,6 +162,7 @@
         <EditText
             android:layout_weight="1"
             android:id="@+id/et_filterName"
+            android:inputType="textPersonName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textSize="@dimen/subtitle_text_size"
@@ -170,6 +174,7 @@
             android:layout_weight="1"
             android:id="@+id/et_filterSurname"
             android:layout_width="0dp"
+            android:inputType="textPersonName"
             android:layout_height="wrap_content"
             android:textSize="@dimen/subtitle_text_size"
             android:textColor="@color/primary_light"
@@ -178,77 +183,95 @@
             />
         </LinearLayout>
 
+
         <LinearLayout
+            android:id="@+id/lay_dateFilters"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <EditText
-                android:layout_weight="1"
                 android:id="@+id/et_startDateS"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/subtitle_text_size"
+                android:layout_weight="1"
+                android:hint="@string/starting_from_str"
                 android:textColor="@color/primary_light"
                 android:textColorHint="@color/primary_light"
-                android:hint="@string/starting_from_str" />
+                android:textSize="@dimen/subtitle_text_size" />
 
             <EditText
-                android:layout_weight="1"
                 android:id="@+id/et_startDateE"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/subtitle_text_size"
+                android:layout_weight="1"
+                android:hint="@string/starting_to_str"
                 android:textColor="@color/primary_light"
                 android:textColorHint="@color/primary_light"
-                android:hint="@string/starting_to_str" />
+                android:textSize="@dimen/subtitle_text_size" />
 
             <EditText
-                android:layout_weight="1"
                 android:id="@+id/et_deadlineS"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/subtitle_text_size"
+                android:layout_weight="1"
+                android:hint="@string/deadline_from_str"
                 android:textColor="@color/primary_light"
                 android:textColorHint="@color/primary_light"
-                android:hint="@string/deadline_from_str" />
+                android:textSize="@dimen/subtitle_text_size" />
 
             <EditText
-                android:layout_weight="1"
                 android:id="@+id/et_deadlineE"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/subtitle_text_size"
+                android:layout_weight="1"
+                android:hint="@string/deadline_to_str"
                 android:textColor="@color/primary_light"
                 android:textColorHint="@color/primary_light"
-                android:hint="@string/deadline_to_str" />
+                android:textSize="@dimen/subtitle_text_size" />
+
+
+
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/xx_small"
             android:background="@color/primary_dark_darker"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="@dimen/xx_small">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:textSize="@dimen/subtitle_text_size"
-            android:textColor="@color/primary_light"
-            android:text="@string/sort_by_Str"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:text="@string/sort_by_Str"
+                android:textColor="@color/primary_light"
+                android:textSize="@dimen/subtitle_text_size" />
 
-        <Spinner
-            android:layout_marginStart="@dimen/medium"
-            android:id="@+id/sp_sortByWorkspace"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColorHint="@color/primary_light"
-            android:textColor="@color/primary_light" />
+            <Spinner
+                android:id="@+id/sp_sortByWs"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/medium"
+                android:layout_weight="2"
+                android:textColor="@color/primary_light"
+                android:textColorHint="@color/primary_light" />
+
+            <Spinner
+                android:id="@+id/sp_sortByUe"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/medium"
+                android:layout_weight="2"
+                android:textColor="@color/primary_light"
+                android:textColorHint="@color/primary_light" />
+
         </LinearLayout>
     </LinearLayout>
+
 
 
     <RadioGroup

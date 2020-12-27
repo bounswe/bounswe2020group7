@@ -25,6 +25,8 @@ class HomeActivityViewModel(application: Application):AndroidViewModel(applicati
     val getInvitationsFromWsResourceResponse:MutableLiveData<Resource<List<WorkspaceInvitation>>> = repository.invitationsFromWsResourceResponse
     val getUserDeleteNotificationResourceResponse:MutableLiveData<Resource<JsonObject>>
 
+    val getSearchUpcomingEventResourceResponse:MutableLiveData<Resource<Search>> = repository.searchUpcomingEventResourceResponse
+
     init {
         getUserResourceResponse = repository.userResourceResponse
         getUserFollowRequestsResourceResponse = repository.userFollowRequestsResourceResponse
@@ -84,5 +86,9 @@ class HomeActivityViewModel(application: Application):AndroidViewModel(applicati
 
     fun getInvitationsFromWs(currUserToken: String, currentPage: Int, pageSize: Int) {
         repository.getInvitationsFromWs(currUserToken, currentPage, pageSize)
+    }
+
+    fun searchUpcomingEvent(currUserToken: String, query: String, dateS: String?, dateE: String?, deadlineS: String?, deadlineE: String?, sortBy:Int?,page:Int?, perPage:Int?) {
+        repository.searchUpcomingEvent(currUserToken, query, dateS, dateE, deadlineS, deadlineE, sortBy, page, perPage)
     }
 }

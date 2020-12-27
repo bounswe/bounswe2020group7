@@ -36,6 +36,16 @@ android:layout_height = "wrap_content">
             android:textSize="@dimen/title_text_size_smaller" />
 
 
+        <TextView
+            android:layout_below="@+id/iw_searchImage"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/tv_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/primary_light"
+            android:textSize="@dimen/subtitle_text_size"
+            android:text="@string/loading_str" />
+
 
     </RelativeLayout>
 </androidx.cardview.widget.CardView>
