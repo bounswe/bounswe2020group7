@@ -2,7 +2,7 @@
 
 .Spinner {
 
-    height: 10vmin;
+    height: 15vmin;
 }
 
 @media (prefers-reduced-motion: no-preference) {
