@@ -42,10 +42,12 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
     private lateinit var sharedPreferences: SharedPreferences
 
     lateinit var binding: FragmentIssuesBinding
-    private val issue: ArrayList<Issue> = arrayListOf()
+    private val issuesList: ArrayList<Issue> = arrayListOf()
 
     private lateinit var paginationListener:PaginationListener
-    private var maxPageNumberIssue:Int=10
+    private var maxPageNumberIssue:Int=0
+    private var pageSize:Int=10
+
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -61,12 +63,12 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
         initViews()
         setListeners()
         setObservers()
-        mIssuesViewModel.getIssues((activity as WorkspaceActivity).workspace_id!!,0, maxPageNumberIssue, (activity as WorkspaceActivity).token!!)
+        issuesList.clear()
+        mIssuesViewModel.getIssues((activity as WorkspaceActivity).workspace_id!!,0, pageSize, (activity as WorkspaceActivity).token!!)
 
     }
 
-
-
+    
 
 
     private fun setObservers(){
@@ -77,13 +79,13 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
                     dialog.show()
                 }
                 Resource.Success::class.java ->{
-
-                    adapter.clearElements()
-                    issue = t.data!!.result as ArrayList<Issue>
-                    adapter.submitElements(issue)
-
-                    
-
+                    //(binding.issuesRecyclerView.adapter as IssuesAdapter).clearElements()
+                    val issue = t.data!!.result as ArrayList<Issue>
+                    maxPageNumberIssue = t.data!!.number_of_pages
+                    (binding.issuesRecyclerView.adapter as IssuesAdapter).submitElements(issue)
+                    issuesList.addAll(issue)
+                    mIssuesViewModel.issuesResponse.value = Resource.Done()
+                    paginationListener.isLoading = false
                 }
                 Resource.Error::class.java ->{
                     Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
@@ -103,9 +105,10 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
                 }
                 Resource.Success::class.java ->{
                     paginationListener.currentPage = 0
-                    issue.clear()
+                    issuesList.clear()
                     (binding.issuesRecyclerView.adapter as IssuesAdapter).clearElements()
-                    mIssuesViewModel.getIssues((activity as WorkspaceActivity).workspace_id!!, 0, maxPageNumberIssue,(activity as WorkspaceActivity).token!! )
+                    mIssuesViewModel.getIssues((activity as WorkspaceActivity).workspace_id!!, 0, pageSize,(activity as WorkspaceActivity).token!! )
+                    mIssuesViewModel.issuesResponse.value = Resource.Done()
                 }
                 Resource.Error::class.java ->{
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
@@ -125,11 +128,12 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
 
         val layoutManagerIssues = LinearLayoutManager(this.activity)
 
-        paginationListener = object: PaginationListener(layoutManagerIssues){
+        paginationListener = object: PaginationListener(layoutManagerIssues, pageSize){
             override fun loadMoreItems() {
                 if(maxPageNumberIssue-1 > currentPage){
+                    isLoading = true
                     currentPage++
-                    mIssuesViewModel.getIssues((activity as WorkspaceActivity).workspace_id!!, currentPage, maxPageNumberIssue,(activity as WorkspaceActivity).token!!)
+                    mIssuesViewModel.getIssues((activity as WorkspaceActivity).workspace_id!!, currentPage, PAGE_SIZE,(activity as WorkspaceActivity).token!!)
                 }
             }
 
@@ -152,17 +156,19 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
 
 
     override fun onIssueButtonClicked(binding: IssueCellBinding, position: Int) {
-        sharedPreferences.edit().putString("issue_title", issue[position].title).apply()
-        sharedPreferences.edit().putString("issue_description", issue[position].description).apply()
-        sharedPreferences.edit().putString("issue_id", issue[position].issue_id.toString()).apply()
-        sharedPreferences.edit().putString("issue_deadline", issue[position].deadline).apply()
-        sharedPreferences.edit().putString("issue_creator_name", issue[position].creator_name + " " + issue[position].creator_surname).apply()
-        findNavController().navigate(IssuesFragmentDirections.actionİssuesFragmentToİssueDetailFragment())
+        sharedPreferences.edit().putString("issue_title", issuesList[position].title).apply()
+        sharedPreferences.edit().putString("issue_description", issuesList[position].description).apply()
+        sharedPreferences.edit().putString("issue_id", issuesList[position].issue_id.toString()).apply()
+        sharedPreferences.edit().putString("issue_deadline", issuesList[position].deadline).apply()
+        sharedPreferences.edit().putString("issue_creator_name", issuesList[position].creator_name + " " + issuesList[position].creator_surname).apply()
+        findNavController().navigate(IssuesFragmentDirections.actionIssuesFragmentToIssueDetailFragment())
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.issue_btn)?.isVisible = false
         menu.findItem(R.id.btn_WorkspaceApplications)?.isVisible = false
+        menu.findItem(R.id.workspaceFolderFragment)?.isVisible = false
+
         super.onPrepareOptionsMenu(menu)
     }
 
@@ -211,26 +217,6 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
 
         }
 
-        addBinding.issueTimeEt.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_DOWN) {
-                val calendar = Calendar.getInstance()
-                val hour = calendar.get(Calendar.HOUR_OF_DAY)
-                val minute = calendar.get(Calendar.MINUTE)
-                val datePickerDialog = TimePickerDialog(
-                    requireContext(),
-                    { _, hours, minutes ->
-                        val h = String.format("%02d", hours)
-                        val m = String.format("%02d", minutes)
-                        addBinding.issueTimeEt.setText("$h:$m:00")
-                    }, hour, minute, true
-
-                )
-
-                datePickerDialog.show()
-            }
-            true
-
-        }
 
 
         addBinding.buttonIssueAdd.setOnClickListener {
@@ -246,21 +232,16 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
                     addBinding.issueDescription.text.isNullOrEmpty() -> {
                         Toast.makeText(activity , "Description cannot be left empty", Toast.LENGTH_LONG).show()
                     }
-                    addBinding.issueDeadline.text.isNotEmpty() && addBinding.issueTimeEt.text.isNullOrEmpty() -> {
-                        Toast.makeText(activity , "Time cannot be left empty", Toast.LENGTH_LONG).show()
+                    addBinding.issueDeadline.text.isNullOrEmpty() -> {
+                        Toast.makeText(activity , "Deadline cannot be left empty", Toast.LENGTH_LONG).show()
                     }
-                    addBinding.issueDeadline.text.isNullOrEmpty() && addBinding.issueTimeEt.text.isNotEmpty() -> {
-                        Toast.makeText(activity , "Date cannot be left empty", Toast.LENGTH_LONG).show()
-                    }
-                    addBinding.issueDeadline.text.isNullOrEmpty() && addBinding.issueTimeEt.text.isNullOrEmpty() -> {
-                        Toast.makeText(activity , "Date and time cannot be left empty", Toast.LENGTH_LONG).show()
-                    }
+
                     else -> {
 
                         mIssuesViewModel.addIssues((activity as WorkspaceActivity).workspace_id!!,
                             addBinding.issueTitle.text.toString(),
                             addBinding.issueDescription.text.toString(),
-                            addBinding.issueDeadline.text.toString() + " " + addBinding.issueTimeEt.text.toString(),
+                            addBinding.issueDeadline.text.toString(),
                             (activity as WorkspaceActivity).token!!)
                         addDialog.dismiss()
                     }

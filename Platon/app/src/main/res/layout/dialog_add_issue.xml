@@ -21,13 +21,13 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:autofillHints=""
-        android:backgroundTint="@color/secondary_purple"
+        android:backgroundTint="@color/very_light_brown"
         android:hint="@string/issue_title_str"
         android:inputType="textPersonName|textAutoComplete"
-        android:textColor="@color/primary_light"
-        android:textColorHighlight="@color/primary_light"
-        android:textColorHint="@color/secondary_purple"
-        android:textColorLink="@color/secondary_purple" />
+        android:textColor="@color/very_light_brown"
+        android:textColorHighlight="@color/very_light_brown"
+        android:textColorHint="@color/very_light_brown"
+        android:textColorLink="@color/very_light_brown" />
 
 
     <EditText
@@ -42,10 +42,10 @@
         android:hint="@string/issue_description_str"
         android:inputType="textMultiLine"
         android:lines="3"
-        android:textColor="@color/primary_light"
+        android:textColor="@color/very_light_brown"
         android:textColorHighlight="@color/primary_light"
-        android:textColorHint="@color/secondary_purple"
-        android:textColorLink="@color/secondary_purple" />
+        android:textColorHint="@color/very_light_brown"
+        android:textColorLink="@color/very_light_brown" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -58,27 +58,14 @@
             android:layout_weight="1"
             android:autofillHints=""
             android:ems="15"
-            android:backgroundTint="@color/secondary_purple"
-            android:hint="@string/date_str"
+            android:backgroundTint="@color/very_light_brown"
+            android:hint="@string/deadline_str"
             android:inputType="date"
-            android:textColor="@color/primary_light"
-            android:textColorHighlight="@color/secondary_purple"
-            android:textColorHint="@color/secondary_purple"
-            android:textColorLink="@color/secondary_purple" />
-        <EditText
-            android:id="@+id/issue_time_et"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:autofillHints=""
-            android:ems="15"
-            android:backgroundTint="@color/secondary_purple"
-            android:hint="@string/time_str"
-            android:inputType="date"
-            android:textColor="@color/primary_light"
-            android:textColorHighlight="@color/secondary_purple"
-            android:textColorHint="@color/secondary_purple"
-            android:textColorLink="@color/secondary_purple" />
+            android:textColor="@color/very_light_brown"
+            android:textColorHighlight="@color/very_light_brown"
+            android:textColorHint="@color/very_light_brown"
+            android:textColorLink="@color/very_light_brown" />
+
     </LinearLayout>
 
 
@@ -88,9 +75,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_horizontal_margin"
-        android:backgroundTint="@color/secondary_purple"
+        android:backgroundTint="@color/very_light_brown"
         android:text="@string/issue_add_str"
-        android:textColor="@color/primary_light" />
+        android:textColor="@color/primary_dark" />
 
 </LinearLayout>
 

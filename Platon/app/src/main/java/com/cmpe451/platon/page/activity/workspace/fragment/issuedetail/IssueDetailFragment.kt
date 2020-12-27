@@ -6,11 +6,16 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.SharedPreferences
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
+import android.widget.GridLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.AssigneeAdapter
@@ -92,8 +97,7 @@ class IssueDetailFragment: Fragment() {
         mIssueDetailViewModel.deleteIssueResponse.observe(viewLifecycleOwner, { t->
             when(t.javaClass){
                 Resource.Success::class.java ->{
-                    activity?.supportFragmentManager?.popBackStack()
-
+                    findNavController().navigateUp()
                 }
                 Resource.Error::class.java ->{
                     Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
@@ -191,7 +195,7 @@ class IssueDetailFragment: Fragment() {
         binding.issueDeadline.text = issue_deadline
 
         binding.issueAssignee.adapter = AssigneeAdapter(ArrayList(), requireContext())
-        binding.issueAssignee.layoutManager = LinearLayoutManager(requireContext())
+        binding.issueAssignee.layoutManager = GridLayoutManager(requireContext(), 2)
 
     }
 
@@ -237,6 +241,7 @@ class IssueDetailFragment: Fragment() {
         menu.findItem(R.id.issue_btn)?.isVisible = false
         menu.findItem(R.id.add_issue_btn)?.isVisible = false
         menu.findItem(R.id.btn_WorkspaceApplications)?.isVisible = false
+        menu.findItem(R.id.workspaceFolderFragment)?.isVisible = false
         super.onPrepareOptionsMenu(menu)
     }
 
@@ -302,7 +307,7 @@ class IssueDetailFragment: Fragment() {
         val editDialog = AlertDialog.Builder(context).setView(tmpBinding.root)
             .setCancelable(true)
             .show()
-
+        editDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         tmpBinding.deleteIssueBtn.setOnClickListener {
             AlertDialog.Builder(context)
                 .setMessage("Are you sure you want to delete? ")
@@ -351,6 +356,7 @@ class IssueDetailFragment: Fragment() {
                         binding.issueTitle.text = title
                         tmpBinding.issueDescriptionEt.setText(description)
                         tmpBinding.issueTitleEt.setText(title)
+
                     }
 
                 }
