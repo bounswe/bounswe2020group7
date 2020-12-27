@@ -470,20 +470,27 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                 //listener for search radio group
                 binding.rgSearchAmong.setOnCheckedChangeListener { _, id ->
                     paginationListener.currentPage = 0
-                    if(binding.toolbarRecyclerview.adapter != null){
+                    if (binding.toolbarRecyclerview.adapter != null) {
                         (binding.toolbarRecyclerview.adapter as ToolbarElementsAdapter).clearElements()
                     }
                     when (id) {
                         R.id.rb_searchUser -> {
-                            binding.layWorkspaceFilter.visibility = View.GONE
+                            binding.layWsAndUeFilters.visibility = View.GONE
                             binding.laySearchUser.visibility = View.VISIBLE
                             mActivityViewModel.getAllJobs()
                         }
                         R.id.rb_searchWorkspace -> {
+                            binding.spSortByUe.visibility = View.GONE
+                            binding.spSortByWs.visibility = View.VISIBLE
+                            binding.layWsAndUeFilters.visibility = View.VISIBLE
                             binding.layWorkspaceFilter.visibility = View.VISIBLE
                             binding.laySearchUser.visibility = View.GONE
                         }
                         R.id.rb_searchUpcoming -> {
+                            binding.spSortByUe.visibility = View.VISIBLE
+                            binding.spSortByWs.visibility = View.GONE
+
+                            binding.layWsAndUeFilters.visibility = View.VISIBLE
                             binding.layWorkspaceFilter.visibility = View.GONE
                             binding.laySearchUser.visibility = View.GONE
                         }
@@ -492,6 +499,17 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
             }
         }
 
+        search.setOnSuggestionListener(object : SearchView.OnSuggestionListener {
+            override fun onSuggestionSelect(position: Int): Boolean {
+                return true
+            }
+
+            override fun onSuggestionClick(position: Int): Boolean {
+                search.setQuery(searchHistory[position].query, false)
+                return true
+            }
+
+        })
 
         search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String?): Boolean {
@@ -501,7 +519,7 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
             override fun onQueryTextSubmit(query: String): Boolean {
                 search.clearFocus()
                 paginationListener.currentPage = 0
-                if(binding.toolbarRecyclerview.adapter != null){
+                if (binding.toolbarRecyclerview.adapter != null) {
                     (binding.toolbarRecyclerview.adapter as ToolbarElementsAdapter).clearElements()
                 }
 
@@ -509,33 +527,55 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                     R.id.rb_searchUser -> {
                         val sortBy = binding.spSortByUser.selectedItemPosition
                         mActivityViewModel.searchUser(
-                            null,
-                            search.query.toString().trim(),
+                            null, query,
                             if (jobIdList[binding.spJobQuery.selectedItemPosition] == -1) null else jobIdList[binding.spJobQuery.selectedItemPosition],
-                            if(sortBy!=0) sortBy-1 else null, 0,
-                            toolbarPageSize)
+                            if (sortBy != 0) sortBy - 1 else null, 0, toolbarPageSize
+                        )
                     }
                     R.id.rb_searchWorkspace -> {
                         val sortBy = binding.spSortByWs.selectedItemPosition
                         val name = binding.etFilterName.text.toString().trim()
                         val surname = binding.etFilterSurname.text.toString().trim()
                         val startDateE = binding.etStartDateE.text.toString().trim()
-                        val startDateS=binding.etDeadlineS.text.toString().trim()
-                        val deadlineS=binding.etStartDateS.text.toString().trim()
+                        val startDateS = binding.etDeadlineS.text.toString().trim()
+                        val deadlineS = binding.etStartDateS.text.toString().trim()
                         val deadlineE = binding.etDeadlineE.text.toString().trim()
                         val event = binding.etFilterEvent.text.toString().trim()
 
                         mActivityViewModel.searchWorkspace(
                             null,
-                            search.query.toString().trim(), binding.etFilterSkill.text.toString().trim(),
-                            if(name.isNotEmpty()) name else null, if(surname.isNotEmpty()) surname else null,
-                            if(startDateS.isNotEmpty()) startDateS else null,if(startDateE.isNotEmpty()) startDateE else null,
-                            if(deadlineS.isNotEmpty()) deadlineS else null,if(deadlineE.isNotEmpty()) deadlineE else null ,if(sortBy!=0) sortBy-1 else null,
-                            if(event.isNotEmpty()) event else null,
+                            search.query.toString().trim(),
+                            binding.etFilterSkill.text.toString().trim(),
+                            if (name.isNotEmpty()) name else null,
+                            if (surname.isNotEmpty()) surname else null,
+                            if (startDateS.isNotEmpty()) startDateS else null,
+                            if (startDateE.isNotEmpty()) startDateE else null,
+                            if (deadlineS.isNotEmpty()) deadlineS else null,
+                            if (deadlineE.isNotEmpty()) deadlineE else null,
+                            if (sortBy != 0) sortBy - 1 else null,
+                            if (event.isNotEmpty()) event else null,
                             0,
-                            toolbarPageSize)
+                            toolbarPageSize
+                        )
                     }
                     R.id.rb_searchUpcoming -> {
+                        val sortBy = binding.spSortByUe.selectedItemPosition
+                        val startDateE = binding.etStartDateE.text.toString().trim()
+                        val startDateS = binding.etDeadlineS.text.toString().trim()
+                        val deadlineS = binding.etStartDateS.text.toString().trim()
+                        val deadlineE = binding.etDeadlineE.text.toString().trim()
+                        mActivityViewModel.searchUpcomingEvent(
+                            null,
+                            search.query.toString().trim(),
+                            if (startDateS.isNotEmpty()) startDateS else null,
+                            if (startDateE.isNotEmpty()) startDateE else null,
+                            if (deadlineS.isNotEmpty()) deadlineS else null,
+                            if (deadlineE.isNotEmpty()) deadlineE else null,
+                            if (sortBy != 0) sortBy - 1 else null,
+                            0,
+                            toolbarPageSize
+                        )
+
                     }
                 }
                 return true
