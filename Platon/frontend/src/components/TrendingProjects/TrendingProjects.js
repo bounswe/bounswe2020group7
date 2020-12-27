@@ -15,7 +15,7 @@ const StyledPagination = withStyles({
   },
 }, { name: 'MuiPaginationItem' })(Pagination)
 
-const TrendingProjects = ({ itemsPerPage = 5, width= '500px' }) => {
+const TrendingProjects = ({ itemsPerPage = 5, width= '500px', marginLeft = "0px", marginRight = "0px"  }) => {
   const [rawData, setRawData] = useState([])
   const [fetching, setFetching] = useState(false)
   const [page, setPage] = useState(1)
@@ -53,7 +53,7 @@ const TrendingProjects = ({ itemsPerPage = 5, width= '500px' }) => {
         variant="h5"
         gutterBottom
       >
-        Trending Projects
+        Trending Workspaces
       </Typography>
       {fetching && (
         <div className="TrendingProjectsSpinner">
@@ -61,7 +61,7 @@ const TrendingProjects = ({ itemsPerPage = 5, width= '500px' }) => {
         </div>
       )}
       {pageData && (
-        <div className="TrendingProjectsItems" style={{width: width}}>
+        <div className="TrendingProjectsItems" style={{width: width, marginLeft: marginLeft, marginRight: marginRight }}>
           {pageData.map((item, index) => (
             <TrendingProjectsItem
               id={index}
@@ -69,6 +69,8 @@ const TrendingProjects = ({ itemsPerPage = 5, width= '500px' }) => {
               title={item.title}
               description={item.description}
               contributors={item.contributor_list}
+              profileId={item.contributor_list[0].id}
+              workspaceId={item.id}
             />
           ))}
           <div className='paginationContainerTrending'>
