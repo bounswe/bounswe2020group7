@@ -26,7 +26,7 @@ class OtherProfileViewModel : ViewModel() {
     fun setUserInfo(){
         isUserPrivate.value = getUserResource.value?.data?.is_private
         isFollowing.value = when(getUserResource.value?.data?.following_status){
-            1->Definitions.USERSTATUS.FOLLOWING;
+            1-> Definitions.USERSTATUS.FOLLOWING;
             0-> Definitions.USERSTATUS.REQUESTED;
             else-> Definitions.USERSTATUS.NOT_FOLLOWING
         }

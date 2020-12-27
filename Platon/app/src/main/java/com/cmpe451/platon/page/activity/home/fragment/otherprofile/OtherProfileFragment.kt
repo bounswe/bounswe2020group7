@@ -282,7 +282,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
             binding.buttonFollow.setBackgroundColor(ContextCompat.getColor(this.requireContext(), R.color.primary_dark_lighter2))
             binding.projectInfoLl.visibility = View.VISIBLE
             binding.privatePageWarningTv.visibility = View.GONE
-
+            binding.ratingBar.rating = user?.rate?.toFloat() ?: 0.0.toFloat()
             binding.tvEmail.text = user?.e_mail
             binding.tvInstitution.text = user?.institution ?: "Institution not specified!"
             binding.tvJob.text = user?.job
