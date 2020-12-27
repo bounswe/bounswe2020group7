@@ -333,7 +333,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
 
             tmpBinding.btnAddComment.setOnClickListener{
                 var comment:String? = null
-                if(!tmpBinding.etRating.text.isNullOrEmpty()){
+                if(!tmpBinding.etRating.text.isNullOrEmpty() || tmpBinding.etRating.text.toString().toInt() < 6 ){
                     val rating = tmpBinding.etRating.text.toString().toInt()
                     if(!tmpBinding.etComment.text.isNullOrEmpty()){
                         comment=tmpBinding.etComment.text.toString().trim()
@@ -341,7 +341,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                     mOtherProfileViewModel.addComment(rating, comment,  userId!!,(activity as HomeActivity).currUserToken)
                     addCommentDialog.cancel()
                 }else{
-                    Toast.makeText(requireContext(), "Please rate the user!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Please rate the user between 0 and 5!", Toast.LENGTH_SHORT).show()
                 }
             }
         }else{
