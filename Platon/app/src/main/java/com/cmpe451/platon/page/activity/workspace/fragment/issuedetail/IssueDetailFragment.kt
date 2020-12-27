@@ -356,6 +356,7 @@ class IssueDetailFragment: Fragment() {
         var contributorNames = ArrayList<String>()
         var contributorIds = ArrayList<Int>()
         var selectedId = ArrayList<Int>()
+        var unselectedId = ArrayList<Int>()
 
 
         for(item in contributors) {
@@ -371,19 +372,15 @@ class IssueDetailFragment: Fragment() {
             assigneeIds.add(item.assignee_id)
         }
 
-        val bArray = contributors.map { assignees.contains(it) }.toBooleanArray()
+        val bArray = contributorIds.map { assigneeIds.contains(it) }.toBooleanArray()
         AlertDialog.Builder(context)
-            .setNegativeButton("Completed") { _, _ -> print("ert")
+            .setNegativeButton("Add Assignee") { _, _ -> print("ert")
                 for (item in selectedId) {
-                    if(!assigneeIds.contains(item)){
-                        mIssueDetailViewModel.addIssueAssignee((activity as WorkspaceActivity).workspace_id!!, issue_id.toInt(), item, (activity as WorkspaceActivity).token!!)
-                    }
+                    mIssueDetailViewModel.addIssueAssignee((activity as WorkspaceActivity).workspace_id!!, issue_id.toInt(), item, (activity as WorkspaceActivity).token!!)
                 }
 
-                for(item in assigneeIds) {
-                    if(!selectedId.contains(item)) {
-                        mIssueDetailViewModel.deleteIssueAssignee((activity as WorkspaceActivity).workspace_id!!, issue_id.toInt(), item, (activity as WorkspaceActivity).token!!)
-                    }
+                for(item in unselectedId) {
+                    mIssueDetailViewModel.deleteIssueAssignee((activity as WorkspaceActivity).workspace_id!!, issue_id.toInt(), item, (activity as WorkspaceActivity).token!!)
                 }
 
             }
@@ -395,7 +392,7 @@ class IssueDetailFragment: Fragment() {
                 if (isChecked) {
                     selectedId.add(contributorIds[which])
                 } else {
-                    selectedId.remove(contributorIds[which])
+                    unselectedId.add(contributorIds[which])
                 }
 
             }
