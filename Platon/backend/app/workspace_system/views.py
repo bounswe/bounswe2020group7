@@ -54,6 +54,7 @@ workspace_small_model = api.model('Workspace', {
     "title": fields.String,
     "description": fields.String,
     "state": fields.Integer,
+    'creator_id': fields.Integer,
     "contributors": fields.List(
         fields.Nested(contributor_model)
     ),
@@ -1300,7 +1301,8 @@ class TrendingWorkspacesAPI(Resource):
                 "id": workspace.id,
                 "title": workspace.title,
                 "description": workspace.description,
-                "state": workspace.state
+                "state": workspace.state,
+                "creator_id": workspace.creator_id
             } for workspace in all_workspaces if workspace.is_private == 0]
             # Add Contributors of the workspaces
             for index,workspace in enumerate(workspace_response):
