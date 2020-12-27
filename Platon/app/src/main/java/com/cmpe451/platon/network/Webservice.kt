@@ -380,8 +380,8 @@ interface Webservice {
 
     @FormUrlEncoded
     @PUT("api/workspaces/issue")
-    fun editIssue(@Field("workspace_id") workspaceId:String,
-                  @Field("issue_id") issueId:String,
+    fun editIssue(@Field("workspace_id") workspaceId:Int,
+                  @Field("issue_id") issueId:Int,
                   @Field("title") title:String?,
                   @Field("description") description:String?,
                   @Field("deadline") deadline:String?,
@@ -410,6 +410,20 @@ interface Webservice {
                          @Header("auth_token") authToken: String ): Call<IssueAssignee?>
 
     @FormUrlEncoded
+
+    @POST("api/workspaces/issue/assignee")
+    fun addIssueAssignee(@Field("workspace_id") workspaceId:Int,
+                         @Field("issue_id") issueId:Int,
+                         @Field("assignee_id") assigneeId:Int,
+                         @Header("auth_token") authToken:String?): Call<JsonObject?>
+
+    @FormUrlEncoded
+    @HTTP(method = "DELETE" , path = "api/workspaces/issue/assignee", hasBody = true)
+    fun deleteIssueAssignee(@Field("workspace_id") workspaceId:Int,
+                         @Field("issue_id") issueId:Int,
+                         @Field("assignee_id") assigneeId:Int,
+                         @Header("auth_token") authToken:String?): Call<JsonObject?>
+
     @HTTP(method = "DELETE" , path = "api/workspaces/applications", hasBody = true)
     fun answerWorkspaceApplication(@Field("application_id") application_id:Int,
                     @Field("is_accepted") is_accepted:Int,
@@ -447,5 +461,6 @@ interface Webservice {
     fun answerWorkspaceInvitation(@Field("invitation_id") application_id:Int,
                                    @Field("is_accepted") is_accepted:Int,
                                    @Header("auth_token") auth_token :String) : Call<JsonObject?>
+
 
 }

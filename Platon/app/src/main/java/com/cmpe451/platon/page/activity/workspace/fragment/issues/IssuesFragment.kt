@@ -77,9 +77,13 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
                     dialog.show()
                 }
                 Resource.Success::class.java ->{
-                    issue.addAll(t.data!!.result)
-                    (binding.issuesRecyclerView.adapter as IssuesAdapter).submitElements(t.data!!.result)
-                    mIssuesViewModel.issuesResponse.value = Resource.Done()
+
+                    adapter.clearElements()
+                    issue = t.data!!.result as ArrayList<Issue>
+                    adapter.submitElements(issue)
+
+                    
+
                 }
                 Resource.Error::class.java ->{
                     Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
@@ -90,6 +94,7 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
                 }
             }
         })
+
 
         mIssuesViewModel.addIssuesResourceResponse.observe(viewLifecycleOwner, {
             when(it.javaClass){
@@ -110,8 +115,6 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
                     dialog.dismiss()
                 }
             }
-
-
 
         })
 
@@ -159,6 +162,7 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.issue_btn)?.isVisible = false
+        menu.findItem(R.id.btn_WorkspaceApplications)?.isVisible = false
         super.onPrepareOptionsMenu(menu)
     }
 
@@ -171,6 +175,7 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
         addDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         addBinding.issueDeadline.setOnTouchListener { _, event ->
+
             if (event.action == MotionEvent.ACTION_DOWN) {
                 val calendar = Calendar.getInstance()
                 val year = calendar.get(Calendar.YEAR)
@@ -202,6 +207,29 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
                 datePickerDialog.show()
             }
             true
+
+
+        }
+
+        addBinding.issueTimeEt.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                val calendar = Calendar.getInstance()
+                val hour = calendar.get(Calendar.HOUR_OF_DAY)
+                val minute = calendar.get(Calendar.MINUTE)
+                val datePickerDialog = TimePickerDialog(
+                    requireContext(),
+                    { _, hours, minutes ->
+                        val h = String.format("%02d", hours)
+                        val m = String.format("%02d", minutes)
+                        addBinding.issueTimeEt.setText("$h:$m:00")
+                    }, hour, minute, true
+
+                )
+
+                datePickerDialog.show()
+            }
+            true
+
         }
 
 
@@ -218,9 +246,22 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
                     addBinding.issueDescription.text.isNullOrEmpty() -> {
                         Toast.makeText(activity , "Description cannot be left empty", Toast.LENGTH_LONG).show()
                     }
+                    addBinding.issueDeadline.text.isNotEmpty() && addBinding.issueTimeEt.text.isNullOrEmpty() -> {
+                        Toast.makeText(activity , "Time cannot be left empty", Toast.LENGTH_LONG).show()
+                    }
+                    addBinding.issueDeadline.text.isNullOrEmpty() && addBinding.issueTimeEt.text.isNotEmpty() -> {
+                        Toast.makeText(activity , "Date cannot be left empty", Toast.LENGTH_LONG).show()
+                    }
+                    addBinding.issueDeadline.text.isNullOrEmpty() && addBinding.issueTimeEt.text.isNullOrEmpty() -> {
+                        Toast.makeText(activity , "Date and time cannot be left empty", Toast.LENGTH_LONG).show()
+                    }
                     else -> {
 
-                        mIssuesViewModel.addIssues((activity as WorkspaceActivity).workspace_id!!, addBinding.issueTitle.text.toString(),addBinding.issueDescription.text.toString(),addBinding.issueDeadline.text.toString(), (activity as WorkspaceActivity).token!!)
+                        mIssuesViewModel.addIssues((activity as WorkspaceActivity).workspace_id!!,
+                            addBinding.issueTitle.text.toString(),
+                            addBinding.issueDescription.text.toString(),
+                            addBinding.issueDeadline.text.toString() + " " + addBinding.issueTimeEt.text.toString(),
+                            (activity as WorkspaceActivity).token!!)
                         addDialog.dismiss()
                     }
                 }

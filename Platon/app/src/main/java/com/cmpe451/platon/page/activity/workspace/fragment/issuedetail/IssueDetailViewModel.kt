@@ -4,6 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.IssueAssignee
+import retrofit2.http.Field
+import retrofit2.http.Header
 
 
 class IssueDetailViewModel: ViewModel() {
@@ -11,13 +13,19 @@ class IssueDetailViewModel: ViewModel() {
     val repository = IssueDetailRepository()
 
     var assigneeResponse: MutableLiveData<Resource<IssueAssignee>>
-    //var addIssuesResourceResponse = repository.addIssuesResourceResponse
+    var addIssueAssigneeResponse = repository.addIssueAssigneeResponse
+    var deleteIssueAssigneeResponse = repository.addIssueAssigneeResponse
+    var deleteIssueResponse = repository.deleteIssueResponse
     var getWorkspaceResponse = repository.getWorkspaceResponse
+    var editIssueResponse = repository.editIssueResponse
 
 
     init {
         assigneeResponse = repository.getIssueAssignee
-        //addIssuesResourceResponse = repository.addIssuesResourceResponse
+        deleteIssueResponse = repository.deleteIssueResponse
+        editIssueResponse = repository.editIssueResponse
+        addIssueAssigneeResponse = repository.addIssueAssigneeResponse
+        deleteIssueAssigneeResponse = repository.deleteIssueAssigneeResponse
 
     }
 
@@ -29,6 +37,30 @@ class IssueDetailViewModel: ViewModel() {
 
     fun fetchWorkspace(workspace_id:Int, token:String){
         repository.fetchWorkspace(workspace_id, token)
+    }
+
+    fun deleteIssue(workspaceId:Int, issueId:Int, auth_token :String){
+        if(auth_token != null){
+            repository.deleteIssue(workspaceId, issueId, auth_token)
+        }
+    }
+
+    fun editIssue(workspaceId:Int, issueId:Int, title:String?, description:String?, deadline:String?, authToken:String?) {
+        if(authToken != null){
+            repository.editIssue(workspaceId, issueId, title, description, deadline, authToken)
+        }
+    }
+
+    fun addIssueAssignee(workspaceId:Int, issueId:Int, assigneeId: Int, authToken:String?) {
+        if(authToken != null){
+            repository.addIssueAssignee(workspaceId, issueId, assigneeId, authToken)
+        }
+    }
+
+    fun deleteIssueAssignee(workspaceId:Int, issueId:Int, assigneeId: Int, authToken:String?) {
+        if(authToken != null){
+            repository.deleteIssueAssignee(workspaceId, issueId, assigneeId, authToken)
+        }
     }
 
 }

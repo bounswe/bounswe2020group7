@@ -9,6 +9,8 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.http.Field
+import retrofit2.http.Header
 
 class IssueDetailRepository {
 
@@ -16,6 +18,7 @@ class IssueDetailRepository {
     val deleteIssueAssigneeResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
     val addIssueAssigneeResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
     val commentsResponse:MutableLiveData<Resource<IssueComment>> = MutableLiveData()
+    val editIssueResponse: MutableLiveData<Resource<JsonObject>> = MutableLiveData()
     val getIssueAssignee:MutableLiveData<Resource<IssueAssignee>> = MutableLiveData()
     var getWorkspaceResponse: MutableLiveData<Resource<Workspace>> = MutableLiveData()
 
@@ -63,6 +66,27 @@ class IssueDetailRepository {
         })
     }
 
+    fun editIssue(workspaceId:Int, issueId:Int, title:String?, description:String?, deadline:String?, authToken:String?) {
+        val service = RetrofitClient.getService()
+        val call = service.editIssue(workspaceId, issueId, title, description, deadline, authToken)
+
+        editIssueResponse.value = Resource.Loading()
+        call.enqueue(object: Callback<JsonObject?> {
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when {
+                    response.isSuccessful && response.body() != null -> editIssueResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> editIssueResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> editIssueResponse.value = Resource.Error("Unknown error!")
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+
     fun getIssueAssignee(workSpaceId: Int, issueId: Int, page: Int?, paginationSize: Int?, authToken: String) {
         val service = RetrofitClient.getService()
         val call = service.getIssueAssignee(workSpaceId, issueId , page, paginationSize, authToken)
@@ -71,7 +95,6 @@ class IssueDetailRepository {
         //nullable check
         call.enqueue(object : Callback<IssueAssignee?> {
             override fun onResponse(call: Call<IssueAssignee?>, response: Response<IssueAssignee?>) {
-                print("ert")
                 when {
                     response.isSuccessful -> getIssueAssignee.value = Resource.Success(response.body()!!)
                     response.errorBody() != null -> getIssueAssignee.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
@@ -80,6 +103,50 @@ class IssueDetailRepository {
             }
 
             override fun onFailure(call: Call<IssueAssignee?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+
+    fun addIssueAssignee(workSpaceId: Int, issueId: Int, assigneeId: Int, authToken: String) {
+        val service = RetrofitClient.getService()
+        val call = service.addIssueAssignee(workSpaceId, issueId , assigneeId, authToken)
+
+        addIssueAssigneeResponse.value = Resource.Loading()
+        //nullable check
+        call.enqueue(object : Callback<JsonObject?> {
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when {
+                    response.isSuccessful -> addIssueAssigneeResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> addIssueAssigneeResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else ->addIssueAssigneeResponse.value =  Resource.Error("Unknown error")
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+
+    fun deleteIssueAssignee(workSpaceId: Int, issueId: Int, assigneeId: Int, authToken: String) {
+        val service = RetrofitClient.getService()
+        val call = service.deleteIssueAssignee(workSpaceId, issueId , assigneeId, authToken)
+
+        deleteIssueAssigneeResponse.value = Resource.Loading()
+        //nullable check
+        call.enqueue(object : Callback<JsonObject?> {
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when {
+                    response.isSuccessful -> deleteIssueAssigneeResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> deleteIssueAssigneeResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else ->deleteIssueAssigneeResponse.value =  Resource.Error("Unknown error")
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
                 call.clone().enqueue(this)
             }
 

@@ -48,20 +48,65 @@
         android:textColorLink="@color/secondary_blue" />
 
 
-    <EditText
-        android:id="@+id/issue_deadline_et"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:autofillHints=""
-        android:ems="15"
-        android:backgroundTint="@color/secondary_blue"
-        android:hint="@string/deadline_str"
-        android:inputType="date"
-        android:textColor="@color/primary_light"
-        android:textColorHighlight="@color/secondary_blue"
-        android:textColorHint="@color/secondary_blue"
-        android:textColorLink="@color/secondary_blue" />
+        android:orientation="horizontal">
+        <EditText
+            android:id="@+id/issue_deadline"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autofillHints=""
+            android:ems="15"
+            android:backgroundTint="@color/secondary_blue"
+            android:hint="@string/date_str"
+            android:inputType="date"
+            android:textColor="@color/primary_light"
+            android:textColorHighlight="@color/secondary_blue"
+            android:textColorHint="@color/secondary_blue"
+            android:textColorLink="@color/secondary_blue" />
+        <EditText
+            android:id="@+id/issue_time_et"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autofillHints=""
+            android:ems="15"
+            android:backgroundTint="@color/secondary_blue"
+            android:hint="@string/time_str"
+            android:inputType="date"
+            android:textColor="@color/primary_light"
+            android:textColorHighlight="@color/secondary_blue"
+            android:textColorHint="@color/secondary_blue"
+            android:textColorLink="@color/secondary_blue" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/delete_issue_btn"
+            android:background="@color/secondary_blue_transparent"
+            android:text="@string/delete_issue_str"
+            android:textColor="@color/primary_light"
+            android:layout_margin="@dimen/x_small"
+            android:padding="@dimen/xx_small"/>
+
+        <Button
+            android:id="@+id/update_issue_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/x_small"
+            android:textColor="@color/primary_light"
+            android:background="@color/secondary_blue_transparent"
+            android:padding="@dimen/xx_small"
+            android:text="@string/issue_edit" />
+
+    </LinearLayout>
 
 
 
