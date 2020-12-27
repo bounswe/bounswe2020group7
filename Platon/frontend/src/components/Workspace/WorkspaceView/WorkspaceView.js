@@ -513,11 +513,12 @@ class WorkspaceView extends Component {
                             >
                               Maximum Collaborator
                             </Typography>
-                            <div style={{ color: colors.quinaryDark }}>
+
                               {this.state.workspace.max_collaborators !== ''
-                                ? this.state.workspace.max_collaborators
-                                : 'Not specified'}
-                            </div>
+                                ? <div style={{ color: colors.quinaryDark }}>
+                                  {this.state.workspace.max_collaborators}
+                                  </div> : 'Not specified'}
+
                           </Grid>
                           <Grid
                             item
@@ -534,14 +535,14 @@ class WorkspaceView extends Component {
                             >
                               Deadline
                             </Typography>
-                            <div style={{ color: colors.quinaryDark }}>
+
                               {this.state.workspace.deadline
-                                ? this.state.workspace.deadline
+                                ? <div style={{ color: colors.quinaryDark }}>{this.state.workspace.deadline
                                     .split(".")
                                     .reverse()
-                                    .join(".")
-                                : "Not specified"}
-                            </div>
+                                    .join(".")}
+                                    </div>: "Not specified"}
+
 
                           </Grid>
                         </Grid>
@@ -569,7 +570,7 @@ class WorkspaceView extends Component {
                             >
                               Requirements
                             </Typography>
-                            {this.state.workspace.requirements ? (
+                            {this.state.workspace.requirements.length !== 0 ? (
                               <div style={{ color: colors.tertiaryDark }}>
                                 {this.state.workspace.requirements.join(', ')}
                               </div>
@@ -584,7 +585,6 @@ class WorkspaceView extends Component {
                             container={true}
                             direction="column"
                             alignItems="center"
-                            style={{ color: colors.quaternaryDark }}
                           >
                             <Typography
                               gutterBottom
