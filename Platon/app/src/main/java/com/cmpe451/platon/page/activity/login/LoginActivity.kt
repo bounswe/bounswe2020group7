@@ -71,12 +71,13 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
         }
 
         //make GONE the views
-        binding.layWorkspaceFilter.visibility = View.GONE
+        binding.layWsAndUeFilters.visibility = View.GONE
         binding.laySearchUser.visibility=View.GONE
         binding.toolbarRecyclerview.visibility = View.GONE
         binding.rgSearchAmong.visibility = View.GONE
 
         binding.rgSearchAmong.setOnCheckedChangeListener(null)
+
         binding.rgSearchAmong.clearCheck()
         // if adapter not null, clear it
         if (binding.toolbarRecyclerview.adapter != null){
@@ -128,7 +129,7 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
             when (t.javaClass) {
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java -> {
-                    searchHistory =  t.data!!.search_history
+                    searchHistory = t.data!!.search_history
                     val historyCursor = MatrixCursor(arrayOf("_id", "query"))
                     searchHistory.forEachIndexed { i, e ->
                         historyCursor.addRow(arrayOf(i, e.query))
@@ -141,7 +142,7 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                     Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
                     mActivityViewModel.getSearchHistoryResourceResponse.value = Resource.Done()
                 }
-                Resource.Done::class.java-> dialog.dismiss()
+                Resource.Done::class.java -> dialog.dismiss()
             }
         })
 
@@ -153,10 +154,16 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                     // set max number of pages for pagination
                     maxPageNumberToolbarElements = t.data!!.number_of_pages
                     // already exists, append on it, else create new
-                    if(binding.toolbarRecyclerview.adapter?.javaClass == SearchElementsAdapter::class.java){
-                        (binding.toolbarRecyclerview.adapter as SearchElementsAdapter).submitElements(t.data!!.result_list)
-                    }else{
-                        binding.toolbarRecyclerview.adapter = SearchElementsAdapter(t.data!!.result_list as ArrayList<SearchElement>, this, this)
+                    if (binding.toolbarRecyclerview.adapter?.javaClass == SearchElementsAdapter::class.java) {
+                        (binding.toolbarRecyclerview.adapter as SearchElementsAdapter).submitElements(
+                            t.data!!.result_list
+                        )
+                    } else {
+                        binding.toolbarRecyclerview.adapter = SearchElementsAdapter(
+                            t.data!!.result_list as java.util.ArrayList<SearchElement>,
+                            this,
+                            this
+                        )
                     }
                     mActivityViewModel.getSearchUserResourceResponse.value = Resource.Done()
                 }
@@ -164,7 +171,7 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                     Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
                     mActivityViewModel.getSearchUserResourceResponse.value = Resource.Done()
                 }
-                Resource.Done::class.java-> dialog.dismiss()
+                Resource.Done::class.java -> dialog.dismiss()
             }
         })
 
@@ -173,12 +180,18 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java -> {
                     // set max number of pages for pagination
-                    maxPageNumberToolbarElements = 0
+                    maxPageNumberToolbarElements = t.data!!.number_of_pages
                     // already exists, append on it, else create new
-                    if(binding.toolbarRecyclerview.adapter?.javaClass == SearchElementsAdapter::class.java){
-                        (binding.toolbarRecyclerview.adapter as SearchElementsAdapter).submitElements(t.data!!.result_list)
-                    }else{
-                        binding.toolbarRecyclerview.adapter = SearchElementsAdapter(t.data!!.result_list as ArrayList<SearchElement>, this, this)
+                    if (binding.toolbarRecyclerview.adapter?.javaClass == SearchElementsAdapter::class.java) {
+                        (binding.toolbarRecyclerview.adapter as SearchElementsAdapter).submitElements(
+                            t.data!!.result_list
+                        )
+                    } else {
+                        binding.toolbarRecyclerview.adapter = SearchElementsAdapter(
+                            t.data!!.result_list as java.util.ArrayList<SearchElement>,
+                            this,
+                            this
+                        )
                     }
                     mActivityViewModel.getSearchUserResourceResponse.value = Resource.Done()
                 }
@@ -186,14 +199,46 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                     Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
                     mActivityViewModel.getSearchUserResourceResponse.value = Resource.Done()
                 }
-                Resource.Done::class.java-> dialog.dismiss()
+                Resource.Done::class.java -> dialog.dismiss()
             }
         })
+
+
+
+        mActivityViewModel.getSearchUpcomingEventResourceResponse.observe(this, { t ->
+            when (t.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    // set max number of pages for pagination
+                    maxPageNumberToolbarElements = t.data!!.number_of_pages
+                    // already exists, append on it, else create new
+                    if (binding.toolbarRecyclerview.adapter?.javaClass == SearchElementsAdapter::class.java) {
+                        (binding.toolbarRecyclerview.adapter as SearchElementsAdapter).submitElements(
+                            t.data!!.result_list
+                        )
+                    } else {
+                        binding.toolbarRecyclerview.adapter = SearchElementsAdapter(
+                            t.data!!.result_list as java.util.ArrayList<SearchElement>,
+                            this,
+                            this
+                        )
+                    }
+                    mActivityViewModel.getSearchUpcomingEventResourceResponse.value =
+                        Resource.Done()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
+                    mActivityViewModel.getSearchUpcomingEventResourceResponse.value =
+                        Resource.Done()
+                }
+                Resource.Done::class.java -> dialog.dismiss()
+            }
+        })
+
 
         // listener for all job list
         mActivityViewModel.getJobListResourceResponse.observe(this, { t ->
             when (t.javaClass) {
-                Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java -> {
                     val aList = arrayListOf("Any")
                     t.data!!.forEach {
@@ -202,58 +247,81 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                         jobIdList.add(it.id)
                     }
                     binding.spJobQuery.adapter = ArrayAdapter(this, R.layout.spinner_item, aList)
-                    mActivityViewModel.getJobListResourceResponse.value = Resource.Done()
                 }
                 Resource.Error::class.java -> {
                     Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
                     mActivityViewModel.getJobListResourceResponse.value = Resource.Done()
                 }
-                Resource.Done::class.java-> dialog.dismiss()
             }
         })
-
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private fun initListeners() {
+
         // pagination listener define
         paginationListener = object: PaginationListener(toolbarLayoutManager, toolbarPageSize){
             override fun loadMoreItems() {
                 if(maxPageNumberToolbarElements-1 > currentPage){
                     currentPage++
-                    when(binding.rgSearchAmong.checkedRadioButtonId){
-                        R.id.rb_searchUser->{
+                    when (binding.rgSearchAmong.checkedRadioButtonId) {
+                        R.id.rb_searchUser -> {
                             val sortBy = binding.spSortByUser.selectedItemPosition
                             mActivityViewModel.searchUser(
                                 null,
                                 search.query.toString().trim(),
                                 if (jobIdList[binding.spJobQuery.selectedItemPosition] == -1) null else jobIdList[binding.spJobQuery.selectedItemPosition],
-                                if(sortBy!=0) sortBy-1 else null, currentPage,
-                                PAGE_SIZE)
+                                if (sortBy != 0) sortBy - 1 else null, currentPage,
+                                PAGE_SIZE
+                            )
                         }
-                        R.id.rb_searchUpcoming->{
+                        R.id.rb_searchUpcoming -> {
+                            val sortBy = binding.spSortByUe.selectedItemPosition
+                            val startDateE = binding.etStartDateE.text.toString().trim()
+                            val startDateS = binding.etDeadlineS.text.toString().trim()
+                            val deadlineS = binding.etStartDateS.text.toString().trim()
+                            val deadlineE = binding.etDeadlineE.text.toString().trim()
+
+                            mActivityViewModel.searchUpcomingEvent(
+                                null,
+                                search.query.toString().trim(),
+                                if (startDateS.isNotEmpty()) startDateS else null,
+                                if (startDateE.isNotEmpty()) startDateE else null,
+                                if (deadlineS.isNotEmpty()) deadlineS else null,
+                                if (deadlineE.isNotEmpty()) deadlineE else null,
+                                if (sortBy != 0) sortBy - 1 else null,
+                                0,
+                                toolbarPageSize
+                            )
+
                         }
-                        R.id.rb_searchWorkspace->{
-                            val sortBy = binding.spSortByWorkspace.selectedItemPosition
+                        R.id.rb_searchWorkspace -> {
+                            val sortBy = binding.spSortByWs.selectedItemPosition
                             val name = binding.etFilterName.text.toString().trim()
                             val surname = binding.etFilterSurname.text.toString().trim()
                             val startDateE = binding.etStartDateE.text.toString().trim()
-                            val startDateS=binding.etDeadlineS.text.toString().trim()
-                            val deadlineS=binding.etStartDateS.text.toString().trim()
+                            val startDateS = binding.etDeadlineS.text.toString().trim()
+                            val deadlineS = binding.etStartDateS.text.toString().trim()
                             val deadlineE = binding.etDeadlineE.text.toString().trim()
                             val event = binding.etFilterEvent.text.toString().trim()
 
                             mActivityViewModel.searchWorkspace(
                                 null,
-                                search.query.toString().trim(), binding.etFilterSkill.text.toString().trim(),
-                                if(name.isNotEmpty()) name else null, if(surname.isNotEmpty()) surname else null,
-                                if(startDateS.isNotEmpty()) startDateS else null,if(startDateE.isNotEmpty()) startDateE else null,
-                                if(deadlineS.isNotEmpty()) deadlineS else null,if(deadlineE.isNotEmpty()) deadlineE else null ,if(sortBy!=0) sortBy-1 else null,
-                                if(event.isNotEmpty()) event else null,
+                                search.query.toString().trim(),
+                                binding.etFilterSkill.text.toString().trim(),
+                                if (name.isNotEmpty()) name else null,
+                                if (surname.isNotEmpty()) surname else null,
+                                if (startDateS.isNotEmpty()) startDateS else null,
+                                if (startDateE.isNotEmpty()) startDateE else null,
+                                if (deadlineS.isNotEmpty()) deadlineS else null,
+                                if (deadlineE.isNotEmpty()) deadlineE else null,
+                                if (sortBy != 0) sortBy - 1 else null,
+                                if (event.isNotEmpty()) event else null,
                                 0,
-                                toolbarPageSize)
-                        }
-                    }
+                                toolbarPageSize
+                            )
+                                }
+                            }
                 }
             }
             override var isLastPage: Boolean = false
@@ -263,10 +331,31 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
 
         binding.toolbarRecyclerview.addOnScrollListener(paginationListener)
 
-        binding.spSortByUser.adapter = ArrayAdapter(this, R.layout.spinner_item, arrayOf("Semantic Rating", "Alphabetical Order(A=>Z)","Alphabetical Order (Z=>A)"))
-        binding.spSortByWorkspace.adapter = ArrayAdapter(this, R.layout.spinner_item,
-            arrayOf("Semantic Rating", "Ascending Date","Descending Date","Ascending Number of Collaborators Needed", "Descending Number of Collaborators Needed",
-                "Ascending Alphabetical Order","Descending Alphabetical Order"))
+
+        binding.spSortByUser.adapter = ArrayAdapter(
+            this, R.layout.spinner_item, arrayOf(
+                "Semantic Rating",
+                "Alphabetical Order(A=>Z)",
+                "Alphabetical Order (Z=>A)"
+            )
+        )
+        binding.spSortByWs.adapter = ArrayAdapter(
+            this, R.layout.spinner_item,
+            arrayOf(
+                "Semantic Rating",
+                "Ascending Date",
+                "Descending Date",
+                "Ascending Number of Collaborators Needed",
+                "Descending Number of Collaborators Needed",
+                "Ascending Alphabetical Order",
+                "Descending Alphabetical Order"
+            )
+        )
+        binding.spSortByUe.adapter = ArrayAdapter(
+            this, R.layout.spinner_item,
+            arrayOf("Semantic Rating", "Alphabetical Order(A=>Z)", "Date Order")
+        )
+
         binding.etStartDateS.setOnTouchListener { _, event ->
             if(event.action == MotionEvent.ACTION_DOWN){
                 val calendar = Calendar.getInstance()
@@ -276,7 +365,7 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                 val datePickerDialog = DatePickerDialog(
                     this,
                     { _, years, months, day ->
-                        val monthString = String.format("%02d", months+1)
+                        val monthString = String.format("%02d", months + 1)
                         val dayString = String.format("%02d", day)
                         binding.etStartDateS.setText("$years.$monthString.$dayString")
                     }, year, month, dayOfMonth
@@ -298,7 +387,7 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                 val datePickerDialog = DatePickerDialog(
                     this,
                     { _, years, months, day ->
-                        val monthString = String.format("%02d", months+1)
+                        val monthString = String.format("%02d", months + 1)
                         val dayString = String.format("%02d", day)
                         binding.etStartDateE.setText("$years.$monthString.$dayString")
                     }, year, month, dayOfMonth
@@ -320,7 +409,7 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                 val datePickerDialog = DatePickerDialog(
                     this,
                     { _, years, months, day ->
-                        val monthString = String.format("%02d", months+1)
+                        val monthString = String.format("%02d", months + 1)
                         val dayString = String.format("%02d", day)
                         binding.etDeadlineE.setText("$years.$monthString.$dayString")
                     }, year, month, dayOfMonth
@@ -342,7 +431,7 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                 val datePickerDialog = DatePickerDialog(
                     this,
                     { _, years, months, day ->
-                        val monthString = String.format("%02d", months+1)
+                        val monthString = String.format("%02d", months + 1)
                         val dayString = String.format("%02d", day)
                         binding.etDeadlineS.setText("$years.$monthString.$dayString")
                     }, year, month, dayOfMonth
@@ -354,6 +443,7 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
             }
             true
         }
+
 
         dialog = Definitions().createProgressBar(this as BaseActivity)
     }
@@ -426,7 +516,7 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                             toolbarPageSize)
                     }
                     R.id.rb_searchWorkspace -> {
-                        val sortBy = binding.spSortByWorkspace.selectedItemPosition
+                        val sortBy = binding.spSortByWs.selectedItemPosition
                         val name = binding.etFilterName.text.toString().trim()
                         val surname = binding.etFilterSurname.text.toString().trim()
                         val startDateE = binding.etStartDateE.text.toString().trim()

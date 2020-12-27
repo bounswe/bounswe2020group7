@@ -59,11 +59,16 @@ class SearchElementsAdapter(private val data: ArrayList<SearchElement>, private 
              holder.binding.tvDetail.text = "Privacy: " + if(data[position].is_private == 1) "True" else "False"
             holder.binding.tvSearchElement.text = data[position].name + " " + data[position].surname
         }
+
             (data[position].state != null) ->{
+                Glide.with(context).load(R.drawable.ic_o_logo)
+                    .circleCrop().diskCacheStrategy(DiskCacheStrategy.NONE).into(holder.binding.iwSearchImage)
             holder.binding.tvDetail.text = data[position].creation_time + " / " + data[position].deadline
             holder.binding.tvSearchElement.text = data[position].title
         }
         else ->{
+            Glide.with(context).load(R.drawable.ic_o_logo)
+                .circleCrop().diskCacheStrategy(DiskCacheStrategy.NONE).into(holder.binding.iwSearchImage)
             holder.binding.tvDetail.text  =data[position].date + " / " + data[position].deadline + " / " + data[position].location
             holder.binding.tvSearchElement.text = data[position].acronym
         }

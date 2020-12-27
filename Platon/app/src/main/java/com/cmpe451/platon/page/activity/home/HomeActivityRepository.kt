@@ -260,7 +260,7 @@ class HomeActivityRepository {
     }
 
 
-    fun searchUpcomingEvent(token: String, query: String, dateS: String?, dateE: String?, deadlineS: String?, deadlineE: String?, sortBy: Int?, page: Int?, perPage: Int?) {
+    fun searchUpcomingEvent(token: String?, query: String, dateS: String?, dateE: String?, deadlineS: String?, deadlineE: String?, sortBy: Int?, page: Int?, perPage: Int?) {
         val service = RetrofitClient.getService()
         val call = service.searchUpcomingEvent(token, query,dateS, dateE, deadlineS, deadlineE, sortBy, page, perPage)
 

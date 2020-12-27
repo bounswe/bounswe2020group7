@@ -88,7 +88,7 @@ class HomeActivityViewModel(application: Application):AndroidViewModel(applicati
         repository.getInvitationsFromWs(currUserToken, currentPage, pageSize)
     }
 
-    fun searchUpcomingEvent(currUserToken: String, query: String, dateS: String?, dateE: String?, deadlineS: String?, deadlineE: String?, sortBy:Int?,page:Int?, perPage:Int?) {
+    fun searchUpcomingEvent(currUserToken: String?, query: String, dateS: String?, dateE: String?, deadlineS: String?, deadlineE: String?, sortBy:Int?,page:Int?, perPage:Int?) {
         repository.searchUpcomingEvent(currUserToken, query, dateS, dateE, deadlineS, deadlineE, sortBy, page, perPage)
     }
 }
