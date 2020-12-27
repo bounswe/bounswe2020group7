@@ -16,6 +16,9 @@ class OtherProfileViewModel : ViewModel() {
     var isUserPrivate = MutableLiveData<Boolean>()
     var isFollowing = MutableLiveData<Definitions.USERSTATUS>()
 
+    var getUserComments = repository.userComments
+    var getAddDeleteCommentResourceResponse = repository.addDeleteCommentResourceResponse
+
     fun getUser(userId:Int, token:String) {
         repository.getUser(userId, token)
     }
@@ -46,5 +49,15 @@ class OtherProfileViewModel : ViewModel() {
         repository.getUserSkills(userId, token)
     }
 
+    fun getComments(id: Int, token: String, page: Int, pageSize: Int) {
+        repository.getComments(id, token, page, pageSize)
+    }
 
+    fun addComment(rating: Int, comment: String?, Id: Int, token: String) {
+        repository.addComment(rating, comment, Id, token)
+    }
+
+    fun deleteComment(commentId: Int, currUserToken: String) {
+        repository.deleteComment(commentId, currUserToken)
+    }
 }

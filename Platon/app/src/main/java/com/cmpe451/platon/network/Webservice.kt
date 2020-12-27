@@ -414,4 +414,25 @@ interface Webservice {
     fun answerWorkspaceApplication(@Field("application_id") application_id:Int,
                     @Field("is_accepted") is_accepted:Int,
                     @Header("auth_token") auth_token :String) : Call<JsonObject?>
+
+
+
+    @GET("api/follow/comment")
+    fun getComments(
+        @Query("commented_user_id") id:Int,
+        @Query("page") page:Int?,
+        @Query("per_page") perPage:Int?,
+        @Header("auth_token") auth_token :String):Call<AllComments?>
+
+    @HTTP(method = "DELETE" , path = "api/follow/comment", hasBody = true)
+    fun deleteComment(@Query("comment_id") id:Int,
+                                   @Header("auth_token") auth_token :String) : Call<JsonObject?>
+
+    @FormUrlEncoded
+    @POST("api/follow/comment")
+    fun addComment(@Field("commented_user_id") userId: Int,
+                 @Field("rate") rate: Int,
+                 @Field("text") text: String?,
+                 @Header("auth_token") authToken: String): Call<JsonObject?>
+
 }

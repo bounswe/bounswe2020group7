@@ -140,7 +140,7 @@ class IssueDetailFragment: Fragment() {
             when(binding.issueCommentsRecyclerView.visibility){
                 View.GONE->{
                     //getComments
-                    binding.issueCommentsRecyclerView.adapter = CommentsAdapter(arrayListOf(Comment(0,"hehe", "haha", "today", 2.5)), requireContext())
+                    //binding.issueCommentsRecyclerView.adapter = CommentsAdapter(arrayListOf(Comment(0,"hehe", "haha", "today", 2.5)), requireContext())
                     binding.issueCommentsRecyclerView.visibility = View.VISIBLE
                 }
                 View.VISIBLE->{

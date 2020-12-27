@@ -1,6 +1,8 @@
 package com.cmpe451.platon.page.activity.home.fragment.otherprofile
 
 import android.app.AlertDialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -25,6 +27,7 @@ import com.cmpe451.platon.adapter.OtherUserProjectsAdapter
 import com.cmpe451.platon.adapter.SkillsAdapter
 import com.cmpe451.platon.adapter.UserProjectsAdapter
 import com.cmpe451.platon.core.BaseActivity
+import com.cmpe451.platon.databinding.DialogAddCommentBinding
 import com.cmpe451.platon.databinding.FragmentProfilePageOthersBinding
 import com.cmpe451.platon.databinding.ResearchesCellBinding
 import com.cmpe451.platon.listener.PaginationListener
@@ -35,7 +38,7 @@ import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.util.Definitions
 import com.cmpe451.platon.util.Definitions.USERSTATUS
 
-class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjectButtonClickListener {
+class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjectButtonClickListener, CommentsAdapter.OnCommentClickedListener {
 
 
     private lateinit var binding: FragmentProfilePageOthersBinding
@@ -44,12 +47,17 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
     private val args: OtherProfileFragmentArgs by navArgs()
     private lateinit var dialog:AlertDialog
 
-    private val mOtherProfileViewModel: OtherProfileViewModel by viewModels()
+    private lateinit var paginationListenerResearches:PaginationListener
+    private lateinit var paginationListenerComments:PaginationListener
     private var maxPageNumberResearch:Int=0
+    private var maxPageNumberComment:Int=0
+    private val pageSize = 5
+
+    private val mOtherProfileViewModel: OtherProfileViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
         binding = FragmentProfilePageOthersBinding.inflate(inflater)
         details = ArrayList()
@@ -65,22 +73,8 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
     }
 
     private fun initializeAdapters() {
-        val height = resources.displayMetrics.heightPixels
-
-        val layoutManagerComments = LinearLayoutManager(this.activity, LinearLayoutManager.HORIZONTAL, false)
-        binding.rvProfilePageComments.layoutManager = layoutManagerComments
-
         val layoutManagerProjects = LinearLayoutManager(this.activity)
-
-        binding.rvProfilePageProjects.adapter = OtherUserProjectsAdapter(ArrayList(), requireContext(), this)
-        binding.rvProfilePageProjects.layoutManager = layoutManagerProjects
-
-        binding.rvProfilePageProjects.layoutParams =
-            LinearLayout.LayoutParams(binding.rvProfilePageProjects.layoutParams.width, height / 3)
-
-
-        binding.rvProfilePageProjects.addOnScrollListener(object :
-            PaginationListener(layoutManagerProjects) {
+        paginationListenerResearches = object:PaginationListener(layoutManagerProjects) {
             override fun loadMoreItems() {
                 if (maxPageNumberResearch - 1 > currentPage) {
                     currentPage++
@@ -91,13 +85,50 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                         5
                     )
                 }
+
             }
 
             override var isLastPage: Boolean = false
             override var isLoading: Boolean = false
             override var currentPage: Int = 0
-        })
+        }
 
+        val layoutManagerComments = LinearLayoutManager(this.activity)
+        paginationListenerComments = object:PaginationListener(layoutManagerComments, pageSize) {
+            override fun loadMoreItems() {
+                if (maxPageNumberComment - 1 > currentPage) {
+                    currentPage++
+                    mOtherProfileViewModel.getComments(
+                        userId!!,
+                        (activity as HomeActivity).currUserToken,
+                        currentPage,
+                        PAGE_SIZE
+                    )
+                }
+
+            }
+
+            override var isLastPage: Boolean = false
+            override var isLoading: Boolean = false
+            override var currentPage: Int = 0
+        }
+
+        val height = resources.displayMetrics.heightPixels
+
+        binding.rvProfilePageProjects.adapter = OtherUserProjectsAdapter(ArrayList(), requireContext(), this)
+        binding.rvProfilePageProjects.layoutManager = layoutManagerProjects
+        binding.rvProfilePageProjects.layoutParams =
+            LinearLayout.LayoutParams(binding.rvProfilePageProjects.layoutParams.width, height / 3)
+
+
+        binding.rvProfilePageComments.adapter = CommentsAdapter(ArrayList(), requireContext(), this, (activity as HomeActivity).currUserId)
+        binding.rvProfilePageComments.layoutManager = layoutManagerComments
+        binding.rvProfilePageComments.layoutParams =
+            LinearLayout.LayoutParams(binding.rvProfilePageProjects.layoutParams.width, height / 3)
+        binding.rvProfilePageComments.addOnScrollListener(paginationListenerComments)
+
+
+        binding.rvProfilePageProjects.addOnScrollListener(paginationListenerResearches)
         binding.rvProfilePageSkills.adapter = SkillsAdapter(ArrayList(), requireContext())
         binding.rvProfilePageSkills.layoutManager = GridLayoutManager(this.activity, 3)
 
@@ -105,6 +136,21 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
     }
 
     private fun setObservers() {
+        mOtherProfileViewModel.getUserComments.observe(viewLifecycleOwner, {t ->
+            when(t.javaClass){
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java ->{
+                    (binding.rvProfilePageComments.adapter as CommentsAdapter).submitElements(t.data!!.result)
+                    mOtherProfileViewModel.getUserComments.value = Resource.Done()
+                }
+                Resource.Error::class.java ->{
+                    Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+                    mOtherProfileViewModel.getUserComments.value = Resource.Done()
+                }
+                Resource.Done::class.java->dialog.dismiss()
+            }
+        })
+
         mOtherProfileViewModel.getUserResource.observe(viewLifecycleOwner,Observer{ i->
             when(i.javaClass){
                 Resource.Success::class.java -> {
@@ -187,14 +233,31 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                 }
             }
         })
-        mOtherProfileViewModel.userSkills.observe(viewLifecycleOwner, Observer{t->
+
+        mOtherProfileViewModel.getAddDeleteCommentResourceResponse.observe(viewLifecycleOwner, {t->
+            when(t.javaClass){
+                Resource.Success::class.java -> {
+                    dialog.dismiss()
+                    paginationListenerComments.currentPage = 0
+                    (binding.rvProfilePageComments.adapter as CommentsAdapter).clearElements()
+                    mOtherProfileViewModel.getComments(userId!!, (activity as HomeActivity).currUserToken, 0, pageSize)
+                }
+                Resource.Error::class.java -> {
+                    dialog.dismiss()
+                    Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+                }
+                Resource.Loading::class.java -> dialog.show()
+            }
+        })
+
+
+        mOtherProfileViewModel.userSkills.observe(viewLifecycleOwner, {t->
             when(t.javaClass){
                 Resource.Success::class.java -> {
                     dialog.dismiss()
                     if(t.data != null && t.data!!.skills != null){
                         (binding.rvProfilePageSkills.adapter as SkillsAdapter).submitElements(t.data!!.skills!!.map { it.name })
                     }
-
                 }
                 Resource.Error::class.java -> {
                     dialog.dismiss()
@@ -250,16 +313,45 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
     private fun setListeners(status:USERSTATUS, isUserPrivate:Boolean){
         val user = mOtherProfileViewModel.getUserResource.value!!.data
 
+
+        if(user!!.can_comment){
+            val tmpBinding = DialogAddCommentBinding.inflate(layoutInflater, binding.root, false)
+            val addCommentDialog  =
+                AlertDialog.Builder(requireContext())
+                .setView(tmpBinding.root).create()
+            addCommentDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            binding.ivAddComment.setOnClickListener{
+                addCommentDialog.show()
+            }
+
+            tmpBinding.btnAddComment.setOnClickListener{
+                var comment:String? = null
+                if(!tmpBinding.etRating.text.isNullOrEmpty()){
+                    val rating = tmpBinding.etRating.text.toString().toInt()
+                    if(!tmpBinding.etComment.text.isNullOrEmpty()){
+                        comment=tmpBinding.etComment.text.toString().trim()
+                    }
+                    mOtherProfileViewModel.addComment(rating, comment,  userId!!,(activity as HomeActivity).currUserToken)
+                    addCommentDialog.cancel()
+                }else{
+                    Toast.makeText(requireContext(), "Please rate the user!", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }else{
+            binding.ivAddComment.visibility = View.GONE
+        }
+
         if(status == USERSTATUS.FOLLOWING){
 
             binding.tvCommentsTitle.setOnClickListener{
                 when(binding.layComments.visibility){
                     View.GONE->{
                         //getComments
-                        binding.rvProfilePageComments.adapter = CommentsAdapter(arrayListOf(Comment(0,"hehe", "haha", "today", 2.5)), requireContext())
-                        binding.layComments.visibility = View.VISIBLE
+                        mOtherProfileViewModel.getComments(userId!!, (activity as HomeActivity).currUserToken, 0, pageSize)
+                           binding.layComments.visibility = View.VISIBLE
                     }
                     View.VISIBLE->{
+                        (binding.rvProfilePageComments.adapter as CommentsAdapter).clearElements()
                         binding.layComments.visibility = View.GONE
                     }
                 }
@@ -357,6 +449,10 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
 
         binding.descTrendProjectTv.refreshDrawableState()
         Definitions().vibrate(50, activity as BaseActivity)
+    }
+
+    override fun onDeleteCommentClicked(element: Comment, position: Int) {
+       mOtherProfileViewModel.deleteComment(element.comment_id, (activity as HomeActivity).currUserToken)
     }
 
 

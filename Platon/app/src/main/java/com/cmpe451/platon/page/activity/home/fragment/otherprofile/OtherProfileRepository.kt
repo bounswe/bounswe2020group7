@@ -5,6 +5,7 @@ import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.OtherUser
 import com.cmpe451.platon.network.models.Researches
 import com.cmpe451.platon.network.RetrofitClient
+import com.cmpe451.platon.network.models.AllComments
 import com.cmpe451.platon.network.models.Skills
 import com.google.gson.JsonObject
 import org.json.JSONObject
@@ -20,6 +21,32 @@ class OtherProfileRepository() {
     var followResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
     var unFollowResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
     val userSkills:MutableLiveData<Resource<Skills>> = MutableLiveData()
+    val userComments:MutableLiveData<Resource<AllComments>> = MutableLiveData()
+
+
+    val addDeleteCommentResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
+
+    fun getComments(id: Int, token: String, page: Int, pageSize: Int) {
+        val service = RetrofitClient.getService()
+        val call = service.getComments(id, page, pageSize, token)
+        userComments.value = Resource.Loading()
+        call.enqueue(object: Callback<AllComments?>{
+            override fun onResponse(call: Call<AllComments?>, response: Response<AllComments?>) {
+                when {
+                    response.isSuccessful && response.body() != null -> {
+                        userComments.value = Resource.Success(response.body()!!)
+                    }
+                    response.errorBody() != null -> userComments.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> userComments.value = Resource.Error("Unknown error!")
+                }
+            }
+
+            override fun onFailure(call: Call<AllComments?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
 
     fun getUser(userId:Int, token:String) {
         val service = RetrofitClient.getService()
@@ -118,6 +145,49 @@ class OtherProfileRepository() {
             }
 
             override fun onFailure(call: Call<Skills?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+
+    fun addComment(rating: Int, comment: String?, id: Int, token: String) {
+        val service = RetrofitClient.getService()
+        val call = service.addComment(id, rating, comment , token)
+        addDeleteCommentResourceResponse.value = Resource.Loading()
+        call.enqueue(object: Callback<JsonObject?>{
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when {
+                    response.isSuccessful && response.body() != null -> {
+                        addDeleteCommentResourceResponse.value = Resource.Success(response.body()!!)
+                    }
+                    response.errorBody() != null -> userSkills.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> addDeleteCommentResourceResponse.value = Resource.Error("Unknown error!")
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+
+    fun deleteComment(id: Int, token: String) {
+        val service = RetrofitClient.getService()
+        val call = service.deleteComment(id, token)
+        addDeleteCommentResourceResponse.value = Resource.Loading()
+        call.enqueue(object: Callback<JsonObject?>{
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when {
+                    response.isSuccessful && response.body() != null -> {
+                        addDeleteCommentResourceResponse.value = Resource.Success(response.body()!!)
+                    }
+                    response.errorBody() != null -> userSkills.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> addDeleteCommentResourceResponse.value = Resource.Error("Unknown error!")
+                }
+            }
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
                 call.clone().enqueue(this)
             }
 

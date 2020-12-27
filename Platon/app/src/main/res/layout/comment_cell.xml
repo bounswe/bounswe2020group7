@@ -28,6 +28,7 @@
             android:id="@+id/tv_description"
             android:layout_width="match_parent"
             android:textSize="@dimen/subtitle_text_size"
+            android:layout_toLeftOf="@+id/iv_deleteComment"
             android:layout_height="wrap_content"
             android:text="@string/loading_str"/>
 
@@ -41,13 +42,21 @@
 
         <TextView
             android:id="@+id/tv_dateTime"
-            android:layout_alignParentEnd="true"
             android:layout_width="wrap_content"
+            android:layout_alignParentEnd="true"
             android:textSize="@dimen/subtitle_text_size"
             android:layout_height="wrap_content"
             android:text="@string/loading_str"/>
 
 
-
+        <ImageView
+            android:id="@+id/iv_deleteComment"
+            android:visibility="gone"
+            android:layout_below="@id/rtb_rating"
+            android:layout_alignParentEnd="true"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_delete_24dp"
+            />
     </RelativeLayout>
 </androidx.cardview.widget.CardView>
