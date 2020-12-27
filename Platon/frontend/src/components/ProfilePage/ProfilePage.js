@@ -473,7 +473,7 @@ class ProfilePage extends React.Component {
                   </AppBar>
                   <TabPanel value={this.state.value} index={0}>
                     {!this.state.isMyProfile ? null : (
-                      <Row className="mb-3">
+                      <Row className="mb-3" style={{display:"flex", flexDirection: "column", alignItems: "center"}}>
                         <EditResearchDialog
                           type="NEW"
                           dialogTitle="Add New Research"
@@ -487,8 +487,8 @@ class ProfilePage extends React.Component {
                     {this.state.researchs.map((value, index) => {
                       return (
                         <Row className="mb-3">
-                          <Card className="ProfileProjectsCard">
-                            <Card.Body>
+                          <Card className="ProfileProjectsCard" style={{width: "100%"}}>
+                            <Card.Body style={{display:"flex", flexDirection: "column", alignItems: "center"}}>
                               <Card.Title style={{ color: colors.primaryDark }}>
                                 Title
                               </Card.Title>
@@ -511,7 +511,7 @@ class ProfilePage extends React.Component {
                               <Card.Text style={{ color: colors.primary }}>
                                 {value.year}
                               </Card.Text>
-                            </Card.Body>
+
                             {!this.state.isMyProfile ? null : (
                               <EditResearchDialog
                                 className="mb-3 allign-items-center"
@@ -529,11 +529,12 @@ class ProfilePage extends React.Component {
                                 onClick={() =>
                                   this.handleDeleteResearchInformation(value.id)
                                 }
-                                style={{ backgroundColor: colors.quinary }}
+                                style={{ backgroundColor: colors.quinary, width: "176px" }}
                               >
                                 Delete
                               </Button>
                             )}
+                            </Card.Body>
                           </Card>
                         </Row>
                       );

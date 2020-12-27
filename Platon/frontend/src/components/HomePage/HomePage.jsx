@@ -36,16 +36,13 @@ class HomePage extends React.Component {
         }}
       >            <NavBar />
 
-          <Box display="flex" p={1} justifyContent="space-evenly" style={{maxWidth:"1500px", marginTop: "20px"}}>
-              <div style={{width: "30%"}}>
-              <TrendingProjects marginLeft= "auto" marginRight= "auto"  itemsPerPage={3} width='400px' />
-              </div>
-              <div style={{width: "35%"}}><InfiniteScroller /></div>
-              <div style={{width: "30%"}}><UpcomingEvents marginLeft= "auto" marginRight= "auto" itemsPerPage={3} width='400px' /></div>
-              </Box>
-
-
-
+        <Box display="flex" p={1} justifyContent="space-evenly" style={{ maxWidth: "1500px", marginTop: "20px" }}>
+          <div style={{ width: "30%" }}>
+            <TrendingProjects marginLeft="auto" marginRight="auto" itemsPerPage={3} width='400px' />
+          </div>
+          <div style={{ width: "35%" }}><InfiniteScroller /></div>
+          <div style={{ width: "30%" }}><UpcomingEvents marginLeft="auto" marginRight="auto" itemsPerPage={3} width='400px' /></div>
+        </Box>
       </Layout>
 
 

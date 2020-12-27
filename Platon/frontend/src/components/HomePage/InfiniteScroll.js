@@ -4,6 +4,8 @@ import qwest from 'qwest';
 import Commentt from './Comment'
 import config from '../../utils/config';
 import requestService from "../../services/requestService";
+import colors from "../../utils/colors";
+import Typography from '@material-ui/core/Typography'
 
 class InfiniteScroller extends Component {
     constructor(props) {
@@ -42,16 +44,28 @@ class InfiniteScroller extends Component {
         var items = [];
         this.state.tracks.map((track, i) => {
             items.push(
+                <div>
                 <Commentt
                     title={track.message}
                     actions={this.actions}
                     author={<a>{track.message}</a>}
                     avatar={track.artwork_url}
                 />
+                <hr style={{backgroundColor: colors.primaryLight}} />
+                </div>
             );
         });
 
         return (
+            <div>
+            <Typography
+            style={{ color: colors.quinary, textAlign: 'center' }}
+            variant="h5"
+            gutterBottom
+          >
+            What's Happening?
+          </Typography>
+          <div  style={{backgroundColor: colors.primaryLight, padding:"16px", borderRadius: "0.5em"}} >
             <InfiniteScroll
                 pageStart={0}
                 loadMore={this.loadItems.bind(this)}
@@ -62,6 +76,8 @@ class InfiniteScroller extends Component {
                     {items}
                 </div>
             </InfiniteScroll>
+            </div>
+            </div>
         );
     }
 };
