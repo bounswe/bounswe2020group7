@@ -140,14 +140,4 @@ class FollowFragment:Fragment() {
 
         rvFollowers.addOnScrollListener(paginationListener)
     }
-
-    override fun onPause() {
-        adapter.clearElements()
-        super.onPause()
-    }
-
-    override fun onResume() {
-        adapter.clearElements()
-        super.onResume()
-    }
 }
