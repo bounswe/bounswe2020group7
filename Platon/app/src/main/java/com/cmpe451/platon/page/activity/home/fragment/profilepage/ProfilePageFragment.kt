@@ -256,6 +256,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
             when(t.javaClass){
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java ->{
+                    paginationListenerResearches.currentPage =0
                     mActivityViewModel.fetchUser((activity as HomeActivity).currUserToken)
                     mProfilePageViewModel.getEditProfileResourceResponse.value = Resource.Done()
                 }
