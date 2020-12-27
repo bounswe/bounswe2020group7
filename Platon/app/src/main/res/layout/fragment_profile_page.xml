@@ -6,218 +6,88 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
+        android:animateLayoutChanges="true"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/profile_page_margin"
         android:orientation="vertical">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/name_block"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_weight="1">
+            android:layout_height="wrap_content">
 
             <ImageView
+                android:background="@drawable/view_back_darker"
                 android:id="@+id/profile_photo"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_margin="@dimen/profile_page_margin"
+                android:layout_width="@dimen/large_photo"
+                android:layout_height="@dimen/large_photo"
                 android:src="@drawable/ic_o_logo_100"
                 app:layout_constraintStart_toStartOf="@id/name_block"
-                app:layout_constraintTop_toTopOf="@id/name_block" />
+                app:layout_constraintTop_toTopOf="@id/name_block"
+                android:contentDescription="TODO" />
 
             <TextView
                 android:id="@+id/text_name_surname"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/profile_page_margin"
-                android:text="Suzan Uskudarli"
+                android:text="@string/loading_str"
                 android:textColor="@color/primary_light"
-                android:textSize="20sp"
-                app:layout_constraintBottom_toTopOf="@id/ll_stars"
+                android:textSize="@dimen/title_text_size"
+                android:gravity="center"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/profile_photo"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <Button
                 android:id="@+id/button_following"
                 android:layout_width="0dp"
+                android:textColor="@color/primary_light"
                 android:layout_height="wrap_content"
-                android:background="@drawable/item_background_border"
+                android:background="@drawable/view_back_darker"
                 android:text="@string/text_following"
                 app:layout_constraintEnd_toStartOf="@+id/button_followers"
                 android:layout_margin="@dimen/profile_page_margin"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/profile_photo"
-                tools:layout_editor_absoluteY="100dp" />
+                app:layout_constraintTop_toBottomOf="@id/profile_photo" />
 
             <Button
                 android:id="@+id/button_followers"
                 android:layout_width="0dp"
+                android:textColor="@color/primary_light"
                 android:layout_height="wrap_content"
-                android:background="@drawable/item_background_border"
+                android:background="@drawable/view_back_darker"
                 android:text="@string/text_follower"
                 android:layout_margin="@dimen/profile_page_margin"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/button_following"
-                app:layout_constraintTop_toBottomOf="@id/profile_photo"
-                tools:layout_editor_absoluteY="100dp" />
-            <LinearLayout
-                android:id="@+id/ll_stars"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/text_name_surname"
-                app:layout_constraintStart_toEndOf="@id/profile_photo"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/button_following"
-                android:layout_margin="@dimen/profile_margin_half"
-                android:orientation="horizontal"
-                android:layout_weight="1"
+                app:layout_constraintTop_toBottomOf="@id/profile_photo" />
 
-                >
-
-                <TextView
-                    android:id="@+id/text_rate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:text="No ratings yet"
-                    android:textColor="@color/primary_dark" />
-
-                <ImageView
-                    android:id="@+id/firstStarYellow"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:visibility="gone"
-                    app:srcCompat="@android:drawable/btn_star_big_on" />
-
-                <ImageView
-                    android:id="@+id/secondStarYellow"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:visibility="gone"
-                    app:srcCompat="@android:drawable/btn_star_big_on" />
-
-                <ImageView
-                    android:id="@+id/thirdStarYellow"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:visibility="gone"
-                    app:srcCompat="@android:drawable/btn_star_big_on" />
-
-                <ImageView
-                    android:id="@+id/forthStarYellow"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:visibility="gone"
-                    app:srcCompat="@android:drawable/btn_star_big_on" />
-
-                <ImageView
-                    android:id="@+id/fifthStarYellow"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:visibility="gone"
-                    app:srcCompat="@android:drawable/btn_star_big_on" />
-
-                <ImageView
-                    android:id="@+id/firstGrayStar"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:visibility="gone"
-                    app:srcCompat="@android:drawable/btn_star_big_off" />
-
-                <ImageView
-                    android:id="@+id/secondGrayStar"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:visibility="gone"
-                    app:srcCompat="@android:drawable/btn_star_big_off" />
-
-                <ImageView
-                    android:id="@+id/thirdGrayStar"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:visibility="gone"
-                    app:srcCompat="@android:drawable/btn_star_big_off" />
-
-                <ImageView
-                    android:id="@+id/forthGrayStar"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:visibility="gone"
-                    app:srcCompat="@android:drawable/btn_star_big_off" />
-
-                <ImageView
-                    android:id="@+id/fifthGrayStar"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:visibility="gone"
-                    app:srcCompat="@android:drawable/btn_star_big_off" />
-            </LinearLayout>
-            <Button
-                android:id="@+id/button_edit_profile"
-                android:layout_width="match_parent"
+            <RatingBar
+                android:id="@+id/ratingBar"
+                android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:background="@color/secondary_purple"
-                android:text="@string/text_edit_profile"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/button_following"
-                android:layout_marginStart="@dimen/profile_page_margin"
-                android:layout_marginEnd="@dimen/profile_page_margin"
-                android:layout_marginTop="@dimen/profile_margin_half"
-                android:layout_marginBottom="@dimen/profile_margin_half"
-                />
+                app:layout_constraintBottom_toTopOf="@+id/button_following"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_margin="@dimen/xx_small"
+                android:isIndicator="true"
+                android:stepSize="0.1"
+                app:layout_constraintStart_toEndOf="@id/profile_photo"
+                android:scaleX="0.4"
+                android:scaleY="0.4"
+                android:numStars="5"
+                app:layout_constraintTop_toBottomOf="@+id/text_name_surname"
+                android:visibility="visible"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        <TextView
-            android:id="@+id/projects_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginTop="@dimen/medium"
-            android:fontFamily="@font/dm_sans_bold"
-            android:gravity="center_horizontal"
-            android:padding="@dimen/x_small"
-            android:shadowColor="@color/primary_dark"
-            android:shadowDx="1"
-            android:shadowDy="1"
-            android:shadowRadius="2"
-            android:text="@string/projects"
-            android:textAllCaps="false"
-            android:textColor="@color/secondary_purple"
-            android:textSize="@dimen/project_title_text_size" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_profile_page_info"
+    <TextView
+            android:id="@+id/info_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/profile_page_margin"
-            app:layout_constraintBottom_toTopOf="@id/projects_title"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/info_title"
-            app:layout_constraintVertical_bias="0.6" />
-        <TextView
-            android:id="@+id/info_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginTop="@dimen/medium"
             android:fontFamily="@font/dm_sans_bold"
             android:padding="@dimen/x_small"
             android:paddingHorizontal="@dimen/title_logo_padding"
@@ -228,17 +98,120 @@
             android:text="@string/your_info"
             android:textColor="@color/secondary_green"
             android:textSize="@dimen/project_title_text_size"
- />
+            android:drawablePadding="@dimen/x_small"
+            app:drawableRightCompat="@drawable/ic_editprofile_24px" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/xx_small"
+            android:background="@drawable/view_back_darker"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_email"
+                android:layout_margin="@dimen/xx_small"
+                android:gravity="start"
+                android:textColor="@color/primary_light"
+                android:textSize="@dimen/title_text_size_smaller"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/prompt_email"
+                />
+            <TextView
+                android:id="@+id/tv_job"
+                android:layout_margin="@dimen/xx_small"
+                android:gravity="start"
+                android:textColor="@color/primary_light"
+                android:textSize="@dimen/title_text_size_smaller"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/job_str"
+                />
+
+            <TextView
+                android:id="@+id/tv_institution"
+                android:layout_margin="@dimen/xx_small"
+                android:gravity="start"
+                android:textColor="@color/primary_light"
+                android:textSize="@dimen/title_text_size_smaller"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/institution_str"
+                />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_comments_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/comments_str"
+            android:gravity="start"
+            android:fontFamily="@font/dm_sans_bold"
+            android:padding="@dimen/x_small"
+            android:shadowColor="@color/primary_dark"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"
+            android:textColor="@color/secondary_orange_transparent"
+            android:textSize="@dimen/project_title_text_size"
+            android:drawablePadding="@dimen/x_small"
+            app:drawableRightCompat="@drawable/ic_comment_24dp"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_profile_page_comments"
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/skills_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/dm_sans_bold"
+            android:gravity="start"
+            android:padding="@dimen/x_small"
+            android:shadowColor="@color/primary_dark"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"
+            android:text="@string/skills"
+            android:textColor="@color/secondary_blue"
+            android:textSize="@dimen/project_title_text_size"
+            android:drawablePadding="@dimen/x_small"
+            app:drawableRightCompat="@drawable/ic_add_24dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_profile_page_skills"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/projects_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/dm_sans_bold"
+            android:gravity="start"
+            android:padding="@dimen/x_small"
+            android:shadowColor="@color/primary_dark"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"
+            android:text="@string/researches_STR"
+            android:textAllCaps="false"
+            android:textColor="@color/secondary_purple"
+            android:textSize="@dimen/project_title_text_size"
+            android:drawablePadding="@dimen/x_small"
+            app:drawableRightCompat="@drawable/ic_add_24dp" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_profile_page_projects"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/profile_page_margin"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/projects_title"
-            app:layout_constraintVertical_bias="0.6" />
-    </LinearLayout>
+            android:layout_height="wrap_content" />
 
+
+
+    </LinearLayout>
 </ScrollView>

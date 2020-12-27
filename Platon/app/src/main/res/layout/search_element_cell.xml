@@ -1,27 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.cardview.widget.CardView xmlns:android = "http://schemas.android.com/apk/res/android"
+xmlns:card_view = "http://schemas.android.com/apk/res-auto"
+card_view:cardCornerRadius = "@dimen/medium"
+card_view:cardElevation="@dimen/xxx_small"
+android:layout_marginBottom="@dimen/xx_small"
+android:layout_width = "match_parent"
+card_view:contentPadding="@dimen/medium"
+    android:layout_margin="@dimen/xx_small"
+card_view:cardBackgroundColor="@color/primary_dark_lighter"
+android:layout_height = "wrap_content">
 
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="@dimen/inner_frame_layout_padding"
-    android:background="@drawable/search_element_cell_back">
-
-    <TextView
-        android:id="@+id/title_trend_project_tv"
+    <RelativeLayout
+        android:id="@+id/rl_searchElement"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerInParent="true"
-        android:gravity="center_vertical|center_horizontal"
-        android:padding="@dimen/inner_frame_layout_padding_2"
-        android:text="@string/hello_world"
-        android:textColor="@color/primary_dark"
-        android:textSize="@dimen/title_text_size"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_marginStart="@dimen/medium"
+            android:id="@+id/iw_searchImage"
+            android:src="@drawable/ic_o_logo"
+            android:layout_width="@dimen/medium_photo"
+            android:layout_height="@dimen/medium_photo"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_toEndOf="@id/iw_searchImage"
+            android:id="@+id/tv_searchElement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/xx_small"
+            android:text="@string/loading_str"
+            android:textColor="@color/primary_light"
+            android:textSize="@dimen/title_text_size_smaller" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:layout_marginTop="@dimen/xxx_small"
+            android:layout_below="@+id/iw_searchImage"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/tv_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/primary_light"
+            android:textSize="@dimen/subtitle_text_size"
+            android:text="@string/loading_str" />
+
+
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

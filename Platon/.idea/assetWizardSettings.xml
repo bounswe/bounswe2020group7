@@ -14,8 +14,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_notifications_24px" />
-                            <entry key="sourceFile" value="E:\Masaüstü\notifications-24px.svg" />
+                            <entry key="outputName" value="ic_group_add_24px" />
+                            <entry key="sourceFile" value="$USER_HOME$/Downloads/group_add-24px.svg" />
                           </map>
                         </option>
                       </PersistentState>

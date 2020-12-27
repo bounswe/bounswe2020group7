@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/logout_menu_btn"
+        android:title="@string/logout_str"
+        android:icon="@drawable/ic_logout_24px"
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/search_btn"
+        android:icon="@drawable/ic_search_24dp"
+        android:title="@string/search_str"
+        android:visible="true"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/notification_btn"
+        android:icon="@drawable/ic_notifications_24px"
+        android:title="@string/notification_str"
+        android:visible="true"
+        app:showAsAction="ifRoom"
+        />
+
+    <item
+        android:id="@+id/add_workspace_btn"
+        android:title="@string/add_sorkspace_str"
+        android:icon="@drawable/ic_add_24dp"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+</menu>

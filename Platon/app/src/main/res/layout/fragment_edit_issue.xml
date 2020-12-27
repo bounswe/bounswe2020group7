@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@drawable/view_back_darker"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="@dimen/inner_frame_layout_padding_2"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+
+
+    <EditText
+        android:id="@+id/issue_title_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:autofillHints=""
+        android:backgroundTint="@color/very_light_brown"
+        android:hint="@string/workspace_title_str"
+        android:inputType="textPersonName|textAutoComplete"
+        android:textColor="@color/primary_light"
+        android:textColorHighlight="@color/very_light_brown"
+        android:textColorHint="@color/very_light_brown"
+        android:textColorLink="@color/very_light_brown" />
+
+    <EditText
+        android:id="@+id/issue_description_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:autofillHints=""
+        android:backgroundTint="@color/very_light_brown"
+        android:hint="@string/desc_str"
+        android:inputType="textMultiLine"
+        android:lines="5"
+        android:textColor="@color/primary_light"
+        android:textColorHighlight="@color/very_light_brown"
+        android:textColorHint="@color/very_light_brown"
+        android:textColorLink="@color/very_light_brown" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:id="@+id/issue_deadline"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autofillHints=""
+            android:ems="15"
+            android:backgroundTint="@color/very_light_brown"
+            android:hint="@string/date_str"
+            android:inputType="date"
+            android:textColor="@color/primary_light"
+            android:textColorHighlight="@color/very_light_brown"
+            android:textColorHint="@color/very_light_brown"
+            android:textColorLink="@color/very_light_brown" />
+        <EditText
+            android:id="@+id/issue_time_et"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autofillHints=""
+            android:ems="15"
+            android:backgroundTint="@color/very_light_brown"
+            android:hint="@string/time_str"
+            android:inputType="date"
+            android:textColor="@color/primary_light"
+            android:textColorHighlight="@color/very_light_brown"
+            android:textColorHint="@color/very_light_brown"
+            android:textColorLink="@color/very_light_brown" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/delete_issue_btn"
+            android:background="@color/very_light_brown"
+            android:text="@string/delete_issue_str"
+            android:textColor="@color/primary_dark"
+            android:layout_margin="@dimen/x_small"
+            android:padding="@dimen/xx_small"/>
+
+        <Button
+            android:id="@+id/update_issue_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/x_small"
+            android:textColor="@color/primary_dark"
+            android:background="@color/very_light_brown"
+            android:padding="@dimen/xx_small"
+            android:text="@string/issue_edit" />
+
+    </LinearLayout>
+
+
+
+
+
+
+</LinearLayout>
+

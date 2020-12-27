@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primary_dark"
     android:fillViewport="true"
-    tools:context=".page.activity.HomeActivity">
+    tools:context=".page.activity.home.HomeActivity">
 
 
     <LinearLayout
@@ -45,35 +45,6 @@
             android:layout_marginTop="@dimen/medium"
             android:shadowColor="@color/primary_dark"
             android:shadowRadius="2"
-            android:shadowDx="1"
-            android:padding="@dimen/x_small"
-            android:shadowDy="1"
-            android:layout_marginHorizontal="10dp"
-            android:id="@+id/textView"
-            android:fontFamily="@font/dm_sans_bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-
-            android:text="@string/trending_projects_str"
-            android:textAllCaps="false"
-            android:textColor="@color/secondary_purple"
-            android:textSize="@dimen/project_title_text_size" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:paddingHorizontal="@dimen/medium"
-            android:fontFamily="@font/dm_sans_bold"
-            android:id="@+id/pre_login_trending_projects_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/xx_small">
-
-        </androidx.recyclerview.widget.RecyclerView>
-
-        <TextView
-            android:layout_marginTop="@dimen/medium"
-            android:shadowColor="@color/primary_dark"
-            android:shadowRadius="2"
             android:fontFamily="@font/dm_sans_bold"
             android:shadowDx="1"
             android:shadowDy="1"
@@ -89,12 +60,69 @@
 
 
         <androidx.recyclerview.widget.RecyclerView
-            android:paddingHorizontal="@dimen/medium"
-            android:id="@+id/pre_login_upcoming_events_recycler_view"
+            android:id="@+id/home_upcoming_events_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/xx_small" />
+            android:layout_marginTop="@dimen/xx_small"
+            android:paddingHorizontal="@dimen/medium" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="@dimen/medium"
+            android:fontFamily="@font/dm_sans_bold"
+            android:padding="@dimen/x_small"
+            android:shadowColor="@color/primary_dark"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"
+
+
+            android:text="@string/activity_stream_str"
+            android:textAllCaps="false"
+            android:textColor="@color/secondary_orange"
+            android:textSize="@dimen/project_title_text_size" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/home_activity_stream_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/xx_small"
+            android:fontFamily="@font/dm_sans_bold"
+            android:paddingHorizontal="@dimen/medium">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <TextView
+            android:layout_marginTop="@dimen/medium"
+            android:shadowColor="@color/primary_dark"
+            android:shadowRadius="2"
+            android:shadowDx="1"
+            android:padding="@dimen/x_small"
+            android:shadowDy="1"
+            android:layout_marginHorizontal="10dp"
+            android:id="@+id/textView"
+            android:fontFamily="@font/dm_sans_bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/trending_projects_str"
+            android:textAllCaps="false"
+            android:textColor="@color/secondary_purple"
+            android:textSize="@dimen/project_title_text_size" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/home_trending_projects_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/xx_small"
+            android:fontFamily="@font/dm_sans_bold"
+            android:paddingHorizontal="@dimen/medium">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
 
     </LinearLayout>
 
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

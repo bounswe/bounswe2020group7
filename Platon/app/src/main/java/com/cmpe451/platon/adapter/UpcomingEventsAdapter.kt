@@ -8,13 +8,9 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.cmpe451.platon.R
-import com.cmpe451.platon.databinding.TrendProjectCellBinding
 import com.cmpe451.platon.databinding.UpcomingEventCellBinding
-import com.cmpe451.platon.util.Definitions.TrendingProject
-import com.cmpe451.platon.util.Definitions.UpcomingEvent
+import com.cmpe451.platon.network.models.UpcomingEvent
 
 class UpcomingEventsAdapter(private val data: ArrayList<UpcomingEvent>, private val context: Context, private val upcomingEventsButtonClickListener: UpcomingButtonClickListener) :
 
@@ -38,6 +34,7 @@ class UpcomingEventsAdapter(private val data: ArrayList<UpcomingEvent>, private 
         fun onUpcomingButtonClicked(binding: UpcomingEventCellBinding, position:Int)
     }
 
+
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(parent: ViewGroup,
                                     viewType: Int): UpcomingEventsAdapter.UpcomingEventViewHolder {
@@ -58,13 +55,12 @@ class UpcomingEventsAdapter(private val data: ArrayList<UpcomingEvent>, private 
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
-        holder.binding.upcomingEventTitle.text = data[position].title
-        val drawable = data[position].img
-        drawable?.setBounds(0,0,drawable.intrinsicWidth,drawable.intrinsicHeight)
-        holder.binding.upcomingEventTitle.setCompoundDrawables(drawable, null, null, null)
+        holder.binding.upcomingEventTitle.text = data[position].acronym
         holder.binding.upcomingEventDate.text = data[position].date
-        holder.binding.upcomingEventDesc.text = data[position].desc
-        holder.binding.upcomingEventType.text = data[position].type.toString()
+        holder.binding.upcomingEventDesc.text = data[position].title
+        holder.binding.upcomingEventDeadline.text = "Deadline: " + data[position].deadline
+        holder.binding.upcomingEventLink.text = data[position].link
+        holder.binding.upcomingEventLocation.text = "Location: " + data[position].location
 
         holder.bindData(position, upcomingEventsButtonClickListener)
     }
@@ -98,5 +94,14 @@ class UpcomingEventsAdapter(private val data: ArrayList<UpcomingEvent>, private 
         data.clear()
         this.notifyDataSetChanged()
     }
-
+    fun submitList(list:ArrayList<UpcomingEvent>){
+//        data.clear()
+        data.addAll(list)
+        this.notifyDataSetChanged()
+    }
+    fun replaceList(list:ArrayList<UpcomingEvent>){
+        data.clear()
+        data.addAll(list)
+        this.notifyDataSetChanged()
+    }
 }

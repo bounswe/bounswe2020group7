@@ -18,6 +18,8 @@
     <color name="secondary_green_transparent">#AAb0db06</color>
     <color name="secondary_orange_transparent">#AAff8b33</color>
     <color name="secondary_purple_transparent">#AA8f9dd3</color>
+    <color name="secondary_blue_transparent">#AAb5d8cc</color>
+    <color name="secondary_blue">#b5d8cc</color>
 
     <color name="primary_light">#e0dfd5</color>
     <color name="secondary_purple">#8f9dd3</color>
@@ -27,4 +29,6 @@
     <color name="primary_dark_lighter">#5D6160</color>
     <color name="primary_dark_lighter_transparent">#885D6160</color>
     <color name="secondary_purple2">#B8BED4</color>
+    <color name="very_light_brown">#F8EBD1</color>
+    <color name="secondary_yellow">#D2C687</color>
 </resources>
