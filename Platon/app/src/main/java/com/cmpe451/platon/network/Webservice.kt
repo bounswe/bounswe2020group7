@@ -396,4 +396,10 @@ interface Webservice {
                          @Query("page") page: Int?,
                          @Query("per_page") perPage: Int?,
                          @Header("auth_token") authToken: String ): Call<IssueAssignee?>
+
+    @FormUrlEncoded
+    @HTTP(method = "DELETE" , path = "api/workspaces/applications", hasBody = true)
+    fun answerWorkspaceApplication(@Field("application_id") application_id:Int,
+                    @Field("is_accepted") is_accepted:Int,
+                    @Header("auth_token") auth_token :String) : Call<JsonObject?>
 }

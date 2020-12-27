@@ -41,6 +41,8 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
     private var skillsArray:ArrayList<String> = ArrayList()
     private var requirementsArray:ArrayList<String> = ArrayList()
     private var upcomingArray:ArrayList<Int> = ArrayList()
+    private var handledRequestPosition:Int =-1
+    private lateinit var wsAppBinding:DialogWsApplicationsBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         binding = FragmentPersonalWorkspaceBinding.inflate(inflater)
@@ -59,15 +61,25 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
     }
 
     private fun onSeeWorkspaceApplicationsClicked() {
-        val tmpBinding = DialogWsApplicationsBinding.inflate(layoutInflater, requireView().parent as ViewGroup, false)
+
 
         mWorkspaceViewModel.getWorkspaceApplicationsResourceResponse.observe(viewLifecycleOwner, {
             when(it.javaClass){
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java -> {
-                    tmpBinding.rvWsApplication.layoutManager =LinearLayoutManager(requireContext())
-                    tmpBinding.rvWsApplication.adapter =
-                        WorkspaceApplicationsAdapter(it.data!! as ArrayList<WorkspaceApplication>, requireContext(), this)
+                    if(it.data!!.isEmpty()){
+                        Toast.makeText(requireContext(), "You do not have any pending requests", Toast.LENGTH_LONG).show()
+                    }
+                    else {
+                        wsAppBinding.rvWsApplication.layoutManager =LinearLayoutManager(requireContext())
+                        wsAppBinding.rvWsApplication.adapter =
+                            WorkspaceApplicationsAdapter(it.data!! as ArrayList<WorkspaceApplication>, requireContext(), this)
+
+                        AlertDialog.Builder(requireContext())
+                            .setView(wsAppBinding.root)
+                            .setCancelable(true)
+                            .show()
+                    }
                     mWorkspaceViewModel.getWorkspaceApplicationsResourceResponse.value = Resource.Done()
                 }
                 Resource.Error::class.java -> {
@@ -84,10 +96,7 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
 
         mWorkspaceViewModel.getWorkspaceApplications((activity as WorkspaceActivity).token!!, (activity as WorkspaceActivity).workspace_id!!, 0, 10)
 
-        AlertDialog.Builder(requireContext())
-            .setView(tmpBinding.root)
-            .setCancelable(true)
-            .show()
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -104,6 +113,7 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun initViews() {
+        wsAppBinding = DialogWsApplicationsBinding.inflate(layoutInflater, requireView().parent as ViewGroup, false)
         if(!(activity as WorkspaceActivity).isOwner!!){
             binding.addRequirementIv.visibility = View.GONE
             binding.addSkillIv.visibility = View.GONE
@@ -389,6 +399,25 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java -> {
                     activity?.finish()
+                    mWorkspaceViewModel.getMilestoneResponse.value = Resource.Done()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    mWorkspaceViewModel.getMilestoneResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java ->{
+                    dialog.dismiss()
+
+                }
+            }
+        })
+        mWorkspaceViewModel.getAnswerWorkspaceApplicationResourceResponse.observe(viewLifecycleOwner,{
+            when (it.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    mWorkspaceViewModel.fetchWorkspace((activity as WorkspaceActivity).workspace_id!!, (activity as WorkspaceActivity).token!!)
+                    (wsAppBinding.rvWsApplication.adapter as WorkspaceApplicationsAdapter).removeElement(this.handledRequestPosition)
+                    this.handledRequestPosition = -1
                     mWorkspaceViewModel.getMilestoneResponse.value = Resource.Done()
                 }
                 Resource.Error::class.java -> {
@@ -870,16 +899,21 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
 
 
     override fun onApplicationAcceptClicked(request: WorkspaceApplication, position: Int) {
-        //TODO("Not yet implemented")
+        mWorkspaceViewModel.answerWorkspaceApplication(request.application_id, 1, (activity as WorkspaceActivity).token!!)
+        this.handledRequestPosition = position
     }
 
     override fun onApplicationRejectClicked(request: WorkspaceApplication, position: Int) {
-        //TODO("Not yet implemented")
+        mWorkspaceViewModel.answerWorkspaceApplication(request.application_id, 0, (activity as WorkspaceActivity).token!!)
+        this.handledRequestPosition = position
     }
 
   
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.add_issue_btn)?.isVisible = false
+        if(!(activity as WorkspaceActivity).isOwner!!){
+            menu.findItem(R.id.btn_WorkspaceApplications).isVisible = false
+        }
         super.onPrepareOptionsMenu(menu)
     }
 

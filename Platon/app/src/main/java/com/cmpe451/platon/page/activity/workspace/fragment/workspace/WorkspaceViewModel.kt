@@ -18,6 +18,7 @@ class WorkspaceViewModel : ViewModel() {
     var getAddDeleteUpdateMilestoneResponse=repository.addDeleteUpdateMilestoneResponse
     var getApplyWorksppaceResourceResponse = repository.applyWorksppaceResourceResponse
     var getQuitWorkspaceResponse = repository.quitWorkspaceResponse
+    var getAnswerWorkspaceApplicationResourceResponse = repository.answerWorkspaceApplicationResourceResponse
 
     var getWorkspaceApplicationsResourceResponse = repository.workspaceApplicationsResourceResponse
 
@@ -55,6 +56,9 @@ class WorkspaceViewModel : ViewModel() {
 
     fun getWorkspaceApplications(token: String, workspaceId: Int, i: Int, i1: Int) {
         repository.getWorkspaceApplications(token, workspaceId)
+    }
+    fun answerWorkspaceApplication(application_id:Int, is_accepted:Int, token:String){
+        repository.answerWorkspaceApplication(application_id, is_accepted, token)
     }
 
 }
