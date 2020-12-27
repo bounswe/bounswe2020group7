@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_restplus import Api
@@ -19,12 +19,14 @@ def create_app(config_class='config'):
     app = Flask(__name__)
     app.config.from_object(config_class)
     api = Api(app,
-              version="0.1",
+              version="0.5",
               title = "Platon RESTful API",
               description = "An Academic Collaboration Platform Backend",
               default="Platon API Endpoints",
               doc = "/documentation",
-              prefix = '/api')
+              prefix = '/api',
+              contact='Platon',
+              contact_url="http://ec2-3-120-98-39.eu-central-1.compute.amazonaws.com")
     db.init_app(app)
     migrate.init_app(app,db)
     mail.init_app(app)
@@ -35,7 +37,12 @@ def create_app(config_class='config'):
     @app.errorhandler(404)
     def not_found(error):
         return "404 Error", 404
-    
+
+    # REdirect index to Documentation
+    @app.route("/")
+    def index():
+        return redirect(url_for("doc"))
+
     # Import a module / component using its blueprint handler variable (mod_auth)
     from app.auth_system.views import register_resources as auth_module
     from app.follow_system.views import register_resources as follow_module
