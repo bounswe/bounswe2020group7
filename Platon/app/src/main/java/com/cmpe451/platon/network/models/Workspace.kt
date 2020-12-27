@@ -4,8 +4,11 @@ package com.cmpe451.platon.network.models
 data class WorkspaceInvitation(
         val invitation_id: Int,
         val workspace_id : Int,
-        val inviter_id : Int,
-        val inviter_fullname:String
+        val invitor_id : Int,
+        val invitor_fullname:String,
+        val invitee_id:Int,
+        val workspace_description:String,
+        val workspace_title: String
 )
 
 data class WorkspaceApplication(
