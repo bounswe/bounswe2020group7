@@ -165,7 +165,7 @@ class IssueDetailFragment: Fragment() {
                     Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
                 }
                 Resource.Loading::class.java -> {
-                    //Toast.makeText(requireContext(), "Loading", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Loading", Toast.LENGTH_SHORT).show()
 
                 }
             }
@@ -333,17 +333,25 @@ class IssueDetailFragment: Fragment() {
                 } else {
                     val title: String = tmpBinding.issueTitleEt.text.toString().trim()
                     val description: String = tmpBinding.issueDescriptionEt.text.toString().trim()
-                    val deadline =
-                        if (tmpBinding.issueDeadline.text.isNullOrEmpty()) null else tmpBinding.issueDeadline.text.toString() + " " + tmpBinding.issueTimeEt.text.toString()
-                    mIssueDetailViewModel.editIssue((activity as WorkspaceActivity).workspace_id!!, issue_id.toInt(), title, description, deadline, (activity as WorkspaceActivity).token!!)
-                    editDialog.dismiss()
-                    binding.issueDescriptionTextView.text = description
-                    if(deadline != null) {
-                        binding.issueDeadline.text = deadline
+                    if(tmpBinding.issueDeadline.text.isNullOrEmpty() && !tmpBinding.issueTimeEt.text.isNullOrEmpty()) {
+                        Toast.makeText(requireContext(), "Deadline cannot be empty.", Toast.LENGTH_SHORT).show()
+
+                    } else if(!tmpBinding.issueDeadline.text.isNullOrEmpty() && tmpBinding.issueTimeEt.text.isNullOrEmpty()) {
+                        Toast.makeText(requireContext(), "Time cannot be empty.", Toast.LENGTH_SHORT).show()
+
+                    } else {
+                        val deadline =
+                            if (tmpBinding.issueDeadline.text.isNullOrEmpty() || tmpBinding.issueTitleEt.text.isNullOrEmpty()) null else tmpBinding.issueDeadline.text.toString() + " " + tmpBinding.issueTimeEt.text.toString()
+                        mIssueDetailViewModel.editIssue((activity as WorkspaceActivity).workspace_id!!, issue_id.toInt(), title, description, deadline, (activity as WorkspaceActivity).token!!)
+                        editDialog.dismiss()
+                        binding.issueDescriptionTextView.text = description
+                        if(deadline != null) {
+                            binding.issueDeadline.text = deadline
+                        }
+                        binding.issueTitle.text = title
+                        tmpBinding.issueDescriptionEt.setText(description)
+                        tmpBinding.issueTitleEt.setText(title)
                     }
-                    binding.issueTitle.text = title
-                    tmpBinding.issueDescriptionEt.setText(description)
-                    tmpBinding.issueTitleEt.setText(title)
 
                 }
             }
