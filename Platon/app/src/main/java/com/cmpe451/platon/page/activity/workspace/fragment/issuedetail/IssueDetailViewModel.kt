@@ -13,7 +13,8 @@ class IssueDetailViewModel: ViewModel() {
     val repository = IssueDetailRepository()
 
     var assigneeResponse: MutableLiveData<Resource<IssueAssignee>>
-    //var addIssuesResourceResponse = repository.addIssuesResourceResponse
+    var addIssueAssigneeResponse = repository.addIssueAssigneeResponse
+    var deleteIssueAssigneeResponse = repository.addIssueAssigneeResponse
     var deleteIssueResponse = repository.deleteIssueResponse
     var getWorkspaceResponse = repository.getWorkspaceResponse
     var editIssueResponse = repository.editIssueResponse
@@ -23,8 +24,8 @@ class IssueDetailViewModel: ViewModel() {
         assigneeResponse = repository.getIssueAssignee
         deleteIssueResponse = repository.deleteIssueResponse
         editIssueResponse = repository.editIssueResponse
-
-        //addIssuesResourceResponse = repository.addIssuesResourceResponse
+        addIssueAssigneeResponse = repository.addIssueAssigneeResponse
+        deleteIssueAssigneeResponse = repository.deleteIssueAssigneeResponse
 
     }
 
@@ -47,6 +48,18 @@ class IssueDetailViewModel: ViewModel() {
     fun editIssue(workspaceId:Int, issueId:Int, title:String?, description:String?, deadline:String?, authToken:String?) {
         if(authToken != null){
             repository.editIssue(workspaceId, issueId, title, description, deadline, authToken)
+        }
+    }
+
+    fun addIssueAssignee(workspaceId:Int, issueId:Int, assigneeId: Int, authToken:String?) {
+        if(authToken != null){
+            repository.addIssueAssignee(workspaceId, issueId, assigneeId, authToken)
+        }
+    }
+
+    fun deleteIssueAssignee(workspaceId:Int, issueId:Int, assigneeId: Int, authToken:String?) {
+        if(authToken != null){
+            repository.deleteIssueAssignee(workspaceId, issueId, assigneeId, authToken)
         }
     }
 

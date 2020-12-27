@@ -395,4 +395,18 @@ interface Webservice {
                          @Query("page") page: Int?,
                          @Query("per_page") perPage: Int?,
                          @Header("auth_token") authToken: String ): Call<IssueAssignee?>
+
+    @FormUrlEncoded
+    @POST("api/workspaces/issue/assignee")
+    fun addIssueAssignee(@Field("workspace_id") workspaceId:Int,
+                         @Field("issue_id") issueId:Int,
+                         @Field("assignee_id") assigneeId:Int,
+                         @Header("auth_token") authToken:String?): Call<JsonObject?>
+
+    @FormUrlEncoded
+    @HTTP(method = "DELETE" , path = "api/workspaces/issue/assignee", hasBody = true)
+    fun deleteIssueAssignee(@Field("workspace_id") workspaceId:Int,
+                         @Field("issue_id") issueId:Int,
+                         @Field("assignee_id") assigneeId:Int,
+                         @Header("auth_token") authToken:String?): Call<JsonObject?>
 }

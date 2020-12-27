@@ -95,7 +95,6 @@ class IssueDetailRepository {
         //nullable check
         call.enqueue(object : Callback<IssueAssignee?> {
             override fun onResponse(call: Call<IssueAssignee?>, response: Response<IssueAssignee?>) {
-                print("ert")
                 when {
                     response.isSuccessful -> getIssueAssignee.value = Resource.Success(response.body()!!)
                     response.errorBody() != null -> getIssueAssignee.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
@@ -104,6 +103,50 @@ class IssueDetailRepository {
             }
 
             override fun onFailure(call: Call<IssueAssignee?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+
+    fun addIssueAssignee(workSpaceId: Int, issueId: Int, assigneeId: Int, authToken: String) {
+        val service = RetrofitClient.getService()
+        val call = service.addIssueAssignee(workSpaceId, issueId , assigneeId, authToken)
+
+        addIssueAssigneeResponse.value = Resource.Loading()
+        //nullable check
+        call.enqueue(object : Callback<JsonObject?> {
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when {
+                    response.isSuccessful -> addIssueAssigneeResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> addIssueAssigneeResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else ->addIssueAssigneeResponse.value =  Resource.Error("Unknown error")
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+
+    fun deleteIssueAssignee(workSpaceId: Int, issueId: Int, assigneeId: Int, authToken: String) {
+        val service = RetrofitClient.getService()
+        val call = service.deleteIssueAssignee(workSpaceId, issueId , assigneeId, authToken)
+
+        deleteIssueAssigneeResponse.value = Resource.Loading()
+        //nullable check
+        call.enqueue(object : Callback<JsonObject?> {
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when {
+                    response.isSuccessful -> deleteIssueAssigneeResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> deleteIssueAssigneeResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else ->deleteIssueAssigneeResponse.value =  Resource.Error("Unknown error")
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
                 call.clone().enqueue(this)
             }
 

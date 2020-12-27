@@ -5,32 +5,25 @@ import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.SharedPreferences
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
-import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.AssigneeAdapter
-import com.cmpe451.platon.adapter.CollaboratorAdapter
 import com.cmpe451.platon.adapter.CommentsAdapter
-import com.cmpe451.platon.adapter.IssuesAdapter
 import com.cmpe451.platon.databinding.*
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.Assignee
 import com.cmpe451.platon.network.models.Comment
-import com.cmpe451.platon.network.models.Issue
+import com.cmpe451.platon.network.models.Contributor
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.util.Definitions
-import com.google.android.play.core.assetpacks.t
 import java.util.*
+import kotlin.collections.ArrayList
 
 class IssueDetailFragment: Fragment() {
     private lateinit var dialog: AlertDialog
@@ -41,6 +34,9 @@ class IssueDetailFragment: Fragment() {
     lateinit var issue_description: String
     lateinit var issue_creator_name: String
     lateinit var issue_deadline: String
+    lateinit var contributors:List<Contributor>
+    lateinit var assignees:List<Assignee>
+
 
 
     lateinit var binding: FragmentIssueDetailBinding
@@ -61,6 +57,7 @@ class IssueDetailFragment: Fragment() {
         setObservers()
         mIssueDetailViewModel.getIssueAssignee((activity as WorkspaceActivity).workspace_id!!,issue_id.toInt(), null, null, (activity as WorkspaceActivity).token!!)
         mIssueDetailViewModel.fetchWorkspace((activity as WorkspaceActivity).workspace_id!!, (activity as WorkspaceActivity).token!!)
+
     }
 
     private fun updateIssueInformations() {
@@ -78,7 +75,7 @@ class IssueDetailFragment: Fragment() {
         mIssueDetailViewModel.assigneeResponse.observe(viewLifecycleOwner, { t->
             when(t.javaClass){
                 Resource.Success::class.java ->{
-
+                    assignees = t.data!!.result
                     (binding.issueAssignee.adapter as AssigneeAdapter).submitElements(t.data!!.result)
 
                 }
@@ -86,7 +83,7 @@ class IssueDetailFragment: Fragment() {
                     Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
                 }
                 Resource.Loading::class.java -> {
-                    Toast.makeText(requireContext(), "Loading", Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(requireContext(), "Loading", Toast.LENGTH_SHORT).show()
 
                 }
             }
@@ -102,7 +99,7 @@ class IssueDetailFragment: Fragment() {
                     Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
                 }
                 Resource.Loading::class.java -> {
-                    Toast.makeText(requireContext(), "Loading", Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(requireContext(), "Loading", Toast.LENGTH_SHORT).show()
 
                 }
             }
@@ -111,15 +108,64 @@ class IssueDetailFragment: Fragment() {
         mIssueDetailViewModel.editIssueResponse.observe(viewLifecycleOwner, { t->
             when(t.javaClass){
                 Resource.Success::class.java ->{
+
                     Toast.makeText(requireContext(), "Succesfully updated.", Toast.LENGTH_SHORT).show()
 
+                }
+                Resource.Error::class.java ->{
+                    Toast.makeText(requireContext(), "hatalı request", Toast.LENGTH_SHORT).show()
+                    activity?.supportFragmentManager?.popBackStack()
+                }
+                Resource.Loading::class.java -> {
+                    //Toast.makeText(requireContext(), "Loading", Toast.LENGTH_SHORT).show()
+
+                }
+            }
+        })
+
+        mIssueDetailViewModel.getWorkspaceResponse.observe(viewLifecycleOwner, { t->
+            when(t.javaClass){
+                Resource.Success::class.java ->{
+                    contributors = t.data!!.active_contributors
                 }
                 Resource.Error::class.java ->{
                     Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
                     activity?.supportFragmentManager?.popBackStack()
                 }
                 Resource.Loading::class.java -> {
-                    Toast.makeText(requireContext(), "Loading", Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(requireContext(), "Loading", Toast.LENGTH_SHORT).show()
+
+                }
+            }
+        })
+
+        mIssueDetailViewModel.addIssueAssigneeResponse.observe(viewLifecycleOwner, { t->
+            when(t.javaClass){
+                Resource.Success::class.java ->{
+                    mIssueDetailViewModel.getIssueAssignee((activity as WorkspaceActivity).workspace_id!!,issue_id.toInt(), null, null, (activity as WorkspaceActivity).token!!)
+                }
+                Resource.Error::class.java ->{
+                    Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                }
+                Resource.Loading::class.java -> {
+                    //Toast.makeText(requireContext(), "Loading", Toast.LENGTH_SHORT).show()
+
+                }
+            }
+        })
+
+        mIssueDetailViewModel.deleteIssueAssigneeResponse.observe(viewLifecycleOwner, { t->
+            when(t.javaClass){
+                Resource.Success::class.java ->{
+                    val ert = t
+                    mIssueDetailViewModel.getIssueAssignee((activity as WorkspaceActivity).workspace_id!!,issue_id.toInt(), null, null, (activity as WorkspaceActivity).token!!)
+
+                }
+                Resource.Error::class.java ->{
+                    Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                }
+                Resource.Loading::class.java -> {
+                    //Toast.makeText(requireContext(), "Loading", Toast.LENGTH_SHORT).show()
 
                 }
             }
@@ -179,6 +225,10 @@ class IssueDetailFragment: Fragment() {
             }
 
         }
+
+        binding.issueAssigneeTextView.setOnClickListener{
+            onAddAssigneeClicked()
+        }
     }
 
 
@@ -186,6 +236,7 @@ class IssueDetailFragment: Fragment() {
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.issue_btn)?.isVisible = false
         menu.findItem(R.id.button_issue_add)?.isVisible = false
+        menu.findItem(R.id.btn_WorkspaceApplications)?.isVisible = false
         super.onPrepareOptionsMenu(menu)
     }
 
@@ -199,8 +250,8 @@ class IssueDetailFragment: Fragment() {
             false
         )
 
-        tmpBinding.issueDescriptionEt.setText(issue_description)
-        tmpBinding.issueTitleEt.setText(issue_title)
+        tmpBinding.issueDescriptionEt.setText(binding.issueDescriptionTextView.text)
+        tmpBinding.issueTitleEt.setText(binding.issueTitle.text)
 
         tmpBinding.issueDeadline.setOnTouchListener { _, event ->
 
@@ -258,7 +309,6 @@ class IssueDetailFragment: Fragment() {
                 .setPositiveButton(
                     "Delete"
                 ) { _, _ ->
-                    //TODO: Dismiss dialog
                     mIssueDetailViewModel.deleteIssue((activity as WorkspaceActivity).workspace_id!!, issue_id.toInt(), (activity as WorkspaceActivity).token!!)
                     editDialog.dismiss()
                 }
@@ -284,13 +334,17 @@ class IssueDetailFragment: Fragment() {
                     val title: String = tmpBinding.issueTitleEt.text.toString().trim()
                     val description: String = tmpBinding.issueDescriptionEt.text.toString().trim()
                     val deadline =
-                        if (tmpBinding.issueDeadline.text.isNullOrEmpty()) null else tmpBinding.issueDeadline.text.toString() + " " + tmpBinding.issueTimeEt.toString()
-                    //TODO: update workspace
+                        if (tmpBinding.issueDeadline.text.isNullOrEmpty()) null else tmpBinding.issueDeadline.text.toString() + " " + tmpBinding.issueTimeEt.text.toString()
                     mIssueDetailViewModel.editIssue((activity as WorkspaceActivity).workspace_id!!, issue_id.toInt(), title, description, deadline, (activity as WorkspaceActivity).token!!)
-                    //mWorkspaceViewModel.updateWorkspace((activity as WorkspaceActivity).workspace_id!!)
+                    editDialog.dismiss()
                     binding.issueDescriptionTextView.text = description
-                    binding.issueDeadline.text = deadline
+                    if(deadline != null) {
+                        binding.issueDeadline.text = deadline
+                    }
                     binding.issueTitle.text = title
+                    tmpBinding.issueDescriptionEt.setText(description)
+                    tmpBinding.issueTitleEt.setText(title)
+
                 }
             }
 
@@ -299,6 +353,54 @@ class IssueDetailFragment: Fragment() {
 
     fun onAddAssigneeClicked() {
 
+        var contributorNames = ArrayList<String>()
+        var contributorIds = ArrayList<Int>()
+        var selectedId = ArrayList<Int>()
+
+
+        for(item in contributors) {
+            var temp = item.name + " " + item.surname
+            contributorNames.add(temp)
+            contributorIds.add(item.id)
+        }
+
+        var assigneeNames = ArrayList<String>()
+        var assigneeIds = ArrayList<Int>()
+        for(item in assignees) {
+            assigneeNames.add(item.assignee_name + " " + item.assignee_surname)
+            assigneeIds.add(item.assignee_id)
+        }
+
+        val bArray = contributors.map { assignees.contains(it) }.toBooleanArray()
+        AlertDialog.Builder(context)
+            .setNegativeButton("Completed") { _, _ -> print("ert")
+                for (item in selectedId) {
+                    if(!assigneeIds.contains(item)){
+                        mIssueDetailViewModel.addIssueAssignee((activity as WorkspaceActivity).workspace_id!!, issue_id.toInt(), item, (activity as WorkspaceActivity).token!!)
+                    }
+                }
+
+                for(item in assigneeIds) {
+                    if(!selectedId.contains(item)) {
+                        mIssueDetailViewModel.deleteIssueAssignee((activity as WorkspaceActivity).workspace_id!!, issue_id.toInt(), item, (activity as WorkspaceActivity).token!!)
+                    }
+                }
+
+            }
+            .setMultiChoiceItems(
+                contributorNames.toTypedArray(),
+                bArray
+            ) { _, which, isChecked ->
+
+                if (isChecked) {
+                    selectedId.add(contributorIds[which])
+                } else {
+                    selectedId.remove(contributorIds[which])
+                }
+
+            }
+            .create().show()
+        dialog.dismiss()
 
     }
 
