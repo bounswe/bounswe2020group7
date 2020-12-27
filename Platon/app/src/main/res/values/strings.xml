@@ -151,4 +151,5 @@
     <string name="applications_str">Applications</string>
     <string name="add_comment_str">Add Comment</string>
     <string name="set_rating_str">Set rating [0–5]</string>
+    <string name="directory_Str">Directory</string>
 </resources>

@@ -25,23 +25,11 @@
         android:id="@+id/profilePageFragment"
         android:name="com.cmpe451.platon.page.activity.home.fragment.profilepage.ProfilePageFragment"
         android:label="Your Profile" >
-        <action
-            android:id="@+id/action_profilePageFragment_to_editProfileFragment"
-            app:destination="@id/editProfileFragment" />
+
         <action
             android:id="@+id/action_profilePageFragment_to_followFragment"
             app:destination="@id/followFragment" />
-        <action
-            android:id="@+id/action_profilePageFragment_to_addResearchInfoFragment"
-            app:destination="@id/addResearchInfoFragment" />
-        <action
-            android:id="@+id/action_profilePageFragment_to_editResearchInfoFragment"
-            app:destination="@id/editResearchInfoFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/editProfileFragment"
-        android:name="com.cmpe451.platon.page.activity.home.fragment.editprofile.EditProfileFragment"
-        android:label="Update" />
     <fragment
         android:id="@+id/followFragment"
         android:name="com.cmpe451.platon.page.activity.home.fragment.follow.FollowFragment"
@@ -71,14 +59,6 @@
             android:name="userId"
             app:argType="integer" />
     </fragment>
-    <fragment
-        android:id="@+id/addResearchInfoFragment"
-        android:name="com.cmpe451.platon.page.activity.home.fragment.researchInfo.AddResearchInfoFragment"
-        android:label="Add" />
-    <fragment
-        android:id="@+id/editResearchInfoFragment"
-        android:name="com.cmpe451.platon.page.activity.home.fragment.researchInfo.EditResearchInfoFragment"
-        android:label="Update" />
     <fragment
         android:id="@+id/workspaceListFragment"
         android:name="com.cmpe451.platon.page.activity.home.fragment.workspace.WorkspaceListFragment"

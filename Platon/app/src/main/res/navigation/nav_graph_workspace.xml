@@ -11,9 +11,6 @@
             android:id="@+id/action_workspaceFragment_to_addWorkspaceFragment"
             app:destination="@id/addWorkspaceFragment" />
         <action
-            android:id="@+id/action_workspaceFragment_to_editWorkspaceFragment"
-            app:destination="@id/editWorkspaceFragment" />
-        <action
             android:id="@+id/action_workspaceFragment_to_issuesFragment"
             app:destination="@id/issuesFragment" />
         <action
@@ -24,10 +21,6 @@
         android:id="@+id/addWorkspaceFragment"
         android:name="com.cmpe451.platon.page.activity.workspace.fragment.addworkspace.AddWorkspaceFragment"
         android:label="Add Workspace" />
-    <fragment
-        android:id="@+id/editWorkspaceFragment"
-        android:name="com.cmpe451.platon.page.activity.workspace.fragment.editworkspace.EditWorkspaceFragment"
-        android:label="Edit Workspace" />
     <fragment
         android:id="@+id/issuesFragment"
         android:name="com.cmpe451.platon.page.activity.workspace.fragment.issues.IssuesFragment"
@@ -43,7 +36,7 @@
     <fragment
         android:id="@+id/workspaceFolderFragment"
         android:name="com.cmpe451.platon.page.activity.workspace.fragment.filesystem.WorkspaceFolderFragment"
-        android:label="WorkspaceFolderFragment" >
+        android:label="Directory" >
         <action
             android:id="@+id/action_workspaceFolderFragment_to_workspaceEditorFragment"
             app:destination="@id/workspaceEditorFragment" />
