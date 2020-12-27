@@ -382,12 +382,12 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
             when (it.javaClass) {
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Success::class.java -> {
-                    Toast.makeText(requireContext(), it.data.toString(), Toast.LENGTH_LONG)
-                    mWorkspaceViewModel.getMilestoneResponse.value = Resource.Done()
+                    Toast.makeText(requireContext(), "Application is successfully sent", Toast.LENGTH_LONG).show()
+                    mWorkspaceViewModel.getApplyWorksppaceResourceResponse.value = Resource.Done()
                 }
                 Resource.Error::class.java -> {
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
-                    mWorkspaceViewModel.getMilestoneResponse.value = Resource.Done()
+                    mWorkspaceViewModel.getApplyWorksppaceResourceResponse.value = Resource.Done()
                 }
                 Resource.Done::class.java ->{
                     dialog.dismiss()

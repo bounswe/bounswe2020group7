@@ -295,9 +295,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
             binding.buttonFollowing.setOnClickListener {
                 Toast.makeText(activity, "To see the following, please wait for the user to accept your request", Toast.LENGTH_LONG).show()
             }
-            binding.buttonFollow.setOnClickListener {
-                mOtherProfileViewModel.setIsFollowing(USERSTATUS.NOT_FOLLOWING)
-            }
+
         }
         if(status == USERSTATUS.NOT_FOLLOWING){
             binding.buttonFollow.setOnClickListener {
