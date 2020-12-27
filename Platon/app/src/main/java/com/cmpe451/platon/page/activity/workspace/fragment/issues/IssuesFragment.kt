@@ -9,6 +9,7 @@ package com.cmpe451.platon.page.activity.workspace.fragment.issues
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Color
@@ -156,6 +157,7 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
         addDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         addBinding.issueDeadline.setOnTouchListener { _, event ->
+
             if (event.action == MotionEvent.ACTION_DOWN) {
                 val calendar = Calendar.getInstance()
                 val year = calendar.get(Calendar.YEAR)
@@ -166,7 +168,7 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
                     { _, years, months, day ->
                         val monthString = String.format("%02d", months+1)
                         val dayString = String.format("%02d", day)
-                        addBinding.issueDeadline.setText("$years.$monthString.$dayString")
+                        addBinding.issueDeadline.setText("$years-$monthString-$dayString")
                     }, year, month, dayOfMonth
 
                 )
@@ -174,6 +176,29 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
                 datePickerDialog.show()
             }
             true
+
+
+        }
+
+        addBinding.issueTimeEt.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                val calendar = Calendar.getInstance()
+                val hour = calendar.get(Calendar.HOUR_OF_DAY)
+                val minute = calendar.get(Calendar.MINUTE)
+                val datePickerDialog = TimePickerDialog(
+                    requireContext(),
+                    { _, hours, minutes ->
+                        val h = String.format("%02d", hours)
+                        val m = String.format("%02d", minutes)
+                        addBinding.issueTimeEt.setText("$h:$m:00")
+                    }, hour, minute, true
+
+                )
+
+                datePickerDialog.show()
+            }
+            true
+
         }
 
         addBinding.buttonIssueAdd.setOnClickListener {
@@ -191,7 +216,11 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
                     }
                     else -> {
 
-                        mIssuesViewModel.addIssues((activity as WorkspaceActivity).workspace_id!!, addBinding.issueTitle.text.toString(),addBinding.issueDescription.text.toString(),addBinding.issueDeadline.text.toString(), (activity as WorkspaceActivity).token!!)
+                        mIssuesViewModel.addIssues((activity as WorkspaceActivity).workspace_id!!,
+                            addBinding.issueTitle.text.toString(),
+                            addBinding.issueDescription.text.toString(),
+                            addBinding.issueDeadline.text.toString() + " " + addBinding.issueTimeEt.text.toString(),
+                            (activity as WorkspaceActivity).token!!)
                         addDialog.dismiss()
                     }
                 }

@@ -47,21 +47,41 @@
         android:textColorHint="@color/secondary_purple"
         android:textColorLink="@color/secondary_purple" />
 
-
-    <EditText
-        android:id="@+id/issue_deadline"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:backgroundTint="@color/secondary_purple"
-        android:ems="10"
-        android:hint="@string/deadline_str"
-        android:inputType="number"
-        android:maxLength="4"
-        android:textColor="@color/primary_light"
-        android:textColorHighlight="@color/primary_light"
-        android:textColorHint="@color/secondary_purple"
-        android:textColorLink="@color/secondary_purple" />
+        android:orientation="horizontal">
+        <EditText
+            android:id="@+id/issue_deadline"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autofillHints=""
+            android:ems="15"
+            android:backgroundTint="@color/secondary_purple"
+            android:hint="@string/date_str"
+            android:inputType="date"
+            android:textColor="@color/primary_light"
+            android:textColorHighlight="@color/secondary_purple"
+            android:textColorHint="@color/secondary_purple"
+            android:textColorLink="@color/secondary_purple" />
+        <EditText
+            android:id="@+id/issue_time_et"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autofillHints=""
+            android:ems="15"
+            android:backgroundTint="@color/secondary_purple"
+            android:hint="@string/time_str"
+            android:inputType="date"
+            android:textColor="@color/primary_light"
+            android:textColorHighlight="@color/secondary_purple"
+            android:textColorHint="@color/secondary_purple"
+            android:textColorLink="@color/secondary_purple" />
+    </LinearLayout>
+
+
 
     <Button
         android:id="@+id/button_issue_add"

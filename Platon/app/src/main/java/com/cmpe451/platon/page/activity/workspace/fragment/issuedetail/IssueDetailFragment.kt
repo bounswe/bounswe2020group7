@@ -3,6 +3,7 @@ package com.cmpe451.platon.page.activity.workspace.fragment.issuedetail
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.SharedPreferences
@@ -14,6 +15,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.AssigneeAdapter
@@ -195,7 +197,7 @@ class IssueDetailFragment: Fragment() {
 
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun onUpdateButtonClicked(){
+    private fun onUpdateButtonClicked() {
         val tmpBinding = FragmentEditIssueBinding.inflate(
             layoutInflater,
             requireView().parent as ViewGroup,
@@ -205,7 +207,6 @@ class IssueDetailFragment: Fragment() {
         tmpBinding.issueDeadlineEt.setText(issue_deadline)
         tmpBinding.issueDescriptionEt.setText(issue_description)
         tmpBinding.issueTitleEt.setText(issue_title)
-
 
         tmpBinding.issueDeadlineEt.setOnTouchListener { _, event ->
 
@@ -219,7 +220,7 @@ class IssueDetailFragment: Fragment() {
                     { _, years, months, day ->
                         val monthString = String.format("%02d", months+1)
                         val dayString = String.format("%02d", day)
-                        tmpBinding.issueDeadlineEt.setText("$years.$monthString.$dayString")
+                        tmpBinding.issueDeadlineEt.setText("$years-$monthString-$dayString")
                     }, year, month, dayOfMonth
 
                 )
@@ -231,68 +232,56 @@ class IssueDetailFragment: Fragment() {
 
         }
 
+
         AlertDialog.Builder(context).setView(tmpBinding.root)
             .setCancelable(true)
-            .setNeutralButton("Delete Issue") { _: DialogInterface, _: Int ->
-                AlertDialog.Builder(context)
-                    .setMessage("Are you sure you want to delete ?")
-                    .setPositiveButton("Delete"
-                    ) { _, _ ->
-                        /*
-                        mWorkspaceViewModel.deleteWorkspace(
-                            (activity as WorkspaceActivity).workspace_id!!,
-                            (activity as WorkspaceActivity).token!!
-                        )
-
-                         */
-                    }
-                    .setNegativeButton("Cancel"
-                    ) { dialog, _ ->
-                        dialog.dismiss()
-                    }
-                    .create().show()
-            }
-            .setNegativeButton("Update", DialogInterface.OnClickListener { dialog, _ ->
-                if (tmpBinding.issueTitleEt.text.isNullOrEmpty()) {
-                    Toast.makeText(requireContext(), "Title cannot be left empty", Toast.LENGTH_LONG)
-                        .show()
-                } else {
-                    if (tmpBinding.issueDescriptionEt.text.isNullOrEmpty()) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Description cannot be left empty",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    } else {
-                        val title: String = tmpBinding.issueTitleEt.text.toString().trim()
-                        val description: String = tmpBinding.issueDescriptionEt.text.toString().trim()
-                        val deadline =
-                            if (tmpBinding.issueDeadlineEt.text.isNullOrEmpty()) null else tmpBinding.issueDeadlineEt.text.toString()
-
-                        /*
-                        mWorkspaceViewModel.updateWorkspace(
-                            (activity as WorkspaceActivity).workspace_id!!,
-                            title,
-                            description,
-                            isPrivate,
-                            max_collaborators,
-                            deadline,
-                            null,
-                            null,
-                            state,
-                            (activity as WorkspaceActivity).token!!
-                        )
-
-                         */
-                    }
-                }
-            })
-
             .create().show()
 
+        tmpBinding.deleteIssueBtn.setOnClickListener {
+            AlertDialog.Builder(context)
+                .setMessage("Are you sure you want to delete? ")
+                .setPositiveButton(
+                    "Delete"
+                ) { _, _ ->
+                    //TODO: Delete issue
+                    //mWorkspaceViewModel.deleteWorkspace((activity as WorkspaceActivity).workspace_id!!,(activity as WorkspaceActivity).token!!)
+                    mIssueDetailViewModel.deleteIssue((activity as WorkspaceActivity).workspace_id!!, issue_id.toInt(), (activity as WorkspaceActivity).token!!)
+                    findNavController()
+                }
+                .setNegativeButton(
+                    "Cancel"
+                ) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create().show()
+        }
+        tmpBinding.updateIssueBtn.setOnClickListener {
+            if (tmpBinding.issueTitleEt.text.isNullOrEmpty()) {
+                Toast.makeText(requireContext(), "Title cannot be left empty", Toast.LENGTH_LONG)
+                    .show()
+            } else {
+                if (tmpBinding.issueDescriptionEt.text.isNullOrEmpty()) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Description cannot be left empty",
+                        Toast.LENGTH_LONG
+                    ).show()
+                } else {
+                    val title: String = tmpBinding.issueTitleEt.text.toString().trim()
+                    val description: String = tmpBinding.issueDescriptionEt.text.toString().trim()
+                    val deadline =
+                        if (tmpBinding.issueDeadlineEt.text.isNullOrEmpty()) null else tmpBinding.issueDeadlineEt.text.toString()
+                    //TODO: update workspace
+                    //mWorkspaceViewModel.updateWorkspace((activity as WorkspaceActivity).workspace_id!!)
+
+                }
+            }
+
+
+        }
     }
 
-    private fun onAddAssigneeClicked() {
+    fun onAddAssigneeClicked() {
 
 
     }

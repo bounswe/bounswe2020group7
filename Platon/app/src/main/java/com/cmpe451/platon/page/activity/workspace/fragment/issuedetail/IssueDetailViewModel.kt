@@ -4,6 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.IssueAssignee
+import retrofit2.http.Field
+import retrofit2.http.Header
 
 
 class IssueDetailViewModel: ViewModel() {
@@ -12,11 +14,13 @@ class IssueDetailViewModel: ViewModel() {
 
     var assigneeResponse: MutableLiveData<Resource<IssueAssignee>>
     //var addIssuesResourceResponse = repository.addIssuesResourceResponse
+    var deleteIssueResponse = repository.deleteIssueResponse
     var getWorkspaceResponse = repository.getWorkspaceResponse
 
 
     init {
         assigneeResponse = repository.getIssueAssignee
+        deleteIssueResponse = repository.deleteIssueResponse
         //addIssuesResourceResponse = repository.addIssuesResourceResponse
 
     }
@@ -29,6 +33,12 @@ class IssueDetailViewModel: ViewModel() {
 
     fun fetchWorkspace(workspace_id:Int, token:String){
         repository.fetchWorkspace(workspace_id, token)
+    }
+
+    fun deleteIssue(workspaceId:Int, issueId:Int, auth_token :String){
+        if(auth_token != null){
+            repository.deleteIssue(workspaceId, issueId, auth_token)
+        }
     }
 
 }
