@@ -55,11 +55,7 @@ class IssueDetailFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        issue_id = sharedPreferences.getString("issue_id", null).toString()
-        issue_title = sharedPreferences.getString("issue_title", null).toString()
-        issue_description = sharedPreferences.getString("issue_description", null).toString()
-        issue_creator_name = sharedPreferences.getString("issue_creator_name", null).toString()
-        issue_deadline = sharedPreferences.getString("issue_deadline", null).toString()
+        updateIssueInformations()
         initViews()
         setListeners()
         setObservers()
@@ -67,8 +63,13 @@ class IssueDetailFragment: Fragment() {
         mIssueDetailViewModel.fetchWorkspace((activity as WorkspaceActivity).workspace_id!!, (activity as WorkspaceActivity).token!!)
     }
 
-
-
+    private fun updateIssueInformations() {
+        issue_id = sharedPreferences.getString("issue_id", null).toString()
+        issue_title = sharedPreferences.getString("issue_title", null).toString()
+        issue_description = sharedPreferences.getString("issue_description", null).toString()
+        issue_creator_name = sharedPreferences.getString("issue_creator_name", null).toString()
+        issue_deadline = sharedPreferences.getString("issue_deadline", null).toString()
+    }
 
 
     private fun setObservers(){
@@ -77,6 +78,7 @@ class IssueDetailFragment: Fragment() {
         mIssueDetailViewModel.assigneeResponse.observe(viewLifecycleOwner, { t->
             when(t.javaClass){
                 Resource.Success::class.java ->{
+
                     (binding.issueAssignee.adapter as AssigneeAdapter).submitElements(t.data!!.result)
 
                 }
@@ -89,6 +91,42 @@ class IssueDetailFragment: Fragment() {
                 }
             }
         })
+
+        mIssueDetailViewModel.deleteIssueResponse.observe(viewLifecycleOwner, { t->
+            when(t.javaClass){
+                Resource.Success::class.java ->{
+                    activity?.supportFragmentManager?.popBackStack()
+
+                }
+                Resource.Error::class.java ->{
+                    Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                }
+                Resource.Loading::class.java -> {
+                    Toast.makeText(requireContext(), "Loading", Toast.LENGTH_SHORT).show()
+
+                }
+            }
+        })
+
+        mIssueDetailViewModel.editIssueResponse.observe(viewLifecycleOwner, { t->
+            when(t.javaClass){
+                Resource.Success::class.java ->{
+                    Toast.makeText(requireContext(), "Succesfully updated.", Toast.LENGTH_SHORT).show()
+
+                }
+                Resource.Error::class.java ->{
+                    Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                    activity?.supportFragmentManager?.popBackStack()
+                }
+                Resource.Loading::class.java -> {
+                    Toast.makeText(requireContext(), "Loading", Toast.LENGTH_SHORT).show()
+
+                }
+            }
+        })
+
+
+
 
 
 
@@ -104,20 +142,10 @@ class IssueDetailFragment: Fragment() {
         binding.issueTitle.text = issue_title
         binding.issueDescriptionTextView.text = issue_description
         binding.issueCreatorName.text = issue_creator_name
+        binding.issueDeadline.text = issue_deadline
 
         binding.issueAssignee.adapter = AssigneeAdapter(ArrayList(), requireContext())
         binding.issueAssignee.layoutManager = LinearLayoutManager(requireContext())
-
-        /*
-        issueRecyclerView = binding.issuesRecyclerView
-        val layoutManagerIssues = LinearLayoutManager(this.activity)
-        issueRecyclerView.layoutManager = layoutManagerIssues
-        adapter = IssuesAdapter(ArrayList(),requireContext(), this)
-        issueRecyclerView.adapter = adapter
-         */
-
-
-
 
     }
 
@@ -161,39 +189,6 @@ class IssueDetailFragment: Fragment() {
         super.onPrepareOptionsMenu(menu)
     }
 
-    private fun onAddIssueButtonClicked() {
-        /*
-        val addBinding = DialogAddIssueBinding.inflate(layoutInflater, binding.root, false)
-        val addDialog = AlertDialog.Builder(requireContext())
-            .setView(addBinding.root)
-            .show()
-        addDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        addBinding.buttonIssueAdd.setOnClickListener {
-            // check if the title and year is empty
-            if(addBinding.issueTitle.text.isNullOrEmpty() && addBinding.issueDescription.text.isNullOrEmpty()){
-                Toast.makeText(activity as WorkspaceActivity, "Title and Description cannot be left empty", Toast.LENGTH_LONG).show()
-            }
-            else {
-                when {
-                    addBinding.issueTitle.text.isNullOrEmpty() -> {
-                        Toast.makeText(activity, "Title cannot be left empty", Toast.LENGTH_LONG).show()
-                    }
-                    addBinding.issueDescription.text.isNullOrEmpty() -> {
-                        Toast.makeText(activity , "Description cannot be left empty", Toast.LENGTH_LONG).show()
-                    }
-                    else -> {
-
-                        mIssueDetailViewModel.addIssues((activity as WorkspaceActivity).workspace_id!!, addBinding.issueTitle.text.toString(),addBinding.issueDescription.text.toString(),addBinding.issueDeadline.text.toString(), (activity as WorkspaceActivity).token!!)
-                        addDialog.dismiss()
-                    }
-                }
-            }
-        }
-         */
-
-    }
-
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -204,11 +199,10 @@ class IssueDetailFragment: Fragment() {
             false
         )
 
-        tmpBinding.issueDeadlineEt.setText(issue_deadline)
         tmpBinding.issueDescriptionEt.setText(issue_description)
         tmpBinding.issueTitleEt.setText(issue_title)
 
-        tmpBinding.issueDeadlineEt.setOnTouchListener { _, event ->
+        tmpBinding.issueDeadline.setOnTouchListener { _, event ->
 
             if (event.action == MotionEvent.ACTION_DOWN) {
                 val calendar = Calendar.getInstance()
@@ -220,7 +214,7 @@ class IssueDetailFragment: Fragment() {
                     { _, years, months, day ->
                         val monthString = String.format("%02d", months+1)
                         val dayString = String.format("%02d", day)
-                        tmpBinding.issueDeadlineEt.setText("$years-$monthString-$dayString")
+                        tmpBinding.issueDeadline.setText("$years-$monthString-$dayString")
                     }, year, month, dayOfMonth
 
                 )
@@ -232,10 +226,31 @@ class IssueDetailFragment: Fragment() {
 
         }
 
+        tmpBinding.issueTimeEt.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                val calendar = Calendar.getInstance()
+                val hour = calendar.get(Calendar.HOUR_OF_DAY)
+                val minute = calendar.get(Calendar.MINUTE)
+                val datePickerDialog = TimePickerDialog(
+                    requireContext(),
+                    { _, hours, minutes ->
+                        val h = String.format("%02d", hours)
+                        val m = String.format("%02d", minutes)
+                        tmpBinding.issueTimeEt.setText("$h:$m:00")
+                    }, hour, minute, true
 
-        AlertDialog.Builder(context).setView(tmpBinding.root)
+                )
+
+                datePickerDialog.show()
+            }
+            true
+
+        }
+
+
+        val editDialog = AlertDialog.Builder(context).setView(tmpBinding.root)
             .setCancelable(true)
-            .create().show()
+            .show()
 
         tmpBinding.deleteIssueBtn.setOnClickListener {
             AlertDialog.Builder(context)
@@ -243,10 +258,9 @@ class IssueDetailFragment: Fragment() {
                 .setPositiveButton(
                     "Delete"
                 ) { _, _ ->
-                    //TODO: Delete issue
-                    //mWorkspaceViewModel.deleteWorkspace((activity as WorkspaceActivity).workspace_id!!,(activity as WorkspaceActivity).token!!)
+                    //TODO: Dismiss dialog
                     mIssueDetailViewModel.deleteIssue((activity as WorkspaceActivity).workspace_id!!, issue_id.toInt(), (activity as WorkspaceActivity).token!!)
-                    findNavController()
+                    editDialog.dismiss()
                 }
                 .setNegativeButton(
                     "Cancel"
@@ -270,13 +284,15 @@ class IssueDetailFragment: Fragment() {
                     val title: String = tmpBinding.issueTitleEt.text.toString().trim()
                     val description: String = tmpBinding.issueDescriptionEt.text.toString().trim()
                     val deadline =
-                        if (tmpBinding.issueDeadlineEt.text.isNullOrEmpty()) null else tmpBinding.issueDeadlineEt.text.toString()
+                        if (tmpBinding.issueDeadline.text.isNullOrEmpty()) null else tmpBinding.issueDeadline.text.toString() + " " + tmpBinding.issueTimeEt.toString()
                     //TODO: update workspace
+                    mIssueDetailViewModel.editIssue((activity as WorkspaceActivity).workspace_id!!, issue_id.toInt(), title, description, deadline, (activity as WorkspaceActivity).token!!)
                     //mWorkspaceViewModel.updateWorkspace((activity as WorkspaceActivity).workspace_id!!)
-
+                    binding.issueDescriptionTextView.text = description
+                    binding.issueDeadline.text = deadline
+                    binding.issueTitle.text = title
                 }
             }
-
 
         }
     }

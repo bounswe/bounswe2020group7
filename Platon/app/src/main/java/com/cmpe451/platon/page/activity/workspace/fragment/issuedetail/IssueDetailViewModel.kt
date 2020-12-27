@@ -16,11 +16,14 @@ class IssueDetailViewModel: ViewModel() {
     //var addIssuesResourceResponse = repository.addIssuesResourceResponse
     var deleteIssueResponse = repository.deleteIssueResponse
     var getWorkspaceResponse = repository.getWorkspaceResponse
+    var editIssueResponse = repository.editIssueResponse
 
 
     init {
         assigneeResponse = repository.getIssueAssignee
         deleteIssueResponse = repository.deleteIssueResponse
+        editIssueResponse = repository.editIssueResponse
+
         //addIssuesResourceResponse = repository.addIssuesResourceResponse
 
     }
@@ -38,6 +41,12 @@ class IssueDetailViewModel: ViewModel() {
     fun deleteIssue(workspaceId:Int, issueId:Int, auth_token :String){
         if(auth_token != null){
             repository.deleteIssue(workspaceId, issueId, auth_token)
+        }
+    }
+
+    fun editIssue(workspaceId:Int, issueId:Int, title:String?, description:String?, deadline:String?, authToken:String?) {
+        if(authToken != null){
+            repository.editIssue(workspaceId, issueId, title, description, deadline, authToken)
         }
     }
 

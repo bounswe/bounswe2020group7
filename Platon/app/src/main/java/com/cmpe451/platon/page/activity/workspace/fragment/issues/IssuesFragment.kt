@@ -74,13 +74,24 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
         mIssuesViewModel.issuesResponse.observe(viewLifecycleOwner, { t->
             when(t.javaClass){
                 Resource.Success::class.java ->{
-
+                    adapter.clearElements()
                     issue = t.data!!.result as ArrayList<Issue>
                     //adapter.addElement(0, issue[0])
                     adapter.submitElements(issue)
                     //var issueArray = issue
                     //TODO: add element
 
+                }
+                Resource.Error::class.java ->{
+                    Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
+
+        mIssuesViewModel.addIssuesResourceResponse.observe(viewLifecycleOwner, { t->
+            when(t.javaClass){
+                Resource.Success::class.java ->{
+                    mIssuesViewModel.getIssues((activity as WorkspaceActivity).workspace_id!!,0, maxPageNumberIssue, (activity as WorkspaceActivity).token!!)
                 }
                 Resource.Error::class.java ->{
                     Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
@@ -213,6 +224,15 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
                     }
                     addBinding.issueDescription.text.isNullOrEmpty() -> {
                         Toast.makeText(activity , "Description cannot be left empty", Toast.LENGTH_LONG).show()
+                    }
+                    addBinding.issueDeadline.text.isNotEmpty() && addBinding.issueTimeEt.text.isNullOrEmpty() -> {
+                        Toast.makeText(activity , "Time cannot be left empty", Toast.LENGTH_LONG).show()
+                    }
+                    addBinding.issueDeadline.text.isNullOrEmpty() && addBinding.issueTimeEt.text.isNotEmpty() -> {
+                        Toast.makeText(activity , "Date cannot be left empty", Toast.LENGTH_LONG).show()
+                    }
+                    addBinding.issueDeadline.text.isNullOrEmpty() && addBinding.issueTimeEt.text.isNullOrEmpty() -> {
+                        Toast.makeText(activity , "Date and time cannot be left empty", Toast.LENGTH_LONG).show()
                     }
                     else -> {
 

@@ -9,6 +9,8 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.http.Field
+import retrofit2.http.Header
 
 class IssueDetailRepository {
 
@@ -16,6 +18,7 @@ class IssueDetailRepository {
     val deleteIssueAssigneeResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
     val addIssueAssigneeResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
     val commentsResponse:MutableLiveData<Resource<IssueComment>> = MutableLiveData()
+    val editIssueResponse: MutableLiveData<Resource<JsonObject>> = MutableLiveData()
     val getIssueAssignee:MutableLiveData<Resource<IssueAssignee>> = MutableLiveData()
     var getWorkspaceResponse: MutableLiveData<Resource<Workspace>> = MutableLiveData()
 
@@ -53,6 +56,27 @@ class IssueDetailRepository {
                     response.isSuccessful && response.body() != null -> deleteIssueResponse.value = Resource.Success(response.body()!!)
                     response.errorBody() != null -> deleteIssueResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
                     else -> deleteIssueResponse.value = Resource.Error("Unknown error!")
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+
+    fun editIssue(workspaceId:Int, issueId:Int, title:String?, description:String?, deadline:String?, authToken:String?) {
+        val service = RetrofitClient.getService()
+        val call = service.editIssue(workspaceId, issueId, title, description, deadline, authToken)
+
+        editIssueResponse.value = Resource.Loading()
+        call.enqueue(object: Callback<JsonObject?> {
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when {
+                    response.isSuccessful && response.body() != null -> editIssueResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> editIssueResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> editIssueResponse.value = Resource.Error("Unknown error!")
                 }
             }
 

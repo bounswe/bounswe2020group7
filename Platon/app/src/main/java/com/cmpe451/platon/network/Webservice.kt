@@ -367,8 +367,8 @@ interface Webservice {
 
     @FormUrlEncoded
     @PUT("api/workspaces/issue")
-    fun editIssue(@Field("workspace_id") workspaceId:String,
-                  @Field("issue_id") issueId:String,
+    fun editIssue(@Field("workspace_id") workspaceId:Int,
+                  @Field("issue_id") issueId:Int,
                   @Field("title") title:String?,
                   @Field("description") description:String?,
                   @Field("deadline") deadline:String?,

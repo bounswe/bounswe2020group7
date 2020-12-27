@@ -150,4 +150,5 @@
     <string name="invitations_str">Invitations</string>
     <string name="applications_str">Applications</string>
     <string name="delete_issue_str">Delete Issue</string>
+
 </resources>
