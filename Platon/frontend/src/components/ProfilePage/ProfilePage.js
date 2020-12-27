@@ -205,9 +205,7 @@ class ProfilePage extends React.Component {
     const follower_id = decoded.id;
     const following_id = this.props.match.params.profileId;
     requestService.postFollowRequest(follower_id, following_id).then((resp) => {
-      this.setState({
-        showSuccess: "You sent following request",
-      });
+
       requestService
         .getUser(this.props.match.params.profileId)
         .then((response) => {
@@ -239,9 +237,7 @@ class ProfilePage extends React.Component {
   handleUnFollowRequest = () => {
     const following_id = this.props.match.params.profileId;
     requestService.deleteUnfollow(following_id).then((resp) => {
-      this.setState({
-        showSuccess: "User unfollowed",
-      });
+
       requestService
         .getUser(this.props.match.params.profileId)
         .then((response) => {
