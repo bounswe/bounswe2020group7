@@ -144,7 +144,6 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                         (binding.rvProfilePageComments.adapter as CommentsAdapter).submitElements(t.data!!.result)
                     }else{
                         Toast.makeText(requireContext(), "No comment found", Toast.LENGTH_SHORT).show()
-                        binding.tvCommentsTitle.performClick()
                     }
 
                     mOtherProfileViewModel.getUserComments.value = Resource.Done()
