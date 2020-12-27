@@ -5,6 +5,7 @@ import InfiniteScroller from './InfiniteScroll.js'
 import 'moment/locale/zh-cn'
 import { Layout } from 'antd'
 import Sider from './Sider'
+
 import colors from '../../utils/colors'
 import NavBar from '../NavBar/NavBar'
 import UpcomingEvents from '../UpcomingEvents/UpcomingEvents'
@@ -18,6 +19,7 @@ moment.locale('zh-cn')
 
 
 class HomePage extends React.Component {
+
   state = {
     data: [],
     loading: false,
@@ -49,6 +51,7 @@ class HomePage extends React.Component {
 
     )
   }
+
 }
 
 
