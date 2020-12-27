@@ -14,7 +14,7 @@ from app.workspace_system.forms import *
 
 from app.workspace_system.helpers import *
 from app.follow_system.helpers import follow_required
-from app.auth_system.helpers import login_required
+from app.auth_system.helpers import login_required, profile_photo_link
 from app.file_system.helpers import FileSystem
 
 workspace_system_ns = Namespace("Workspace System",
@@ -82,7 +82,8 @@ issue_model = api.model('Issue', {
 	"creator_rate": fields.Float,
 	"creator_job_name": fields.String,
 	"creator_institution": fields.String,
-	"creator_is_private": fields.Boolean
+	"creator_is_private": fields.Boolean,
+    "creator_photo": fields.String
     })
 
 issue_list_model = api.model('Issues List', {
@@ -150,7 +151,8 @@ issue_comment_model = api.model('Issue Assignee', {
 	"owner_name": fields.String,
 	"owner_surname": fields.String,
 	"owner_e_mail": fields.String,
-	"owner_rate": fields.Float
+	"owner_rate": fields.Float,
+    "owner_photo": fields.String
 })
 
 issue_comment_list_model = api.model('Issue Comments List', {
@@ -238,7 +240,8 @@ class IssueAPI(Resource):
                     'creator_e_mail': creator_user.e_mail, 
                     'creator_rate': creator_user.rate, 
                     'creator_job_name': job_name.name,
-                    'creator_is_private': creator_user.is_private
+                    'creator_is_private': creator_user.is_private,
+                    'creator_photo': profile_photo_link(creator_user.profile_photo,creator_user.id)
                     })
             
             # Pagination functionality
@@ -612,6 +615,7 @@ class IssueCommentAPI(Resource):
                     "owner_surname": commenter.surname,
                     "owner_e_mail": commenter.e_mail,
                     "owner_rate": commenter.rate,
+                    "owner_photo": profile_photo_link(commenter.profile_photo,commenter.id)
                     })
             
             # Pagination functionality
