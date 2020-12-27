@@ -6,4 +6,4 @@ android:layout_height="match_parent"
     android:paddingTop="5dp"
     android:paddingLeft="3dp"
     android:paddingRight="3dp"
-android:background="@color/primary_dark_lighter" />
+android:background="@color/primary_dark" />

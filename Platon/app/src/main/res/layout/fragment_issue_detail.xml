@@ -2,7 +2,7 @@
 <ScrollView     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/primary_dark_lighter"
+    android:background="@color/primary_dark"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
@@ -39,7 +39,7 @@
             android:textColor="@color/secondary_green"
             android:textSize="@dimen/project_title_text_size"
             android:drawablePadding="@dimen/xx_small"
-            app:drawableRightCompat="@drawable/ic_editprofile_dark_24px"
+            app:drawableRightCompat="@drawable/ic_editprofile_24px"
             />
 
 
@@ -59,7 +59,7 @@
             android:textColor="@color/secondary_orange_transparent"
             android:textSize="18sp"
             android:drawablePadding="@dimen/xx_small"
-            app:drawableRightCompat="@drawable/ic_expand_more_black_24dp" />
+            app:drawableRightCompat="@drawable/ic_expand_more_white_24dp" />
 
 
         <LinearLayout
@@ -121,7 +121,7 @@
             android:textColor="@color/secondary_orange_transparent"
             android:textSize="18sp"
             android:drawablePadding="@dimen/xx_small"
-            app:drawableRightCompat="@drawable/ic_comment_black_24dp"
+            app:drawableRightCompat="@drawable/ic_comment_24dp"
             />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -150,7 +150,7 @@
             android:textColor="@color/secondary_purple"
             android:textSize="@dimen/project_title_text_size"
             android:drawablePadding="@dimen/xx_small"
-            app:drawableRightCompat="@drawable/ic_add_black_24dp"
+            app:drawableRightCompat="@drawable/ic_add_24dp"
             />
 
         <androidx.recyclerview.widget.RecyclerView
