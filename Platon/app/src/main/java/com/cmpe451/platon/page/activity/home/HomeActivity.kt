@@ -411,7 +411,6 @@ class HomeActivity : BaseActivity(),
 
     @SuppressLint("ClickableViewAccessibility")
     private fun initListeners() {
-
         // pagination listener define
         paginationListener = object: PaginationListener(toolbarLayoutManager, toolbarPageSize){
             override fun loadMoreItems() {
@@ -469,8 +468,8 @@ class HomeActivity : BaseActivity(),
                                         if (deadlineS.isNotEmpty()) deadlineS else null,
                                         if (deadlineE.isNotEmpty()) deadlineE else null,
                                         if (sortBy != 0) sortBy - 1 else null,
-                                        0,
-                                        toolbarPageSize
+                                        currentPage,
+                                        PAGE_SIZE
                                     )
 
                                 }
@@ -496,8 +495,8 @@ class HomeActivity : BaseActivity(),
                                         if (deadlineE.isNotEmpty()) deadlineE else null,
                                         if (sortBy != 0) sortBy - 1 else null,
                                         if (event.isNotEmpty()) event else null,
-                                        0,
-                                        toolbarPageSize
+                                        currentPage,
+                                        PAGE_SIZE
                                     )
                                 }
                             }

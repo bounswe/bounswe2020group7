@@ -290,7 +290,7 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                                 if (deadlineS.isNotEmpty()) deadlineS else null,
                                 if (deadlineE.isNotEmpty()) deadlineE else null,
                                 if (sortBy != 0) sortBy - 1 else null,
-                                0,
+                                currentPage,
                                 toolbarPageSize
                             )
 
@@ -317,7 +317,7 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                                 if (deadlineE.isNotEmpty()) deadlineE else null,
                                 if (sortBy != 0) sortBy - 1 else null,
                                 if (event.isNotEmpty()) event else null,
-                                0,
+                                currentPage,
                                 toolbarPageSize
                             )
                                 }
