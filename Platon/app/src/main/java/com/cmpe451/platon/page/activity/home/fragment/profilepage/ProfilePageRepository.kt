@@ -232,8 +232,8 @@ class ProfilePageRepository() {
                 when {
                     response.isSuccessful && response.body() != null -> addDeleteSkillResourceResponse.value = Resource.Success(response.body()!!)
                     response.errorBody() != null ->  {
-                        Log.i("ERORR",response.errorBody()!!.string().toString())
-                        val obj = JSONObject(response.errorBody()!!.string().toString())
+                        Log.i("ERORR",response.errorBody()!!.string())
+                        val obj = JSONObject(response.errorBody()!!.string())
                         if (obj.has("error"))
                             addDeleteSkillResourceResponse.value = Resource.Error(obj.getString("error"))
                         else addDeleteSkillResourceResponse.value = Resource.Error("Unknown error!")

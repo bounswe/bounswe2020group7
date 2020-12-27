@@ -386,6 +386,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
 
                 FilePickerBuilder.instance
                     .setMaxCount(1)
+                    .enableCameraSupport(false)
                     .pickPhoto(this);
 
 

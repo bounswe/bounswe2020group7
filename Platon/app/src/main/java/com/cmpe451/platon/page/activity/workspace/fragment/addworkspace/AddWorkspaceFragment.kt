@@ -70,6 +70,10 @@ class AddWorkspaceFragment: Fragment() {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.workspaceFolderFragment)?.isVisible = false
+        menu.findItem(R.id.issue_btn)?.isVisible = false
+        menu.findItem(R.id.add_issue_btn)?.isVisible = false
+        menu.findItem(R.id.btn_WorkspaceApplications)?.isVisible = false
+
         super.onPrepareOptionsMenu(menu)
     }
 

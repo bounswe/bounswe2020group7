@@ -213,6 +213,7 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
                         .addFileSupport("C", arrayOf("c", "cpp", "C", "CPP"))
                         .addFileSupport("PYTHON", arrayOf("PY", "py"))
                         .addFileSupport("README", arrayOf("md", "MD"))
+                        .addFileSupport("PNG", arrayOf("png", "jpg", "jpeg"))
                         .pickFile(this);
 
                 } else {
