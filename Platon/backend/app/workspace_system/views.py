@@ -54,10 +54,10 @@ workspace_small_model = api.model('Workspace', {
     "title": fields.String,
     "description": fields.String,
     "state": fields.Integer,
-    'creator_id': fields.Integer,
+    "creator_id": fields.Integer,
     "contributors": fields.List(
         fields.Nested(contributor_model)
-    ),
+    )
 })
 
 trending_workspaces_model = api.model('Trending Projects', {
