@@ -70,6 +70,8 @@ class Commentt extends React.Component {
             action:'',
             props: props,
             reply:false,
+            description:'',
+            showChildren:false,
         };
     }
 
@@ -136,10 +138,45 @@ handleSubmit = () => {
         }
 
     };
+    deleteIssue = (issue_id,workspace_id) => {
+        requestService.deleteIssue(issue_id,workspace_id)
+
+        };
 
 reply= () => {
-this.setState({reply:true})
+this.setState({reply:!this.state.reply,showChildren:!this.state.showChildren})
 }
+handleSubmit = () => {
+    if (!this.state.description) {
+      return;
+    }
+
+    this.setState({
+      submitting: true,
+    });
+    requestService.addIssueComment(this.state.title,this.state.description,this.state.deadline,2/*this.state.workspace_id*/).then((response) => {
+        const length=this.state.selectedMembers.length;
+        console.log(this.props)
+        for(var i=0;i<length;i++)
+        requestService.assignIssue(78,2,this.state.selectedMembers[i])
+       })
+        setTimeout(() => {
+             this.setState({
+               submitting: false,
+               value: '',
+               comments: [
+                 {
+                   title: 'Han Solo',
+                   avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+                   description: <p>{this.state.description}</p>,
+                   datetime: moment().fromNow(),
+                 },
+                 ...this.state.comments,
+               ],
+             });
+           }, 1000);
+  };
+
     render() {
         const actions = [
             <Box  justifyContent="flex-start" display="flex" flexDirection="row" css={{width:250}}>
@@ -159,40 +196,51 @@ this.setState({reply:true})
       </span>
                     </Tooltip>,
                 </Box>
+               {this.props.func && <Box>
+                     <Tooltip key="issueFunc" title="func">
+                      <Button onClick={()=>{this.props.func(this.props.issue.issue_id,this.props.issue.workspace_id,this.setState({}))}}>
+                          <span className="comment-action">{this.props.funcName}</span>
+                      </Button>
+                                    </Tooltip>,
+                                </Box>}
+
                  <Box>
                                     <Tooltip key="comment-basic-reply" title="Reply">
-                      <span onClick={this.reply}>
-                      <span key="comment-nested-reply-to">Reply to</span>
+
+                      <Button onClick={this.reply}>
+                                                <span className="comment-action">{"Reply To"}</span>
+                                            </Button>
+
                         {this.state.reply && <Comment
-                                                                          avatar={
-                                                                            <Avatar
-                                                                              src={this.state.user?this.state.user.profile_photo:"https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"}
-                                                                              alt="Han Solo"
-                                                                            />
-                                                                          }
-                                                                          content={
-                                                                          <div>
+                                              avatar={
+                                                <Avatar
+                                                  src={this.state.user?this.state.user.profile_photo:"https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"}
+                                                  alt="Han Solo"
+                                                />
+                                              }
+                                              content={
+                                              <div>
+                                               <Editor
+                                              onChange={this.handleChange}
+                                              onSubmit={()=>{this.props.func2(this.props.issue.issue_id,this.props.issue.workspace_id,this.state.description)}}
+                                              value={this.state.description}
+                                            />
+                                            </div>
+                                          }
+                                        /> }
 
-                                                                           <Editor
-                                                                              onChange={this.handleChange}
-                                                                              onSubmit={this.handleSubmit}
-                                                                              value={this.state.description}
-                                                                            />
-                                                                            </div>
-                                                                          }
-                                                                        /> }
 
-                      </span>
                                     </Tooltip>
                                 </Box>
             </Box>
         ];
         //
         return (
+
         <div
         style={{display:'flex'}}
         >
-        <Avatar
+            <Avatar
                                  src={this.props.avatar}
                                  alt="Han Solo"
                              />
@@ -206,7 +254,9 @@ this.setState({reply:true})
                     </p>
                 }
                 style={{color:colors.tertiary} }
-            />
+            >
+            {this.state.showChildren && this.props.childComments}
+            </Comment>
             </div>
         );
     };

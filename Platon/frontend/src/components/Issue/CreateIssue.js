@@ -10,6 +10,10 @@ import { withStyles } from "@material-ui/core/styles";
 import "antd/dist/antd.css";
 import jwt_decode from "jwt-decode";
 import requestService from "../../services/requestService";
+import { Select } from 'antd';
+const { Option } = Select;
+
+
 
 
 const { RangePicker } = DatePicker;
@@ -71,17 +75,31 @@ const Editor = ({ onChange, onSubmit, submitting, value }) => (
 );
 
 class CreateIssue extends React.Component {
+    constructor(props)
+    {
+    super(props)}
   state = {
     comments: [],
     submitting: false,
     value: '',
     user:null,
-    selectedMembers:[]
+    selectedMembers:[],
+    members:[1,2,3],
   };
+   pushMembers= ()=>{
+
+      const members=[];
+      for (let i = 0; i < 60; i++) {
+        members.push(<Option key={i}>{i}</Option>);
+      }
+      this.setState({members:members});
+      }
+
   componentDidMount(){
 
   const token = localStorage.getItem("jwtToken");
   const decoded = jwt_decode(token);
+  this.pushMembers();
   // get members
     const children = [];
     for (let i = 0; i < 6; i++) {
@@ -107,12 +125,29 @@ class CreateIssue extends React.Component {
     this.setState({
       submitting: true,
     });
-    requestService.createIssue(this.state.title,this.state.description,this.state.deadline,this.state.workspace_id).then((response) => {
-
-        for(int i=0;i<this.state.selectedMembers.length;i++)
-        requestService.assignIssue(null,null,this.state.selectedMembers(i))
+    requestService.createIssue(this.state.title,this.state.description,this.state.deadline,2/*this.state.workspace_id*/).then((response) => {
+        const length=this.state.selectedMembers.length;
+        console.log(this.props)
+        for(var i=0;i<length;i++)
+        requestService.assignIssue(response.data.issue_id,2,this.state.selectedMembers[i])
        })
+        setTimeout(() => {
+             this.setState({
+               submitting: false,
+               value: '',
+               comments: [
+                 {
+                   title: 'Han Solo',
+                   avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+                   description: <p>{this.state.description}</p>,
+                   datetime: moment().fromNow(),
+                 },
+                 ...this.state.comments,
+               ],
+             });
+           }, 1000);
   };
+
 
   handleChange = e => {
     this.setState({
@@ -120,10 +155,8 @@ class CreateIssue extends React.Component {
     });
   };
   handleChange2=(value)=> {
-    var mems=this.state.selectedMembers
-    mems.append(value)
-    var unique = mems.filter((v, i, a) => a.indexOf(v) === i);
-    this.setState({selectedMembers:unique})
+
+    this.setState({selectedMembers:value})
   }
   render() {
     const { comments, submitting, value } = this.state;
@@ -153,23 +186,23 @@ class CreateIssue extends React.Component {
                             onChange={(e) => this.setState({ title: e.target.value })}
                           />
             <DatePicker defaultValue={moment('2020/01/01', dateFormat)} format={dateFormat} onChange={this.datePick} />
+             <Select
+                                      mode="multiple"
+                                      allowClear
+                                      style={{ width: '100%' }}
+                                      placeholder="Please select"
+                                      defaultValue={[]}
+                                      onChange={this.handleChange2}
+                                    >
+                                      {this.state.members}
+                                    </Select>
+
             <Editor
               onChange={this.handleChange}
               onSubmit={this.handleSubmit}
               submitting={submitting}
               value={this.state.description}
             />
-             <Select
-                          mode="multiple"
-                          allowClear
-                          style={{ width: '100%' }}
-                          placeholder="Please select"
-                          defaultValue={[]}
-                          onChange={this.handleChange2}
-                        >
-                          {this.state.members}
-                        </Select>
-                  </>
             </div>
           }
         />
