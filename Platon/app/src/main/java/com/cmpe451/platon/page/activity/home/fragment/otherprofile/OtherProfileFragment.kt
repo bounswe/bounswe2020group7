@@ -77,6 +77,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
         paginationListenerResearches = object:PaginationListener(layoutManagerProjects) {
             override fun loadMoreItems() {
                 if (maxPageNumberResearch - 1 > currentPage) {
+                    isLoading = true
                     currentPage++
                     mOtherProfileViewModel.fetchResearch(
                         (activity as HomeActivity).currUserToken,
@@ -97,6 +98,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
         paginationListenerComments = object:PaginationListener(layoutManagerComments, pageSize) {
             override fun loadMoreItems() {
                 if (maxPageNumberComment - 1 > currentPage) {
+                    isLoading = true
                     currentPage++
                     mOtherProfileViewModel.getComments(
                         userId!!,
@@ -145,7 +147,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                     }else{
                         Toast.makeText(requireContext(), "No comment found", Toast.LENGTH_SHORT).show()
                     }
-
+                    paginationListenerComments.isLoading = false
                     mOtherProfileViewModel.getUserComments.value = Resource.Done()
                 }
                 Resource.Error::class.java ->{
@@ -196,7 +198,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                         val researches = i.data!!.research_info!!
                         (binding.rvProfilePageProjects.adapter as OtherUserProjectsAdapter).submitElements(researches)
                     }
-
+                    paginationListenerResearches.isLoading = false
                     dialog.dismiss()
                 }
                 Resource.Loading::class.java -> dialog.show()

@@ -82,6 +82,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
         paginationListenerResearches = object:PaginationListener(layoutManagerProjects) {
             override fun loadMoreItems() {
                 if (maxPageNumberResearch - 1 > currentPage) {
+                    isLoading = true
                     currentPage++
                     mProfilePageViewModel.fetchResearch(
                         (activity as HomeActivity).currUserToken,
@@ -102,6 +103,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
         paginationListenerComments = object:PaginationListener(layoutManagerComments, pageSize) {
             override fun loadMoreItems() {
                 if (maxPageNumberComment - 1 > currentPage) {
+                    isLoading = true
                     currentPage++
                     mProfilePageViewModel.getComments(
                         (activity as HomeActivity).currUserId,
@@ -230,6 +232,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                         (binding.rvProfilePageProjects.adapter as UserProjectsAdapter).submitElements(
                             t.data!!.research_info!!
                         )
+                        paginationListenerResearches.isLoading = false
                     }
                     Resource.Error::class.java -> {
                         Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
@@ -314,6 +317,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
                         Toast.makeText(requireContext(), "No comment found", Toast.LENGTH_SHORT).show()
                         binding.tvCommentsTitle.performClick()
                     }
+                    paginationListenerComments.isLoading = false
                     mProfilePageViewModel.getUserComments.value = Resource.Done()
                 }
                 Resource.Error::class.java ->{

@@ -165,6 +165,7 @@ class HomeActivity : BaseActivity(),
                             this
                         )
                     }
+                    paginationListener.isLoading = false
                     mActivityViewModel.getInvitationsFromWsResourceResponse.value = Resource.Done()
                 }
                 Resource.Loading::class.java -> dialog.show()
@@ -193,6 +194,7 @@ class HomeActivity : BaseActivity(),
                             this
                         )
                     }
+                    paginationListener.isLoading = false
                     mActivityViewModel.getUserNotificationsResourceResponse.value = Resource.Done()
                 }
                 Resource.Loading::class.java -> dialog.show()
@@ -221,6 +223,7 @@ class HomeActivity : BaseActivity(),
                             this
                         )
                     }
+                    paginationListener.isLoading = false
                     mActivityViewModel.getUserFollowRequestsResourceResponse.value = Resource.Done()
                 }
                 Resource.Error::class.java -> {
@@ -296,6 +299,7 @@ class HomeActivity : BaseActivity(),
                             this
                         )
                     }
+                    paginationListener.isLoading = false
                     mActivityViewModel.getSearchUserResourceResponse.value = Resource.Done()
                 }
                 Resource.Error::class.java -> {
@@ -324,6 +328,7 @@ class HomeActivity : BaseActivity(),
                             this
                         )
                     }
+                    paginationListener.isLoading = false
                     mActivityViewModel.getSearchUserResourceResponse.value = Resource.Done()
                 }
                 Resource.Error::class.java -> {
@@ -354,6 +359,7 @@ class HomeActivity : BaseActivity(),
                             this
                         )
                     }
+                    paginationListener.isLoading = false
                     mActivityViewModel.getSearchUpcomingEventResourceResponse.value =
                         Resource.Done()
                 }
@@ -415,6 +421,7 @@ class HomeActivity : BaseActivity(),
         paginationListener = object: PaginationListener(toolbarLayoutManager, toolbarPageSize){
             override fun loadMoreItems() {
                 if(maxPageNumberToolbarElements-1 > currentPage){
+                    isLoading = true
                     currentPage++
                     when(binding.rgSearchAmong.visibility){
                         View.GONE -> {

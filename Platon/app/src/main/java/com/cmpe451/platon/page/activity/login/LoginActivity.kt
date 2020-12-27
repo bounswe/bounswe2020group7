@@ -165,6 +165,7 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                             this
                         )
                     }
+                    paginationListener.isLoading = false
                     mActivityViewModel.getSearchUserResourceResponse.value = Resource.Done()
                 }
                 Resource.Error::class.java -> {
@@ -193,6 +194,7 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                             this
                         )
                     }
+                    paginationListener.isLoading = false
                     mActivityViewModel.getSearchUserResourceResponse.value = Resource.Done()
                 }
                 Resource.Error::class.java -> {
@@ -223,6 +225,7 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
                             this
                         )
                     }
+                    paginationListener.isLoading = false
                     mActivityViewModel.getSearchUpcomingEventResourceResponse.value =
                         Resource.Done()
                 }
@@ -263,6 +266,7 @@ class LoginActivity :BaseActivity(), SearchElementsAdapter.SearchButtonClickList
         paginationListener = object: PaginationListener(toolbarLayoutManager, toolbarPageSize){
             override fun loadMoreItems() {
                 if(maxPageNumberToolbarElements-1 > currentPage){
+                    isLoading = true
                     currentPage++
                     when (binding.rgSearchAmong.checkedRadioButtonId) {
                         R.id.rb_searchUser -> {
