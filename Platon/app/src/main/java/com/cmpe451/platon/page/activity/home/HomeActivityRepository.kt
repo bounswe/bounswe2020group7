@@ -24,6 +24,7 @@ class HomeActivityRepository {
 
     var userNotificationDeleteResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
     val searchUpcomingEventResourceResponse:MutableLiveData<Resource<Search>> = MutableLiveData()
+    val invitationAnswerResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
 
 
     fun deleteNotification(id: Int, token: String){
@@ -254,6 +255,26 @@ class HomeActivityRepository {
             }
 
             override fun onFailure(call: Call<List<WorkspaceInvitation>?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+        })
+    }
+
+    fun answerWorkspaceInvitations(invitation_id:Int, is_accepted:Int, token:String){
+        val service = RetrofitClient.getService()
+        val call = service.answerWorkspaceInvitation(invitation_id,is_accepted,token)
+
+        invitationAnswerResourceResponse.value = Resource.Loading()
+        call.enqueue(object :Callback<JsonObject?>{
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when{
+                    response.isSuccessful && response.body() != null -> invitationAnswerResourceResponse.value =  Resource.Success(response.body()!!)
+                    response.errorBody() != null -> invitationAnswerResourceResponse.value =  Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> invitationAnswerResourceResponse.value =  Resource.Error("Unknown error!")
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
                 call.clone().enqueue(this)
             }
         })

@@ -36,6 +36,7 @@
                 android:textColor="@color/primary_light"
                 android:textSize="@dimen/title_text_size"
                 android:gravity="center"
+                app:drawableRightCompat="@drawable/ic_group_add_24px"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/profile_photo"
                 app:layout_constraintTop_toTopOf="parent" />

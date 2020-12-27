@@ -253,6 +253,25 @@ class HomeActivity : BaseActivity(),
                 Resource.Done::class.java -> dialog.dismiss()
             }
         })
+        mActivityViewModel.getInvitationAnswerResourceResponse.observe(this,{i->
+            when (i.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    if (handledFollowRequestPosition != -1) {
+                        (binding.toolbarRecyclerview.adapter as WorkspaceInvitationsAdapter)
+                            .removeElement(this.handledFollowRequestPosition)
+                        this.handledFollowRequestPosition = -1
+                    }
+                    mActivityViewModel.acceptRequestResourceResponse.value = Resource.Done()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(this, i.message, Toast.LENGTH_SHORT).show()
+                    mActivityViewModel.acceptRequestResourceResponse.value = Resource.Done()
+                }
+
+                Resource.Done::class.java -> dialog.dismiss()
+            }
+        })
 
     }
 
@@ -1013,11 +1032,13 @@ class HomeActivity : BaseActivity(),
     }
 
     override fun onInvitationAcceptClicked(request: WorkspaceInvitation, position: Int) {
-        //TODO("Not yet implemented")
+        mActivityViewModel.answerWorkspaceInvitations(request.invitation_id, 1,  currUserToken)
+        handledFollowRequestPosition = position
     }
 
     override fun onInvitationRejectClicked(request: WorkspaceInvitation, position: Int) {
-        //TODO("Not yet implemented")
+        mActivityViewModel.answerWorkspaceInvitations(request.invitation_id, 0, currUserToken)
+        handledFollowRequestPosition = position
     }
 
 }

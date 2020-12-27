@@ -15,6 +15,7 @@ class OtherProfileViewModel : ViewModel() {
     var userSkills: MutableLiveData<Resource<Skills>> =repository.userSkills
     var isUserPrivate = MutableLiveData<Boolean>()
     var isFollowing = MutableLiveData<Definitions.USERSTATUS>()
+    var getInvitationResponse = repository.invitationResponse
 
     var getUserComments = repository.userComments
     var getAddDeleteCommentResourceResponse = repository.addDeleteCommentResourceResponse
@@ -59,5 +60,9 @@ class OtherProfileViewModel : ViewModel() {
 
     fun deleteComment(commentId: Int, currUserToken: String) {
         repository.deleteComment(commentId, currUserToken)
+    }
+
+    fun sendInvitationToWorkspace(wsId: Int, invId: Int, currUserToken: String) {
+        repository.sendInvitationToWorkspace(wsId, invId, currUserToken)
     }
 }

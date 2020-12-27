@@ -434,5 +434,18 @@ interface Webservice {
                  @Field("rate") rate: Int,
                  @Field("text") text: String?,
                  @Header("auth_token") authToken: String): Call<JsonObject?>
+    @FormUrlEncoded
+    @POST("api/workspaces/invitations")
+    fun inviteToWorkspace(@Field("workspace_id") workspace_id: Int,
+                   @Field("invitee_id") invitee_id: Int,
+                   @Header("auth_token") authToken: String): Call<JsonObject?>
+
+
+
+    @FormUrlEncoded
+    @HTTP(method = "DELETE" , path = "api/workspaces/invitations", hasBody = true)
+    fun answerWorkspaceInvitation(@Field("invitation_id") application_id:Int,
+                                   @Field("is_accepted") is_accepted:Int,
+                                   @Header("auth_token") auth_token :String) : Call<JsonObject?>
 
 }

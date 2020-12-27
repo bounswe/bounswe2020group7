@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -22,12 +23,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.cmpe451.platon.R
-import com.cmpe451.platon.adapter.CommentsAdapter
-import com.cmpe451.platon.adapter.OtherUserProjectsAdapter
-import com.cmpe451.platon.adapter.SkillsAdapter
-import com.cmpe451.platon.adapter.UserProjectsAdapter
+import com.cmpe451.platon.adapter.*
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.DialogAddCommentBinding
+import com.cmpe451.platon.databinding.DialogWsInvitationsBinding
 import com.cmpe451.platon.databinding.FragmentProfilePageOthersBinding
 import com.cmpe451.platon.databinding.ResearchesCellBinding
 import com.cmpe451.platon.listener.PaginationListener
@@ -35,6 +34,7 @@ import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.Comment
 import com.cmpe451.platon.network.models.OtherUser
 import com.cmpe451.platon.page.activity.home.HomeActivity
+import com.cmpe451.platon.page.activity.home.fragment.workspace.WorkspaceListViewModel
 import com.cmpe451.platon.util.Definitions
 import com.cmpe451.platon.util.Definitions.USERSTATUS
 
@@ -54,6 +54,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
     private val pageSize = 5
 
     private val mOtherProfileViewModel: OtherProfileViewModel by viewModels()
+    private val mWorkspaceListViewModel:WorkspaceListViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -273,6 +274,19 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                 Resource.Loading::class.java -> dialog.show()
             }
         })
+        mOtherProfileViewModel.getInvitationResponse.observe(viewLifecycleOwner, {t->
+            when(t.javaClass){
+                Resource.Success::class.java -> {
+                    Toast.makeText(requireContext(), "Invitation is successfully sent", Toast.LENGTH_LONG).show()
+                    mOtherProfileViewModel.getInvitationResponse.value = Resource.Done()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+                }
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Done::class.java -> dialog.dismiss()
+            }
+        })
 
     }
 
@@ -319,6 +333,44 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
 
     private fun setListeners(status:USERSTATUS, isUserPrivate:Boolean){
         val user = mOtherProfileViewModel.getUserResource.value!!.data
+
+
+        binding.textNameSurname.setOnClickListener {
+
+            mWorkspaceListViewModel.getWorkspaces((activity as HomeActivity).currUserToken)
+            mWorkspaceListViewModel.workspaces.observe(viewLifecycleOwner, {wsList->
+                when(wsList.javaClass){
+                    Resource.Success::class.java->{
+                        val tmpBinding = DialogWsInvitationsBinding.inflate(layoutInflater, binding.root, false)
+                        AlertDialog.Builder(requireContext())
+                            .setView(tmpBinding.root)
+                            .create().show()
+                        val x = ArrayAdapter(requireContext(), R.layout.spinner_item, mutableListOf("Loading..."))
+                        x.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                        tmpBinding.spWorkspaces.adapter = x
+                        (tmpBinding.spWorkspaces.adapter as ArrayAdapter<String>).clear()
+                        (tmpBinding.spWorkspaces.adapter as ArrayAdapter<String>).addAll(wsList.data!!.workspaces.map { it.title })
+                        tmpBinding.sendInvitation.setOnClickListener {
+                            val wsPosition = tmpBinding.spWorkspaces.selectedItemPosition
+                            val wsId =wsList.data!!.workspaces.map { t->t.id }[wsPosition]
+                            mOtherProfileViewModel.sendInvitationToWorkspace(wsId, mOtherProfileViewModel.getUserResource.value!!.data!!.id!!,
+                                (activity as HomeActivity).currUserToken)
+
+                        }
+                        mWorkspaceListViewModel.workspaces.value = Resource.Done()
+                    }
+                    Resource.Loading::class.java -> dialog.show()
+                    Resource.Error::class.java -> {
+                        Toast.makeText(requireContext(), wsList.message, Toast.LENGTH_SHORT).show()
+                        mWorkspaceListViewModel.workspaces.value = Resource.Done()
+                    }
+                    Resource.Done::class.java ->{
+                        dialog.dismiss()
+                        mWorkspaceListViewModel.workspaces.removeObservers(viewLifecycleOwner)
+                    }
+                }
+            })
+        }
 
 
         if(user!!.can_comment){

@@ -22,6 +22,7 @@ class OtherProfileRepository() {
     var unFollowResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
     val userSkills:MutableLiveData<Resource<Skills>> = MutableLiveData()
     val userComments:MutableLiveData<Resource<AllComments>> = MutableLiveData()
+    val invitationResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
 
 
     val addDeleteCommentResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
@@ -185,6 +186,27 @@ class OtherProfileRepository() {
                     }
                     response.errorBody() != null -> userSkills.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
                     else -> addDeleteCommentResourceResponse.value = Resource.Error("Unknown error!")
+                }
+            }
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+
+    fun sendInvitationToWorkspace(wsId: Int, invId: Int, currUserToken: String) {
+        val service = RetrofitClient.getService()
+        val call = service.inviteToWorkspace(wsId,invId, currUserToken)
+        invitationResponse.value = Resource.Loading()
+        call.enqueue(object: Callback<JsonObject?>{
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when {
+                    response.isSuccessful && response.body() != null -> {
+                        invitationResponse.value = Resource.Success(response.body()!!)
+                    }
+                    response.errorBody() != null -> userSkills.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> invitationResponse.value = Resource.Error("Unknown error!")
                 }
             }
             override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
