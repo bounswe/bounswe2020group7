@@ -23,6 +23,7 @@ import CancelOutlinedIcon from "@material-ui/icons/CancelOutlined";
 import CheckCircleOutlinedIcon from "@material-ui/icons/CheckCircleOutlined";
 import IconButton from "@material-ui/core/IconButton";
 import WorkspaceViewMilestoneSection from './WorkspaceViewMilestoneSection'
+import Issue from '../../Issue/Issue'
 
 const StyledButton = withStyles({
   root: {
@@ -756,8 +757,7 @@ class WorkspaceView extends Component {
                     />
                   </TabPanel>
                   <TabPanel value={this.state.value} index={2}>
-                    Issues
-                    {/*<Issues workspaceId={this.props.match.params.workspaceId} members={this.state.workspace.active_contributors} />*/}
+                  <Issue workspaceId={this.props.match.params.workspaceId} members={this.state.workspace.active_contributors}/>
                   </TabPanel>
                   <TabPanel value={this.state.value} index={3}>
                     <WorkspaceViewMilestoneSection workspaceId={this.state.workspaceId} />
