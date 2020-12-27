@@ -69,7 +69,7 @@ const TrendingProjects = ({ itemsPerPage = 5, width= '500px', marginLeft = "0px"
               title={item.title}
               description={item.description}
               contributors={item.contributor_list}
-              profileId={item.contributor_list[0].id}
+              profileId={item.creator_id}
               workspaceId={item.id}
             />
           ))}
