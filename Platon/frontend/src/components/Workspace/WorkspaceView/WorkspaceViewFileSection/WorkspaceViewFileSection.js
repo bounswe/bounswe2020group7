@@ -116,7 +116,7 @@ class WorkspaceViewFileSection extends Component {
       })
       .catch((err) => {
         this.setState({
-          error: "Error occured. " + err.response.data.err,
+          error: "Error occured. " + err.response.data.error,
         });
         console.log(err);
       });

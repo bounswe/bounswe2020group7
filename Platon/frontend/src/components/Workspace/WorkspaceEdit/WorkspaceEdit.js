@@ -176,8 +176,9 @@ class WorkspaceEdit extends Component {
     formData.append("requirements", JSON.stringify(requirementsEdited));
 
     // deadline handler
-    let deadlineEdited = this.state.workspace.deadline
-    formData.append("deadline", this.state.workspace.deadline);
+    if(this.state.workspace.deadline){
+      formData.append("deadline", this.state.workspace.deadline);
+    }
 
     const url = config.BASE_URL;
     const token = localStorage.getItem("jwtToken");
@@ -254,7 +255,7 @@ class WorkspaceEdit extends Component {
                   handleSkills={this.handleSkills}
                 />
                 <WorkspaceInputDate
-                  deadline={this.state.workspace.deadline.replaceAll(".", "-")}
+                  deadline={this.state.workspace.deadline ? this.state.workspace.deadline.replaceAll(".", "-"): this.state.workspace.deadline}
                   handleDeadline={this.handleDeadline}
                 />
                 <hr/>

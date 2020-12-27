@@ -15,7 +15,7 @@ const useStyles = () => ({
   },
 })
 
-const UpcomingEvents = ({ itemsPerPage = 5, classes, width = '500px' }) => {
+const UpcomingEvents = ({ itemsPerPage = 5, classes, width = '500px', marginLeft= '0px', marginRight='0px' }) => {
   const [data, setData] = useState({})
   const [fetching, setFetching] = useState(false)
   const [page, setPage] = useState(1)
@@ -55,7 +55,7 @@ const UpcomingEvents = ({ itemsPerPage = 5, classes, width = '500px' }) => {
       >
         Upcoming Events
       </Typography>
-        <div className="UpcomingEventsItems" style={{ width: width }}>
+        <div className="UpcomingEventsItems" style={{ width: width, marginLeft: marginLeft, marginRight: marginRight }}>
           {fetching && (
             <div className="TrendingProjectsSpinner">
               <Spinner />

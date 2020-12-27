@@ -9,6 +9,8 @@ import colors from '../../utils/colors'
 import NavBar from '../NavBar/NavBar'
 import UpcomingEvents from '../UpcomingEvents/UpcomingEvents'
 import TrendingProjects from '../TrendingProjects/TrendingProjects'
+import Box from '@material-ui/core/Box';
+import { Container } from '@material-ui/core'
 
 const { Footer } = Layout
 
@@ -30,57 +32,17 @@ class HomePage extends React.Component {
     return (
       <Layout
         style={{
-          background: colors.primaryDark,
+          background: colors.primary,
         }}
-      >
-        <Layout>
-          <Layout
-            style={{
-              overflow: 'auto',
-              position: 'fixed',
-              left: 0,
-              top: 80,
-            }}
-          >
-          </Layout>
-          <Layout
-            style={{
-              position: 'fixed',
-              right: 16,
-              top: 80,
-            }}
-          >
-            <div style={{ overflow: 'scroll', height: 'calc(100vh - 100px)' }}>
-              <div><TrendingProjects itemsPerPage={3} width='400px' /></div>
-              <div style={{ marginTop: '16px' }}><UpcomingEvents itemsPerPage={3} width='400px' />
-              </div>
-            </div>
+      >            <NavBar />
 
-          </Layout>
-          <Layout
-            style={{
-              position: 'fixed',
-              top: 0,
-              width: '100%',
-              zIndex: 100,
-            }}
-          >
-            <NavBar />
-          </Layout>
-          <Layout
-            className="site-layout"
-            style={{ marginLeft: '400px', marginTop: '64px', marginRight: '516px' }}
-          >
-            <Layout>
-              <div>
-                <div>
-                  <InfiniteScroller />
-                </div>
-              </div>
-            </Layout>
-          </Layout>
-        </Layout>
-        <Footer style={{ textAlign: 'center', position: 'fixed', marginLeft: 200 }}>Platon</Footer>
+        <Box display="flex" p={1} justifyContent="space-evenly" style={{ maxWidth: "1500px", marginTop: "20px" }}>
+          <div style={{ width: "30%" }}>
+            <TrendingProjects marginLeft="auto" marginRight="auto" itemsPerPage={3} width='400px' />
+          </div>
+          <div style={{ width: "35%" }}><InfiniteScroller /></div>
+          <div style={{ width: "30%" }}><UpcomingEvents marginLeft="auto" marginRight="auto" itemsPerPage={3} width='400px' /></div>
+        </Box>
       </Layout>
 
 
