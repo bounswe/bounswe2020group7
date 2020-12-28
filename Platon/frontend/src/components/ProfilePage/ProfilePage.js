@@ -1,5 +1,5 @@
-import React from "react";
-import "./ProfilePage.css";
+import React from 'react'
+import './ProfilePage.css'
 import {
   Container,
   Col,
@@ -7,40 +7,41 @@ import {
   Button,
   Card,
   ResponsiveEmbed,
-} from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
-import Rating from "@material-ui/lab/Rating";
-import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
-import Grid from "@material-ui/core/Grid";
-import NavBar from "../NavBar/NavBar";
-import jwt_decode from "jwt-decode";
-import requestService from "../../services/requestService";
-import { Link } from "react-router-dom";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import ListItemText from "@material-ui/core/ListItemText";
-import PersonIcon from "@material-ui/icons/Person";
-import Snackbar from "@material-ui/core/Snackbar";
-import MuiAlert from "@material-ui/lab/Alert";
-import Avatar from "@material-ui/core/Avatar";
-import Chip from "@material-ui/core/Chip";
-import colors from "../../utils/colors";
-import config from "../../utils/config";
-import axios from "axios";
-import Spinner from "../Spinner/Spinner";
-import EditResearchDialog from "./EditResearchDialog/EditResearchDialog";
+} from 'react-bootstrap'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import Rating from '@material-ui/lab/Rating'
+import PropTypes from 'prop-types'
+import { withStyles } from '@material-ui/core/styles'
+import AppBar from '@material-ui/core/AppBar'
+import Tabs from '@material-ui/core/Tabs'
+import Tab from '@material-ui/core/Tab'
+import Typography from '@material-ui/core/Typography'
+import Box from '@material-ui/core/Box'
+import Grid from '@material-ui/core/Grid'
+import NavBar from '../NavBar/NavBar'
+import jwt_decode from 'jwt-decode'
+import requestService from '../../services/requestService'
+import { Link } from 'react-router-dom'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemAvatar from '@material-ui/core/ListItemAvatar'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
+import ListItemText from '@material-ui/core/ListItemText'
+import PersonIcon from '@material-ui/icons/Person'
+import Snackbar from '@material-ui/core/Snackbar'
+import MuiAlert from '@material-ui/lab/Alert'
+import Avatar from '@material-ui/core/Avatar'
+import Chip from '@material-ui/core/Chip'
+import colors from '../../utils/colors'
+import config from '../../utils/config'
+import axios from 'axios'
+import Spinner from '../Spinner/Spinner'
+import EditResearchDialog from './EditResearchDialog/EditResearchDialog'
+import InviteDialog from './InviteDialog'
 
 function TabPanel(props) {
-  const { children, value, index, ...other } = props;
+  const { children, value, index, ...other } = props
 
   return (
     <div
@@ -56,24 +57,24 @@ function TabPanel(props) {
         </Box>
       )}
     </div>
-  );
+  )
 }
 
 TabPanel.propTypes = {
   children: PropTypes.node,
   index: PropTypes.any.isRequired,
   value: PropTypes.any.isRequired,
-};
+}
 
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
+    'aria-controls': `simple-tabpanel-${index}`,
+  }
 }
 
 function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
+  return <MuiAlert elevation={6} variant="filled" {...props} />
 }
 
 const useStyles = withStyles((theme) => ({
@@ -81,11 +82,12 @@ const useStyles = withStyles((theme) => ({
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
   },
-}));
+}))
+
 
 class ProfilePage extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       followers: [],
       followings: [],
@@ -96,26 +98,28 @@ class ProfilePage extends React.Component {
       personalSkills: [],
       user: null,
       value: 0,
-      job: "",
+      job: '',
       renderTrigger: false,
       isLoading: true,
       isMyProfile: true,
       isProfilePrivate: false,
       showSuccess: false,
-    };
+      inviteDialogOpen: false,
+    }
   }
+
   componentDidMount() {
-    const token = localStorage.getItem("jwtToken");
-    const decoded = jwt_decode(token);
-    const profileId = this.props.match.params.profileId;
+    const token = localStorage.getItem('jwtToken')
+    const decoded = jwt_decode(token)
+    const profileId = this.props.match.params.profileId
     if (decoded.id == profileId) {
       this.setState({
         isMyProfile: true,
-      });
+      })
     } else {
       this.setState({
         isMyProfile: false,
-      });
+      })
     }
     requestService
       .getUser(profileId)
@@ -124,66 +128,66 @@ class ProfilePage extends React.Component {
           this.setState({
             isProfilePrivate: true,
             user: response.data,
-          });
+          })
         } else {
           this.setState({
             user: response.data,
-          });
+          })
           Promise.all([
             requestService.followings(profileId).then((response) => {
               this.setState({
                 followings: response.data.followings,
-              });
+              })
             }),
             requestService.followers(profileId).then((response) => {
               this.setState({
                 followers: response.data.followers,
-              });
+              })
             }),
             requestService.getFollowRequests().then((response) => {
               this.setState({
                 follow_requests: response.data.follow_requests,
-              });
+              })
             }),
             requestService.getResearchs(profileId).then((response) => {
               this.setState({
                 researchs: response.data.research_info,
-              });
+              })
             }),
             requestService.getPersonalSkillList(profileId).then((response) => {
               if (response) {
-                let skillArray = [];
+                let skillArray = []
                 for (var key in response.data.skills) {
-                  skillArray.push(response.data.skills[key].name);
+                  skillArray.push(response.data.skills[key].name)
                 }
                 this.setState({
                   personalSkills: skillArray,
-                });
+                })
               }
             }),
-          ]);
+          ])
         }
       })
-      .then(() => this.setState({ isLoading: false }));
+      .then(() => this.setState({ isLoading: false }))
   }
 
   handleCloseSuccess = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
+    if (reason === 'clickaway') {
+      return
     }
 
-    this.setState({ showSuccess: false });
-  };
+    this.setState({ showSuccess: false })
+  }
 
   handleDeleteResearchInformation = (id) => {
-    const token = localStorage.getItem("jwtToken");
-    const decoded = jwt_decode(token);
-    let formData = new FormData();
-    const url = config.BASE_URL;
+    const token = localStorage.getItem('jwtToken')
+    const decoded = jwt_decode(token)
+    let formData = new FormData()
+    const url = config.BASE_URL
 
-    formData.append("research_id", id);
+    formData.append('research_id', id)
     axios
-      .delete(url + "/api/profile/research_information", {
+      .delete(url + '/api/profile/research_information', {
         headers: {
           auth_token: token, //the token is a variable which holds the token
         },
@@ -191,19 +195,19 @@ class ProfilePage extends React.Component {
       })
       .then((response) => {
         if (response.status === 200) {
-          document.location.reload();
+          document.location.reload()
         }
       })
       .catch((err) => {
-        console.log(err);
-      });
-  };
+        console.log(err)
+      })
+  }
 
   handleFollowRequest = () => {
-    const token = localStorage.getItem("jwtToken");
-    const decoded = jwt_decode(token);
-    const follower_id = decoded.id;
-    const following_id = this.props.match.params.profileId;
+    const token = localStorage.getItem('jwtToken')
+    const decoded = jwt_decode(token)
+    const follower_id = decoded.id
+    const following_id = this.props.match.params.profileId
     requestService.postFollowRequest(follower_id, following_id).then((resp) => {
 
       requestService
@@ -213,11 +217,11 @@ class ProfilePage extends React.Component {
             this.setState({
               isProfilePrivate: true,
               user: response.data,
-            });
+            })
           } else {
             this.setState({
               user: response.data,
-            });
+            })
           }
         })
         .then(() => {
@@ -227,15 +231,15 @@ class ProfilePage extends React.Component {
               .then((response) => {
                 this.setState({
                   followers: response.data.followers,
-                });
-              });
+                })
+              })
           }
-        });
-    });
-  };
+        })
+    })
+  }
 
   handleUnFollowRequest = () => {
-    const following_id = this.props.match.params.profileId;
+    const following_id = this.props.match.params.profileId
     requestService.deleteUnfollow(following_id).then((resp) => {
 
       requestService
@@ -245,11 +249,11 @@ class ProfilePage extends React.Component {
             this.setState({
               isProfilePrivate: true,
               user: response.data,
-            });
+            })
           } else {
             this.setState({
               user: response.data,
-            });
+            })
           }
         })
         .then(() => {
@@ -259,35 +263,35 @@ class ProfilePage extends React.Component {
               .then((response) => {
                 this.setState({
                   followers: response.data.followers,
-                });
-              });
+                })
+              })
           }
-        });
-    });
-  };
+        })
+    })
+  }
 
   handleChange = (event, newValue) => {
     this.setState({
       value: newValue,
-    });
-  };
+    })
+  }
 
   handleProfile = (id) => {
-    const token = localStorage.getItem("jwtToken");
-    const decoded = jwt_decode(token);
-    document.location.href = "/" + id;
-  };
+    const token = localStorage.getItem('jwtToken')
+    const decoded = jwt_decode(token)
+    document.location.href = '/' + id
+  }
 
   handlePersonalFollowRequests = (id, switchCase) => {
     requestService.deleteFollowRequests(id, switchCase).then((resp) => {
       if (switchCase == 1) {
         this.setState({
-          showSuccess: "Accepted Follow Request",
-        });
+          showSuccess: 'Accepted Follow Request',
+        })
       } else {
         this.setState({
-          showSuccess: "Rejected Follow Request",
-        });
+          showSuccess: 'Rejected Follow Request',
+        })
       }
       requestService
         .getUser(this.props.match.params.profileId)
@@ -296,31 +300,31 @@ class ProfilePage extends React.Component {
             this.setState({
               isProfilePrivate: true,
               user: response.data,
-            });
+            })
           } else {
             this.setState({
               user: response.data,
-            });
+            })
           }
-        });
+        })
       requestService
         .followers(this.props.match.params.profileId)
         .then((response) => {
           this.setState({
             followers: response.data.followers,
-          });
-        });
+          })
+        })
 
       requestService.getFollowRequests().then((response) => {
         this.setState({
           follow_requests: response.data.follow_requests,
-        });
-      });
-    });
-  };
+        })
+      })
+    })
+  }
 
   render() {
-    const { classes } = this.props;
+    const { classes } = this.props
     return (
       <div className="ProfilePageLanding">
         <div className="AppBar">
@@ -341,7 +345,7 @@ class ProfilePage extends React.Component {
                   <img
                     className="ProfilePhoto"
                     src={
-                      "http://18.185.75.161:5000/api" +
+                      'http://18.185.75.161:5000/api' +
                       this.state.user.profile_photo
                     }
                     alt="UserImage"
@@ -355,22 +359,22 @@ class ProfilePage extends React.Component {
                   )}
                   {this.state.user && (
                     <p className="GeneralSmallFont">
-                      {this.state.user.job}{" "}
-                      {this.state.user.institution && " - "}{" "}
+                      {this.state.user.job}{' '}
+                      {this.state.user.institution && ' - '}{' '}
                       {this.state.user.institution}
                     </p>
                   )}
                   {this.state.isProfilePrivate
                     ? null
                     : this.state.personalSkills.map((value, index) => {
-                        return (
-                          <Chip
-                            className="mr-1 mb-1 ProfileSkillChip"
-                            label={value}
-                            variant="outlined"
-                          />
-                        );
-                      })}
+                      return (
+                        <Chip
+                          className="mr-1 mb-1 ProfileSkillChip"
+                          label={value}
+                          variant="outlined"
+                        />
+                      )
+                    })}
                 </Col>
                 <Col>
                   {this.state.isProfilePrivate ? null : (
@@ -434,6 +438,9 @@ class ProfilePage extends React.Component {
                       className="ProfileFollowButton"
                       variant="primary"
                       size="lg"
+                      onClick={() => this.setState({
+                        inviteDialogOpen: true,
+                      })}
                       block
                     >
                       Invite
@@ -473,22 +480,35 @@ class ProfilePage extends React.Component {
                   </AppBar>
                   <TabPanel value={this.state.value} index={0}>
                     {!this.state.isMyProfile ? null : (
-                      <Row className="mb-3" style={{display:"flex", flexDirection: "column", alignItems: "center"}}>
+                      <Row
+                        className="mb-3"
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                        }}
+                      >
                         <EditResearchDialog
                           type="NEW"
                           dialogTitle="Add New Research"
-                          id={""}
-                          title={""}
-                          description={""}
-                          year={""}
+                          id={''}
+                          title={''}
+                          description={''}
+                          year={''}
                         />
                       </Row>
                     )}
                     {this.state.researchs.map((value, index) => {
                       return (
                         <Row className="mb-3">
-                          <Card className="ProfileProjectsCard" style={{width: "100%"}}>
-                            <Card.Body style={{display:"flex", flexDirection: "column", alignItems: "center"}}>
+                          <Card className="ProfileProjectsCard" style={{ width: '100%' }}>
+                            <Card.Body
+                              style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                              }}
+                            >
                               <Card.Title style={{ color: colors.primaryDark }}>
                                 Title
                               </Card.Title>
@@ -500,8 +520,8 @@ class ProfilePage extends React.Component {
                               </Card.Title>
 
                               <Card.Text style={{ color: colors.primaryLight }}>
-                                {value.description === ""
-                                  ? "No description is provided."
+                                {value.description === ''
+                                  ? 'No description is provided.'
                                   : value.description}
                               </Card.Text>
                               <Card.Title style={{ color: colors.primaryDark }}>
@@ -512,32 +532,32 @@ class ProfilePage extends React.Component {
                                 {value.year}
                               </Card.Text>
 
-                            {!this.state.isMyProfile ? null : (
-                              <EditResearchDialog
-                                className="mb-3 allign-items-center"
-                                type="EDIT"
-                                dialogTitle="Edit Research"
-                                id={value.id}
-                                title={value.title}
-                                description={value.description}
-                                year={value.year}
-                              />
-                            )}
-                            {!this.state.isMyProfile ? null : (
-                              <Button
-                                className="mt-3"
-                                onClick={() =>
-                                  this.handleDeleteResearchInformation(value.id)
-                                }
-                                style={{ backgroundColor: colors.quinary, width: "176px" }}
-                              >
-                                Delete
-                              </Button>
-                            )}
+                              {!this.state.isMyProfile ? null : (
+                                <EditResearchDialog
+                                  className="mb-3 allign-items-center"
+                                  type="EDIT"
+                                  dialogTitle="Edit Research"
+                                  id={value.id}
+                                  title={value.title}
+                                  description={value.description}
+                                  year={value.year}
+                                />
+                              )}
+                              {!this.state.isMyProfile ? null : (
+                                <Button
+                                  className="mt-3"
+                                  onClick={() =>
+                                    this.handleDeleteResearchInformation(value.id)
+                                  }
+                                  style={{ backgroundColor: colors.quinary, width: '176px' }}
+                                >
+                                  Delete
+                                </Button>
+                              )}
                             </Card.Body>
                           </Card>
                         </Row>
-                      );
+                      )
                     })}
                   </TabPanel>
                   <TabPanel value={this.state.value} index={1}>
@@ -549,7 +569,7 @@ class ProfilePage extends React.Component {
                               <ListItemAvatar>
                                 <Avatar
                                   src={
-                                    "http://18.185.75.161:5000/api" +
+                                    'http://18.185.75.161:5000/api' +
                                     value.profile_photo
                                   }
                                 ></Avatar>
@@ -560,7 +580,7 @@ class ProfilePage extends React.Component {
                               />
                             </ListItem>
                           </Link>
-                        );
+                        )
                       })}
                     </List>
                   </TabPanel>
@@ -573,7 +593,7 @@ class ProfilePage extends React.Component {
                               <ListItemAvatar>
                                 <Avatar
                                   src={
-                                    "http://18.185.75.161:5000/api" +
+                                    'http://18.185.75.161:5000/api' +
                                     value.profile_photo
                                   }
                                 ></Avatar>
@@ -584,7 +604,7 @@ class ProfilePage extends React.Component {
                               />
                             </ListItem>
                           </Link>
-                        );
+                        )
                       })}
                     </List>
                   </TabPanel>
@@ -613,7 +633,7 @@ class ProfilePage extends React.Component {
                                   onClick={() =>
                                     this.handlePersonalFollowRequests(
                                       value.id,
-                                      1
+                                      1,
                                     )
                                   }
                                 >
@@ -624,7 +644,7 @@ class ProfilePage extends React.Component {
                                   onClick={() =>
                                     this.handlePersonalFollowRequests(
                                       value.id,
-                                      2
+                                      2,
                                     )
                                   }
                                 >
@@ -632,7 +652,7 @@ class ProfilePage extends React.Component {
                                 </Button>
                               </div>
                             </ListItem>
-                          );
+                          )
                         })}
                       </List>
                     </TabPanel>
@@ -657,9 +677,17 @@ class ProfilePage extends React.Component {
             </Alert>
           </Snackbar>
         )}
+        <InviteDialog
+          open={this.state.inviteDialogOpen}
+          user={this.state.user}
+          closeDialog={() => this.setState({
+            inviteDialogOpen: false,
+          })}
+        />
       </div>
-    );
+    )
   }
 }
 
-export default ProfilePage;
+
+export default ProfilePage

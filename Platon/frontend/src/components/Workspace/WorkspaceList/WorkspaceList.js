@@ -20,16 +20,16 @@ import { red } from "@material-ui/core/colors";
 
 import PageviewIcon from "@material-ui/icons/Pageview";
 import DeleteIcon from "@material-ui/icons/Delete";
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import {Link} from 'react-router-dom'
+import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
+import { Link } from "react-router-dom";
 import jwt_decode from "jwt-decode";
-
+import CancelOutlinedIcon from "@material-ui/icons/CancelOutlined";
+import CheckCircleOutlinedIcon from "@material-ui/icons/CheckCircleOutlined";
 const useStyles = (theme) => ({
   root: {
     flexGrow: 1,
-    width: 752,
     marginBottom: theme.spacing(2),
-    backgroundColor: colors.secondary
+    backgroundColor: colors.secondary,
   },
   demo: {
     marginTop: theme.spacing(3),
@@ -69,33 +69,62 @@ class WorkspaceList extends Component {
       success: false,
       error: false,
       loaded: false,
-      profileId: null
+      profileId: null,
+      inviter: [],
     };
   }
   componentDidMount() {
-    this.fetchWorkspaces();
+    this.promise()
   }
-  fetchWorkspaces = () =>{
+  promise = () => {
+    Promise.all([
+      this.fetchWorkspaces(),
+      this.fetchWorkspaceInvitations(),
+    ]).then(() => {
+      this.setState({
+        loaded: true,
+      });
+    });
+  }
+  fetchWorkspaces = () => {
     const token = localStorage.getItem("jwtToken");
     const decoded = jwt_decode(token);
     axios.defaults.headers.common["auth_token"] = `${token}`;
-    const url = config.BASE_URL
+    const url = config.BASE_URL;
     this.setState({
-      profileId: decoded.id
-    })
-    axios.get(url+'/api/workspaces/self')
-    .then((response) => {
-      if (response.status === 200) {
-        this.setState({
-          workspaces: response.data.workspaces,
-          loaded: true,
-        });
-      }
-    })
-    .catch((err) => {
-      console.log(err);
+      profileId: decoded.id,
     });
-  }
+    axios
+      .get(url + "/api/workspaces/self")
+      .then((response) => {
+        if (response.status === 200) {
+          this.setState({
+            workspaces: response.data.workspaces
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  fetchWorkspaceInvitations = () => {
+    const token = localStorage.getItem("jwtToken");
+    axios.defaults.headers.common["auth_token"] = `${token}`;
+    const url = config.BASE_URL;
+    return axios
+      .get(url + "/api/workspaces/invitations")
+      .then((response) => {
+        if (response.status === 200) {
+          this.setState({
+            inviter: response.data,
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   handleCloseError = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -111,6 +140,63 @@ class WorkspaceList extends Component {
 
     this.setState({ success: false });
   };
+
+  handleAcceptInvitation = (id) => {
+    const token = localStorage.getItem("jwtToken");
+    const url = config.BASE_URL;
+    let formData = new FormData();
+    formData.append("is_accepted", "1");
+    formData.append("invitation_id", id);
+    axios
+      .delete(url + "/api/workspaces/invitations", {
+        headers: {
+          auth_token: token, //the token is a variable which holds the token
+        },
+        data: formData,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          this.setState({
+            success: "Successfully accepted.",
+          });
+          this.promise();
+        }
+      })
+      .catch((err) => {
+        this.setState({
+          error: "Error occured. " + err.response.data.error,
+        });
+      });
+  };
+  handleRejectInvitation = (id) => {
+    const token = localStorage.getItem("jwtToken");
+    const url = config.BASE_URL;
+    let formData = new FormData();
+    formData.append("is_accepted", "0");
+    formData.append("invitation_id", id);
+    axios
+      .delete(url + "/api/workspaces/invitations", {
+        headers: {
+          auth_token: token, //the token is a variable which holds the token
+        },
+        data: formData,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          this.setState({
+            success: "Successfully rejected.",
+          });
+          this.fetchWorkspaceInvitations();
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+        this.setState({
+          error: "Error occured. " + err.response.data.error,
+        });
+      });
+  };
+
   deleteWorkspace = (element) => {
     const token = localStorage.getItem("jwtToken");
     const url = config.BASE_URL;
@@ -161,7 +247,7 @@ class WorkspaceList extends Component {
                 width: "100%",
               }}
             >
-              <div>
+              <div style={{width:"55%"}}>
                 <Typography
                   style={{ color: colors.secondary, marginBottom: "20px" }}
                   component="h1"
@@ -171,57 +257,127 @@ class WorkspaceList extends Component {
                   Workspaces
                 </Typography>
 
-                {this.state.workspaces.length !== 0 ? (this.state.workspaces.map((item, index) => {
-                  return (
-                    <Card className={classes.root}>
-                      <CardHeader style={{color: colors.primaryDark}} title={item.title} />
+                {this.state.workspaces.length !== 0 ? (
+                  this.state.workspaces.map((item, index) => {
+                    return (
+                      <Card className={classes.root}>
+                        <CardHeader
+                          style={{ color: colors.primaryDark }}
+                          title={item.title}
+                        />
 
-                      <CardContent>
-                        <Typography
-                          variant="body2"
-                          style={{color: colors.primary}}
-                          component="p"
+                        <CardContent>
+                          <Typography
+                            variant="body2"
+                            style={{ color: colors.primary }}
+                            component="p"
+                          >
+                            {item.description}
+                          </Typography>
+                        </CardContent>
+                        <CardActions
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
                         >
-                          {item.description}
-                        </Typography>
-                      </CardContent>
-                      <CardActions style={{display: "flex",  justifyContent: "space-between"}}>
-                      <Link to = {`/${this.state.profileId}/workspace/${item.id}`}>
-                        <IconButton aria-label="view">
-                          <PageviewIcon style={{color: colors.tertiary}}/>
-                        </IconButton>
-                        </Link>
+                          <Link
+                            to={`/${this.state.profileId}/workspace/${item.id}`}
+                          >
+                            <IconButton aria-label="view">
+                              <PageviewIcon
+                                style={{ color: colors.tertiary }}
+                              />
+                            </IconButton>
+                          </Link>
 
-                        <IconButton onClick={()=>this.deleteWorkspace(item.id)}aria-label="delete">
-                          <DeleteIcon style={{color: colors.quinary}}/>
-                        </IconButton>
-                      </CardActions>
-                    </Card>
-                  );
-                })):                <Typography
-                style={{ color: colors.secondary, marginBottom: "20px" }}
-                component="h1"
-                variant="h6"
-                align="center"
-              >
-                You have not created any workspace yet.
-              </Typography>}
-
+                          <IconButton
+                            onClick={() => this.deleteWorkspace(item.id)}
+                            aria-label="delete"
+                          >
+                            <DeleteIcon style={{ color: colors.quinary }} />
+                          </IconButton>
+                        </CardActions>
+                      </Card>
+                    );
+                  })
+                ) : (
+                  <Typography
+                    style={{ color: colors.secondary, marginBottom: "20px" }}
+                    component="h1"
+                    variant="h6"
+                    align="center"
+                  >
+                    You have not created any workspace yet.
+                  </Typography>
+                )}
               </div>
-              <Link to = {`/${this.state.profileId}/workspace/new`} style={{textDecoration: "none"}}>
-              <IconButton disableRipple aria-label="create" style={{border: "none", borderRadius: "0%", backgroundColor: colors.tertiaryDark}}>
-                <AddCircleOutlineIcon style={{ color: colors.secondary }} />
-                 <Typography
-                  style={{ color: colors.secondaryLight, paddingLeft:"5px" }}
-                  component="h1"
-                  variant="h5"
-                  align="center"
+              <div style={{width: "35%"}}>
+                <div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
+              <Link
+                to={`/${this.state.profileId}/workspace/new`}
+                style={{ textDecoration: "none" }}
+              >
+                <IconButton
+                  disableRipple
+                  aria-label="create"
+                  style={{
+                    border: "none",
+                    borderRadius: "0.5em",
+                    backgroundColor: colors.tertiary,
+
+                  }}
 
                 >
-                   New Workspace
-                </Typography>
-              </IconButton>
+                  <AddCircleOutlineIcon style={{ color: colors.secondary }} />
+                  <Typography
+                    style={{ color: colors.secondaryLight, paddingLeft: "5px" }}
+                    component="h1"
+                    variant="h5"
+                    align="center"
+                  >
+                    New Workspace
+                  </Typography>
+                </IconButton>
               </Link>
+              </div>
+              <div style={{marginTop: "40px"}}>
+              <Typography
+                gutterBottom
+                variant="body1"
+                align="center"
+                style={{ color: colors.tertiary }}
+              >
+                Incoming Workspace Invitations
+              </Typography>
+              {this.state.inviter && this.state.inviter.length === 0
+                ? <div style={{textAlign: "center", color: colors.secondary}}>Nothing to show</div>
+                : null}
+              {this.state.inviter.map((inviter, index) => (
+                <div>
+                <div style={{ display: "flex" }}>
+                  <h6 style={{ margin: "auto 0px", color:colors.secondary}} >
+                    {inviter.invitor_fullname} invited you to join{" "}
+                    {inviter.workspace_title}
+                  </h6>
+                  <div>
+                    <IconButton onClick={() => this.handleRejectInvitation(inviter.invitation_id)}>
+                      <CancelOutlinedIcon style={{ color: colors.quinary }} />
+                    </IconButton>
+                    <IconButton onClick={() => this.handleAcceptInvitation(inviter.invitation_id)}>
+                      <CheckCircleOutlinedIcon
+                        style={{ color: colors.quaternary }}
+                      />
+                    </IconButton>
+
+                  </div>
+
+                </div>
+                <hr style={{backgroundColor: colors.primaryDark}}/>
+                </div>
+              ))}
+              </div>
+              </div>
             </div>
           ) : (
             <div style={{ marginTop: "150px" }}>
