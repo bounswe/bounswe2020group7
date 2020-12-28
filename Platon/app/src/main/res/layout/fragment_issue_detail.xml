@@ -123,12 +123,20 @@
             android:drawablePadding="@dimen/xx_small"
             app:drawableRightCompat="@drawable/ic_comment_24dp"
             />
+        <ImageView
+            android:id="@+id/issue_add_comment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_add_comment_24dp"
+            android:visibility="gone"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/issue_comments_recycler_view"
             android:layout_width="match_parent"
             android:visibility="gone"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/xx_small"
+            android:layout_marginEnd="@dimen/xx_small"/>
 
 
 
