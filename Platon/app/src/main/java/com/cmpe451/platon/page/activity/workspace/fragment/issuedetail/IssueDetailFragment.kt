@@ -69,6 +69,7 @@ class IssueDetailFragment: Fragment() {
 
     }
 
+
     private fun updateIssueInformations() {
         issue_id = sharedPreferences.getString("issue_id", null).toString()
         issue_title = sharedPreferences.getString("issue_title", null).toString()
@@ -165,7 +166,6 @@ class IssueDetailFragment: Fragment() {
         mIssueDetailViewModel.deleteIssueAssigneeResponse.observe(viewLifecycleOwner, { t->
             when(t.javaClass){
                 Resource.Success::class.java ->{
-                    val ert = t
                     mIssueDetailViewModel.getIssueAssignee((activity as WorkspaceActivity).workspace_id!!,issue_id.toInt(), null, null, (activity as WorkspaceActivity).token!!)
 
                 }
@@ -195,6 +195,25 @@ class IssueDetailFragment: Fragment() {
                 Resource.Error::class.java ->{
                     Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
                     mIssueDetailViewModel.getIssueCommentsResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java->{
+                    dialog.dismiss()
+                }
+            }
+        })
+
+        mIssueDetailViewModel.addIssueCommentResponse.observe(viewLifecycleOwner, { t->
+            when(t.javaClass){
+                Resource.Loading::class.java->{
+                    dialog.show()
+                }
+                Resource.Success::class.java ->{
+                    (binding.issueCommentsRecyclerView.adapter as IssueCommentAdapter).clearElements()
+                    mIssueDetailViewModel.getIssueComments((activity as WorkspaceActivity).workspace_id!!, issue_id.toInt(), maxPageNumberComment, pageSize,(activity as WorkspaceActivity).token!!)
+                }
+                Resource.Error::class.java ->{
+                    Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                    mIssueDetailViewModel.addIssueCommentResponse.value = Resource.Done()
                 }
                 Resource.Done::class.java->{
                     dialog.dismiss()
@@ -267,11 +286,27 @@ class IssueDetailFragment: Fragment() {
         binding.issueCommentsTitle.setOnClickListener{
             when(binding.issueCommentsRecyclerView.visibility){
                 View.GONE->{
-                    //getComments
-                    //binding.issueCommentsRecyclerView.adapter = CommentsAdapter(arrayListOf(Comment(0,"hehe", "haha", "today", 2.5)), requireContext())
+                    var collaboratorIds = ArrayList<Int>()
+
+                    for (item in contributors) {
+                        collaboratorIds.add(item.id)
+                    }
+
+                    if (collaboratorIds.contains((activity as WorkspaceActivity).user_id!!)) {
+                        binding.issueAddComment.visibility = View.VISIBLE
+                    }
                     binding.issueCommentsRecyclerView.visibility = View.VISIBLE
                 }
                 View.VISIBLE->{
+                    var collaboratorIds = ArrayList<Int>()
+
+                    for (item in contributors) {
+                        collaboratorIds.add(item.id)
+                    }
+
+                    if (collaboratorIds.contains((activity as WorkspaceActivity).user_id!!)) {
+                        binding.issueAddComment.visibility = View.GONE
+                    }
                     binding.issueCommentsRecyclerView.visibility = View.GONE
                 }
             }
@@ -280,6 +315,10 @@ class IssueDetailFragment: Fragment() {
 
         binding.issueAssigneeTextView.setOnClickListener{
             onAddAssigneeClicked()
+        }
+
+        binding.issueAddComment.setOnClickListener{
+            onAddCommentClicked()
         }
     }
 
@@ -413,7 +452,7 @@ class IssueDetailFragment: Fragment() {
         }
     }
 
-    fun onAddAssigneeClicked() {
+    private fun onAddAssigneeClicked() {
 
         var contributorNames = ArrayList<String>()
         var contributorIds = ArrayList<Int>()
@@ -461,6 +500,36 @@ class IssueDetailFragment: Fragment() {
             .create().show()
         dialog.dismiss()
 
+    }
+
+    private fun onAddCommentClicked() {
+        val addBinding = DialogIssueAddCommentBinding.inflate(layoutInflater, binding.root, false)
+        val addCommentDialog = AlertDialog.Builder(requireContext())
+            .setView(addBinding.root)
+            .show()
+        addCommentDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        addBinding.buttonIssueAddComment.setOnTouchListener { _, event ->
+
+            when {
+                addBinding.issueComment.text.isNullOrEmpty() -> {
+                    Toast.makeText(activity, "Comment cannot be left empty", Toast.LENGTH_LONG).show()
+                }
+
+                else -> {
+                    mIssueDetailViewModel.addIssueComments((activity as WorkspaceActivity).workspace_id!!,
+                        issue_id.toInt(),
+                        addBinding.issueComment.text.toString(),
+                        (activity as WorkspaceActivity).token!!)
+                    addCommentDialog.dismiss()
+
+                }
+            }
+
+            true
+
+
+        }
     }
 
 

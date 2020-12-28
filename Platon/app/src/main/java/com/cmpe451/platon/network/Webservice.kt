@@ -481,11 +481,11 @@ interface Webservice {
 
 
     @FormUrlEncoded
-    @POST("api/workspaces/issue")
+    @POST("api/workspaces/issue/comment")
     fun addIssueComment(@Field("workspace_id") workspaceId: Int,
-                 @Field("issue_id") issueId: Int,
-                 @Field("comment") comment: String,
-                 @Header("auth_token") authToken: String): Call<JsonObject?>
+                        @Field("issue_id") issueId: Int,
+                        @Field("comment") comment: String,
+                        @Header("auth_token") authToken: String): Call<JsonObject?>
 
 
 }

@@ -37,6 +37,7 @@ class IssueCommentAdapter(private val data: ArrayList<IssueComment>, private val
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(holder: IssueCommentsViewHolder, position: Int) {
+
         holder.binding.issueDeleteComment.setOnClickListener{
             onCommentClicked.onDeleteCommentClicked(data[position], position)
         }

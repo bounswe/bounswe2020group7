@@ -4,8 +4,11 @@
     xmlns:card_view = "http://schemas.android.com/apk/res-auto"
     card_view:cardCornerRadius = "@dimen/medium"
     card_view:cardElevation="@dimen/xxx_small"
+    android:layout_margin="@dimen/xx_small"
     android:layout_marginBottom="@dimen/xxx_small"
-    card_view:cardBackgroundColor="@color/secondary_green_transparent"
+    card_view:cardBackgroundColor="@color/very_light_brown"
+    android:layout_marginStart="30dp"
+    android:layout_marginEnd="30dp"
     android:layout_width = "match_parent"
     android:layout_height = "wrap_content">
 
@@ -19,16 +22,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="horizontal"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp">
-            <ImageView
-                android:id="@+id/issue_comment_image"
-                android:layout_marginStart="@dimen/x_small"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_width="@dimen/xxxxx_large"
-                android:background="@color/white"
-                android:layout_height="@dimen/xxxxx_large" />
+            android:layout_marginStart="@dimen/x_small">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -40,8 +34,6 @@
                     android:layout_width="match_parent"
                     android:layout_margin="@dimen/x_small"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/activity_img"
-                    android:layout_centerInParent="true"
                     android:maxLines="1"
                     android:text="@string/comment_owner_str"
                     android:textColor="@color/primary_dark"
@@ -53,9 +45,7 @@
                     android:layout_width="match_parent"
                     android:layout_margin="@dimen/x_small"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/activity_img"
-                    android:layout_centerInParent="true"
-                    android:maxLines="2"
+                    android:maxLines="3"
                     android:text="@string/comments_str"
                     android:textColor="@color/primary_light"
                     android:textSize="@dimen/desc_text_size" />
@@ -64,14 +54,11 @@
 
             <ImageView
                 android:id="@+id/issue_delete_comment"
-                android:visibility="gone"
-                android:layout_below="@id/rtb_rating"
-                android:layout_alignParentEnd="true"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_delete_24dp"
-                android:paddingLeft="10dp"
-                />
+                android:layout_weight="1"
+                android:src="@drawable/ic_delete_black_24dp"
+                android:layout_marginEnd="6dp"/>
 
         </LinearLayout>
 

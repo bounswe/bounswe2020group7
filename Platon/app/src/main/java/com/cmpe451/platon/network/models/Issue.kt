@@ -52,7 +52,8 @@ data class IssueComment(
     val owner_name: String,
     val owner_surname: String,
     val owner_e_mail: String,
-    val owner_rate: Int
+    val owner_rate: Int,
+    val owner_photo: String
 )
 
 
