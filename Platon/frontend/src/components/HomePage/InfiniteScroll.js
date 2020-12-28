@@ -46,9 +46,8 @@ class InfiniteScroller extends Component {
             items.push(
                 <div>
                 <Commentt
-                    message={track.message}
-                    author={<a>{track.author}</a>}
-                    avatar={track.avatar}
+                    title={track.message}
+                    avatar={track.artwork_url}
                 />
                 <hr style={{backgroundColor: colors.primaryLight}} />
                 </div>

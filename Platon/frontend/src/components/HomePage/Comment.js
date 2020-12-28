@@ -11,7 +11,7 @@ import {
 } from "@ant-design/icons";
 import colors from "../../utils/colors";
 import Box from "@material-ui/core/Box";
-
+import './commentStyle.css'
 class Commentt extends React.Component {
   constructor(props) {
     super(props);
@@ -107,8 +107,9 @@ class Commentt extends React.Component {
         <Avatar src={this.props.avatar} alt="Han Solo" />
 
         <Comment
+          className="comment"
           content={this.props.title}
-          style={{ color: colors.quinary, marginLeft: "10px"}}
+          style={{color: colors.quinary, marginLeft: "10px"}}
         />
       </div>
     );
