@@ -125,12 +125,12 @@ class Issue extends React.Component {
     }
 
   componentDidMount(){
-
+    console.log(this.props)
   const token = localStorage.getItem("jwtToken");
   const decoded = jwt_decode(token);
   this.reply=this.reply.bind(this);
     //Get workspace members
-    requestService.getIssues(decoded.id,2).then((response)=>{
+    requestService.getIssues(decoded.id,this.props.workspaceId).then((response)=>{
          const issues=response.data.result;
                       const toDisplay=[];
                       issues.forEach(function (issue,index){
@@ -185,7 +185,7 @@ class Issue extends React.Component {
       componentDidUpdate(){
       const token = localStorage.getItem("jwtToken");
         const decoded = jwt_decode(token);
-      requestService.getIssues(decoded.id,2).then((response)=>{
+      requestService.getIssues(decoded.id,this.props.workspaceId).then((response)=>{
               const issues=response.data.result;
               const toDisplay=[];
               issues.forEach(function (issue,index){
@@ -225,7 +225,7 @@ class Issue extends React.Component {
 
     }
     deleteIssue = (issue_id) =>{
-        requestService.deleteIssue(issue_id,2)
+        requestService.deleteIssue(issue_id,this.props.workspaceId)
         }
   handleSubmit = () => {
     if(!this.state.description) {
@@ -235,7 +235,7 @@ class Issue extends React.Component {
     this.setState({
       submitting: true,
     });
-    requestService.createIssue(this.state.title,this.state.description,this.state.deadline,2).then((response) => {
+    requestService.createIssue(this.state.title,this.state.description,this.state.deadline,this.props.workspaceId).then((response) => {
     this.setState({})
        })
     setTimeout(() => {
@@ -262,7 +262,7 @@ class Issue extends React.Component {
     this.setState({
       submitting: true,
     });
-    requestService.createIssue(this.state.title,this.state.description,this.state.deadline,2).then((response) => {
+    requestService.createIssue(this.state.title,this.state.description,this.state.deadline,this.props.workspaceId).then((response) => {
     this.setState({})
        })
     setTimeout(() => {
@@ -316,7 +316,7 @@ class Issue extends React.Component {
         <Button onClick={this.prevButton}>
         PREV
                 </Button>
-            <CreateIssue  user={this.state.user}  />
+            <CreateIssue  user={this.state.user} workspaceId={this.props.workspaceId} members={this.props.members}  />
         </>
     );
   }
