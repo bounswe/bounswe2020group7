@@ -3,7 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="0f20f1c4-475d-4e74-a6af-05f9b289d905" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Platon/frontend/src/components/Workspace/WorkspaceView/WorkspaceView.js" beforeDir="false" afterPath="$PROJECT_DIR$/Platon/frontend/src/components/Workspace/WorkspaceView/WorkspaceView.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Platon/frontend/src/components/Issue/CreateIssue.js" beforeDir="false" afterPath="$PROJECT_DIR$/Platon/frontend/src/components/Issue/CreateIssue.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Platon/frontend/src/components/Issue/Issue.js" beforeDir="false" afterPath="$PROJECT_DIR$/Platon/frontend/src/components/Issue/Issue.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,7 +71,14 @@
       <option name="project" value="LOCAL" />
       <updated>1609097735636</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Issue Entegration Step 1">
+      <created>1609098634768</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1609098634768</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -107,6 +115,7 @@
     <MESSAGE value="HomePage i başardık" />
     <MESSAGE value="Issue" />
     <MESSAGE value="Issue Completed" />
-    <option name="LAST_COMMIT_MESSAGE" value="Issue Completed" />
+    <MESSAGE value="Issue Entegration Step 1" />
+    <option name="LAST_COMMIT_MESSAGE" value="Issue Entegration Step 1" />
   </component>
 </project>
