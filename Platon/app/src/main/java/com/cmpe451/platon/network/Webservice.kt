@@ -410,7 +410,6 @@ interface Webservice {
                          @Header("auth_token") authToken: String ): Call<IssueAssignee?>
 
     @FormUrlEncoded
-
     @POST("api/workspaces/issue/assignee")
     fun addIssueAssignee(@Field("workspace_id") workspaceId:Int,
                          @Field("issue_id") issueId:Int,
@@ -424,6 +423,7 @@ interface Webservice {
                          @Field("assignee_id") assigneeId:Int,
                          @Header("auth_token") authToken:String?): Call<JsonObject?>
 
+    @FormUrlEncoded
     @HTTP(method = "DELETE" , path = "api/workspaces/applications", hasBody = true)
     fun answerWorkspaceApplication(@Field("application_id") application_id:Int,
                     @Field("is_accepted") is_accepted:Int,
