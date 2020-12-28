@@ -78,6 +78,7 @@ class CreateIssue extends React.Component {
     constructor(props)
     {
     super(props)}
+
   state = {
     comments: [],
     submitting: false,
@@ -89,23 +90,16 @@ class CreateIssue extends React.Component {
    pushMembers= ()=>{
 
       const members=[];
-      for (let i = 0; i < 60; i++) {
-        members.push(<Option key={i}>{i}</Option>);
+      for (let i = 0; i < this.props.members.length; i++) {
+        members.push(<Option key={this.props.members[i].id}>{''+this.props.members[i].name+ ' '+this.props.members[i].surname}</Option>);
       }
       this.setState({members:members});
       }
 
   componentDidMount(){
-
   const token = localStorage.getItem("jwtToken");
   const decoded = jwt_decode(token);
   this.pushMembers();
-  // get members
-    const children = [];
-    for (let i = 0; i < 6; i++) {
-      children.push(<Option key={i}>{i}</Option>);
-    }
-
     requestService.getUser(decoded.id).then((response) => {
       this.setState({
         user: response.data,
@@ -125,11 +119,11 @@ class CreateIssue extends React.Component {
     this.setState({
       submitting: true,
     });
-    requestService.createIssue(this.state.title,this.state.description,this.state.deadline,2/*this.state.workspace_id*/).then((response) => {
+    requestService.createIssue(this.state.title,this.state.description,this.state.deadline,this.props.workspaceId/*this.state.workspace_id*/).then((response) => {
         const length=this.state.selectedMembers.length;
         console.log(this.props)
         for(var i=0;i<length;i++)
-        requestService.assignIssue(response.data.issue_id,2,this.state.selectedMembers[i])
+        requestService.assignIssue(response.data.issue_id,this.props.workspaceId,this.state.selectedMembers[i])
        })
         setTimeout(() => {
              this.setState({
