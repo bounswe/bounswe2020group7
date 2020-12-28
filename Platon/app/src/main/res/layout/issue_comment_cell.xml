@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.cardview.widget.CardView xmlns:android = "http://schemas.android.com/apk/res/android"
+    xmlns:card_view = "http://schemas.android.com/apk/res-auto"
+    card_view:cardCornerRadius = "@dimen/medium"
+    card_view:cardElevation="@dimen/xxx_small"
+    android:layout_marginBottom="@dimen/xxx_small"
+    card_view:cardBackgroundColor="@color/secondary_green_transparent"
+    android:layout_width = "match_parent"
+    android:layout_height = "wrap_content">
+
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/issue_comment_image"
+                android:layout_marginStart="@dimen/x_small"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_width="@dimen/xxxxx_large"
+                android:background="@color/white"
+                android:layout_height="@dimen/xxxxx_large" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/issue_comment_owner"
+                    android:layout_width="match_parent"
+                    android:layout_margin="@dimen/x_small"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/activity_img"
+                    android:layout_centerInParent="true"
+                    android:maxLines="1"
+                    android:text="@string/comment_owner_str"
+                    android:textColor="@color/primary_dark"
+                    android:textSize="@dimen/desc_text_size" />
+
+                <TextView
+                    android:background="@drawable/view_back_darker"
+                    android:id="@+id/issue_comment_text"
+                    android:layout_width="match_parent"
+                    android:layout_margin="@dimen/x_small"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/activity_img"
+                    android:layout_centerInParent="true"
+                    android:maxLines="2"
+                    android:text="@string/comments_str"
+                    android:textColor="@color/primary_light"
+                    android:textSize="@dimen/desc_text_size" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/issue_delete_comment"
+                android:visibility="gone"
+                android:layout_below="@id/rtb_rating"
+                android:layout_alignParentEnd="true"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_delete_24dp"
+                />
+
+        </LinearLayout>
+
+
+
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

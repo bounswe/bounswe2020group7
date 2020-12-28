@@ -40,12 +40,12 @@ data class Assignee(
     val assignee_surname: String
 )
 
-data class IssueComment(
+data class IssueAllComments(
     val number_of_pages: Int,
     val result: ArrayList<Issue>
 )
 
-data class Comments(
+data class IssueComment(
     val comment_id: Int,
     val comment: String,
     val owner_id: Int,
