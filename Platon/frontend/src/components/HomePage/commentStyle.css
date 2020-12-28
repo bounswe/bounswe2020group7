@@ -1,8 +1,11 @@
-.comment-action {
-    padding-left: 8px;
+.comment .ant-comment-inner {
+    padding: 0px;
+
 }
 
-[class*='-col-rtl'] .comment-action {
-    padding-right: 8px;
-    padding-left: 0;
+.comment .ant-comment-content-detail {
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
 }
+
