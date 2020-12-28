@@ -132,9 +132,12 @@ const getSearchUser = (search_query, job_filter, sorting_criteria) => {
 
   const params = {
     search_query: search_query,
-    job_filter: job_filter,
     sorting_criteria: sorting_criteria,
   };
+  
+  if (job_filter !== "") {
+    params.job_filter = job_filter;
+  }
 
   return axios
     .get(url + "/api/search_engine/user", { params })
