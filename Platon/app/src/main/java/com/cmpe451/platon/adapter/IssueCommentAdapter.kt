@@ -7,9 +7,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.databinding.IssueCommentCellBinding
 import com.cmpe451.platon.network.models.IssueComment
+import com.cmpe451.platon.page.activity.workspace.fragment.issuedetail.IssueDetailFragment
 
 
-class IssueCommentAdapter(private val data: ArrayList<IssueComment>, private val context: Context, private val onCommentClicked:OnCommentClickedListener, private val ownerId:Int) :
+class IssueCommentAdapter(private val data: ArrayList<IssueComment>, private val context: Context, private val onCommentClicked: IssueDetailFragment, private val ownerId:Int) :
 
     RecyclerView.Adapter<IssueCommentAdapter.IssueCommentsViewHolder>() {
 
@@ -87,5 +88,9 @@ class IssueCommentAdapter(private val data: ArrayList<IssueComment>, private val
     }
 
     override fun getItemCount() = data.size
+
+}
+
+private fun IssueDetailFragment.onDeleteCommentClicked(issueComment: IssueComment, position: Int) {
 
 }

@@ -10,7 +10,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
-import android.widget.GridLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -19,12 +18,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.AssigneeAdapter
-import com.cmpe451.platon.adapter.CommentsAdapter
+import com.cmpe451.platon.adapter.IssueCommentAdapter
 import com.cmpe451.platon.databinding.*
+import com.cmpe451.platon.listener.PaginationListener
 import com.cmpe451.platon.network.Resource
-import com.cmpe451.platon.network.models.Assignee
-import com.cmpe451.platon.network.models.Comment
-import com.cmpe451.platon.network.models.Contributor
+import com.cmpe451.platon.network.models.*
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.util.Definitions
 import java.util.*
@@ -34,6 +32,8 @@ class IssueDetailFragment: Fragment() {
     private lateinit var dialog: AlertDialog
     private val mIssueDetailViewModel: IssueDetailViewModel by viewModels()
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var paginationListenerComments: PaginationListener
+
     lateinit var issue_id: String
     lateinit var issue_title: String
     lateinit var issue_description: String
@@ -41,6 +41,9 @@ class IssueDetailFragment: Fragment() {
     lateinit var issue_deadline: String
     lateinit var contributors:List<Contributor>
     lateinit var assignees:List<Assignee>
+    private var maxPageNumberComment:Int=0
+    private var pageSize:Int=10
+
 
 
 
@@ -62,6 +65,7 @@ class IssueDetailFragment: Fragment() {
         setObservers()
         mIssueDetailViewModel.getIssueAssignee((activity as WorkspaceActivity).workspace_id!!,issue_id.toInt(), null, null, (activity as WorkspaceActivity).token!!)
         mIssueDetailViewModel.fetchWorkspace((activity as WorkspaceActivity).workspace_id!!, (activity as WorkspaceActivity).token!!)
+        mIssueDetailViewModel.getIssueComments((activity as WorkspaceActivity).workspace_id!!, issue_id.toInt(), 0, pageSize,(activity as WorkspaceActivity).token!!)
 
     }
 
@@ -175,6 +179,29 @@ class IssueDetailFragment: Fragment() {
             }
         })
 
+        mIssueDetailViewModel.getIssueCommentsResponse.observe(viewLifecycleOwner, { t->
+            when(t.javaClass){
+                Resource.Loading::class.java->{
+                    dialog.show()
+                }
+                Resource.Success::class.java ->{
+                    //(binding.issuesRecyclerView.adapter as IssuesAdapter).clearElements()
+                    val issue = t.data!!.result as ArrayList<IssueComment>
+                    maxPageNumberComment = t.data!!.number_of_pages
+                    (binding.issueCommentsRecyclerView.adapter as IssueCommentAdapter).submitElements(issue)
+                    mIssueDetailViewModel.getIssueCommentsResponse.value = Resource.Done()
+                    paginationListenerComments.isLoading = false
+                }
+                Resource.Error::class.java ->{
+                    Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                    mIssueDetailViewModel.getIssueCommentsResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java->{
+                    dialog.dismiss()
+                }
+            }
+        })
+
 
 
 
@@ -186,6 +213,27 @@ class IssueDetailFragment: Fragment() {
 
     }
     private fun initViews() {
+
+        val layoutManagerComments = LinearLayoutManager(this.activity)
+        paginationListenerComments = object:PaginationListener(layoutManagerComments, pageSize) {
+            override fun loadMoreItems() {
+                if (maxPageNumberComment - 1 > currentPage) {
+                    isLoading = true
+                    currentPage++
+                    //TODO: get implement
+                    //mIssueDetailViewModel.getComments()
+                }
+
+            }
+
+            override var isLastPage: Boolean = false
+            override var isLoading: Boolean = false
+            override var currentPage: Int = 0
+        }
+
+        binding.issueCommentsRecyclerView.layoutManager = layoutManagerComments
+        binding.issueCommentsRecyclerView.adapter = IssueCommentAdapter(ArrayList(),requireContext(), this, (activity as WorkspaceActivity).user_id!!)
+        binding.issueCommentsRecyclerView.addOnScrollListener(paginationListenerComments)
 
         val height = resources.displayMetrics.heightPixels
         val width = resources.displayMetrics.widthPixels

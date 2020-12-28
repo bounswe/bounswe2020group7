@@ -199,22 +199,22 @@ class IssueDetailRepository {
         })
     }
 
-    fun addIssueComments(workSpaceId: Int, issueId: Int, page: Int?, paginationSize: Int?, authToken: String) {
+    fun addIssueComments(workSpaceId: Int, issueId: Int, comment: String, authToken: String) {
         val service = RetrofitClient.getService()
-        val call = service.getIssueComments(workSpaceId, issueId , page, paginationSize, authToken)
+        val call = service.addIssueComment(workSpaceId, issueId , comment, authToken)
 
-        getCommentsResponse.value = Resource.Loading()
+        addIssueCommentResponse.value = Resource.Loading()
         //nullable check
-        call.enqueue(object : Callback<IssueAllComments?> {
-            override fun onResponse(call: Call<IssueAllComments?>, response: Response<IssueAllComments?>) {
+        call.enqueue(object : Callback<JsonObject?> {
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
                 when {
-                    response.isSuccessful -> getCommentsResponse.value = Resource.Success(response.body()!!)
-                    response.errorBody() != null -> getCommentsResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
-                    else ->getCommentsResponse.value =  Resource.Error("Unknown error")
+                    response.isSuccessful -> addIssueCommentResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> addIssueCommentResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else ->addIssueCommentResponse.value =  Resource.Error("Unknown error")
                 }
             }
 
-            override fun onFailure(call: Call<IssueAllComments?>, t: Throwable) {
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
                 call.clone().enqueue(this)
             }
 

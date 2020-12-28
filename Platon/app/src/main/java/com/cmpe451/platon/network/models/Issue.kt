@@ -42,7 +42,7 @@ data class Assignee(
 
 data class IssueAllComments(
     val number_of_pages: Int,
-    val result: ArrayList<Issue>
+    val result: ArrayList<IssueComment>
 )
 
 data class IssueComment(

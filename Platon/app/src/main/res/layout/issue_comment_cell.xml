@@ -18,7 +18,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
             <ImageView
                 android:id="@+id/issue_comment_image"
                 android:layout_marginStart="@dimen/x_small"
@@ -68,6 +70,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_delete_24dp"
+                android:paddingLeft="10dp"
                 />
 
         </LinearLayout>
