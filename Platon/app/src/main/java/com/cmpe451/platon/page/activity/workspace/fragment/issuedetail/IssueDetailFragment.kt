@@ -210,6 +210,7 @@ class IssueDetailFragment: Fragment() {
                 Resource.Success::class.java ->{
                     (binding.issueCommentsRecyclerView.adapter as IssueCommentAdapter).clearElements()
                     mIssueDetailViewModel.getIssueComments((activity as WorkspaceActivity).workspace_id!!, issue_id.toInt(), maxPageNumberComment, pageSize,(activity as WorkspaceActivity).token!!)
+                    mIssueDetailViewModel.addIssueCommentResponse.value = Resource.Done()
                 }
                 Resource.Error::class.java ->{
                     Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()

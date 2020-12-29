@@ -29,6 +29,9 @@
         <action
             android:id="@+id/action_profilePageFragment_to_followFragment"
             app:destination="@id/followFragment" />
+        <action
+            android:id="@+id/action_profilePageFragment_to_lottieFragment"
+            app:destination="@id/lottieFragment" />
     </fragment>
     <fragment
         android:id="@+id/followFragment"
@@ -70,4 +73,8 @@
             android:id="@+id/action_workspaceListFragment_to_profilePageFragment"
             app:destination="@id/profilePageFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/lottieFragment"
+        android:name="com.cmpe451.platon.page.activity.home.fragment.lottie.LottieFragment"
+        android:label="LottieFragment" />
 </navigation>
