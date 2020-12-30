@@ -77,10 +77,6 @@ issue_model = api.model('Issue', {
 	"creator_id": fields.Integer,
 	"creator_name": fields.String,
 	"creator_surname": fields.String,
-	"creator_e_mail": fields.String,
-	"creator_rate": fields.Float,
-	"creator_job_name": fields.String,
-	"creator_institution": fields.String,
 	"creator_is_private": fields.Boolean,
     "creator_photo": fields.String
     })
@@ -100,7 +96,7 @@ issue_post_model = api.model('Issue Post', {
 	"description": fields.String,
 	"deadline": fields.DateTime,
 	"is_open": fields.Boolean,
-	"creator_id": fields.Integer,
+	"creator_id": fields.Integer
     })
 
 milestone_model = api.model('Milestone', {
@@ -112,10 +108,6 @@ milestone_model = api.model('Milestone', {
     "creator_id": fields.Integer,
 	"creator_name": fields.String,
 	"creator_surname": fields.String,
-	"creator_e_mail": fields.String,
-	"creator_rate": fields.Float,
-	"creator_job_name": fields.String,
-	"creator_institution": fields.String,
 	"creator_is_private": fields.Boolean
     })
 
@@ -129,11 +121,7 @@ milestone_list_model = api.model('Milestones List', {
 issue_assignee_model = api.model('Issue Assignee', {
     "assignee_id": fields.Integer,
 	"assignee_name": fields.String,
-	"assignee_surname": fields.String,
-	"assignee_e_mail": fields.String,
-	"assignee_rate": fields.Float,
-	"assignee_job_name": fields.String,
-	"assignee_institution": fields.String
+	"assignee_surname": fields.String
 })
 
 issue_assignee_list_model = api.model('Issue Assignees List', {
@@ -149,8 +137,6 @@ issue_comment_model = api.model('Issue Assignee', {
 	"owner_id": fields.Integer,
 	"owner_name": fields.String,
 	"owner_surname": fields.String,
-	"owner_e_mail": fields.String,
-	"owner_rate": fields.Float,
     "owner_photo": fields.String
 })
 
@@ -236,9 +222,6 @@ class IssueAPI(Resource):
                     'creator_id': creator_user.id, 
                     'creator_name': creator_user.name, 
                     'creator_surname': creator_user.surname, 
-                    'creator_e_mail': creator_user.e_mail, 
-                    'creator_rate': creator_user.rate, 
-                    'creator_job_name': job_name.name,
                     'creator_is_private': creator_user.is_private,
                     'creator_photo': profile_photo_link(creator_user.profile_photo,creator_user.id)
                     })
@@ -444,11 +427,7 @@ class IssueAssigneeAPI(Resource):
                 return_list.append({
                     "assignee_id": assignee.id,
 	                "assignee_name": assignee.name,
-                    "assignee_surname": assignee.surname,
-                    "assignee_e_mail": assignee.e_mail,
-                    "assignee_rate": assignee.rate,
-                    "assignee_job_name": job.name,
-                    "assignee_institution": assignee.institution,
+                    "assignee_surname": assignee.surname
                     })
             
             # Pagination functionality
@@ -612,8 +591,6 @@ class IssueCommentAPI(Resource):
                     "owner_id": issue_comment.commenter_id,
                     "owner_name": commenter.name,
                     "owner_surname": commenter.surname,
-                    "owner_e_mail": commenter.e_mail,
-                    "owner_rate": commenter.rate,
                     "owner_photo": profile_photo_link(commenter.profile_photo,commenter.id)
                     })
             
@@ -754,11 +731,7 @@ class MilestoneAPI(Resource):
                     'deadline': milestone.deadline,
                     'creator_id': None, 
                     'creator_name': None, 
-                    'creator_surname': None, 
-                    'creator_e_mail': None, 
-                    'creator_rate': None, 
-                    'creator_job_name': None,
-                    'creator_institution': None,
+                    'creator_surname': None,
                     'creator_is_private': None
                     })
                     continue
@@ -780,11 +753,7 @@ class MilestoneAPI(Resource):
                     'deadline': milestone.deadline,
                     'creator_id': creator_user.id, 
                     'creator_name': creator_user.name, 
-                    'creator_surname': creator_user.surname, 
-                    'creator_e_mail': creator_user.e_mail, 
-                    'creator_rate': creator_user.rate, 
-                    'creator_job_name': None,
-                    'creator_institution': creator_user.institution,
+                    'creator_surname': creator_user.surname,
                     'creator_is_private': creator_user.is_private
                     })
                     continue
@@ -797,11 +766,7 @@ class MilestoneAPI(Resource):
                     'deadline': milestone.deadline,
                     'creator_id': creator_user.id, 
                     'creator_name': creator_user.name, 
-                    'creator_surname': creator_user.surname, 
-                    'creator_e_mail': creator_user.e_mail, 
-                    'creator_rate': creator_user.rate, 
-                    'creator_job_name': job_name.name,
-                    'creator_institution': creator_user.institution,
+                    'creator_surname': creator_user.surname,
                     'creator_is_private': creator_user.is_private
                     })
             
