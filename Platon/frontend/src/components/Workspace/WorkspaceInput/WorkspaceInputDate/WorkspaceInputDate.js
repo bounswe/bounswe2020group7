@@ -105,8 +105,8 @@ export default function WorkspaceInputDate(props) {
           onChange={(e)=>props.handleUpcomingEvents(e.target.value)}
           value={props.upcomingEvents}
         >
-          {props.upcomingEventsList.map((event)=>
-            <MenuItem style={{color: colors.quaternaryDark}} value={event.acronym}>{event.acronym}</MenuItem>
+          {props.upcomingEventsList.map((event, index)=>
+            <MenuItem style={{color: colors.quaternaryDark}} value={index}>{event.acronym}</MenuItem>
         )}
 
         </Select>

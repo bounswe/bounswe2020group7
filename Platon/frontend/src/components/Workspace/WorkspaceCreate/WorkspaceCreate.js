@@ -145,7 +145,7 @@ class WorkspaceCreate extends Component {
     if (this.state.deadline !== "") {
       formData.append("deadline", this.state.deadline);
     }
-    if (this.state.upcomingEvents.length === 0) {
+    if (this.state.upcomingEvents.length !== 0) {
       formData.append("upcoming_events", JSON.stringify(this.state.upcomingEvents));
     }
     this.setState({ isSending: true });
@@ -176,6 +176,7 @@ class WorkspaceCreate extends Component {
   };
 
   render() {
+    console.log(this.state.upcomingEvents)
     return (
       <div className="WorkspaceContainer">
         <Navbar />

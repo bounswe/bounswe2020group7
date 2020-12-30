@@ -521,33 +521,8 @@ class WorkspaceView extends Component {
                                   </div> : 'Not specified'}
 
                           </Grid>
-                          <Grid
-                            item
-                            xs
-                            container={true}
-                            direction="column"
-                            alignItems="center"
-                          >
-                            <Typography
-                              gutterBottom
-                              variant="body1"
-                              align="center"
-                              style={{ color: colors.quaternaryDark }}
-                            >
-                              Deadline
-                            </Typography>
 
-                              {this.state.workspace.deadline
-                                ? <div style={{ color: colors.quinaryDark }}>{this.state.workspace.deadline
-                                    .split(".")
-                                    .reverse()
-                                    .join(".")}
-                                    </div>: "Not specified"}
-
-
-                          </Grid>
                         </Grid>
-
                         <Divider
                           className={classes.divider}
                           variant="middle"
@@ -601,6 +576,68 @@ class WorkspaceView extends Component {
                                     className={classes.chip}
                                     label={element}
                                   />
+                                ))}
+                              </div>
+                            ) : (
+                              'Not specified'
+                            )}
+                          </Grid>
+                        </Grid>
+                        <Divider
+                          className={classes.divider}
+                          variant="middle"
+                          style={{
+                            width: '100%',
+                            backgroundColor: colors.primaryLight,
+                          }}
+                        />
+                        <Grid container={true} spacing={2}>
+                        <Grid
+                            item
+                            xs
+                            container={true}
+                            direction="column"
+                            alignItems="center"
+                          >
+                            <Typography
+                              gutterBottom
+                              variant="body1"
+                              align="center"
+                              style={{ color: colors.quaternaryDark }}
+                            >
+                              Deadline
+                            </Typography>
+
+                              {this.state.workspace.deadline
+                                ? <div style={{ color: colors.quinaryDark }}>{this.state.workspace.deadline
+                                    .split(".")
+                                    .reverse()
+                                    .join(".")}
+                                    </div>: "Not specified"}
+
+
+                          </Grid>
+
+                          <Grid
+                            item
+                            xs
+                            container={true}
+                            direction="column"
+                            alignItems="center"
+                          >
+                            <Typography
+                              gutterBottom
+                              variant="body1"
+                              style={{ color: colors.quaternaryDark }}
+                            >
+                              Attached Upcoming Events
+                            </Typography>
+                            {this.state.workspace.upcoming_events && this.state.workspace.upcoming_events.length !== 0 ? (
+                              <div>
+                                {this.state.workspace.upcoming_events.map((element) => (
+                                  <div style={{color: colors.quinaryDark}}>
+                                  {element.acronym}
+                                </div>
                                 ))}
                               </div>
                             ) : (
