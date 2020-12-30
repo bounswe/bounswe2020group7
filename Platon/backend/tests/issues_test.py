@@ -112,7 +112,7 @@ class IssuesTest(BaseTest):
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
 
         data = {'issue_id': 1,'workspace_id': 2}
-        actual_response = self.client.get('/api/workspaces/issue_info', query_string=data,
+        actual_response = self.client.get('/api/workspaces/issue/info', query_string=data,
                                           headers={'auth_token': valid_token})
 
         self.assertEqual(actual_response.status_code, 404, 'Incorrect HTTP Response Code')
@@ -121,7 +121,7 @@ class IssuesTest(BaseTest):
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
 
         data = {'issue_id': 1,'workspace_id': 1}
-        actual_response = self.client.get('/api/workspaces/issue_info', query_string=data,
+        actual_response = self.client.get('/api/workspaces/issue/info', query_string=data,
                                           headers={'auth_token': valid_token})
 
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
@@ -131,7 +131,7 @@ class IssuesTest(BaseTest):
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
 
         data = {'issue_id': 3,'workspace_id': 3}
-        actual_response = self.client.get('/api/workspaces/issue_info', query_string=data,
+        actual_response = self.client.get('/api/workspaces/issue/info', query_string=data,
                                           headers={'auth_token': valid_token})
 
         self.assertEqual(actual_response.status_code, 404, 'Incorrect HTTP Response Code')
@@ -141,13 +141,13 @@ class IssuesTest(BaseTest):
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
 
         data = {'issue_id': 2,'workspace_id': 2}
-        actual_response = self.client.get('/api/workspaces/issue_info', query_string=data,
+        actual_response = self.client.get('/api/workspaces/issue/info', query_string=data,
                                           headers={'auth_token': valid_token})
 
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
         
         expected_list_length = 2
-        self.assertEqual(len(actual_response.json.get('contributors_list')), expected_list_length)
+        self.assertEqual(len(actual_response.json.get('contributors')), expected_list_length)
 
         
     def test_get_issues(self):

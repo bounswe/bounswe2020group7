@@ -65,6 +65,20 @@ trending_workspaces_model = api.model('Trending Projects', {
     )
 })
 
+issue_info_model = api.model('Issue_Info', {
+	"title": fields.String,
+	"description": fields.String,
+	"deadline": fields.DateTime,
+	"is_open": fields.Boolean,
+	"creator_id": fields.Integer,
+	"creator_name": fields.String,
+	"creator_surname": fields.String,
+	"creator_is_private": fields.Boolean,
+    "creator_photo": fields.String,
+    "contributors": fields.List(
+        fields.Nested(contributor_model)
+    )
+ })
                     
 
 issue_model = api.model('Issue', {
@@ -160,6 +174,72 @@ issue_comment_list_model = api.model('Issue Comments List', {
         fields.Nested(issue_comment_model)
     )
 })
+
+@workspace_system_ns.route("/issue/info")
+class IssueInfoAPI(Resource):
+
+    @api.doc(responses={401 : 'Account Problems', 400 : 'Input Format Error' ,500 : ' Database Connection Error', 404: 'Not found'})
+    @api.response(200, 'Success', issue_info_model)
+    @api.expect(get_issue_info_parser)
+    @login_required
+    @workspace_exists(param_loc='args',workspace_id_key='workspace_id')
+    @active_contribution_required(param_loc='args',workspace_id_key='workspace_id')
+    def get(user_id, self):
+        '''
+            Get Information about specific Issue
+        '''
+        form = GetIssueInfoForm(request.args)
+        if form.validate():
+            workspace_id = form.workspace_id.data
+
+            try:
+                issueSearch = Issue.query.filter((Issue.workspace_id == workspace_id)&(Issue.id == form.issue_id.data)).first()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+            if issueSearch is None:
+                return make_response(jsonify({'error': 'Corresponding issue is not in the workspace {}!'.format(workspace_id)}), 404)
+
+            try:
+                creator_user = User.query.filter(User.id == issueSearch.creator_id).first()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+            if creator_user is None:
+                return make_response(jsonify({'error': 'Creator user not found'}), 404)
+
+            try:
+                contributionSearch = Contribution.query.filter((Contribution.workspace_id == workspace_id) & (Contribution.is_active)).all()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+            contribution_id_list = []
+            for contrib in contributionSearch:
+                contribution_list.append(contrib.user_id)
+
+
+            # now fill the below with respect to API 
+            contributors_list = []
+
+            result = {
+                'title': issueSearch.title,
+                'description': issueSearch.description,
+                'deadline': issueSearch.deadline,
+                'is_open': issueSearch.is_open,
+                'creator_id': creator_user.id, 
+                'creator_name': creator_user.name, 
+                'creator_surname': creator_user.surname, 
+                'creator_is_private': creator_user.is_private,
+                'creator_photo': profile_photo_link(creator_user.profile_photo,creator_user.id),
+                'contributors': contributors_list
+            }
+            
+            return make_response(jsonify({'result': result}),200)
+            
+        else:
+            return make_response(jsonify({'error': 'Input Format Error'}), 400)
+
+
 
 @workspace_system_ns.route("/issue")
 class IssueAPI(Resource):
