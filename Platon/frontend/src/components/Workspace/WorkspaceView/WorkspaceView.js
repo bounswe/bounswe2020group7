@@ -344,6 +344,7 @@ class WorkspaceView extends Component {
       });
   };
   render() {
+    console.log(this.state.workspace.requirements, typeof this.state.workspace.requirements )
     const { classes } = this.props
     return (
       <div className="WorkspaceViewContainer">
@@ -546,12 +547,13 @@ class WorkspaceView extends Component {
                             >
                               Requirements
                             </Typography>
-                            {this.state.workspace.requirements.length !== 0 ? (
+                            {(this.state.workspace.requirements.length !== 0 && this.state.workspace.requirements.toString() !=="")? (
                               <div style={{ color: colors.tertiaryDark }}>
                                 {this.state.workspace.requirements.join(', ')}
                               </div>
                             ) : (
                               'Not specified'
+
                             )}
                           </Grid>
 
