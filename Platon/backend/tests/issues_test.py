@@ -106,7 +106,7 @@ class IssuesTest(BaseTest):
             db.session.add(issue_comment)
         db.session.commit()
 
-    def def_get_issue_info(self):
+    def test_get_issue_info(self):
         # Can will try to get an issue which does not exist in that workspace.
         # Fail
         valid_token = generate_token(2, datetime.timedelta(minutes=10))
@@ -134,7 +134,7 @@ class IssuesTest(BaseTest):
         actual_response = self.client.get('/api/workspaces/issue/info', query_string=data,
                                           headers={'auth_token': valid_token})
 
-        self.assertEqual(actual_response.status_code, 404, 'Incorrect HTTP Response Code')
+        self.assertEqual(actual_response.status_code, 401, 'Incorrect HTTP Response Code')
 
         # Can(2) will try to get an issue with its collaborators.
         # Success
@@ -149,7 +149,7 @@ class IssuesTest(BaseTest):
         expected_list_length = 2
         self.assertEqual(len(actual_response.json.get('contributors')), expected_list_length)
 
-        
+   
     def test_get_issues(self):
 
         # Can will try to get the issues of a public workspace in which there is no issue.
