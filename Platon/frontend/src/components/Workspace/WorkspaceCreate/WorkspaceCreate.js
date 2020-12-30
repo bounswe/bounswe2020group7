@@ -8,7 +8,6 @@ import axios from "axios";
 import Spinner from "../../Spinner/Spinner";
 import MuiAlert from "@material-ui/lab/Alert";
 import Snackbar from "@material-ui/core/Snackbar";
-import jwt_decode from "jwt-decode";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -25,8 +24,10 @@ class WorkspaceCreate extends Component {
       deadline: "",
       requirements: "",
       skills: [],
+      upcomingEvents:[],
       loaded: false,
       skillsList: [],
+      upcomingEventsList:[],
       error: false,
       success: false,
       isSending: false,
@@ -35,21 +36,30 @@ class WorkspaceCreate extends Component {
   }
   componentDidMount() {
     const url = config.BASE_URL;
-    axios
-      .get(url + "/api/profile/skills")
+    Promise.all([axios.get(url + "/api/profile/skills")
       .then((response) => {
         if (response) {
           this.setState({
+
             skillsList: response.data,
-            loaded: true,
           });
         }
-        return response;
       })
       .catch((err) => {
         console.log(err);
-        return err.response;
-      });
+      }),
+      axios.get(url +"/api/upcoming_events").then((response)=>{
+        if(response){
+          this.setState({
+            upcomingEventsList: response.data.upcoming_events
+          })
+        }
+      })
+    ]).then(()=>{
+      this.setState({
+        loaded: true
+      })
+    })
   }
   handleCloseError = (event, reason) => {
     if (reason === "clickaway") {
@@ -102,6 +112,11 @@ class WorkspaceCreate extends Component {
       skills: value,
     });
   };
+  handleUpcomingEvents = (value) =>{
+    this.setState({
+      upcomingEvents: value
+    })
+  }
 
   handleSubmit = () => {
     if (this.state.title === "" || this.state.description === "") {
@@ -129,6 +144,9 @@ class WorkspaceCreate extends Component {
     }
     if (this.state.deadline !== "") {
       formData.append("deadline", this.state.deadline);
+    }
+    if (this.state.upcomingEvents.length !== 0) {
+      formData.append("upcoming_events", JSON.stringify(this.state.upcomingEvents));
     }
     this.setState({ isSending: true });
     const url = config.BASE_URL
@@ -180,6 +198,8 @@ class WorkspaceCreate extends Component {
                 deadline={this.state.deadline}
                 requirements={this.state.requirements}
                 skills={this.state.skills}
+                upcomingEventsList={this.state.upcomingEventsList}
+                upcomingEvents={this.state.upcomingEvents}
                 error={this.state.error}
                 success={this.state.success}
                 isSending={this.state.isSending}
@@ -192,6 +212,7 @@ class WorkspaceCreate extends Component {
                 handleRequirements={this.handleRequirements}
                 handleSkills={this.handleSkills}
                 handleSubmit={this.handleSubmit}
+                handleUpcomingEvents={this.handleUpcomingEvents}
               />
 
               {this.state.error && (
