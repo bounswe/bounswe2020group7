@@ -6,8 +6,7 @@ import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import Select from "@material-ui/core/Select";
 import MenuItem from '@material-ui/core/MenuItem';
-import { makeStyles } from '@material-ui/core/styles';
-import { Menu } from '@material-ui/core';
+
 
 const StyledTextField = withStyles({
     root: {
@@ -105,8 +104,8 @@ export default function WorkspaceInputDate(props) {
           onChange={(e)=>props.handleUpcomingEvents(e.target.value)}
           value={props.upcomingEvents}
         >
-          {props.upcomingEventsList.map((event, index)=>
-            <MenuItem style={{color: colors.quaternaryDark}} value={index}>{event.acronym}</MenuItem>
+          {props.upcomingEventsList.map((event)=>
+            <MenuItem style={{color: colors.quaternaryDark}} value={event.id}>{event.acronym}</MenuItem>
         )}
 
         </Select>

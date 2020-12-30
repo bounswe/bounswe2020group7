@@ -176,7 +176,6 @@ class WorkspaceCreate extends Component {
   };
 
   render() {
-    console.log(this.state.upcomingEvents)
     return (
       <div className="WorkspaceContainer">
         <Navbar />
