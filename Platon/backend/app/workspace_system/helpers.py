@@ -287,7 +287,8 @@ def visibility_required(param_loc,workspace_id_key):
                 return active_contribution_check(workspace.id,user_id,func,*args,**kwargs)
             else:
                 if workspace.state == int(WorkspaceState.ongoing):
-                    return make_response(jsonify({"err": "You are note allowed to see the content of this workspace"}),403)
+                    user_id = args[0]
+                    return active_contribution_check(workspace.id,user_id,func,*args,**kwargs)
             return func(*args,**kwargs)
         return visibilitiy_check
     return visibility_required_inner

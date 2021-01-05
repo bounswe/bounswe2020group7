@@ -471,10 +471,7 @@ class CommentRateAPI(Resource):
         if form.validate():
             try:
                 # Find comment record
-                comment = Comments.query.filter((Comments.id == form.comment_id.data)).first()
-
-                if comment.owner_id != user_id:
-                    return make_response(jsonify({'error': 'Unauthorized'}), 401)
+                comment = Comments.query.filter((Comments.id == form.comment_id.data)&(Comments.owner_id == user_id)).first()                    
 
                 if comment is None:
                     return make_response(jsonify({'error': 'Comment not found'}), 404)
@@ -485,7 +482,7 @@ class CommentRateAPI(Resource):
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
             
             if update_rate(comment.commented_user_id):
-                return make_response(jsonify({'msg': 'Issue Comment is successfully deleted'}), 201)
+                return make_response(jsonify({'msg': 'Comment is successfully deleted'}), 201)
             else:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
