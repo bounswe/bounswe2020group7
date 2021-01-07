@@ -179,7 +179,7 @@ class ActivityStreamTest(BaseTest):
         actual_response = self.client.get('/api/activity_stream', query_string=data,
                                            headers={'auth_token': auth_token})
         
-                expected_output =   {
+        expected_output =   {
                                         "@context": "https://www.w3.org/ns/activitystreams",
                                         "summary": "Page 0 of Activity Stream",
                                         "type": "OrderedCollectionPage",
@@ -212,7 +212,7 @@ class ActivityStreamTest(BaseTest):
                                                 }
                                             }
                                         ]
-                                    }
+                            }
         
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
         self.assertEqual(actual_response.json, expected_output)
@@ -220,34 +220,327 @@ class ActivityStreamTest(BaseTest):
     # Check if related user commented on someone.
     def test_user_comment_activity(self):
         # Umut comments on Can.
+        auth_token = generate_token(1, datetime.timedelta(minutes=10))
+        data = {'commented_user_id': 2, 'rate': 4, 'text': "helal huso"}
+        actual_response = self.client.post('/api/follow/comment', data=data,
+                                           headers={'auth_token': auth_token})
+
         # Alperen's activity stream should contain that activity since Alperen follows Umut.
-        pass
+        auth_token = generate_token(3, datetime.timedelta(minutes=10))
+        data = {'page': 0, 'per_page': 10}
+        actual_response = self.client.get('/api/activity_stream', query_string=data,
+                                           headers={'auth_token': auth_token})
+
+        expected_output =   {
+                                "@context": "https://www.w3.org/ns/activitystreams",
+                                "summary": "Page 0 of Activity Stream",
+                                "type": "OrderedCollectionPage",
+                                "id": 0,
+                                "orderedItems": [
+                                            {
+                                                "@context": {
+                                                    "@vocab": "https://www.w3.org/ns/activitystreams",
+                                                    "ext": "http://schema.org/Rating",
+                                                    "@language": "en"
+                                                },
+                                                "summary": "Umut left a comment about Can",
+                                                "type": "Add",
+                                                "actor": {
+                                                    "type": "Person",
+                                                    "id": 1,
+                                                    "name": "Umut"
+                                                    "image": {
+                                                        "type": "Image",
+                                                        "url": "/auth_system/logo"
+                                                    }
+                                                },
+                                                "object": {
+                                                    "type": "Note",
+                                                    "name": "Comment for Can",
+                                                    "content": "helal huso"
+                                                    "ext:ratingValue": 4
+                                                },
+                                                "target": {
+                                                    "type": "Person",
+                                                    "id": 2,
+                                                    "name": "Can Bolukbas",
+                                                    "image": {
+                                                        "type": "Image",
+                                                        "url": "/auth_system/logo"
+                                                    }
+                                                }
+                                            }
+                                ]
+                            }
+        self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
+        self.assertEqual(actual_response.json, expected_output)
 
     # Check if related user is now contributing to a workspace. 
     def test_new_contribution(self):
         # Can becomes a new contributor to the workspace(4) titled "bos"
-        # Umut and Alperen's activity stream should contain that activity since they follow Can.
-        pass
+
+        # Can sends application request.
+        auth_token = generate_token(2, datetime.timedelta(minutes=10))
+        data = {'workspace_id': 4}
+        actual_response = self.client.post('/api/workspaces/applications', data=data,
+                                           headers={'auth_token': auth_token})
+        # Alperen accepts application request
+        auth_token = generate_token(3, datetime.timedelta(minutes=10))
+        data = {'application_id': 1, "is_accepted": "1"}
+        actual_response = self.client.delete('/api/workspaces/applications', data=data,
+                                           headers={'auth_token': auth_token})
+
+        # Umut's activity stream should contain that activity since he follows Can.
+        auth_token = generate_token(1, datetime.timedelta(minutes=10))
+        data = {'page': 0, 'per_page': 10}
+        actual_response = self.client.get('/api/activity_stream', query_string=data,
+                                           headers={'auth_token': auth_token})
+        
+        expected_output =   {
+                                "@context": "https://www.w3.org/ns/activitystreams",
+                                "summary": "Page 0 of Activity Stream",
+                                "type": "OrderedCollectionPage",
+                                "id": 0,
+                                "orderedItems": [
+                                            {
+                                                "@context": {
+                                                    "@vocab": "https://www.w3.org/ns/activitystreams",
+                                                    "@language": "en"
+                                                },
+                                                "summary": "Can joined a workspace",
+                                                "type": "Join",
+                                                "actor": {
+                                                    "type": "Person",
+                                                    "id": 2
+                                                    "name": "Can Bolukbas"
+                                                    "image": {
+                                                        "type": "Image",
+                                                        "url": "/auth_system/logo"
+                                                    }
+                                                },
+                                                "object": {
+                                                    "type": "Group",
+                                                    "id": 4,
+                                                    "name": "bos"
+                                                }
+                                            }
+                                ]
+                            }
+    
+        self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
+        self.assertEqual(actual_response.json, expected_output)
+
     # Check if related user stopped contributing to a workspace. 
     def test_stop_contribution(self):
         # Can(2) will stop contributing to the workspace(2) titled "SWE difficulties"
-        # Since Alperen and Umut follows Can, they should see this activity in their Activity Stream.
-        pass
+        auth_token = generate_token(2, datetime.timedelta(minutes=10))
+        data = {'workspace_id': 2}
+        actual_response = self.client.post('/api/workspaces/quit', data=data,
+                                           headers={'auth_token': auth_token})
+        # Since Umut follows Can, he should see this activity in his Activity Stream.
+        auth_token = generate_token(1, datetime.timedelta(minutes=10))
+        data = {'page': 0, 'per_page': 10}
+        actual_response = self.client.get('/api/activity_stream', query_string=data,
+                                           headers={'auth_token': auth_token})
+        
+        expected_output =   {
+                                "@context": "https://www.w3.org/ns/activitystreams",
+                                "summary": "Page 0 of Activity Stream",
+                                "type": "OrderedCollectionPage",
+                                "id": 0,
+                                "orderedItems": [
+                                            {
+                                                "@context": {
+                                                    "@vocab": "https://www.w3.org/ns/activitystreams",
+                                                    "@language": "en"
+                                                },
+                                                "summary": "Can left a workspace",
+                                                "type": "Leave",
+                                                "actor": {
+                                                    "type": "Person",
+                                                    "id": 2,
+                                                    "name": "Can Bolukbas"
+                                                    "image": {
+                                                        "type": "Image",
+                                                        "url": "/auth_system/logo"
+                                                    }
+                                                },
+                                                "object": {
+                                                    "type": "Group"
+                                                    "id": 2,
+                                                    "name": "SWE difficulties"
+                                                }
+                                            }
+                                ]
+                            }
+    
+        self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
+        self.assertEqual(actual_response.json, expected_output)
+
     # Check if related user created a workspace
     def test_create_workspace(self):
-        # Can creates a new workspace.
-        # Since Alperen and Umut follows Can, they should see this activity in their Activity Stream.
-        pass
+        # Can creates a new public workspace.
+        auth_token = generate_token(2, datetime.timedelta(minutes=10))
+        data = {'title': "Meditator Depression", 'description': "lol"}
+        actual_response = self.client.post('/api/workspaces', data=data,
+                                           headers={'auth_token': auth_token})
+        # Since Umut follows Can, he should see this activity in his Activity Stream.
+        auth_token = generate_token(1, datetime.timedelta(minutes=10))
+        data = {'page': 0, 'per_page': 10}
+        actual_response = self.client.get('/api/activity_stream', query_string=data,
+                                           headers={'auth_token': auth_token})
+        
+        expected_output =   {
+                                "@context": "https://www.w3.org/ns/activitystreams",
+                                "summary": "Page 0 of Activity Stream",
+                                "type": "OrderedCollectionPage",
+                                "id": 0,
+                                "orderedItems": [
+                                            {
+                                                "@context": {
+                                                    "@vocab": "https://www.w3.org/ns/activitystreams",
+                                                    "@language": "en"
+                                                },
+                                                "summary": "Can created a workspace",
+                                                "type": "Create",
+                                                "actor": {
+                                                    "type": "Person",
+                                                    "id": 2,
+                                                    "name": "Can",
+                                                    "image": {
+                                                        "type": "Image",
+                                                        "url": "/auth_system/logo"
+                                                    }
+                                                },
+                                                "object": {
+                                                    "type": "Group",
+                                                    "id": 5,
+                                                    "name": "Meditator Depression",
+                                                }
+                                            }
+                                ]
+                            }
+    
+        self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
+        self.assertEqual(actual_response.json, expected_output)
+
+        # If the created workspace is private, don't show it.
+
+        # Can creates a new private workspace.
+        auth_token = generate_token(2, datetime.timedelta(minutes=10))
+        data = {'title': "Meditator Depression Hurts", 'description': "lol", 'is_private': 1}
+        actual_response = self.client.post('/api/workspaces', data=data,
+                                           headers={'auth_token': auth_token})
+        # Since Umut follows Can, he should see this activity in his Activity Stream.
+        auth_token = generate_token(1, datetime.timedelta(minutes=10))
+        data = {'page': 0, 'per_page': 10}
+        actual_response = self.client.get('/api/activity_stream', query_string=data,
+                                           headers={'auth_token': auth_token})
+        
+        expected_output =   {
+                                "@context": "https://www.w3.org/ns/activitystreams",
+                                "summary": "Page 0 of Activity Stream",
+                                "type": "OrderedCollectionPage",
+                                "id": 0,
+                                "orderedItems": []
+                            }
+    
+        self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
+        self.assertEqual(actual_response.json, expected_output)
+
     # Check if related user deleted a workspace
     def test_delete_workspace(self):
         # Umut deletes the workspace(1) titled "Coronovirus Study"
+        auth_token = generate_token(1, datetime.timedelta(minutes=10))
+        data = {'workspace_id': 1}
+        actual_response = self.client.delete('/api/workspaces', data=data,
+                                           headers={'auth_token': auth_token})
         # Since Alperen follows Umut, he should see this activity in his Activity Stream.
-        pass
+        auth_token = generate_token(3, datetime.timedelta(minutes=10))
+        data = {'page': 0, 'per_page': 10}
+        actual_response = self.client.get('/api/activity_stream', query_string=data,
+                                           headers={'auth_token': auth_token})
+        
+        expected_output =   {
+                                "@context": "https://www.w3.org/ns/activitystreams",
+                                "summary": "Page 0 of Activity Stream",
+                                "type": "OrderedCollectionPage",
+                                "id": 0,
+                                "orderedItems": [
+                                            {
+                                                "@context": {
+                                                    "@vocab": "https://www.w3.org/ns/activitystreams",
+                                                    "@language": "en"
+                                                },
+                                                "summary": "Umut deleted a workspace",
+                                                "type": "Delete",
+                                                "actor": {
+                                                    "type": "Person",
+                                                    "id": 1,
+                                                    "name": "Umut Ozdemir",
+                                                    "image": {
+                                                        "type": "Image",
+                                                        "url": "/auth_system/logo"
+                                                    }
+                                                },
+                                                "object": {
+                                                    "type": "Group",
+                                                    "id": 1,
+                                                    "name": "coronovirus study",
+                                                }
+                                            }
+                                ]
+                            }
+    
+        self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
+        self.assertEqual(actual_response.json, expected_output)
+
     # Check if the workspace of the related user is updated their state.
     def test_update_state(self):
         # Umut changes the workspace(1) state to ongoing state.
+        auth_token = generate_token(1, datetime.timedelta(minutes=10))
+        data = {'workspace_id': 1, 'state': WorkspaceState.ongoing.value}
+        actual_response = self.client.put('/api/workspaces', data=data,
+                                           headers={'auth_token': auth_token})
         # Since Alperen follows Umut, he should see this activity in his Activity Stream.
-        pass
+        auth_token = generate_token(3, datetime.timedelta(minutes=10))
+        data = {'page': 0, 'per_page': 10}
+        actual_response = self.client.get('/api/activity_stream', query_string=data,
+                                           headers={'auth_token': auth_token})
+        
+        expected_output =   {
+                                "@context": "https://www.w3.org/ns/activitystreams",
+                                "summary": "Page 0 of Activity Stream",
+                                "type": "OrderedCollectionPage",
+                                "id": 0,
+                                "orderedItems": [
+                                            {
+                                                "@context": {
+                                                    "@vocab": "https://www.w3.org/ns/activitystreams",
+                                                    "@language": "en"
+                                                },
+                                                "summary": "Umut's workspace coronavirus study is updated its state",
+                                                "type": "Update",
+                                                "actor": {
+                                                    "type": "Person",
+                                                    "id": 2
+                                                    "name": "Umut Ozdemir",
+                                                    "image": {
+                                                        "type": "Image",
+                                                        "url": "/auth_system/logo"
+                                                    }
+                                                },
+                                                "object": {
+                                                    "type": "Group",
+                                                    "id": 1,
+                                                    "name": "coronovirus study",
+                                                }
+                                            }
+                                ]
+                            }
+    
+        self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
+        self.assertEqual(actual_response.json, expected_output)
 
     def tearDown(self):
         super().tearDown()
