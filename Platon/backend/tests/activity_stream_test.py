@@ -29,9 +29,9 @@ class ActivityStreamTest(BaseTest):
         # Umut and Can are public users. Alperen is private user.
         users = [
             User("umut@deneme.com", True, "b73ec5e4625ffcb6d0d70826f33be7a75d45b37046e26c4b60d9111266d70e32", 3.5,
-                 "Umut", "Özdemir", False, None, None, None, 1, "boun"),
+                 "Umut", "Ozdemir", False, None, None, None, 1, "boun"),
             User("can@deneme.com", True, "cce0c2170d1ae52e099c716165d80119ee36840e3252e57f2b2b4d6bb111d8a5", 3.4,
-                 "Can", "Deneme", False, None, None, None, 2, "boun"),
+                 "Can", "Bolukbas", False, None, None, None, 2, "boun"),
             User("alperen@deneme.com", True, "hashedpassword", 4.6, "Alperen", "Ozprivate", True, None, None, None, 1, "boun"),
             User("hilal@deneme.com", True, "hasheddpassword", 4.5, "Hilal", "Private", True, None, None, None, 1, "boun")
         ]
@@ -117,24 +117,136 @@ class ActivityStreamTest(BaseTest):
 
     # Check if the related user started following someone.
     def test_follow_activity(self):
-        pass
+        # Can Follows Umut
+        can_token = generate_token(2, datetime.timedelta(minutes=10))
+        data = {'follower_id': 2, 'following_id': 1}  # 1: Umut, 2: Can
+        actual_response = self.client.post('/api/follow/follow_requests', data=data,
+                                           headers={'auth_token': can_token})
+
+        # Alperen's activity stream should contain that activity since Alperen follows Can.
+        alperen_token = generate_token(3, datetime.timedelta(minutes=10))
+        data = {'page': 0, 'per_page': 10}
+        actual_response = self.client.get('/api/activity_stream', query_string=data,
+                                           headers={'auth_token': alperen_token})
+
+        expected_output =   {
+                                "@context": "https://www.w3.org/ns/activitystreams",
+                                "summary": "Page 0 of Activity Stream",
+                                "type": "OrderedCollectionPage",
+                                "id": 0,
+                                "orderedItems": [
+                                    {
+                                        "@context": {
+                                            "@vocab": "https://www.w3.org/ns/activitystreams",
+                                            "@language": "en"
+                                        },
+                                        "summary": "Can started following Umut",
+                                        "type": "Follow",
+                                        "actor": {
+                                            "type": "Person",
+                                            "id": 2,
+                                            "name": "Can Bolukbas",
+                                            "image": {
+                                                "type": "Image",
+                                                "url": "/auth_system/logo"
+                                            }
+                                        },
+                                        "object": {
+                                            "type": "Person",
+                                            "id": 1,
+                                            "name": "Umut Ozdemir",
+                                            "image": {
+                                                "type": "Image",
+                                                "url": "/auth_system/logo"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+        
+        self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
+        self.assertEqual(actual_response.json, expected_output)
+
+        # Alperen accepts Can's follow request. Can starts following Alperen.
+        alperen_token = generate_token(3, datetime.timedelta(minutes=10))
+        data = {'follower_id': 2, 'following_id': 3, 'state': 1}
+        actual_response = self.client.delete('/api/follow/follow_requests', data=data,
+                                           headers={'auth_token': alperen_token})
+
+        # Umut's activity stream should contain that activity since Umut follows Can.
+        auth_token = generate_token(1, datetime.timedelta(minutes=10))
+        data = {'page': 0, 'per_page': 10}
+        actual_response = self.client.get('/api/activity_stream', query_string=data,
+                                           headers={'auth_token': auth_token})
+        
+                expected_output =   {
+                                        "@context": "https://www.w3.org/ns/activitystreams",
+                                        "summary": "Page 0 of Activity Stream",
+                                        "type": "OrderedCollectionPage",
+                                        "id": 0,
+                                        "orderedItems": [
+                                            {
+                                                "@context": {
+                                                    "@vocab": "https://www.w3.org/ns/activitystreams",
+                                                    "@language": "en"
+                                                },
+                                                "summary": "Can started following Alperen",
+                                                "type": "Follow",
+                                                "actor": {
+                                                    "type": "Person",
+                                                    "id": 2,
+                                                    "name": "Can Bolukbas",
+                                                    "image": {
+                                                        "type": "Image",
+                                                        "url": "/auth_system/logo"
+                                                    }
+                                                },
+                                                "object": {
+                                                    "type": "Person",
+                                                    "id": 3,
+                                                    "name": "Alperen Ozprivate",
+                                                    "image": {
+                                                        "type": "Image",
+                                                        "url": "/auth_system/logo"
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+        
+        self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
+        self.assertEqual(actual_response.json, expected_output)
+
     # Check if related user commented on someone.
     def test_user_comment_activity(self):
+        # Umut comments on Can.
+        # Alperen's activity stream should contain that activity since Alperen follows Umut.
         pass
+
     # Check if related user is now contributing to a workspace. 
     def test_new_contribution(self):
+        # Can becomes a new contributor to the workspace(4) titled "bos"
+        # Umut and Alperen's activity stream should contain that activity since they follow Can.
         pass
     # Check if related user stopped contributing to a workspace. 
     def test_stop_contribution(self):
+        # Can(2) will stop contributing to the workspace(2) titled "SWE difficulties"
+        # Since Alperen and Umut follows Can, they should see this activity in their Activity Stream.
         pass
     # Check if related user created a workspace
     def test_create_workspace(self):
+        # Can creates a new workspace.
+        # Since Alperen and Umut follows Can, they should see this activity in their Activity Stream.
         pass
     # Check if related user deleted a workspace
     def test_delete_workspace(self):
+        # Umut deletes the workspace(1) titled "Coronovirus Study"
+        # Since Alperen follows Umut, he should see this activity in his Activity Stream.
         pass
     # Check if the workspace of the related user is updated their state.
     def test_update_state(self):
+        # Umut changes the workspace(1) state to ongoing state.
+        # Since Alperen follows Umut, he should see this activity in his Activity Stream.
         pass
 
     def tearDown(self):
