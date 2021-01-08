@@ -18,6 +18,7 @@ from app.profile_management.helpers import NotificationManager
 from app.auth_system.helpers import profile_photo_link
 from app.follow_system.forms import GetCommentsForm, PostCommentForm, DeleteCommentForm
 from app.follow_system.forms import get_comment_parser, post_comment_parser, delete_comment_parser
+from app.activity_stream.models import ActivityStreamItem
 
 follow_system_ns = Namespace("Follow System",
                              description="Follow System Endpoints",
@@ -295,6 +296,27 @@ class FollowRequestAPI(Resource):
                     NotificationManager.add_notification(form.following_id.data,[logged_in_user.id],text)
                 except:
                     return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+                
+                # Add this activity to the Activity Stream
+                activity_stream_item = ActivityStreamItem(
+                    activity_context_vocab = "https://www.w3.org/ns/activitystreams",
+                    activity_summary = "{} {} started following {} {}".format(logged_in_user.name, logged_in_user.surname, following_user.name, following_user.surname),
+                    activity_type = "Follow",
+                    activity_actor_type = "Person",
+                    activity_actor_id = user_id,
+                    activity_actor_name = (logged_in_user.name + " " + logged_in_user.surname),
+                    activity_actor_image_url = profile_photo_link(logged_in_user.profile_photo,logged_in_user.id),
+                    activity_object_type = "Person",
+                    activity_object_id = following_user.id,
+                    activity_object_name = following_user.name + " " + following_user.surname,
+                    activity_object_image_url = profile_photo_link(following_user.profile_photo, following_user.id)
+                )
+
+                try:
+                    db.session.add(activity_stream_item)  # Creating a new database entry.
+                    db.session.commit()
+                except:
+                    return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
             try:
                 db.session.add(follow_record)  # Creating a new database entry.
@@ -356,6 +378,27 @@ class FollowRequestAPI(Resource):
                 except:
                     return make_response(jsonify({'error': 'Database Connection Error'}), 500)
                 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+                # Add this activity into Activity Stream
+                activity_stream_entry = ActivityStreamItem(
+                    activity_context_vocab = "https://www.w3.org/ns/activitystreams",
+                    activity_summary = "{} {} started following {} {}".format(follower_user.name, follower_user.surname, following_user.name, following_user.surname),
+                    activity_type = "Follow",
+                    activity_actor_type = "Person",
+                    activity_actor_id = follower_user.id,
+                    activity_actor_name = (follower_user.name + " " + follower_user.surname),
+                    activity_actor_image_url = profile_photo_link(follower_user.profile_photo,follower_user.id),
+                    activity_object_type = "Person",
+                    activity_object_id = following_user.id,
+                    activity_object_name = following_user.name + " " + following_user.surname,
+                    activity_object_image_url = profile_photo_link(following_user.profile_photo, following_user.id)
+                )
+                try:
+                    db.session.add(activity_stream_entry)
+                    db.session.commit()
+                except:
+                    return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+            
             # Reject if the state of the reply is 2.
             elif form.state.data == 2:
                 try:

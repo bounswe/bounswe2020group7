@@ -186,7 +186,7 @@ class ActivityStreamAPI(Resource):
                 }
 
                 ordered_items.append({
-                    "@context": activity_stream_item.activity_stream_item_context,
+                    "@context": activity_stream_item_context,
                     "summary": activity_stream_item.activity_summary,
                     "type": activity_stream_item.activity_type,
                     "actor": activity_stream_item_actor,
