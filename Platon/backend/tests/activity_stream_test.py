@@ -297,7 +297,7 @@ class ActivityStreamTest(BaseTest):
         print(ordered_json(actual_response.json))
         print(ordered_json(expected_output))
         self.assertEqual(ordered_json(actual_response.json), ordered_json(expected_output))
-    '''
+
     # Check if related user commented on someone.
     def test_user_comment_activity(self):
         # Umut comments on Can.
@@ -368,8 +368,8 @@ class ActivityStreamTest(BaseTest):
                 return cur
 
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
-        print(ordered_json(actual_response.json)) 
-        print(ordered_json(expected_output))
+        #print(ordered_json(actual_response.json)) 
+        #print(ordered_json(expected_output))
         self.assertEqual(ordered_json(actual_response.json), ordered_json(expected_output))
     '''
     # Check if related user is now contributing to a workspace. 
@@ -405,7 +405,7 @@ class ActivityStreamTest(BaseTest):
                                                     "ext": None,
                                                     "@language": "en"
                                                 },
-                                                "summary": "Can joined a workspace",
+                                                "summary": "Can Bolukbas is now a contributor in bos workspace",
                                                 "type": "Join",
                                                 "actor": {
                                                     "type": "Person",
@@ -439,10 +439,128 @@ class ActivityStreamTest(BaseTest):
                                             }
                                 ]
                             }
-    
+        def ordered_json(cur):
+            if isinstance(cur, list):
+                return sorted(ordered_json(list_item) for list_item in cur)
+            elif isinstance(cur, dict):
+                return sorted((key, ordered_json(val)) for key, val in cur.items())
+            else:
+                return cur
+        
+        # print(ordered_json(actual_response.json)) 
+        # print(ordered_json(expected_output))
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
-        self.assertEqual(actual_response.json, expected_output)
+        self.assertEqual(ordered_json(actual_response.json), ordered_json(expected_output))
 
+
+        # Check if this functionality works for invitations also.
+
+        # Alperen sends workspace(4) invitation to Umut(1).
+        auth_token = generate_token(3, datetime.timedelta(minutes=10))
+        data = {'workspace_id': 4, "invitee_id": 1}
+        actual_response = self.client.post('/api/workspaces/invitations', data=data,
+                                           headers={'auth_token': auth_token})
+        # Umut accepts it.
+        auth_token = generate_token(1, datetime.timedelta(minutes=10))
+        data = {'invitation_id': 1, "is_accepted": "1"}
+        actual_response = self.client.delete('/api/workspaces/invitations', data=data,
+                                           headers={'auth_token': auth_token})
+
+        # Alperen should see this in his activity stream.
+        auth_token = generate_token(3, datetime.timedelta(minutes=10))
+        data = {'page': 0, 'per_page': 10}
+        actual_response = self.client.get('/api/activity_stream', query_string=data,
+                                           headers={'auth_token': auth_token})
+        expected_output =   {
+                                "@context": "https://www.w3.org/ns/activitystreams",
+                                "summary": "Page 0 of Activity Stream",
+                                "type": "OrderedCollectionPage",
+                                "id": 0,
+                                "orderedItems": [
+                                            {
+                                                "@context": {
+                                                    "@vocab": "https://www.w3.org/ns/activitystreams",
+                                                    "ext": None,
+                                                    "@language": "en"
+                                                },
+                                                "summary": "Umut Ozdemir is now a contributor in bos workspace",
+                                                "type": "Join",
+                                                "actor": {
+                                                    "type": "Person",
+                                                    "id": 1,
+                                                    "name": "Umut Ozdemir",
+                                                    "image": {
+                                                        "type": "Image",
+                                                        "url": "/auth_system/logo"
+                                                    }
+                                                },
+                                                "object": {
+                                                    "type": "Group",
+                                                    "id": 4,
+                                                    "name": "bos",
+                                                    "image": {
+                                                        "type": "Image",
+                                                        "url": None
+                                                    },
+                                                    "content": None,
+                                                    "ext:ratingValue": None
+                                                },
+                                                "target": {
+                                                            "type": None,
+                                                            "id": None,
+                                                            "name": None,
+                                                            "image": {
+                                                                "type": "Image",
+                                                                "url": None
+                                                            }
+                                                }
+                                            },
+                                            {
+                                                "@context": {
+                                                    "@vocab": "https://www.w3.org/ns/activitystreams",
+                                                    "ext": None,
+                                                    "@language": "en"
+                                                },
+                                                "summary": "Can Bolukbas is now a contributor in bos workspace",
+                                                "type": "Join",
+                                                "actor": {
+                                                    "type": "Person",
+                                                    "id": 2,
+                                                    "name": "Can Bolukbas",
+                                                    "image": {
+                                                        "type": "Image",
+                                                        "url": "/auth_system/logo"
+                                                    }
+                                                },
+                                                "object": {
+                                                    "type": "Group",
+                                                    "id": 4,
+                                                    "name": "bos",
+                                                    "image": {
+                                                        "type": "Image",
+                                                        "url": None
+                                                    },
+                                                    "content": None,
+                                                    "ext:ratingValue": None
+                                                },
+                                                "target": {
+                                                            "type": None,
+                                                            "id": None,
+                                                            "name": None,
+                                                            "image": {
+                                                                "type": "Image",
+                                                                "url": None
+                                                            }
+                                                }
+                                            }
+                                ]
+                            }
+        # print(ordered_json(actual_response.json)) 
+        # print(ordered_json(expected_output))
+        self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
+        self.assertEqual(ordered_json(actual_response.json), ordered_json(expected_output))
+
+    '''
     # Check if related user stopped contributing to a workspace. 
     def test_stop_contribution(self):
         # Can(2) will stop contributing to the workspace(2) titled "SWE difficulties"

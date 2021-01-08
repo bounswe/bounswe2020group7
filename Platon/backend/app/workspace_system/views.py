@@ -16,6 +16,7 @@ from app.workspace_system.helpers import *
 from app.follow_system.helpers import follow_required
 from app.auth_system.helpers import login_required, profile_photo_link
 from app.file_system.helpers import FileSystem
+from app.activity_stream.models import ActivityStreamItem
 
 workspace_system_ns = Namespace("Workspace System",
                             description="Workspace System Endpoints",
@@ -1510,6 +1511,32 @@ class CollaborationInvitationsAPI(Resource):
                             contribution = Contribution(workspace_id=invitation.workspace_id,user_id=invitee_id,is_active=True)
                             db.session.add(contribution)
                             add_new_collaboration(invitation.workspace_id, invitee_id)
+    
+                            try:
+                                workspace = Workspace.query.filter(Workspace.id == invitation.workspace_id).first()
+                                current_user = User.query.filter(User.id ==invitee_id).first()
+                            except:
+                                return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+
+                            # Activity is added into Activity Stream
+                            activity_stream_entry = ActivityStreamItem(
+                                activity_context_vocab = "https://www.w3.org/ns/activitystreams",
+                                activity_summary = "{} {} is now a contributor in {} workspace".format(current_user.name, current_user.surname, workspace.title),
+                                activity_type = "Join",
+                                activity_actor_type = "Person",
+                                activity_actor_id = current_user.id,
+                                activity_actor_name = (current_user.name + " " + current_user.surname),
+                                activity_actor_image_url = profile_photo_link(current_user.profile_photo,current_user.id),
+                                activity_object_type = "Group",
+                                activity_object_name = workspace.title,
+                                activity_object_id = workspace.id,
+                            )
+                            try:
+                                db.session.add(activity_stream_entry)
+                                # commit is done 5 lines below.
+                            except:
+                                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+                            
                         # Invitation gets deleted no matter how it was responded.
                         db.session.delete(invitation)
                         try:
@@ -1708,6 +1735,32 @@ class CollaborationApplicationsAPI(Resource):
                                 contribution = Contribution(workspace_id=application.workspace_id,user_id=application.applicant_id,is_active=True)
                                 db.session.add(contribution)
                                 add_new_collaboration(application.workspace_id, application.applicant_id)
+                            
+                                try:
+                                    workspace = Workspace.query.filter(Workspace.id == application.workspace_id).first()
+                                    current_user = User.query.filter(User.id == application.applicant_id).first()
+                                except:
+                                    return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+
+                                # Activity is added into Activity Stream
+                                activity_stream_entry = ActivityStreamItem(
+                                    activity_context_vocab = "https://www.w3.org/ns/activitystreams",
+                                    activity_summary = "{} {} is now a contributor in {} workspace".format(current_user.name, current_user.surname, workspace.title),
+                                    activity_type = "Join",
+                                    activity_actor_type = "Person",
+                                    activity_actor_id = current_user.id,
+                                    activity_actor_name = (current_user.name + " " + current_user.surname),
+                                    activity_actor_image_url = profile_photo_link(current_user.profile_photo,current_user.id),
+                                    activity_object_type = "Group",
+                                    activity_object_name = workspace.title,
+                                    activity_object_id = workspace.id,
+                                )
+                                try:
+                                    db.session.add(activity_stream_entry)
+                                    # commit is done 5 lines below.
+                                except:
+                                    return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+                            
                             # Application gets deleted no matter how it was responded.
                             db.session.delete(application)
                             try:
