@@ -120,7 +120,7 @@ class ActivityStreamTest(BaseTest):
         db.session.add(collab)
         db.session.commit()
 
-    '''
+
     # Check if the related user started following someone.
     def test_follow_activity(self):
         # Can Follows Umut
@@ -294,8 +294,8 @@ class ActivityStreamTest(BaseTest):
                             }
         
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
-        print(ordered_json(actual_response.json))
-        print(ordered_json(expected_output))
+        # print(ordered_json(actual_response.json))
+        # print(ordered_json(expected_output))
         self.assertEqual(ordered_json(actual_response.json), ordered_json(expected_output))
 
     # Check if related user commented on someone.
@@ -629,7 +629,7 @@ class ActivityStreamTest(BaseTest):
 
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
         self.assertEqual(ordered_json(actual_response.json), ordered_json(expected_output))
-    '''
+
     # Check if related user created a workspace
     def test_create_workspace(self):
         # Can creates a new public workspace.
@@ -764,7 +764,6 @@ class ActivityStreamTest(BaseTest):
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
         self.assertEqual(ordered_json(actual_response.json), ordered_json(expected_output))
 
-    '''
     # Check if related user deleted a workspace
     def test_delete_workspace(self):
         # Umut deletes the workspace(1) titled "Coronovirus Study"
@@ -790,7 +789,7 @@ class ActivityStreamTest(BaseTest):
                                                     "ext": None,
                                                     "@language": "en"
                                                 },
-                                                "summary": "Umut deleted a workspace",
+                                                "summary": "Umut Ozdemir deleted the workspace coronovirus study",
                                                 "type": "Delete",
                                                 "actor": {
                                                     "type": "Person",
@@ -825,9 +824,18 @@ class ActivityStreamTest(BaseTest):
                                 ]
                             }
     
+        def ordered_json(cur):
+            if isinstance(cur, list):
+                return sorted(ordered_json(list_item) for list_item in cur)
+            elif isinstance(cur, dict):
+                return sorted((key, ordered_json(val)) for key, val in cur.items())
+            else:
+                return cur
+        # print(ordered_json(actual_response.json))
+        # print(ordered_json(expected_output))
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
-        self.assertEqual(actual_response.json, expected_output)
-    '''
+        self.assertEqual(ordered_json(actual_response.json), ordered_json(expected_output))
+
     # This is too complex. For every workspace for every following user we should add this update. This will really slow us down.
     # Check if the workspace of the related user is updated their state.
     '''

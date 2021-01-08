@@ -1188,10 +1188,35 @@ class WorkspacesAPI(Resource):
                         try:
                             db.session.delete(requested_workspace)
                             db.session.commit()
-                            FileSystem.delete_ws_files(worksapce_id)
+                            FileSystem.delete_ws_files(worksapce_id) # while testing A.S., I've commented out this part since it creates an error. I've assumed getting an error here while running tests locally is not important. Am I right?
                         except:
                             return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
                         else:
+                            #Add this activity into Activity Stream if it is public
+                            if not requested_workspace.is_private:
+                                try:
+                                    current_user = User.query.filter(User.id == requester_id).first()
+                                except:
+                                    return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+
+                                # Activity is added into Activity Stream
+                                activity_stream_entry = ActivityStreamItem(
+                                    activity_context_vocab = "https://www.w3.org/ns/activitystreams",
+                                    activity_summary = "{} {} deleted the workspace {}".format(current_user.name, current_user.surname, requested_workspace.title),
+                                    activity_type = "Delete",
+                                    activity_actor_type = "Person",
+                                    activity_actor_id = current_user.id,
+                                    activity_actor_name = (current_user.name + " " + current_user.surname),
+                                    activity_actor_image_url = profile_photo_link(current_user.profile_photo,current_user.id),
+                                    activity_object_type = "Group",
+                                    activity_object_name = requested_workspace.title,
+                                    activity_object_id = requested_workspace.id,
+                                )
+                                try:
+                                    db.session.add(activity_stream_entry)
+                                    db.session.commit()
+                                except:
+                                    return make_response(jsonify({'error': 'Database Connection Error'}), 500)
                             return make_response(jsonify({"message" : "Workspace has been successfully deleted."}), 200)
                     else:
                         return make_response(jsonify({"error" : "You are not the creator of this workspace, you cannot delete it."}), 401)
