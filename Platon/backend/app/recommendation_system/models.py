@@ -1,6 +1,6 @@
 from app import db
 
-class FollowRecommendationItem(db.Models):
+class FollowRecommendationItem(db.Model):
     __tablename__ = 'follow_recommendations'
     owner_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"),primary_key=True)
     recommendation_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"),primary_key=True)
@@ -12,7 +12,7 @@ class FollowRecommendationItem(db.Models):
         self.recommendation_id = recommendation_id
         self.score = score
 
-class WorkspaceRecommendationItem(db.Models):
+class WorkspaceRecommendationItem(db.Model):
     __tablename__ = 'workspace_recommendations'
     owner_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"),primary_key=True)
     recommendation_id = db.Column(db.Integer,db.ForeignKey('workspaces.id',ondelete="CASCADE"),primary_key=True)
@@ -24,7 +24,7 @@ class WorkspaceRecommendationItem(db.Models):
         self.recommendation_id = recommendation_id
         self.score = score
 
-class CollaboratorRecommendationItem(db.Models):
+class CollaboratorRecommendationItem(db.Model):
     __tablename__ = 'collaborator_recommendations'
     owner_id = db.Column(db.Integer,db.ForeignKey('workspaces.id',ondelete="CASCADE"),primary_key=True)
     recommendation_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"),primary_key=True)
