@@ -1797,6 +1797,31 @@ class QuitWorkspaceAPI(Resource):
             try:
                 contribution = Contribution.query.filter_by(workspace_id=form.workspace_id.data, user_id = user_id , is_active=True).first()
                 db.session.delete(contribution)
+
+                # Add this activity into Activity Stream
+                try:
+                    current_user = User.query.filter(User.id == user_id).first()
+                    workspace = Workspace.query.filter(Workspace.id == form.workspace_id.data).first()
+                except:
+                    return make_response(jsonify({'error': 'DB connection error'}), 500)
+
+                activity_stream_entry = ActivityStreamItem(
+                    activity_context_vocab = "https://www.w3.org/ns/activitystreams",
+                    activity_summary = "{} {} left {} workspace".format(current_user.name, current_user.surname, workspace.title),
+                    activity_type = "Leave",
+                    activity_actor_type = "Person",
+                    activity_actor_id = current_user.id,
+                    activity_actor_name = (current_user.name + " " + current_user.surname),
+                    activity_actor_image_url = profile_photo_link(current_user.profile_photo,current_user.id),
+                    activity_object_type = "Group",
+                    activity_object_name = workspace.title,
+                    activity_object_id = workspace.id
+                )
+                try:
+                    db.session.add(activity_stream_entry)
+                except:
+                    return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
                 db.session.commit()
                 return make_response(jsonify({"msg" : "You successfully quited from workspace."}), 201)
             except:

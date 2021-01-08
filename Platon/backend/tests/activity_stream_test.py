@@ -371,7 +371,7 @@ class ActivityStreamTest(BaseTest):
         #print(ordered_json(actual_response.json)) 
         #print(ordered_json(expected_output))
         self.assertEqual(ordered_json(actual_response.json), ordered_json(expected_output))
-    '''
+
     # Check if related user is now contributing to a workspace. 
     def test_new_contribution(self):
         # Can becomes a new contributor to the workspace(4) titled "bos"
@@ -566,7 +566,7 @@ class ActivityStreamTest(BaseTest):
         # Can(2) will stop contributing to the workspace(2) titled "SWE difficulties"
         auth_token = generate_token(2, datetime.timedelta(minutes=10))
         data = {'workspace_id': 2}
-        actual_response = self.client.post('/api/workspaces/quit', data=data,
+        actual_response = self.client.delete('/api/workspaces/quit', data=data,
                                            headers={'auth_token': auth_token})
         # Since Umut follows Can, he should see this activity in his Activity Stream.
         auth_token = generate_token(1, datetime.timedelta(minutes=10))
@@ -586,7 +586,7 @@ class ActivityStreamTest(BaseTest):
                                                     "ext": None,
                                                     "@language": "en"
                                                 },
-                                                "summary": "Can left a workspace",
+                                                "summary": "Can Bolukbas left SWE difficulties workspace",
                                                 "type": "Leave",
                                                 "actor": {
                                                     "type": "Person",
@@ -620,10 +620,17 @@ class ActivityStreamTest(BaseTest):
                                                 }
                                 ]
                             }
-    
-        self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
-        self.assertEqual(actual_response.json, expected_output)
+        def ordered_json(cur):
+            if isinstance(cur, list):
+                return sorted(ordered_json(list_item) for list_item in cur)
+            elif isinstance(cur, dict):
+                return sorted((key, ordered_json(val)) for key, val in cur.items())
+            else:
+                return cur
 
+        self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
+        self.assertEqual(ordered_json(actual_response.json), ordered_json(expected_output))
+    '''
     # Check if related user created a workspace
     def test_create_workspace(self):
         # Can creates a new public workspace.
