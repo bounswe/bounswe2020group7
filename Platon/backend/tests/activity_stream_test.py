@@ -560,7 +560,6 @@ class ActivityStreamTest(BaseTest):
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
         self.assertEqual(ordered_json(actual_response.json), ordered_json(expected_output))
 
-    '''
     # Check if related user stopped contributing to a workspace. 
     def test_stop_contribution(self):
         # Can(2) will stop contributing to the workspace(2) titled "SWE difficulties"
@@ -656,12 +655,12 @@ class ActivityStreamTest(BaseTest):
                                                     "ext": None,
                                                     "@language": "en"
                                                 },
-                                                "summary": "Can created a workspace",
+                                                "summary": "Can Bolukbas created a workspace named Meditator Depression",
                                                 "type": "Create",
                                                 "actor": {
                                                     "type": "Person",
                                                     "id": 2,
-                                                    "name": "Can",
+                                                    "name": "Can Bolukbas",
                                                     "image": {
                                                         "type": "Image",
                                                         "url": "/auth_system/logo"
@@ -690,9 +689,16 @@ class ActivityStreamTest(BaseTest):
                                                 }
                                 ]
                             }
-    
+        def ordered_json(cur):
+            if isinstance(cur, list):
+                return sorted(ordered_json(list_item) for list_item in cur)
+            elif isinstance(cur, dict):
+                return sorted((key, ordered_json(val)) for key, val in cur.items())
+            else:
+                return cur
+        
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
-        self.assertEqual(actual_response.json, expected_output)
+        self.assertEqual(ordered_json(actual_response.json), ordered_json(expected_output))
 
         # If the created workspace is private, don't show it.
 
@@ -712,12 +718,53 @@ class ActivityStreamTest(BaseTest):
                                 "summary": "Page 0 of Activity Stream",
                                 "type": "OrderedCollectionPage",
                                 "id": 0,
-                                "orderedItems": []
+                                "orderedItems": [
+                                            {
+                                                "@context": {
+                                                    "@vocab": "https://www.w3.org/ns/activitystreams",
+                                                    "ext": None,
+                                                    "@language": "en"
+                                                },
+                                                "summary": "Can Bolukbas created a workspace named Meditator Depression",
+                                                "type": "Create",
+                                                "actor": {
+                                                    "type": "Person",
+                                                    "id": 2,
+                                                    "name": "Can Bolukbas",
+                                                    "image": {
+                                                        "type": "Image",
+                                                        "url": "/auth_system/logo"
+                                                    }
+                                                },
+                                                "object": {
+                                                    "type": "Group",
+                                                    "id": 5,
+                                                    "name": "Meditator Depression",
+                                                    "image": {
+                                                        "type": "Image",
+                                                        "url": None
+                                                    },
+                                                    "content": None,
+                                                    "ext:ratingValue": None
+                                                },
+                                                "target": {
+                                                            "type": None,
+                                                            "id": None,
+                                                            "name": None,
+                                                            "image": {
+                                                                "type": "Image",
+                                                                "url": None
+                                                            }
+                                                        }
+                                                }
+                                ]
                             }
-    
+        # print(ordered_json(actual_response.json))
+        # print(ordered_json(expected_output))
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
-        self.assertEqual(actual_response.json, expected_output)
+        self.assertEqual(ordered_json(actual_response.json), ordered_json(expected_output))
 
+    '''
     # Check if related user deleted a workspace
     def test_delete_workspace(self):
         # Umut deletes the workspace(1) titled "Coronovirus Study"

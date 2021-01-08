@@ -979,6 +979,33 @@ class WorkspacesAPI(Resource):
                 except:
                     return make_response(jsonify({"error" : "The server is not connected to the database. (Workspace skills/requirements/contributions could not get created.)"}), 500)
                 else:
+                    
+                    #Add this activity into Activity Stream if it is public
+                    if not new_workspace.is_private:
+                        try:
+                            current_user = User.query.filter(User.id == requester_id).first()
+                        except:
+                            return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+
+                        # Activity is added into Activity Stream
+                        activity_stream_entry = ActivityStreamItem(
+                            activity_context_vocab = "https://www.w3.org/ns/activitystreams",
+                            activity_summary = "{} {} created a workspace named {}".format(current_user.name, current_user.surname, new_workspace.title),
+                            activity_type = "Create",
+                            activity_actor_type = "Person",
+                            activity_actor_id = current_user.id,
+                            activity_actor_name = (current_user.name + " " + current_user.surname),
+                            activity_actor_image_url = profile_photo_link(current_user.profile_photo,current_user.id),
+                            activity_object_type = "Group",
+                            activity_object_name = new_workspace.title,
+                            activity_object_id = new_workspace.id,
+                        )
+                        try:
+                            db.session.add(activity_stream_entry)
+                            db.session.commit()
+                        except:
+                            return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
                     return make_response(jsonify({"message" : "Workspace has been successfully created."}), 201)
         else:
             return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
