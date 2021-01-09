@@ -1188,7 +1188,7 @@ class WorkspacesAPI(Resource):
                         try:
                             db.session.delete(requested_workspace)
                             db.session.commit()
-                            FileSystem.delete_ws_files(worksapce_id) # while testing A.S., I've commented out this part since it creates an error. I've assumed getting an error here while running tests locally is not important. Am I right?
+                            FileSystem.delete_ws_files(worksapce_id)
                         except:
                             return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
                         else:

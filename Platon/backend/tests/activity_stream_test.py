@@ -10,6 +10,7 @@ import json
 from app.workspace_system.helpers import WorkspaceState
 from app.auth_system.models import *
 from app.follow_system.models import *
+from app.file_system.helpers import *
 
 class ActivityStreamTest(BaseTest):
     """
@@ -72,6 +73,9 @@ class ActivityStreamTest(BaseTest):
             db.session.add(workspace)
         
         db.session.commit()
+
+        # Initialize ws file structure
+        FileSystem.initialize_ws(1)
 
         contributions = [
             Contribution(workspace_id = 1, user_id = 1, is_active = 1), # Umut will be active in coronovirus study
