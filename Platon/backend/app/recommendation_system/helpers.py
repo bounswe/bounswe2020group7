@@ -7,13 +7,13 @@ from app.recommendation_system.models import *
 from app.profile_management.models import UserSkills
 from app.workspace_system.models import Workspace,WorkspaceSkill
 from app.auth_system.models import User
+from app.follow_system.models import Follow,FollowRequests
+from app.workspace_system.models import Contribution,CollaborationApplication,CollaborationInvitation
 
 import atexit
 from apscheduler.schedulers.background import BackgroundScheduler
 
 class RecommendationSystem():
-
-    number_of_recommendations = 8
 
     @staticmethod
     def calculate_recommendations(tokenized_corpus,id_list,tokenized_query):
@@ -34,15 +34,17 @@ class RecommendationSystem():
         # Tokenized Query
         tokenized_query = [skill.skill_id for skill in skills]
         # Calculate Recommendations
-        recommendations = RecommendationSystem.calculate_recommendations(skill_array,id_list,tokenized_query)[:RecommendationSystem.number_of_recommendations+1]
+        recommendations = RecommendationSystem.calculate_recommendations(skill_array,id_list,tokenized_query)
         # Delete all of the recommendations of this user
         try:
             FollowRecommendationItem.query.filter(FollowRecommendationItem.owner_id == user_id).delete()
+            all_follows = [follow.following_id for follow in Follow.query.filter_by(follower_id=user_id).all()]
+            all_follow_requests = [follow_request.following_id for follow_request in FollowRequests.query.filter_by(follower_id=user_id).all()]
         except:
             return
         recommendation_records = []
         for recommendation in recommendations:
-            if recommendation[0] != user_id:
+            if recommendation[0] != user_id and recommendation[0] not in all_follows + all_follow_requests:
                 recommendation_records.append(FollowRecommendationItem(user_id,recommendation[0],float(recommendation[1])))
         try:
             db.session.add_all(recommendation_records)
@@ -89,15 +91,18 @@ class RecommendationSystem():
         # Tokenized Query
         tokenized_query = [skill.skill_id for skill in skills]
         # Calculate Recommendations
-        recommendations = RecommendationSystem.calculate_recommendations(skill_array,id_list,tokenized_query)[:RecommendationSystem.number_of_recommendations+1]
+        recommendations = RecommendationSystem.calculate_recommendations(skill_array,id_list,tokenized_query)
         # Delete all of the recommendations of this user
         try:
             WorkspaceRecommendationItem.query.filter(WorkspaceRecommendationItem.owner_id == user_id).delete()
+            all_contributions = [contribution.workspace_id for contribution in Contribution.query.filter_by(user_id=user_id,is_active=True).all()]
+            all_applications = [contribution.workspace_id for contribution in Contribution.query.filter_by(applicant_id=user_id).all()]
         except:
             return
         recommendation_records = []
         for recommendation in recommendations:
-            recommendation_records.append(WorkspaceRecommendationItem(user_id,recommendation[0],float(recommendation[1])))
+            if recommendation[0] not in all_contributions + all_applications:
+                recommendation_records.append(WorkspaceRecommendationItem(user_id,recommendation[0],float(recommendation[1])))
         try:
             db.session.add_all(recommendation_records)
             db.session.commit()
@@ -147,15 +152,18 @@ class RecommendationSystem():
         # Tokenized Query
         tokenized_query = [skill.skill_id for skill in skills]
         # Calculate Recommendations
-        recommendations = RecommendationSystem.calculate_recommendations(skill_array,id_list,tokenized_query)[:RecommendationSystem.number_of_recommendations+1]
+        recommendations = RecommendationSystem.calculate_recommendations(skill_array,id_list,tokenized_query)
         # Delete all of the recommendations of this user
         try:
             CollaboratorRecommendationItem.query.filter(CollaboratorRecommendationItem.owner_id == workspace_id).delete()
+            all_contributiors = [contribution.user_id for contribution in Contribution.query.filter_by(workspace_id=workspace_id,is_active=True).all()]
+            all_invitations = [invitation.invitee_id for invitation in CollaborationInvitation.query.filter_by(workspace_id=workspace_id).all()]
         except:
             return
         recommendation_records = []
         for recommendation in recommendations:
-            recommendation_records.append(CollaboratorRecommendationItem(workspace_id,recommendation[0],float(recommendation[1])))
+            if recommendation[0] not in all_contributiors + all_invitations:
+                recommendation_records.append(CollaboratorRecommendationItem(workspace_id,recommendation[0],float(recommendation[1])))
         try:
             db.session.add_all(recommendation_records)
             db.session.commit()
