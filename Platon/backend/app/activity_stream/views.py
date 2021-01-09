@@ -11,6 +11,8 @@ from app.workspace_system.models import *
 from app.activity_stream.forms import *
 from app.auth_system.helpers import *
 
+from sqlalchemy import desc
+
 activity_stream_ns = Namespace("Activity Stream",
                             description="Activity Stream Endpoints",
                             path = "/activity_stream")
@@ -125,15 +127,13 @@ class ActivityStreamAPI(Resource):
             activity_stream_list = []
             for following_id in followings_ids_list:
                 try:
-                    activity_stream_items_list = ActivityStreamItem.query.filter(ActivityStreamItem.activity_actor_id == following_id).all()
+                    # Returns activity stream items with descending timestamp value.
+                    activity_stream_items_list = ActivityStreamItem.query.filter(ActivityStreamItem.activity_actor_id == following_id).order_by(desc(ActivityStreamItem.timestamp)).all()
                 except:
                     # not sure to return error.
                     return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
 
                 activity_stream_list += activity_stream_items_list
-
-            # Sort all activities.
-            activity_stream_list.sort(key = lambda activity_stream_item: activity_stream_item.timestamp, reverse=True)
 
             # Pagination applied
             per_page = form.per_page.data
