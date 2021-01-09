@@ -19,6 +19,7 @@ from app.auth_system.helpers import profile_photo_link
 from app.follow_system.forms import GetCommentsForm, PostCommentForm, DeleteCommentForm
 from app.follow_system.forms import get_comment_parser, post_comment_parser, delete_comment_parser
 from app.activity_stream.models import ActivityStreamItem
+from app.activity_stream.helpers import *
 
 follow_system_ns = Namespace("Follow System",
                              description="Follow System Endpoints",
@@ -298,25 +299,7 @@ class FollowRequestAPI(Resource):
                     return make_response(jsonify({'error': 'Database Connection Error'}), 500)
                 
                 # Add this activity to the Activity Stream
-                activity_stream_item = ActivityStreamItem(
-                    activity_context_vocab = "https://www.w3.org/ns/activitystreams",
-                    activity_summary = "{} {} started following {} {}".format(logged_in_user.name, logged_in_user.surname, following_user.name, following_user.surname),
-                    activity_type = "Follow",
-                    activity_actor_type = "Person",
-                    activity_actor_id = user_id,
-                    activity_actor_name = (logged_in_user.name + " " + logged_in_user.surname),
-                    activity_actor_image_url = profile_photo_link(logged_in_user.profile_photo,logged_in_user.id),
-                    activity_object_type = "Person",
-                    activity_object_id = following_user.id,
-                    activity_object_name = following_user.name + " " + following_user.surname,
-                    activity_object_image_url = profile_photo_link(following_user.profile_photo, following_user.id)
-                )
-
-                try:
-                    db.session.add(activity_stream_item)  # Creating a new database entry.
-                    db.session.commit()
-                except:
-                    return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+                activity_stream_follow_activity(logged_in_user, following_user)
 
             try:
                 db.session.add(follow_record)  # Creating a new database entry.
@@ -498,38 +481,7 @@ class CommentRateAPI(Resource):
             if update_rate(form.commented_user_id.data):
 
                 # Add this activity into Activity Stream
-                try:
-                    current_user = User.query.filter(User.id == user_id).first()
-                    other_user = User.query.filter(User.id == form.commented_user_id.data).first()
-                except:
-                    return make_response(jsonify({'error': 'DB connection error'}), 500)
-
-                activity_stream_entry = ActivityStreamItem(
-                    activity_context_vocab = "https://www.w3.org/ns/activitystreams",
-                    activity_context_ext = 'http://schema.org/Rating',
-                    activity_summary = "{} {} commented and rated {} {}".format(current_user.name, current_user.surname, other_user.name, other_user.surname),
-                    activity_type = "Add",
-                    activity_actor_type = "Person",
-                    activity_actor_id = current_user.id,
-                    activity_actor_name = (current_user.name + " " + current_user.surname),
-                    activity_actor_image_url = profile_photo_link(current_user.profile_photo,current_user.id),
-                    activity_object_type = "Note",
-                    activity_object_name = "Comment",
-                    activity_object_id = comment.id,
-                    activity_object_content = comment.text,
-                    activity_object_rating_value = comment.rate,
-                    activity_target_type = "Person",
-                    activity_target_id = other_user.id,
-                    activity_target_name = other_user.name + " " + other_user.surname,
-                    activity_target_image_url = profile_photo_link(other_user.profile_photo, other_user.id)
-                )
-                try:
-                    db.session.add(activity_stream_entry)
-                    db.session.commit()
-                except:
-                    return make_response(jsonify({'error': 'Database Connection Error'}), 500)
-
-                # Successfully added into Activity Stream
+                activity_stream_user_comment_activity(user_id, form, comment)
                 
                 return make_response(jsonify({'msg': 'Comment is successfully created'}), 201)
             else:
