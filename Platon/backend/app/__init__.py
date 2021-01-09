@@ -51,6 +51,7 @@ def create_app(config_class='config'):
     from app.file_system.views import register_resources as file_system
     from app.workspace_system.views import register_resources as workspace_module
     from app.upcoming_events.views import register_resources as upcoming_events
+    from app.recommendation_system.views import register_resources as recommendation_system
 
     # Register blueprint(s)
     auth_module(api)
@@ -60,7 +61,8 @@ def create_app(config_class='config'):
     workspace_module(api)
     file_system(api)
     upcoming_events(api)
-    
+    recommendation_system(api)
+
     if not os.path.exists(app.config['WORKSPACE_FILE_PATH']):
         os.makedirs(app.config['WORKSPACE_FILE_PATH'])
 
