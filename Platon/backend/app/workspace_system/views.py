@@ -16,6 +16,8 @@ from app.workspace_system.helpers import *
 from app.follow_system.helpers import follow_required
 from app.auth_system.helpers import login_required, profile_photo_link
 from app.file_system.helpers import FileSystem
+from app.activity_stream.models import ActivityStreamItem
+from app.activity_stream.helpers import *
 
 from app.recommendation_system.helpers import RecommendationSystem
 
@@ -981,6 +983,10 @@ class WorkspacesAPI(Resource):
                 except:
                     return make_response(jsonify({"error" : "The server is not connected to the database. (Workspace skills/requirements/contributions could not get created.)"}), 500)
                 else:
+                    
+                    #Add this activity into Activity Stream if it is public
+                    activity_stream_create_workspace(new_workspace, requester_id)
+
                     return make_response(jsonify({"message" : "Workspace has been successfully created."}), 201)
         else:
             return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
@@ -1167,6 +1173,9 @@ class WorkspacesAPI(Resource):
                         except:
                             return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
                         else:
+                            #Add this activity into Activity Stream if it is public
+                            activity_stream_delete_workspace(requested_workspace, requester_id)
+                            
                             return make_response(jsonify({"message" : "Workspace has been successfully deleted."}), 200)
                     else:
                         return make_response(jsonify({"error" : "You are not the creator of this workspace, you cannot delete it."}), 401)
@@ -1516,6 +1525,16 @@ class CollaborationInvitationsAPI(Resource):
                             contribution = Contribution(workspace_id=invitation.workspace_id,user_id=invitee_id,is_active=True)
                             db.session.add(contribution)
                             add_new_collaboration(invitation.workspace_id, invitee_id)
+                            
+                            # Before moving to activity stream, changes in db is committed.
+                            try:
+                                db.session.commit()
+                            except:
+                                return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+                            
+                            # Adds to Activity Stream 
+                            activity_stream_accept_collaboration_invitation(invitation, invitee_id)
+                            
                         # Invitation gets deleted no matter how it was responded.
                         db.session.delete(invitation)
                         try:
@@ -1716,6 +1735,16 @@ class CollaborationApplicationsAPI(Resource):
                                 contribution = Contribution(workspace_id=application.workspace_id,user_id=application.applicant_id,is_active=True)
                                 db.session.add(contribution)
                                 add_new_collaboration(application.workspace_id, application.applicant_id)
+
+                                # Before moving to activity stream, changes in db is committed.
+                                try:
+                                    db.session.commit()
+                                except:
+                                    return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+                            
+                                # Activity is added into Activity Stream
+                                activity_stream_accept_collaboration_application(application)
+                            
                             # Application gets deleted no matter how it was responded.
                             db.session.delete(application)
                             try:
@@ -1753,9 +1782,12 @@ class QuitWorkspaceAPI(Resource):
                 contribution = Contribution.query.filter_by(workspace_id=form.workspace_id.data, user_id = user_id , is_active=True).first()
                 db.session.delete(contribution)
                 db.session.commit()
-                return make_response(jsonify({"msg" : "You successfully quited from workspace."}), 201)
             except:
                 return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+            
+            # Add this activity into Activity Stream
+            activity_stream_quit_workspace(user_id, form)
+            return make_response(jsonify({"msg" : "You successfully quited from workspace."}), 201)
         else:
             return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
 

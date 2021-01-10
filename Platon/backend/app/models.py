@@ -5,3 +5,4 @@ from app.search_engine import models
 from app.workspace_system import models
 from app.upcoming_events import models
 from app.recommendation_system import models
+from app.activity_stream import models
