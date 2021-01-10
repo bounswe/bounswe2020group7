@@ -14,7 +14,7 @@ import math
 
 recommendation_system_ns = Namespace("Recommendation System",
                                      description="Recommendation System Endpoints",
-                                     path = "/recommenadtion_system")
+                                     path = "/recommendation_system")
 
 user_model = api.model('User Recommendation', {
     'id': fields.Integer,
@@ -147,7 +147,7 @@ class WorkspaceRecommendationsAPI(Resource):
                         "name": user.name,
                         "surname": user.surname
                     })
-                workspace_response[index]["contributor_list"] = contributor_list
+                response[index]["contributor_list"] = contributor_list
             return make_response(jsonify({"recommendation_list": response}),200)
         else:
             return make_response(jsonify({"error": "Input Format Error"}),400)
@@ -161,7 +161,7 @@ class CollaborationRecommendationsAPI(Resource):
     @api.response(200, 'Valid Response', user_recommendation_list)
     @api.expect(recommendation_ws_parser)
     @login_required
-    @workspace_exists    
+    @workspace_exists(param_loc="args",workspace_id_key="workspace_id")
     @active_contribution_required(param_loc="args",workspace_id_key="workspace_id")
     def get(user_id,self):
         form = WorkspaceForm(request.args)

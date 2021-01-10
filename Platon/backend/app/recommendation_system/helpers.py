@@ -54,32 +54,31 @@ class RecommendationSystem():
     
     @staticmethod
     def update_all_follow_recommendations():
-        with app.app_context():
-            # Take all of the user skills
-            try:
-                all_user_skills = UserSkills.query.all()
-            except:
-                return
-            skills = {}
-            for user_skill in all_user_skills:
-                if user_skill.user_id not in skills:
-                    skills[user_skill.user_id] = [user_skill.skill_id]
-                else:
-                    skills[user_skill.user_id].append(user_skill.skill_id)
-            try:
-                all_users = User.query.all()
-            except:
-                return
-            id_list = [user.id for user in all_users]
-            tokenized_corpus = []
-            for id in id_list:
-                if id in skills:
-                    tokenized_corpus.append(skills[id])
-                else:
-                    tokenized_corpus.append([])
-            # Update all follow recommendations
-            for user in all_users:
-                RecommendationSystem.update_follow_recommendation(user.id,tokenized_corpus,id_list)
+        # Take all of the user skills
+        try:
+            all_user_skills = UserSkills.query.all()
+        except:
+            return
+        skills = {}
+        for user_skill in all_user_skills:
+            if user_skill.user_id not in skills:
+                skills[user_skill.user_id] = [user_skill.skill_id]
+            else:
+                skills[user_skill.user_id].append(user_skill.skill_id)
+        try:
+            all_users = User.query.all()
+        except:
+            return
+        id_list = [user.id for user in all_users]
+        tokenized_corpus = []
+        for id in id_list:
+            if id in skills:
+                tokenized_corpus.append(skills[id])
+            else:
+                tokenized_corpus.append([])
+        # Update all follow recommendations
+        for user in all_users:
+            RecommendationSystem.update_follow_recommendation(user.id,tokenized_corpus,id_list)
 
     @staticmethod
     def update_workspace_recommendation(user_id,skill_array,id_list):
@@ -96,7 +95,7 @@ class RecommendationSystem():
         try:
             WorkspaceRecommendationItem.query.filter(WorkspaceRecommendationItem.owner_id == user_id).delete()
             all_contributions = [contribution.workspace_id for contribution in Contribution.query.filter_by(user_id=user_id,is_active=True).all()]
-            all_applications = [contribution.workspace_id for contribution in Contribution.query.filter_by(applicant_id=user_id).all()]
+            all_applications = [application.workspace_id for application in CollaborationApplication.query.filter_by(applicant_id=user_id).all()]
         except:
             return
         recommendation_records = []
@@ -111,36 +110,35 @@ class RecommendationSystem():
 
     @staticmethod
     def update_all_workspace_recommendations():
-        with app.app_context():
-            # Take all of the user skills
-            try:
-                all_ws_skills = WorkspaceSkill.query.all()
-            except:
-                return
-            skills = {}
-            for ws_skill in all_ws_skills:
-                if ws_skill.workspace_id not in skills:
-                    skills[ws_skill.workspace_id] = [ws_skill.skill_id]
-                else:
-                    skills[ws_skill.workspace_id].append(ws_skill.skill_id)
-            try:
-                all_ws = Workspace.query.all()
-            except:
-                return
-            id_list = [ws.id for ws in all_ws]
-            tokenized_corpus = []
-            for id in id_list:
-                if id in skills:
-                    tokenized_corpus.append(skills[id])
-                else:
-                    tokenized_corpus.append([])
-            try:
-                all_users = User.query.all()
-            except:
-                return
-            # Update all follow recommendations
-            for user in all_users:
-                RecommendationSystem.update_workspace_recommendation(user.id,tokenized_corpus,id_list)    
+        # Take all of the user skills
+        try:
+            all_ws_skills = WorkspaceSkill.query.all()
+        except:
+            return
+        skills = {}
+        for ws_skill in all_ws_skills:
+            if ws_skill.workspace_id not in skills:
+                skills[ws_skill.workspace_id] = [ws_skill.skill_id]
+            else:
+                skills[ws_skill.workspace_id].append(ws_skill.skill_id)
+        try:
+            all_ws = Workspace.query.all()
+        except:
+            return
+        id_list = [ws.id for ws in all_ws]
+        tokenized_corpus = []
+        for id in id_list:
+            if id in skills:
+                tokenized_corpus.append(skills[id])
+            else:
+                tokenized_corpus.append([])
+        try:
+            all_users = User.query.all()
+        except:
+            return
+        # Update all follow recommendations
+        for user in all_users:
+            RecommendationSystem.update_workspace_recommendation(user.id,tokenized_corpus,id_list)    
     
     @staticmethod
     def update_collaboration_recommendation(workspace_id,skill_array,id_list):
@@ -172,36 +170,42 @@ class RecommendationSystem():
 
     @staticmethod
     def update_all_collaboration_recommendations():
+        # Take all of the user skills
+        try:
+            all_user_skills = UserSkills.query.all()
+        except:
+            return
+        skills = {}
+        for user_skill in all_user_skills:
+            if user_skill.user_id not in skills:
+                skills[user_skill.user_id] = [user_skill.skill_id]
+            else:
+                skills[user_skill.user_id].append(user_skill.skill_id)
+        try:
+            all_users = User.query.all()
+        except:
+            return
+        id_list = [user.id for user in all_users]
+        tokenized_corpus = []
+        for id in id_list:
+            if id in skills:
+                tokenized_corpus.append(skills[id])
+            else:
+                tokenized_corpus.append([])
+        try:
+            all_ws = Workspace.query.all()
+        except:
+            return
+        # Update all follow recommendations
+        for ws in all_ws:
+            RecommendationSystem.update_collaboration_recommendation(ws.id,tokenized_corpus,id_list)
+    
+    @staticmethod
+    def update_all():
         with app.app_context():
-            # Take all of the user skills
-            try:
-                all_user_skills = UserSkills.query.all()
-            except:
-                return
-            skills = {}
-            for user_skill in all_user_skills:
-                if user_skill.user_id not in skills:
-                    skills[user_skill.user_id] = [user_skill.skill_id]
-                else:
-                    skills[user_skill.user_id].append(user_skill.skill_id)
-            try:
-                all_users = User.query.all()
-            except:
-                return
-            id_list = [user.id for user in all_users]
-            tokenized_corpus = []
-            for id in id_list:
-                if id in skills:
-                    tokenized_corpus.append(skills[id])
-                else:
-                    tokenized_corpus.append([])
-            try:
-                all_ws = Workspace.query.all()
-            except:
-                return
-            # Update all follow recommendations
-            for ws in all_ws:
-                RecommendationSystem.update_collaboration_recommendation(ws.id,tokenized_corpus,id_list)
+            RecommendationSystem.update_all_follow_recommendations()
+            RecommendationSystem.update_all_workspace_recommendations()
+            RecommendationSystem.update_all_collaboration_recommendations()
 
     @staticmethod
     def remove_follow_recommendation(owner_id,recommendation_id):
@@ -230,9 +234,7 @@ class RecommendationSystem():
 
 def schedule_regularly():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(func=RecommendationSystem.update_all_follow_recommendations, trigger="interval",seconds=60*10)
-    scheduler.add_job(func=RecommendationSystem.update_all_workspace_recommendations, trigger="interval",seconds=60*10)
-    scheduler.add_job(func=RecommendationSystem.update_all_collaboration_recommendations, trigger="interval",seconds=60*10)
+    scheduler.add_job(func=RecommendationSystem.update_all, trigger="interval",seconds=60*10)
     scheduler.start()
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())   
