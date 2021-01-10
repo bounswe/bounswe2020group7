@@ -18,6 +18,7 @@ from app.profile_management.helpers import NotificationManager
 from app.auth_system.helpers import profile_photo_link
 from app.follow_system.forms import GetCommentsForm, PostCommentForm, DeleteCommentForm
 from app.follow_system.forms import get_comment_parser, post_comment_parser, delete_comment_parser
+from app.recommendation_system.helpers import RecommendationSystem
 
 follow_system_ns = Namespace("Follow System",
                              description="Follow System Endpoints",
@@ -299,6 +300,8 @@ class FollowRequestAPI(Resource):
             try:
                 db.session.add(follow_record)  # Creating a new database entry.
                 db.session.commit()
+                # Remove the recommenadtion item if it exits
+                RecommendationSystem.remove_follow_recommendation(form.follower_id.data,form.following_id.data)
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 

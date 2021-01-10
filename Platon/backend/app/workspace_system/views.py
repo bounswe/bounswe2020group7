@@ -17,6 +17,8 @@ from app.follow_system.helpers import follow_required
 from app.auth_system.helpers import login_required, profile_photo_link
 from app.file_system.helpers import FileSystem
 
+from app.recommendation_system.helpers import RecommendationSystem
+
 workspace_system_ns = Namespace("Workspace System",
                             description="Workspace System Endpoints",
                             path = "/workspaces")
@@ -1399,6 +1401,8 @@ class CollaborationInvitationsAPI(Resource):
                             try:
                                 db.session.add(new_invitation)
                                 db.session.commit()
+                                # Remove Recommendation Item if it exists
+                                RecommendationSystem.remove_collaboration_recommendation(invitee_user.id,requested_workspace.id) 
                             except:
                                 return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
                             else:
@@ -1588,6 +1592,8 @@ class CollaborationApplicationsAPI(Resource):
                         try:
                             db.session.add(new_application)
                             db.session.commit()
+                            # Remove workspace Recommendation if it exists
+                            RecommendationSystem.remove_ws_recommendation(applicant_id,requested_workspace.id)
                         except:
                             return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
                         else:

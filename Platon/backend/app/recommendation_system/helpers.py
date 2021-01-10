@@ -203,6 +203,31 @@ class RecommendationSystem():
             for ws in all_ws:
                 RecommendationSystem.update_collaboration_recommendation(ws.id,tokenized_corpus,id_list)
 
+    @staticmethod
+    def remove_follow_recommendation(owner_id,recommendation_id):
+        try:
+            FollowRecommendationItem.query.filter_by(owner_id=owner_id,recommendation_id=recommendation_id).delete()
+            db.session.commit()
+        except:
+            return
+    
+    @staticmethod
+    def remove_ws_recommendation(owner_id,recommendation_id):
+        try:
+            WorkspaceRecommendationItem.query.filter_by(owner_id=owner_id,recommendation_id=recommendation_id).delete()
+            db.session.commit()
+        except:
+            return
+    
+    @staticmethod
+    def remove_collaboration_recommendation(owner_id,recommendation_id):
+        try:
+            CollaboratorRecommendationItem.query.filter_by(owner_id=owner_id,recommendation_id=recommendation_id).delete()
+            db.session.commit()
+        except:
+            return
+
+
 def schedule_regularly():
     scheduler = BackgroundScheduler()
     scheduler.add_job(func=RecommendationSystem.update_all_follow_recommendations, trigger="interval",seconds=60*10)
