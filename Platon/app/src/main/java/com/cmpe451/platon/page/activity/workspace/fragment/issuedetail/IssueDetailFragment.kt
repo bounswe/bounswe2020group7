@@ -39,13 +39,10 @@ class IssueDetailFragment: Fragment() {
     lateinit var issue_description: String
     lateinit var issue_creator_name: String
     lateinit var issue_deadline: String
-    lateinit var contributors:List<Contributor>
+    var contributors:List<Contributor> = listOf()
     lateinit var assignees:List<Assignee>
     private var maxPageNumberComment:Int=0
     private var pageSize:Int=10
-
-
-
 
     lateinit var binding: FragmentIssueDetailBinding
 
@@ -87,10 +84,12 @@ class IssueDetailFragment: Fragment() {
                 Resource.Success::class.java ->{
                     assignees = t.data!!.result
                     (binding.issueAssignee.adapter as AssigneeAdapter).submitElements(t.data!!.result)
+                    mIssueDetailViewModel.assigneeResponse.value = Resource.Done()
 
                 }
                 Resource.Error::class.java ->{
                     Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                    mIssueDetailViewModel.assigneeResponse.value = Resource.Done()
                 }
                 Resource.Loading::class.java -> {
                     //Toast.makeText(requireContext(), "Loading", Toast.LENGTH_SHORT).show()
@@ -106,6 +105,7 @@ class IssueDetailFragment: Fragment() {
                 }
                 Resource.Error::class.java ->{
                     Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                    mIssueDetailViewModel.deleteIssueResponse.value = Resource.Done()
                 }
                 Resource.Loading::class.java -> {
                     //Toast.makeText(requireContext(), "Loading", Toast.LENGTH_SHORT).show()
@@ -117,9 +117,8 @@ class IssueDetailFragment: Fragment() {
         mIssueDetailViewModel.editIssueResponse.observe(viewLifecycleOwner, { t->
             when(t.javaClass){
                 Resource.Success::class.java ->{
-
                     Toast.makeText(requireContext(), "Succesfully updated.", Toast.LENGTH_SHORT).show()
-
+                    mIssueDetailViewModel.editIssueResponse.value = Resource.Done()
                 }
                 Resource.Error::class.java ->{
                     Toast.makeText(requireContext(), "hatalı request", Toast.LENGTH_SHORT).show()
@@ -136,6 +135,8 @@ class IssueDetailFragment: Fragment() {
             when(t.javaClass){
                 Resource.Success::class.java ->{
                     contributors = t.data!!.active_contributors
+                    mIssueDetailViewModel.getWorkspaceResponse.value = Resource.Done()
+
                 }
                 Resource.Error::class.java ->{
                     Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
@@ -152,6 +153,7 @@ class IssueDetailFragment: Fragment() {
             when(t.javaClass){
                 Resource.Success::class.java ->{
                     mIssueDetailViewModel.getIssueAssignee((activity as WorkspaceActivity).workspace_id!!,issue_id.toInt(), null, null, (activity as WorkspaceActivity).token!!)
+                    mIssueDetailViewModel.addIssueAssigneeResponse.value = Resource.Done()
                 }
                 Resource.Error::class.java ->{
                     Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
@@ -167,10 +169,11 @@ class IssueDetailFragment: Fragment() {
             when(t.javaClass){
                 Resource.Success::class.java ->{
                     mIssueDetailViewModel.getIssueAssignee((activity as WorkspaceActivity).workspace_id!!,issue_id.toInt(), null, null, (activity as WorkspaceActivity).token!!)
-
+                    mIssueDetailViewModel.deleteIssueAssigneeResponse.value = Resource.Done()
                 }
                 Resource.Error::class.java ->{
                     Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                    mIssueDetailViewModel.deleteIssueAssigneeResponse.value = Resource.Done()
                 }
                 Resource.Loading::class.java -> {
                     Toast.makeText(requireContext(), "Loading", Toast.LENGTH_SHORT).show()
@@ -189,8 +192,8 @@ class IssueDetailFragment: Fragment() {
                     val issue = t.data!!.result as ArrayList<IssueComment>
                     maxPageNumberComment = t.data!!.number_of_pages
                     (binding.issueCommentsRecyclerView.adapter as IssueCommentAdapter).submitElements(issue)
-                    mIssueDetailViewModel.getIssueCommentsResponse.value = Resource.Done()
                     paginationListenerComments.isLoading = false
+                    mIssueDetailViewModel.getIssueCommentsResponse.value = Resource.Done()
                 }
                 Resource.Error::class.java ->{
                     Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
@@ -210,6 +213,7 @@ class IssueDetailFragment: Fragment() {
                 Resource.Success::class.java ->{
                     (binding.issueCommentsRecyclerView.adapter as IssueCommentAdapter).clearElements()
                     mIssueDetailViewModel.getIssueComments((activity as WorkspaceActivity).workspace_id!!, issue_id.toInt(), maxPageNumberComment, pageSize,(activity as WorkspaceActivity).token!!)
+                    mIssueDetailViewModel.addIssueCommentResponse.value = Resource.Done()
                 }
                 Resource.Error::class.java ->{
                     Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
@@ -221,15 +225,6 @@ class IssueDetailFragment: Fragment() {
             }
         })
 
-
-
-
-
-
-
-
-
-
     }
     private fun initViews() {
 
@@ -240,7 +235,7 @@ class IssueDetailFragment: Fragment() {
                     isLoading = true
                     currentPage++
                     //TODO: get implement
-                    //mIssueDetailViewModel.getComments()
+                    mIssueDetailViewModel.getIssueComments((activity as WorkspaceActivity).workspace_id!!, issue_id.toInt(), currentPage, PAGE_SIZE,(activity as WorkspaceActivity).token!!)
                 }
 
             }

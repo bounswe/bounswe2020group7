@@ -6,10 +6,6 @@
         <color android:color="@color/primary_dark"/>
 
     </item>
-    <item>
-        <bitmap
-            android:src="@drawable/ic_o_logo_100"
-            android:gravity="center"/>
-    </item>
+    <item android:gravity="center" android:drawable="@drawable/ic_splash_background_christmas"/>
 
 </layer-list>
