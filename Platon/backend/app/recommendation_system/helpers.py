@@ -234,7 +234,7 @@ class RecommendationSystem():
 
 def schedule_regularly():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(func=RecommendationSystem.update_all, trigger="interval",seconds=60*10)
+    scheduler.add_job(func=RecommendationSystem.update_all, trigger="interval",seconds=60)
     scheduler.start()
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())   
