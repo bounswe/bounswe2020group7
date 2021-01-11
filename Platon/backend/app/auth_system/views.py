@@ -19,7 +19,7 @@ from app.auth_system.models import User
 from app.profile_management.models import Jobs, Skills, UserSkills
 from app.follow_system.models import Follow, FollowRequests
 from app.auth_system.helpers import generate_token,send_email,login_required, hashed, allowed_file, profile_photo_link
-from app.profile_management.helpers import ResearchInfoFetch
+from app.profile_management.helpers import ResearchInfoFetch, EMail_Manager
 from app.follow_system.helpers import follow_required_user
 from app.workspace_system.models import Collaboration
 
@@ -98,7 +98,7 @@ class ResetPasswordAPI(Resource):
             if not user.is_valid:
                 return make_response(jsonify({'error' : 'Please activate your account'}),401)
             token = generate_token(user.id,app.config['LINK_DURATION'])
-            if send_email(user.e_mail,"Password Reset Link","Click the following link to change tour password\nDo not forget to activate your account today, the link expires in 20 minutes!\nToken: {}".format(token),"{}/resetpassword/{}".format(app.config["FRONTEND_HOSTNAME"],token)):
+            if EMail_Manager.send_reset_password_e_mail(user.email,token):
                 return make_response(jsonify({'mgs' : 'E-mail is successfully sent'}),200)
             else:
                 return make_response(jsonify({'error' : 'E-mail Server Error'}),500)
@@ -321,12 +321,7 @@ class UserAPI(Resource):
                     # If it fails, an error is raised.
                     try:
                         account_activation_token = generate_token(new_user.id, datetime.timedelta(days=1))
-                        send_email(
-                                    recipient_email=new_user.e_mail,
-                                    subject="Activate Your Platon Account",
-                                    message_body="Please activate your Platon account by clicking the activation link below.\nDo not forget to activate your account today, the link expires in one day!\nToken: {}".format(account_activation_token),
-                                    message_link="{}/activate_account?token={}".format(app.config["FRONTEND_HOSTNAME"],account_activation_token)
-                                    )
+                        EMail_Manager.send_reset_password_e_mail(new_user.e_mail,account_activation_token)
                     except:
                         return make_response(jsonify({"error" : "The server could not send the account activation e-mail."}), 503)
                     else:

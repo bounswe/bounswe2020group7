@@ -4,6 +4,7 @@ from flask_migrate import Migrate
 from flask_restplus import Api
 from flask_mail import Mail
 from flask_cors import CORS
+import config
 
 import os
 
@@ -16,7 +17,7 @@ app = None
 def create_app(config_class='config'):
     global api,app
 
-    app = Flask(__name__)
+    app = Flask(__name__,template_folder=config.TEMPLATE_DIR)
     app.config.from_object(config_class)
     api = Api(app,
               version="0.5",
