@@ -10,8 +10,11 @@ from app.auth_system.models import User
 from app.auth_system.helpers import decode_token,login_required,profile_photo_link
 from app.workspace_system.models import Contribution, Workspace, WorkspaceSkill
 from app.upcoming_events.models import UpcomingEvent
+from app.search_engine.forms import TagSearchForm,tag_search_parser
+
 from string import digits
 from datetime import datetime
+import json
 
 from app import api, db
 import math
@@ -573,6 +576,100 @@ class UpcomingEventsSearchAPI(Resource):
 
         else:
             return make_response(jsonify({"error": "Missing data fields or invalid data."}), 400)
+
+@search_engine_ns.route("/tag_search")
+class TagSearchAPI(Resource):
+
+    @api.doc(responses={401: 'Account Problems', 400: 'Input Format Error', 500: 'Database Connection Error'})
+    @api.response(200, 'Valid Users', search_user_list_model)
+    @api.response(201, 'Valid Workspaces', workspace_list_model)
+    @api.expect(tag_search_parser)
+    def get(self):
+        form = TagSearchForm(request.args)
+        if form.validate():
+            skill_list = json.loads(form.skills.data)
+            # Find the ids of the skills
+            try:
+                skill_ids = [Skills.query.filter_by(name=skill.title()).first().id for skill in skill_list]
+            except:
+                return make_response(jsonify({"error": "Database Connection Problem."}), 500)
+            result_lists = []
+            # Return Users
+            if form.search_type.data == 0:
+                for skill_id in skill_ids:
+                    try:
+                        user_ids = [user_skill.user_id for user_skill in UserSkills.query.filter_by(skill_id=skill_id).all()]
+                    except:
+                        return make_response(jsonify({"error": "Database Connection Problem."}), 500)
+                    result_lists.append(set(user_ids))
+                result_list = set.intersection(*result_lists)
+                result_response = []
+                for user_id in result_list:
+                    try:
+                        user = User.query.get(user_id)
+                        result_response.append({
+                            "id": user.id,
+                            "name": user.name,
+                            "surname": user.surname,
+                            "profile_photo": profile_photo_link(user.profile_photo,user.id),
+                            "job": Jobs.query.get(user.job_id).name,
+                            "institution": user.institution
+                        })
+                    except:
+                        return make_response(jsonify({"error": "Database Connection Problem."}), 500)
+            else:
+                for skill_id in skill_ids:
+                    try:
+                        ws_ids = [ws_skill.workspace_id for ws_skill in WorkspaceSkill.query.filter_by(skill_id=skill_id).all()]
+                    except:
+                        return make_response(jsonify({"error": "Database Connection Problem."}), 500)
+                    result_lists.append(set(ws_ids))
+                result_list = set.intersection(*result_lists)
+                result_response = []
+                for ws_id in result_list:
+                    try:
+                        ws = Workspace.query.get(ws_id)
+                    except:
+                        return make_response(jsonify({"error": "Database Connection Problem."}), 500)
+                    if ws.is_private:
+                        continue
+                    try:
+                        contributors = Contribution.query.filter(Contribution.workspace_id == ws.id).all()
+                    except:
+                        return make_response(jsonify({"error": "Database Connection Error"}),500)
+                    contributor_list = []
+                    for contributor in contributors:
+                        try:
+                            user = User.query.get(contributor.user_id)
+                        except:
+                            return make_response(jsonify({"error": "Database Connection Error"}),500)
+                        contributor_list.append({
+                                "id": user.id,
+                                "name": user.name,
+                                "surname": user.surname
+                        })
+                    try:
+                        creator_info = User.query.filter(User.id == ws.creator_id).first()
+                    except:
+                        return make_response(jsonify({"error": "Database Connection Error"}),500)
+                result_response.append({"id":ws.id, "title": ws.title, "is_private": int(ws.is_private), 
+                                        "description" : ws.description, "state": ws.state, "deadline" : ws.deadline,
+                                        "creation_time": ws.timestamp, "max_contributors": ws.max_collaborators,"contributor_list":contributor_list,
+                                        "creator_id": creator_info.id, "creator_name": creator_info.name,"creator_surname": creator_info.surname}) 
+
+            # Apply Pagination
+            number_of_pages = 1
+            if form.page.data is not None and form.per_page.data is not None:
+                per_page = form.per_page.data
+                number_of_pages = math.ceil(len(result_list) / per_page)
+                page = form.page.data if form.page.data < number_of_pages else number_of_pages - 1
+                result_response = result_response[page * per_page:(page + 1) * per_page]
+
+            return make_response(jsonify({"result_list": result_response, "number_of_pages":number_of_pages}),200 + form.search_type.data)
+        else:
+            return make_response(jsonify({"error": "Missing data fields or invalid data."}), 400)
+
+
 
 def register_resources(api):
     api.add_namespace(search_engine_ns) 
