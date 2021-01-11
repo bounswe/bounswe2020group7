@@ -1,10 +1,14 @@
+from flask_mail import Message 
+from flask import render_template
+
 import requests
 import json
 import atexit
 from apscheduler.schedulers.background import BackgroundScheduler
-from app import db,app
+from app import db,app,mail
 from bs4 import BeautifulSoup
 from enum import IntEnum
+from flask import current_app as config_app
 
 from app.auth_system.models import User
 from app.profile_management.models import ResearchInformation,Notification,NotificationRelatedUser
@@ -123,6 +127,36 @@ class NotificationManager():
 
         return True
 
+
+class EMailManager():
+
+    @staticmethod
+    def send_account_activation_e_mail(recipient_email,activation_token):
+        msg = Message(subject='Account Activation',recipients = [recipient_email])
+        e_mail_context = {
+            "activation_link": "{}/activate_account?token={}".format(config_app.config["FRONTEND_HOSTNAME"],activation_token),
+            "activation_token": activation_token
+        }
+        msg.html = render_template('account_verification.html',activation_link = e_mail_context["activation_link"],activation_token = e_mail_context["activation_token"])
+        try:
+            mail.send(msg)
+            return True
+        except:
+            return False
+    
+    @staticmethod
+    def send_reset_password_e_mail(recipient_email,token):
+        msg = Message(subject='Reset Password',recipients = [recipient_email])
+        e_mail_context = {
+            "reset_password_link": "{}/reset_password?token={}".format(config_app.config["FRONTEND_HOSTNAME"],token),
+            "reset_password_token": token
+        }
+        msg.html = render_template('reset_password.html',reset_password_link = e_mail_context["reset_password_link"],reset_password_token = e_mail_context["reset_password_token"])
+        try:
+            mail.send(msg)
+            return True
+        except:
+            return False
 
 def schedule_regularly():
     scheduler = BackgroundScheduler()

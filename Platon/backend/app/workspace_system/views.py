@@ -70,6 +70,20 @@ trending_workspaces_model = api.model('Trending Projects', {
     )
 })
 
+issue_info_model = api.model('Issue_Info', {
+	"title": fields.String,
+	"description": fields.String,
+	"deadline": fields.DateTime,
+	"is_open": fields.Boolean,
+	"creator_id": fields.Integer,
+	"creator_name": fields.String,
+	"creator_surname": fields.String,
+	"creator_is_private": fields.Boolean,
+    "creator_photo": fields.String,
+    "contributors": fields.List(
+        fields.Nested(contributor_model)
+    )
+ })
                     
 
 issue_model = api.model('Issue', {
@@ -82,10 +96,6 @@ issue_model = api.model('Issue', {
 	"creator_id": fields.Integer,
 	"creator_name": fields.String,
 	"creator_surname": fields.String,
-	"creator_e_mail": fields.String,
-	"creator_rate": fields.Float,
-	"creator_job_name": fields.String,
-	"creator_institution": fields.String,
 	"creator_is_private": fields.Boolean,
     "creator_photo": fields.String
     })
@@ -105,7 +115,7 @@ issue_post_model = api.model('Issue Post', {
 	"description": fields.String,
 	"deadline": fields.DateTime,
 	"is_open": fields.Boolean,
-	"creator_id": fields.Integer,
+	"creator_id": fields.Integer
     })
 
 milestone_model = api.model('Milestone', {
@@ -117,10 +127,6 @@ milestone_model = api.model('Milestone', {
     "creator_id": fields.Integer,
 	"creator_name": fields.String,
 	"creator_surname": fields.String,
-	"creator_e_mail": fields.String,
-	"creator_rate": fields.Float,
-	"creator_job_name": fields.String,
-	"creator_institution": fields.String,
 	"creator_is_private": fields.Boolean
     })
 
@@ -134,11 +140,7 @@ milestone_list_model = api.model('Milestones List', {
 issue_assignee_model = api.model('Issue Assignee', {
     "assignee_id": fields.Integer,
 	"assignee_name": fields.String,
-	"assignee_surname": fields.String,
-	"assignee_e_mail": fields.String,
-	"assignee_rate": fields.Float,
-	"assignee_job_name": fields.String,
-	"assignee_institution": fields.String
+	"assignee_surname": fields.String
 })
 
 issue_assignee_list_model = api.model('Issue Assignees List', {
@@ -154,8 +156,6 @@ issue_comment_model = api.model('Issue Assignee', {
 	"owner_id": fields.Integer,
 	"owner_name": fields.String,
 	"owner_surname": fields.String,
-	"owner_e_mail": fields.String,
-	"owner_rate": fields.Float,
     "owner_photo": fields.String
 })
 
@@ -165,6 +165,97 @@ issue_comment_list_model = api.model('Issue Comments List', {
         fields.Nested(issue_comment_model)
     )
 })
+
+@workspace_system_ns.route("/issue/info")
+class IssueInfoAPI(Resource):
+
+    @api.doc(responses={401 : 'Account Problems', 400 : 'Input Format Error' ,500 : ' Database Connection Error', 404: 'Not found'})
+    @api.response(200, 'Success', issue_info_model)
+    @api.expect(get_issue_info_parser)
+    @login_required
+    @workspace_exists(param_loc='args',workspace_id_key='workspace_id')
+    def get(user_id, self):
+        '''
+            Get Information about specific Issue
+        '''
+        form = GetIssueInfoForm(request.args)
+        if form.validate():
+            workspace_id = form.workspace_id.data
+
+            # check if the workspace is public or not.  
+            try:
+                workspaceSearch = Workspace.query.filter(Workspace.id == workspace_id).first()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+            if workspaceSearch.is_private:
+                # check if current user is an active contributor.
+                try:
+                    contributionSearch = Contribution.query.filter((Contribution.workspace_id == workspace_id)&(Contribution.user_id == user_id)).first()
+                except:
+                    return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+                if contributionSearch is None:
+                    return make_response(jsonify({'error': 'User is not a contributor'}), 401)
+
+                if not contributionSearch.is_active:
+                    return make_response(jsonify({'error': 'User is not an active contributor currently'}), 401)
+
+            try:
+                issueSearch = Issue.query.filter((Issue.workspace_id == workspace_id)&(Issue.id == form.issue_id.data)).first()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+            if issueSearch is None:
+                return make_response(jsonify({'error': 'Corresponding issue is not in the workspace {}!'.format(workspace_id)}), 404)
+
+            try:
+                creator_user = User.query.filter(User.id == issueSearch.creator_id).first()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+            if creator_user is None:
+                return make_response(jsonify({'error': 'Creator user not found'}), 404)
+
+            try:
+                contributionSearch = Contribution.query.filter((Contribution.workspace_id == workspace_id) & (Contribution.is_active)).all()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+            contribution_id_list = []
+            for contrib in contributionSearch:
+                contribution_id_list.append(contrib.user_id)
+
+
+            # now fill the below with respect to API 
+            contributors_list = []
+            for contributor_id in contribution_id_list:
+                try:
+                    contributor_user = User.query.filter(User.id == contributor_id).first()
+                except:
+                    return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+                contributors_list.append({'id': contributor_user.id, 'name': contributor_user.name, 'surname': contributor_user.surname})
+
+            result = {
+                'title': issueSearch.title,
+                'description': issueSearch.description,
+                'deadline': issueSearch.deadline,
+                'is_open': issueSearch.is_open,
+                'creator_id': creator_user.id, 
+                'creator_name': creator_user.name, 
+                'creator_surname': creator_user.surname, 
+                'creator_is_private': creator_user.is_private,
+                'creator_photo': profile_photo_link(creator_user.profile_photo,creator_user.id),
+                'contributors': contributors_list
+            }
+            
+            return make_response(jsonify(result),200)
+            
+        else:
+            return make_response(jsonify({'error': 'Input Format Error'}), 400)
+
+
 
 @workspace_system_ns.route("/issue")
 class IssueAPI(Resource):
@@ -241,9 +332,6 @@ class IssueAPI(Resource):
                     'creator_id': creator_user.id, 
                     'creator_name': creator_user.name, 
                     'creator_surname': creator_user.surname, 
-                    'creator_e_mail': creator_user.e_mail, 
-                    'creator_rate': creator_user.rate, 
-                    'creator_job_name': job_name.name,
                     'creator_is_private': creator_user.is_private,
                     'creator_photo': profile_photo_link(creator_user.profile_photo,creator_user.id)
                     })
@@ -449,11 +537,7 @@ class IssueAssigneeAPI(Resource):
                 return_list.append({
                     "assignee_id": assignee.id,
 	                "assignee_name": assignee.name,
-                    "assignee_surname": assignee.surname,
-                    "assignee_e_mail": assignee.e_mail,
-                    "assignee_rate": assignee.rate,
-                    "assignee_job_name": job.name,
-                    "assignee_institution": assignee.institution,
+                    "assignee_surname": assignee.surname
                     })
             
             # Pagination functionality
@@ -617,8 +701,6 @@ class IssueCommentAPI(Resource):
                     "owner_id": issue_comment.commenter_id,
                     "owner_name": commenter.name,
                     "owner_surname": commenter.surname,
-                    "owner_e_mail": commenter.e_mail,
-                    "owner_rate": commenter.rate,
                     "owner_photo": profile_photo_link(commenter.profile_photo,commenter.id)
                     })
             
@@ -759,11 +841,7 @@ class MilestoneAPI(Resource):
                     'deadline': milestone.deadline,
                     'creator_id': None, 
                     'creator_name': None, 
-                    'creator_surname': None, 
-                    'creator_e_mail': None, 
-                    'creator_rate': None, 
-                    'creator_job_name': None,
-                    'creator_institution': None,
+                    'creator_surname': None,
                     'creator_is_private': None
                     })
                     continue
@@ -785,11 +863,7 @@ class MilestoneAPI(Resource):
                     'deadline': milestone.deadline,
                     'creator_id': creator_user.id, 
                     'creator_name': creator_user.name, 
-                    'creator_surname': creator_user.surname, 
-                    'creator_e_mail': creator_user.e_mail, 
-                    'creator_rate': creator_user.rate, 
-                    'creator_job_name': None,
-                    'creator_institution': creator_user.institution,
+                    'creator_surname': creator_user.surname,
                     'creator_is_private': creator_user.is_private
                     })
                     continue
@@ -802,11 +876,7 @@ class MilestoneAPI(Resource):
                     'deadline': milestone.deadline,
                     'creator_id': creator_user.id, 
                     'creator_name': creator_user.name, 
-                    'creator_surname': creator_user.surname, 
-                    'creator_e_mail': creator_user.e_mail, 
-                    'creator_rate': creator_user.rate, 
-                    'creator_job_name': job_name.name,
-                    'creator_institution': creator_user.institution,
+                    'creator_surname': creator_user.surname,
                     'creator_is_private': creator_user.is_private
                     })
             
