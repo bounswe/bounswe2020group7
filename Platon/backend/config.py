@@ -7,6 +7,8 @@ DEVELOPMENT = False
 import os
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
+TEMPLATE_DIR = BASE_DIR + os.path.sep + "templates"
+
 FRONTEND_HOSTNAME = "http://ec2-3-120-98-39.eu-central-1.compute.amazonaws.com"
 
 if DEVELOPMENT and DEBUG:
