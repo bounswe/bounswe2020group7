@@ -98,7 +98,7 @@ class ResetPasswordAPI(Resource):
             if not user.is_valid:
                 return make_response(jsonify({'error' : 'Please activate your account'}),401)
             token = generate_token(user.id,app.config['LINK_DURATION'])
-            if EMailManager.send_reset_password_e_mail(user.email,token):
+            if EMailManager.send_reset_password_e_mail(user.e_mail,token):
                 return make_response(jsonify({'mgs' : 'E-mail is successfully sent'}),200)
             else:
                 return make_response(jsonify({'error' : 'E-mail Server Error'}),500)
