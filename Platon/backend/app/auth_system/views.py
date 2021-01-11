@@ -321,7 +321,7 @@ class UserAPI(Resource):
                     # If it fails, an error is raised.
                     try:
                         account_activation_token = generate_token(new_user.id, datetime.timedelta(days=1))
-                        EMailManager.send_reset_password_e_mail(new_user.e_mail,account_activation_token)
+                        EMailManager.send_account_activation_e_mail(new_user.e_mail,account_activation_token)
                     except:
                         return make_response(jsonify({"error" : "The server could not send the account activation e-mail."}), 503)
                     else:

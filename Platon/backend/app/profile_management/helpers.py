@@ -148,7 +148,7 @@ class EMailManager():
     def send_reset_password_e_mail(recipient_email,token):
         msg = Message(subject='Reset Password',recipients = [recipient_email])
         e_mail_context = {
-            "reset_password_link": "{}/resetpassword?token={}".format(config_app.config["FRONTEND_HOSTNAME"],token),
+            "reset_password_link": "{}/resetpassword/{}".format(config_app.config["FRONTEND_HOSTNAME"],token),
             "reset_password_token": token
         }
         msg.html = render_template('reset_password.html',reset_password_link = e_mail_context["reset_password_link"],reset_password_token = e_mail_context["reset_password_token"])
