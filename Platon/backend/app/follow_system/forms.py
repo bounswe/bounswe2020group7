@@ -115,5 +115,32 @@ class DeleteCommentForm(Form):
     comment_id = IntegerField('comment_id', validators=[validators.DataRequired()])
 
 delete_comment_parser = reqparse.RequestParser()
-delete_comment_parser.add_argument('comment_id',required=True,type=int,help="ID of the commented user", location="args")
+delete_comment_parser.add_argument('comment_id',required=True,type=int,help="ID of the comment", location="args")
 delete_comment_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
+
+class GetReportsForm(Form):
+    reported_user_id = IntegerField('reported_user_id', validators=[validators.DataRequired()])
+    page = IntegerField("page")
+    per_page = IntegerField("per_page")
+
+get_report_parser = reqparse.RequestParser()
+get_report_parser.add_argument('reported_user_id',required=True,type=int,help="ID of the reported user", location="args")
+get_report_parser.add_argument('page',type=int,help="Page index that you want(Starts from 0)",location='args')
+get_report_parser.add_argument('per_page',type=int,help="Number of items in a page",location='args')
+get_report_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
+
+class PostReportForm(Form):
+    reported_user_id = IntegerField('commented_user_id', validators=[validators.DataRequired()])
+    text = StringField("text")
+
+post_report_parser = reqparse.RequestParser()
+post_report_parser.add_argument('reported_user_id',required=True,type=int,help="ID of the reported user", location="form")
+post_report_parser.add_argument('text',type=str,help="Report for the User", location="form")
+post_report_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
+
+class DeleteReportForm(Form):
+    report_id = IntegerField('comment_id', validators=[validators.DataRequired()])
+
+delete_report_parser = reqparse.RequestParser()
+delete_report_parser.add_argument('report_id',required=True,type=int,help="ID of the report", location="args")
+delete_report_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")

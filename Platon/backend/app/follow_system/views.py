@@ -10,14 +10,14 @@ from app.follow_system.forms import GetFollowingsForm, GetFollowersForm, GetFoll
     SendFollowRequestsForm, ReplyFollowRequestsForm, UnfollowForm
 from app.follow_system.forms import get_followings_parser, get_followers_parser, get_follow_requests_parser, send_follow_requests_parser, \
     reply_follow_requests_parser, unfollow_parser
-from app.follow_system.models import Follow, FollowRequests, Comments
+from app.follow_system.models import Follow, FollowRequests, Comments, Reports
 from app.auth_system.models import User
 from app.auth_system.views import login_required
 from app.follow_system.helpers import follow_required, previous_collaboration_required, update_rate
 from app.profile_management.helpers import NotificationManager
 from app.auth_system.helpers import profile_photo_link
-from app.follow_system.forms import GetCommentsForm, PostCommentForm, DeleteCommentForm
-from app.follow_system.forms import get_comment_parser, post_comment_parser, delete_comment_parser
+from app.follow_system.forms import GetCommentsForm, PostCommentForm, DeleteCommentForm, GetReportsForm, PostReportForm, DeleteReportForm
+from app.follow_system.forms import get_comment_parser, post_comment_parser, delete_comment_parser, get_report_parser, post_report_parser, delete_report_parser
 
 follow_system_ns = Namespace("Follow System",
                              description="Follow System Endpoints",
@@ -66,6 +66,19 @@ comment_list_model = api.model('Comments List', {
     'number_of_pages': fields.Integer,
     'result': fields.List(
         fields.Nested(comment_model)
+    )
+})
+report_model = api.model('Reports', {
+    'report_id': fields.Integer,
+    'owner_id': fields.Integer,
+    'reported_user_id': fields.Integer,
+    'text': fields.String
+})
+
+report_list_model = api.model('Reports List', {
+    'number_of_pages': fields.Integer,
+    'result': fields.List(
+        fields.Nested(report_model)
     )
 })
 
@@ -487,6 +500,119 @@ class CommentRateAPI(Resource):
             if update_rate(comment.commented_user_id):
                 return make_response(jsonify({'msg': 'Issue Comment is successfully deleted'}), 201)
             else:
+                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+        else:
+            return make_response(jsonify({'error': 'Input Format Error'}), 400)
+
+@follow_system_ns.route("/report")
+class ReportAPI(Resource):
+    '''
+        Endpoints for Report Model.
+    '''
+
+    @api.doc(responses={401: 'Account Problems', 400: 'Input Format Error', 500: ' Database Connection Error',
+                        404: 'Not found'})
+    @api.response(200, 'Success', report_list_model)
+    @api.expect(get_report_parser)
+    @login_required
+    @follow_required(param_loc='args', requested_user_id_key='reported_user_id')
+    def get(user_id, self):
+        '''
+            Get Reports of User.
+        '''
+        form = GetReportsForm(request.args)
+        if form.validate():
+            try:
+                user_reports = Reports.query.filter(
+                    Reports.reported_user_id == form.reported_user_id.data).all()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+            if len(user_reports) == 0:
+                return make_response(jsonify({'result': []}), 200)
+            return_list = []
+            for report in user_reports:
+                try:
+                    reporter = User.query.filter(User.id == report.owner_id).first()
+                except:
+                    return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+                if reporter is None:
+                    return make_response(jsonify({'error': 'Reporter is None, smth wrong'}), 500)
+                return_list.append({
+                    "report_id": report.id,
+                    "owner_id": report.owner_id,
+                    "reported_user_id": report.reported_user_id,
+                    "text": report.text
+                })
+            # Pagination functionality
+            number_of_pages = 1
+            if form.page.data is not None and form.per_page.data is not None:
+                per_page = form.per_page.data
+                number_of_pages = math.ceil(len(return_list) / per_page)
+                # Assign the page index to the maximum if it exceeds the max index
+                page = form.page.data if form.page.data < number_of_pages else number_of_pages - 1
+                return_list = return_list[page * per_page:(page + 1) * per_page]
+            return make_response(jsonify({'number_of_pages': number_of_pages, 'result': return_list}), 200)
+        else:
+            return make_response(jsonify({'error': 'Input Format Error'}), 400)
+
+    @api.doc(responses={401: 'Account Problems', 400: 'Input Format Error', 500: ' Database Connection Error',
+                        404: 'Not found'})
+    @api.expect(post_report_parser)
+    @login_required
+    @previous_collaboration_required(param_loc="form", requested_user_id_key="reported_user_id")
+    def post(user_id, self):
+        '''
+            Create user report
+        '''
+        form = PostReportForm(request.form)
+        if form.validate():
+            try:
+                prev_report = Reports.query.filter_by(owner_id=user_id,
+                                                        reported_user_id=form.reported_user_id.data).first()
+            except:
+                return make_response(jsonify({'error': 'DB connection error'}), 500)
+
+            if prev_report is not None:
+                return make_response(jsonify({'error': 'You are not allowed to send more than 1 report to a user'}),
+                                     403)
+
+            try:
+                report = Reports(user_id, form.reported_user_id.data, form.text.data)
+            except:
+                return make_response(jsonify({'error': 'DB connection error'}), 500)
+            try:
+                db.session.add(report)
+                db.session.commit()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+            return make_response(jsonify({'msg': 'Report is successfully created'}), 200)
+        else:
+            return make_response(jsonify({'error': 'Input Format Error'}), 400)
+
+    @api.doc(responses={401: 'Account Problems', 400: 'Input Format Error', 500: ' Database Connection Error',
+                        404: 'Not found'})
+    @api.expect(delete_report_parser)
+    @login_required
+    def delete(user_id, self):
+        '''
+            Deletes an user report
+        '''
+        form = DeleteReportForm(request.args)
+        if form.validate():
+            try:
+                # Find report record
+                report = Reports.query.filter((Reports.id == form.report_id.data)).first()
+
+                if report.owner_id != user_id:
+                    return make_response(jsonify({'error': 'Unauthorized'}), 401)
+
+                if report is None:
+                    return make_response(jsonify({'error': 'Report not found'}), 404)
+
+                db.session.delete(report)
+                db.session.commit()
+            except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
         else:
