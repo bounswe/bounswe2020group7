@@ -31,7 +31,9 @@ import com.cmpe451.platon.util.Definitions
 import java.util.*
 import kotlin.collections.ArrayList
 
-class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListener,WorkspaceApplicationsAdapter.ApplicationsButtonClickListener, UpcomingEventsAdapter.UpcomingButtonClickListener{
+class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListener,
+    WorkspaceApplicationsAdapter.ApplicationsButtonClickListener, UpcomingEventsAdapter.UpcomingButtonClickListener,
+    RecommendedCollaboratorsAdapter.RecommendedUserClickListener{
 
     private lateinit var binding: FragmentPersonalWorkspaceBinding
     private lateinit var dialog:AlertDialog
@@ -81,19 +83,18 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun initViews() {
-          if(!(activity as WorkspaceActivity).isOwner!!){
+        if(!(activity as WorkspaceActivity).isOwner!!){
             binding.addRequirementIv.visibility = View.GONE
             binding.addSkillIv.visibility = View.GONE
             binding.infoTitle.setCompoundDrawables(null,null,null,null)
             binding.milestoneTitleTv.setCompoundDrawables(null,null,null,null)
             binding.workspaceTitleTv.setCompoundDrawables(null,null,binding.workspaceTitleTv.compoundDrawablesRelative[2],null)
             binding.upcomingTitleTv.setCompoundDrawables(null,null,null,null)
+            binding.collabTitleTv.setCompoundDrawables(null,null,null,null)
         }
         else {
             binding.workspaceTitleTv.setCompoundDrawables(binding.workspaceTitleTv.compoundDrawablesRelative[0],null,null,null)
         }
-        //TODO
-        binding.collabTitleTv.setCompoundDrawables(null,null,null,null)
         mWorkspaceViewModel.fetchWorkspace((activity as WorkspaceActivity).workspace_id!!, (activity as WorkspaceActivity).token!!)
         getMilestones()
     }
@@ -119,6 +120,9 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
             }
             binding.upcomingTitleTv.setOnClickListener {
                 onAddUpcomingEventClicked()
+            }
+            binding.collabTitleTv.setOnClickListener {
+                onRecommendedCollaboratorsClicked()
             }
         }
         else {
@@ -158,6 +162,38 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
             }
         }
 
+    }
+
+    private fun onRecommendedCollaboratorsClicked() {
+        mWorkspaceViewModel.getRecommendedCollaborators((activity as WorkspaceActivity).workspace_id!!, 20, (activity as WorkspaceActivity).token!!)
+        mWorkspaceViewModel.getRecommendedUsersResourceResponse.observe(viewLifecycleOwner, {t->
+            when(t.javaClass){
+                Resource.Loading::class.java ->dialog.show()
+                Resource.Error::class.java -> {
+                    Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                    mWorkspaceViewModel.getRecommendedUsersResourceResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java -> dialog.dismiss()
+                Resource.Success::class.java->{
+                    val tmpBinding = DialogRecommendedBinding.inflate(
+                        layoutInflater,
+                        requireView().parent as ViewGroup,
+                        false
+                    )
+                    val recDialog = AlertDialog.Builder(context).setView(tmpBinding.root)
+                        .setCancelable(true).create()
+                    recDialog.show()
+                    tmpBinding.recommendedRv.adapter = RecommendedCollaboratorsAdapter(ArrayList(), requireContext(), this)
+                    tmpBinding.recommendedRv.layoutManager = LinearLayoutManager(requireContext())
+                    (tmpBinding.recommendedRv.adapter as RecommendedCollaboratorsAdapter).replaceElements(t.data!!.recommendation_list)
+                    tmpBinding.recommendedTitleTv.setOnClickListener {
+                        recDialog.dismiss()
+                    }
+                    mWorkspaceViewModel.getRecommendedUsersResourceResponse.value = Resource.Done()
+
+                }
+            }
+        })
     }
 
     private fun onAddUpcomingEventClicked() {
@@ -926,6 +962,10 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
         binding.expandLl.refreshDrawableState()
 
         Definitions().vibrate(50, activity as BaseActivity)
+    }
+
+    override fun onInviteUserClicked(user: RecommendedUser) {
+        TODO("Not yet implemented")
     }
 
 

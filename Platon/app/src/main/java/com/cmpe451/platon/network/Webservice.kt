@@ -488,4 +488,17 @@ interface Webservice {
                         @Header("auth_token") authToken: String): Call<JsonObject?>
 
 
+    @GET("api/recommendation_system/collaboration")
+    fun getRecommendedCollaborators(
+        @Query("workspace_id") workspace_id:Int,
+        @Query("number_of_recommendations") number_of_recommendations:Int,
+        @Header("auth_token") authToken :String):Call<RecommendedUserList?>
+    @GET("api/recommendation_system/follow")
+    fun getRecommendedFollows(
+        @Query("number_of_recommendations") number_of_recommendations:Int,
+        @Header("auth_token") authToken :String):Call<RecommendedUserList?>
+    @GET("api/recommendation_system/workspace")
+    fun getRecommendedWorkspaces(
+        @Query("number_of_recommendations") number_of_recommendations:Int,
+        @Header("auth_token") authToken :String):Call<RecommendedWorkspaceList?>
 }
