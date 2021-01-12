@@ -47,6 +47,7 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
     private var upcomingArray:ArrayList<Int> = ArrayList()
     private var handledRequestPosition:Int =-1
     private lateinit var wsAppBinding:DialogWsApplicationsBinding
+    private lateinit var wsRecommendedCollabBinding: DialogRecommendedBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         binding = FragmentPersonalWorkspaceBinding.inflate(inflater)
@@ -175,18 +176,19 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
                 }
                 Resource.Done::class.java -> dialog.dismiss()
                 Resource.Success::class.java->{
-                    val tmpBinding = DialogRecommendedBinding.inflate(
+                    wsRecommendedCollabBinding = DialogRecommendedBinding.inflate(
                         layoutInflater,
                         requireView().parent as ViewGroup,
                         false
                     )
-                    val recDialog = AlertDialog.Builder(context).setView(tmpBinding.root)
+                    val recDialog = AlertDialog.Builder(context).setView(wsRecommendedCollabBinding.root)
                         .setCancelable(true).create()
                     recDialog.show()
-                    tmpBinding.recommendedRv.adapter = RecommendedCollaboratorsAdapter(ArrayList(), requireContext(), this)
-                    tmpBinding.recommendedRv.layoutManager = LinearLayoutManager(requireContext())
-                    (tmpBinding.recommendedRv.adapter as RecommendedCollaboratorsAdapter).replaceElements(t.data!!.recommendation_list)
-                    tmpBinding.recommendedTitleTv.setOnClickListener {
+                    wsRecommendedCollabBinding.recommendedRv.adapter = RecommendedCollaboratorsAdapter(ArrayList(), requireContext(), this,
+                        mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.creator_id == (activity as WorkspaceActivity).user_id)
+                    wsRecommendedCollabBinding.recommendedRv.layoutManager = LinearLayoutManager(requireContext())
+                    (wsRecommendedCollabBinding.recommendedRv.adapter as RecommendedCollaboratorsAdapter).replaceElements(t.data!!.recommendation_list)
+                    wsRecommendedCollabBinding.recommendedTitleTv.setOnClickListener {
                         recDialog.dismiss()
                     }
                     mWorkspaceViewModel.getRecommendedUsersResourceResponse.value = Resource.Done()
@@ -463,6 +465,23 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
                 Resource.Done::class.java ->{
                     dialog.dismiss()
 
+                }
+            }
+        })
+        mWorkspaceViewModel.getInvitationResponse.observe(viewLifecycleOwner, {
+            when (it.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    (wsRecommendedCollabBinding.recommendedRv.adapter as RecommendedCollaboratorsAdapter).removeElement(this.handledRequestPosition)
+                    this.handledRequestPosition = -1
+                    mWorkspaceViewModel.getInvitationResponse.value = Resource.Done()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    mWorkspaceViewModel.getInvitationResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java ->{
+                    dialog.dismiss()
                 }
             }
         })
@@ -964,8 +983,9 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
         Definitions().vibrate(50, activity as BaseActivity)
     }
 
-    override fun onInviteUserClicked(user: RecommendedUser) {
-        TODO("Not yet implemented")
+    override fun onInviteUserClicked(user: RecommendedUser, position: Int) {
+        mWorkspaceViewModel.sendInvitationToWorkspace((activity as WorkspaceActivity).workspace_id!!, user.id, (activity as WorkspaceActivity).token!!)
+        this.handledRequestPosition = position
     }
 
 

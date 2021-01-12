@@ -3,6 +3,7 @@ package com.cmpe451.platon.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -12,7 +13,7 @@ import com.cmpe451.platon.databinding.RecommendedProfileCellBinding
 import com.cmpe451.platon.network.models.RecommendedUser
 import com.cmpe451.platon.util.Definitions
 
-class RecommendedCollaboratorsAdapter(private val data: ArrayList<RecommendedUser>, private val context: Context, private val buttonClickListener: RecommendedUserClickListener) :
+class RecommendedCollaboratorsAdapter(private val data: ArrayList<RecommendedUser>, private val context: Context, private val buttonClickListener: RecommendedUserClickListener, private val canInvite:Boolean) :
 
     RecyclerView.Adapter<RecommendedCollaboratorsAdapter.RecommendedUserViewHolder>() {
 
@@ -23,7 +24,7 @@ class RecommendedCollaboratorsAdapter(private val data: ArrayList<RecommendedUse
     class RecommendedUserViewHolder(val binding: RecommendedProfileCellBinding) : RecyclerView.ViewHolder(binding.root){
 
         @SuppressLint("SetTextI18n")
-        fun bindData(binding: RecommendedProfileCellBinding,context: Context, model: RecommendedUser, buttonClickListener: RecommendedUserClickListener) {
+        fun bindData(binding: RecommendedProfileCellBinding,context: Context, model: RecommendedUser, buttonClickListener: RecommendedUserClickListener, position: Int, canInvite: Boolean) {
             binding.tvNameSurname.text = "${model.name} ${model.surname}"
             binding.tvJob.text = model.job
             binding.tvInstitution.text = model.institution
@@ -34,14 +35,20 @@ class RecommendedCollaboratorsAdapter(private val data: ArrayList<RecommendedUse
                 .placeholder(R.drawable.ic_o_logo)
                 .into(binding.profilePageIcon)
             binding.profilePageIcon
-            binding.ivInvite.setOnClickListener {
-                buttonClickListener.onInviteUserClicked(model)
+            if(canInvite){
+                binding.ivInvite.setOnClickListener {
+                    buttonClickListener.onInviteUserClicked(model, position)
+                }
             }
+            else {
+                binding.ivInvite.visibility = View.GONE
+            }
+
         }
     }
 
     interface RecommendedUserClickListener{
-        fun onInviteUserClicked(user:RecommendedUser)
+        fun onInviteUserClicked(user:RecommendedUser, position: Int)
     }
 
     // Create new views (invoked by the layout manager)
@@ -51,7 +58,7 @@ class RecommendedCollaboratorsAdapter(private val data: ArrayList<RecommendedUse
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(holder: RecommendedUserViewHolder, position: Int) {
-        holder.bindData(holder.binding, context, data[position], buttonClickListener)
+        holder.bindData(holder.binding, context, data[position], buttonClickListener, position, canInvite)
     }
 
 
@@ -68,7 +75,7 @@ class RecommendedCollaboratorsAdapter(private val data: ArrayList<RecommendedUse
      */
     fun removeElement(position: Int){
         data.removeAt(position)
-        this.notifyItemRemoved(position)
+        this.notifyDataSetChanged()
     }
     /**
      * Updates element at given position
