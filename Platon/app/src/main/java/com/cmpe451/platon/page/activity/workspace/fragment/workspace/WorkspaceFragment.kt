@@ -176,21 +176,27 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
                 }
                 Resource.Done::class.java -> dialog.dismiss()
                 Resource.Success::class.java->{
-                    wsRecommendedCollabBinding = DialogRecommendedBinding.inflate(
-                        layoutInflater,
-                        requireView().parent as ViewGroup,
-                        false
-                    )
-                    val recDialog = AlertDialog.Builder(context).setView(wsRecommendedCollabBinding.root)
-                        .setCancelable(true).create()
-                    recDialog.show()
-                    wsRecommendedCollabBinding.recommendedRv.adapter = RecommendedCollaboratorsAdapter(ArrayList(), requireContext(), this,
-                        mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.creator_id == (activity as WorkspaceActivity).user_id)
-                    wsRecommendedCollabBinding.recommendedRv.layoutManager = LinearLayoutManager(requireContext())
-                    (wsRecommendedCollabBinding.recommendedRv.adapter as RecommendedCollaboratorsAdapter).replaceElements(t.data!!.recommendation_list)
-                    wsRecommendedCollabBinding.recommendedTitleTv.setOnClickListener {
-                        recDialog.dismiss()
+                    if(t.data!!.recommendation_list.isEmpty()){
+                        Toast.makeText(requireContext(), "No new recommendations found", Toast.LENGTH_LONG).show()
                     }
+                    else {
+                        wsRecommendedCollabBinding = DialogRecommendedBinding.inflate(
+                            layoutInflater,
+                            requireView().parent as ViewGroup,
+                            false
+                        )
+                        val recDialog = AlertDialog.Builder(context).setView(wsRecommendedCollabBinding.root)
+                            .setCancelable(true).create()
+                        recDialog.show()
+                        wsRecommendedCollabBinding.recommendedRv.adapter = RecommendedCollaboratorsAdapter(ArrayList(), requireContext(), this,
+                            mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.creator_id == (activity as WorkspaceActivity).user_id)
+                        wsRecommendedCollabBinding.recommendedRv.layoutManager = LinearLayoutManager(requireContext())
+                        (wsRecommendedCollabBinding.recommendedRv.adapter as RecommendedCollaboratorsAdapter).replaceElements(t.data!!.recommendation_list)
+                        wsRecommendedCollabBinding.recommendedTitleTv.setOnClickListener {
+                            recDialog.dismiss()
+                        }
+                    }
+
                     mWorkspaceViewModel.getRecommendedUsersResourceResponse.value = Resource.Done()
 
                 }
