@@ -108,11 +108,11 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
                     issuesList.clear()
                     (binding.issuesRecyclerView.adapter as IssuesAdapter).clearElements()
                     mIssuesViewModel.getIssues((activity as WorkspaceActivity).workspace_id!!, 0, pageSize,(activity as WorkspaceActivity).token!! )
-                    mIssuesViewModel.issuesResponse.value = Resource.Done()
+                    mIssuesViewModel.addIssuesResourceResponse.value = Resource.Done()
                 }
                 Resource.Error::class.java ->{
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
-                    mIssuesViewModel.issuesResponse.value = Resource.Done()
+                    mIssuesViewModel.addIssuesResourceResponse.value = Resource.Done()
                 }
                 Resource.Done::class.java->{
                     dialog.dismiss()

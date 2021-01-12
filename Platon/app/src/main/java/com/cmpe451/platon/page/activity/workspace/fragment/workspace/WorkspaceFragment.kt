@@ -5,6 +5,8 @@ import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.DialogInterface
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
 import android.widget.ArrayAdapter
@@ -62,41 +64,7 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
 
     private fun onSeeWorkspaceApplicationsClicked() {
 
-
-        mWorkspaceViewModel.getWorkspaceApplicationsResourceResponse.observe(viewLifecycleOwner, {
-            when(it.javaClass){
-                Resource.Loading::class.java -> dialog.show()
-                Resource.Success::class.java -> {
-                    if(it.data!!.isEmpty()){
-                        Toast.makeText(requireContext(), "You do not have any pending requests", Toast.LENGTH_LONG).show()
-                    }
-                    else {
-                        wsAppBinding.rvWsApplication.layoutManager =LinearLayoutManager(requireContext())
-                        wsAppBinding.rvWsApplication.adapter =
-                            WorkspaceApplicationsAdapter(it.data!! as ArrayList<WorkspaceApplication>, requireContext(), this)
-
-                        AlertDialog.Builder(requireContext())
-                            .setView(wsAppBinding.root)
-                            .setCancelable(true)
-                            .show()
-                    }
-                    mWorkspaceViewModel.getWorkspaceApplicationsResourceResponse.value = Resource.Done()
-                }
-                Resource.Error::class.java -> {
-                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
-                    mWorkspaceViewModel.getWorkspaceApplicationsResourceResponse.value = Resource.Done()
-
-                }
-                Resource.Done::class.java ->{
-                    dialog.dismiss()
-                    mWorkspaceViewModel.getWorkspaceApplicationsResourceResponse.removeObservers(viewLifecycleOwner)
-                }
-            }
-        })
-
         mWorkspaceViewModel.getWorkspaceApplications((activity as WorkspaceActivity).token!!, (activity as WorkspaceActivity).workspace_id!!, 0, 10)
-
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -113,8 +81,7 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun initViews() {
-        wsAppBinding = DialogWsApplicationsBinding.inflate(layoutInflater, requireView().parent as ViewGroup, false)
-        if(!(activity as WorkspaceActivity).isOwner!!){
+          if(!(activity as WorkspaceActivity).isOwner!!){
             binding.addRequirementIv.visibility = View.GONE
             binding.addSkillIv.visibility = View.GONE
             binding.infoTitle.setCompoundDrawables(null,null,null,null)
@@ -276,6 +243,39 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
     @SuppressLint("SetTextI18n")
     private fun setObservers() {
         dialog = Definitions().createProgressBar(requireContext())
+        mWorkspaceViewModel.getWorkspaceApplicationsResourceResponse.observe(viewLifecycleOwner, {
+            when(it.javaClass){
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    if(it.data!!.isEmpty()){
+                        Toast.makeText(requireContext(), "You do not have any pending requests", Toast.LENGTH_LONG).show()
+                    }
+                    else {
+                        wsAppBinding = DialogWsApplicationsBinding.inflate(layoutInflater, requireView().parent as ViewGroup, false)
+                        wsAppBinding.rvWsApplication.layoutManager =LinearLayoutManager(requireContext())
+                        wsAppBinding.rvWsApplication.adapter =
+                            WorkspaceApplicationsAdapter(it.data!! as ArrayList<WorkspaceApplication>, requireContext(), this)
+
+                        val wsApps = AlertDialog.Builder(requireContext())
+                            .setView(wsAppBinding.root)
+                            .show()
+                        wsApps.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                    }
+                    mWorkspaceViewModel.getWorkspaceApplicationsResourceResponse.value = Resource.Done()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    mWorkspaceViewModel.getWorkspaceApplicationsResourceResponse.value = Resource.Done()
+
+                }
+                Resource.Done::class.java ->{
+                    dialog.dismiss()
+                }
+            }
+        })
+
+
+
         mWorkspaceViewModel.getWorkspaceResponse.observe(viewLifecycleOwner, {
             when(it.javaClass){
                 Resource.Loading::class.java -> dialog.show()

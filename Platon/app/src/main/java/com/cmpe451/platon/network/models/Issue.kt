@@ -40,19 +40,20 @@ data class Assignee(
     val assignee_surname: String
 )
 
-data class IssueComment(
+data class IssueAllComments(
     val number_of_pages: Int,
-    val result: ArrayList<Issue>
+    val result: ArrayList<IssueComment>
 )
 
-data class Comments(
+data class IssueComment(
     val comment_id: Int,
     val comment: String,
     val owner_id: Int,
     val owner_name: String,
     val owner_surname: String,
     val owner_e_mail: String,
-    val owner_rate: Int
+    val owner_rate: Int,
+    val owner_photo: String
 )
 
 

@@ -10,7 +10,7 @@
     android:animateLayoutChanges="true"
     tools:context=".page.activity.home.HomeActivity">
 
-    <include layout="@layout/toolbar" />
+    <include layout="@layout/toolbar"/>
 
     <RadioGroup
         android:id="@+id/rg_searchAmong"

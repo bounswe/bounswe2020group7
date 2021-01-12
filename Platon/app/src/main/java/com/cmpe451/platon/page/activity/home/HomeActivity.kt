@@ -18,7 +18,9 @@ import androidx.appcompat.widget.SearchView
 import androidx.cursoradapter.widget.CursorAdapter
 import androidx.cursoradapter.widget.SimpleCursorAdapter
 import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,9 +32,12 @@ import com.cmpe451.platon.listener.PaginationListener
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.*
 import com.cmpe451.platon.page.activity.home.fragment.home.HomeFragmentDirections
+import com.cmpe451.platon.page.activity.home.fragment.profilepage.ProfilePageFragment
+import com.cmpe451.platon.page.activity.home.fragment.profilepage.ProfilePageFragmentDirections
 import com.cmpe451.platon.page.activity.home.fragment.workspace.WorkspaceListFragmentDirections
 import com.cmpe451.platon.page.activity.login.LoginActivity
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
+import com.cmpe451.platon.page.activity.workspace.fragment.issues.IssuesFragmentDirections
 import com.cmpe451.platon.util.Definitions
 import java.util.*
 
@@ -840,6 +845,12 @@ class HomeActivity : BaseActivity(),
         val sharedPrefs = getSharedPreferences("token_file", 0)
         sharedPrefs.edit().remove("mail").apply()
         sharedPrefs.edit().remove("pass").apply()
+        navController.navigate(ProfilePageFragmentDirections.actionProfilePageFragmentToLottieFragment())
+        binding.bottomNavBar.visibility = View.INVISIBLE
+
+    }
+
+    fun lottieEndded() {
         finish()
         startActivity(Intent(this, LoginActivity::class.java))
     }
