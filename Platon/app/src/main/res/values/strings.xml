@@ -156,5 +156,7 @@
     <string name="send_str">Send</string>
     <string name="comment_owner_str">Comment Owner</string>
     <string name="recommended_str">Recommended</string>
+    <string name="workspace_recommendations_str">Workspace Recommendations</string>
+    <string name="follow_recommendation_str">Follow Recommendations</string>
 
 </resources>

@@ -10,10 +10,15 @@ class WorkspaceListViewModel : ViewModel() {
 
     private var repository: WorkspaceListRepository = WorkspaceListRepository()
     var workspaces:MutableLiveData<Resource<WorkspaceListItems>>
+    var getWorkspaceRecommendationsResponse = repository.workspaceRecommendationsResponse
     init{
         workspaces = repository.workspaces
     }
     fun getWorkspaces(token: String) {
         repository.getWorkspaces(token)
+    }
+
+    fun getWorkspaceRecommendations(num_of_rec: Int, currUserToken: String) {
+        repository.getWorkspaceRecommendations(num_of_rec, currUserToken)
     }
 }
