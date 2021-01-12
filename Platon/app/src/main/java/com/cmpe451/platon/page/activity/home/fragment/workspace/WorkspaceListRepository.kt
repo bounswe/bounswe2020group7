@@ -48,7 +48,7 @@ class WorkspaceListRepository() {
                     response.isSuccessful && response.body() != null -> {
                         workspaceRecommendationsResponse.value = Resource.Success(response.body()!!)
                     }
-                    response.errorBody() != null -> workspaces.value = Resource.Error(
+                    response.errorBody() != null -> workspaceRecommendationsResponse.value = Resource.Error(
                         JSONObject(response.errorBody()!!.string()).get("error").toString())
                     else -> workspaceRecommendationsResponse.value = Resource.Error("Unknown error!")
                 }
