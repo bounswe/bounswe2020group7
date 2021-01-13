@@ -24,7 +24,6 @@ import CheckCircleOutlinedIcon from "@material-ui/icons/CheckCircleOutlined";
 import IconButton from "@material-ui/core/IconButton";
 import WorkspaceViewMilestoneSection from "./WorkspaceViewMilestoneSection";
 import WorkspaceViewIssueSection from "./WorkspaceViewIssueSection";
-import Issue from "../../Issue/Issue";
 import CollaboratorRecommendationDialog from '../../Recommendation/CollaboratorRecommendation/CollaboratorRecommendationDialog/CollaboratorRecommendationDialog'
 const colorsDark = [
   colors.tertiaryDark,
@@ -368,7 +367,6 @@ class WorkspaceView extends Component {
     })
   }
   render() {
-    console.log("asdsad", this.state.error, this.state.success)
     if (this.state.quited) {
       return <Redirect to={`/${this.state.profileId}/workspace`} />;
     }

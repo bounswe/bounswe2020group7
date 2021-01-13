@@ -10,7 +10,7 @@ import { format } from 'date-fns'
 import Snackbar from '@material-ui/core/Snackbar'
 import MuiAlert from '@material-ui/lab/Alert'
 
-const CreateUpdateModal = ({ isCreate, open, closePopup, workspaceId, currentIssue, loadIssues }) => {
+const CreateUpdateModal = ({ isCreate, open, closePopup, workspaceId, currentIssue, loadIssues, members }) => {
   const [issue, setIssue] = useState({})
   const [errorSnackbar, setErrorSnackbar] = useState(false)
   const [errorText, setErrorText] = useState('')
@@ -29,6 +29,12 @@ const CreateUpdateModal = ({ isCreate, open, closePopup, workspaceId, currentIss
   }, [currentIssue])
 
   const handleSubmit = () => {
+
+    if(!issue.title || !issue.description){
+      setErrorText("Title and description are required.")
+      setErrorSnackbar(true)
+      return
+    }
     const dateObject = new Date(issue.deadline)
     let formattedDateString
     if(issue.deadline)
@@ -88,7 +94,6 @@ const CreateUpdateModal = ({ isCreate, open, closePopup, workspaceId, currentIss
   const updateDeadline = (event) => {
     setIssue({ ...issue, deadline: event.target.value })
   }
-
   return (
     <>
       <Snackbar
@@ -106,6 +111,7 @@ const CreateUpdateModal = ({ isCreate, open, closePopup, workspaceId, currentIss
         </DialogTitle>
         <DialogContent>
           <TextField
+            required
             autoFocus
             margin="dense"
             id="title"
@@ -115,6 +121,7 @@ const CreateUpdateModal = ({ isCreate, open, closePopup, workspaceId, currentIss
             value={issue && issue.title}
           />
           <TextField
+            required
             autoFocus
             margin="dense"
             id="description"
@@ -135,7 +142,6 @@ const CreateUpdateModal = ({ isCreate, open, closePopup, workspaceId, currentIss
               shrink: true,
             }}
           />
-
         </DialogContent>
         <DialogActions>
           <Button onClick={closePopup} color="primary">
