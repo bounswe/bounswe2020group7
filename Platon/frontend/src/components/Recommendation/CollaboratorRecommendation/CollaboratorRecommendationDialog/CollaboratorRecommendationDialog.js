@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
 import Avatar from "@material-ui/core/Avatar";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -10,35 +9,21 @@ import ListItemText from "@material-ui/core/ListItemText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Dialog from "@material-ui/core/Dialog";
 import PersonIcon from "@material-ui/icons/Person";
-import AddIcon from "@material-ui/icons/Add";
-import Typography from "@material-ui/core/Typography";
 import { blue } from "@material-ui/core/colors";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import IconButton from "@material-ui/core/IconButton";
 import colors from "../../../../utils/colors";
-import CollaboratorRecommendation from "../CollaboratorRecommendation";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import Spinner from "../../../Spinner/Spinner";
 import config from "../../../../utils/config";
 import axios from "axios";
-import { Link } from "react-router-dom";
 
 const { BASE_URL } = config;
 const REC_URL = `${BASE_URL}/api/recommendation_system/collaboration`;
 axios.defaults.headers.common["auth_token"] = localStorage.getItem("jwtToken");
 
 const useStyles = makeStyles({
-  root: {
-    border: "none",
-    borderRadius: "0.5em",
-    backgroundColor: colors.secondary,
-  },
-  root2: {
-    border: "none",
-    borderRadius: "0.5em",
-    backgroundColor: colors.quaternary,
-  },
   avatar: {
     backgroundColor: blue[100],
     color: blue[600],
@@ -72,7 +57,8 @@ function SimpleDialog(props) {
       onClose={handleClose}
       aria-labelledby="simple-dialog-title"
       open={open}
-    >
+    >{props.loaded ? (
+      <div>
       <DialogTitle
         style={{ backgroundColor: colors.secondary }}
         id="simple-dialog-title"
@@ -98,7 +84,7 @@ function SimpleDialog(props) {
         ))}
 
       </List>
-      {/*<CollaboratorRecommendation workspaceId={props.workspaceId}/>*/}
+      </div>):<div style={{display: "flex", alignItems: "center", height: "500px", width: "500px"}}><div style={{margin:"200px"}}><Spinner/></div></div>}
     </Dialog>
   );
 }
@@ -133,7 +119,7 @@ export default function SimpleDialogDemo(props) {
     setOpen(true);
   };
 
-  const handleClose = (value) => {
+  const handleClose = () => {
     setOpen(false);
   };
   return (
