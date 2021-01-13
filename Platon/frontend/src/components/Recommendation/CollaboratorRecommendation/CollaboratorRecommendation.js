@@ -12,9 +12,8 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 
 const { BASE_URL } = config;
-const REC_URL = `${BASE_URL}/api/recommendation_system/workspace`;
+const REC_URL = `${BASE_URL}/api/recommendation_system/collaboration`;
 axios.defaults.headers.common["auth_token"] = localStorage.getItem("jwtToken");
-
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -28,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 const NUMBER_OF_RECOMMENDATIONS = 3;
-const WorkspaceRecommendation = () => {
+const CollaboratorRecommendation = (props) => {
   const classes = useStyles();
   const theme = useTheme();
   const [activeStep, setActiveStep] = React.useState(0);
@@ -37,6 +36,7 @@ const WorkspaceRecommendation = () => {
   const [loaded, setLoaded] = React.useState(false);
   const options = {
     params: {
+      workspace_id: props.workspaceId,
       number_of_recommendations: NUMBER_OF_RECOMMENDATIONS,
     },
   };
@@ -65,6 +65,8 @@ const WorkspaceRecommendation = () => {
     <div>
         {loaded ?
       <div className={classes.root}>
+        <div>Recs</div>
+        {/*
            <Link
                     to={`/${recommendations[activeStep].creator_id}/workspace/${recommendations[activeStep].id}`}
                     style={{ textDecoration: "none" }}
@@ -74,7 +76,7 @@ const WorkspaceRecommendation = () => {
           <Typography style={{color: colors.tertiary, padding: "8px 16px"}}><span style={{color: colors.primary}} >Description: </span>{recommendations[activeStep].description.substring(0,120)}{recommendations[activeStep].description.length>120 ? "..."  : null}</Typography>
           <Typography style={{color: colors.quaternaryDark, padding: "8px 16px"}}><span style={{color: colors.primary}} >Contributors: </span>{recommendations[activeStep].contributor_list.map((contributor, index) => <span>{`${contributor.name} ${contributor.surname}`}{recommendations[activeStep].contributor_list && index !== (recommendations[activeStep].contributor_list.length-1) ? " - ": null}</span>)}</Typography>
           <Typography style={{color: colors.quinaryDark, padding: "8px 16px"}}><span style={{color: colors.primary}} >State: </span>{recommendations[activeStep].state===0 ? "Search For Collaborators" : (recommendations[activeStep].state===1 ? "Ongoing": "Published") }</Typography>
-
+*/}
         <MobileStepper
           steps={maxSteps}
           style={{backgroundColor: colors.secondaryLight, borderRadius: "0.5em"}}
@@ -115,4 +117,4 @@ const WorkspaceRecommendation = () => {
   );
 };
 
-export default WorkspaceRecommendation;
+export default CollaboratorRecommendation;
