@@ -194,7 +194,7 @@ export default function SimpleDialogDemo(props) {
   return (
     <div>
 
-      <Button variant="outlined" color="primary" onClick={handleClickOpen}>
+      <Button variant="outlined" style={{color: colors.primary, backgroundColor:colors.secondary}} onClick={handleClickOpen}>
       {props.type==="NEW" ? "Create Research" : "Update Research"}
       </Button>
       <SimpleDialog
