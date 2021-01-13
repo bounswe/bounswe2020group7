@@ -446,6 +446,16 @@ class ProfilePage extends React.Component {
                       Invite
                     </Button>
                   )}
+                  {this.state.isMyProfile ? null : (
+                    <Button
+                      className="ProfileFollowButton"
+                      variant="primary"
+                      size="lg"
+                      block
+                    >
+                      Rate
+                    </Button>
+                  )}
                   {this.state.isProfilePrivate ? null : (
                     <Row className="RatingColumn">
                       <Rating
