@@ -13,6 +13,7 @@ from app.follow_system.forms import get_followings_parser, get_followers_parser,
 from app.follow_system.models import Follow, FollowRequests, Comments, Reports
 from app.auth_system.models import User
 from app.auth_system.views import login_required
+from app.auth_system.helpers import send_email
 from app.follow_system.helpers import follow_required, previous_collaboration_required, update_rate
 from app.profile_management.helpers import NotificationManager
 from app.auth_system.helpers import profile_photo_link
@@ -72,6 +73,8 @@ report_model = api.model('Reports', {
     'report_id': fields.Integer,
     'owner_id': fields.Integer,
     'reported_user_id': fields.Integer,
+    'reported_user_name': fields.String,
+    'reported_user_surname': fields.String,
     'text': fields.String
 })
 
@@ -516,7 +519,6 @@ class ReportAPI(Resource):
     @api.response(200, 'Success', report_list_model)
     @api.expect(get_report_parser)
     @login_required
-    @follow_required(param_loc='args', requested_user_id_key='reported_user_id')
     def get(user_id, self):
         '''
             Get Reports of User.
@@ -525,7 +527,7 @@ class ReportAPI(Resource):
         if form.validate():
             try:
                 user_reports = Reports.query.filter(
-                    Reports.reported_user_id == form.reported_user_id.data).all()
+                    Reports.owner_id == user_id).all()
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
             if len(user_reports) == 0:
@@ -533,15 +535,17 @@ class ReportAPI(Resource):
             return_list = []
             for report in user_reports:
                 try:
-                    reporter = User.query.filter(User.id == report.owner_id).first()
+                    reported_user = User.query.filter(User.id == report.reported_user_id).first()
                 except:
                     return make_response(jsonify({'error': 'Database Connection Error'}), 500)
-                if reporter is None:
-                    return make_response(jsonify({'error': 'Reporter is None, smth wrong'}), 500)
+                if reported_user is None:
+                    return make_response(jsonify({'error': 'Reported User is None, smth wrong'}), 500)
                 return_list.append({
                     "report_id": report.id,
                     "owner_id": report.owner_id,
                     "reported_user_id": report.reported_user_id,
+                    "reported_user_name": reported_user.name,
+                    "reported_user_surname": reported_user.surname,
                     "text": report.text
                 })
             # Pagination functionality
@@ -557,7 +561,7 @@ class ReportAPI(Resource):
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
 
     @api.doc(responses={401: 'Account Problems', 400: 'Input Format Error', 500: ' Database Connection Error',
-                        404: 'Not found'})
+                        404: 'Not found', 200: 'Success'})
     @api.expect(post_report_parser)
     @login_required
     @previous_collaboration_required(param_loc="form", requested_user_id_key="reported_user_id")
@@ -586,12 +590,16 @@ class ReportAPI(Resource):
                 db.session.commit()
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
-            return make_response(jsonify({'msg': 'Report is successfully created'}), 200)
+            report_id = report.id
+            if send_email("platon.group7@gmail.com", "Report of a User", "Following report is created with the Report ID: {}".format(report_id),""):
+                return make_response(jsonify({'msg': 'Report addition is successfully sent via email'}), 200)
+            else:
+                return make_response(jsonify({'error' : 'E-mail Server Error'}),500)
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
 
     @api.doc(responses={401: 'Account Problems', 400: 'Input Format Error', 500: ' Database Connection Error',
-                        404: 'Not found'})
+                        404: 'Not found', 200: 'Success'})
     @api.expect(delete_report_parser)
     @login_required
     def delete(user_id, self):
@@ -600,6 +608,7 @@ class ReportAPI(Resource):
         '''
         form = DeleteReportForm(request.args)
         if form.validate():
+            report_id = 0
             try:
                 # Find report record
                 report = Reports.query.filter((Reports.id == form.report_id.data)).first()
@@ -609,11 +618,16 @@ class ReportAPI(Resource):
 
                 if report is None:
                     return make_response(jsonify({'error': 'Report not found'}), 404)
-
+                report_id = report.id
                 db.session.delete(report)
                 db.session.commit()
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+            if send_email("platon.group7@gmail.com", "Report of a User", "Report of a User", "Following report is deleted with the Report ID: {}".format(report_id),""):
+                return make_response(jsonify({'msg': 'Report deletion is successfully sent via email'}), 200)
+            else:
+                return make_response(jsonify({'error' : 'E-mail Server Error'}),500)
 
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)

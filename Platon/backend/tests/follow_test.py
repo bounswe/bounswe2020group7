@@ -275,8 +275,11 @@ class ReportTest(BaseTest):
             'reported_user_id': 2,
             'text': "report"
         }
+        expected_response = {
+            'msg': 'Report addition is successfully sent via email'
+        }
         actual_response = self.client.post('/api/follow/report',data=data,headers={'auth_token': valid_token})
-
+        self.assertEqual(expected_response, json.loads(actual_response.data))
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
 
     def test_post_report_invalid(self):
@@ -285,16 +288,16 @@ class ReportTest(BaseTest):
             'reported_user_id': 3,
             'text': "report"
         }
+        expected_response = {
+            'error': 'You can not send comments to the user which you did not worked before'
+        }
         actual_response = self.client.post('/api/follow/report',data=data,headers={'auth_token': valid_token})
-
+        self.assertEqual(expected_response, json.loads(actual_response.data))
         self.assertEqual(actual_response.status_code, 403, 'Incorrect HTTP Response Code')
 
     def test_get_reports(self):
         valid_token = generate_token(1, datetime.timedelta(minutes=10))
-
-        actual_response = self.client.get('/api/follow/report', query_string={'reported_user_id': 2},
-                                          headers={'auth_token': valid_token})
-
+        actual_response = self.client.get('/api/follow/report', headers={'auth_token': valid_token})
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
 
     def tearDown(self):
