@@ -14,7 +14,6 @@ import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ArrayAdapter
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView

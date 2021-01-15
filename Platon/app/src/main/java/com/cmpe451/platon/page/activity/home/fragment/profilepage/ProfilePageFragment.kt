@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -28,6 +29,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.signature.MediaStoreSignature
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.CommentsAdapter
+import com.cmpe451.platon.adapter.SearchElementsAdapter
 import com.cmpe451.platon.adapter.SkillsAdapter
 import com.cmpe451.platon.adapter.UserProjectsAdapter
 import com.cmpe451.platon.core.BaseActivity
@@ -35,6 +37,7 @@ import com.cmpe451.platon.databinding.*
 import com.cmpe451.platon.listener.PaginationListener
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.Comment
+import com.cmpe451.platon.network.models.SearchElement
 import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.activity.home.HomeActivityViewModel
 import com.cmpe451.platon.util.Definitions
@@ -48,7 +51,10 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonClickListener, CommentsAdapter.OnCommentClickedListener{
+class ProfilePageFragment : Fragment(),
+    UserProjectsAdapter.UserProjectButtonClickListener,
+    CommentsAdapter.OnCommentClickedListener,
+    SkillsAdapter.OnTagClickedListener{
 
     private lateinit var binding: FragmentProfilePageBinding
     private val mProfilePageViewModel: ProfilePageViewModel by activityViewModels()
@@ -136,7 +142,7 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
 
 
         binding.rvProfilePageProjects.addOnScrollListener(paginationListenerResearches)
-        binding.rvProfilePageSkills.adapter = SkillsAdapter(ArrayList(), requireContext())
+        binding.rvProfilePageSkills.adapter = SkillsAdapter(ArrayList(), requireContext(), this)
         binding.rvProfilePageSkills.layoutManager = GridLayoutManager(this.activity, 3)
 
         dialog = Definitions().createProgressBar(requireContext())
@@ -763,4 +769,48 @@ class ProfilePageFragment : Fragment(), UserProjectsAdapter.UserProjectButtonCli
         //TODO("Not yet implemented")
     }
 
+    var maxNumberOfTagSearchPages = 0
+
+    /***
+     * Function to handle tag search when a tag in profile page is clicked
+     * @param model Name of the tag clicked
+     * @param position Position of the tag clicked
+     */
+    override fun onTagClicked(model:String, position: Int) {
+        // get all tags related with clicked one, page and perPage can be tuned
+        mProfilePageViewModel.getTagSearch("[\"%s\"]".format(model), 0, 20)
+        Log.i("Info","[\"%s\"]".format(model))
+        // observe result
+        mProfilePageViewModel.getTagSearchResourceResponse.observe(viewLifecycleOwner, {
+
+            when (it.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    maxNumberOfTagSearchPages = it.data?.number_of_pages!!
+                    // prepare dialog to show results
+                    val tagSearchUserBinding = DialogTagSearchBinding.inflate(layoutInflater, binding.root, false)
+                    val tagSearchDialog = AlertDialog.Builder(requireContext())
+                        .setView(tagSearchUserBinding.root)
+                        .show()
+                    tagSearchDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+                    tagSearchUserBinding.rvTagSearch.adapter = SearchElementsAdapter(
+                        it.data!!.result_list as ArrayList<SearchElement>, requireContext(),
+                        requireActivity() as HomeActivity,tagSearchDialog
+                    )
+                    tagSearchUserBinding.rvTagSearch.layoutManager =
+                        LinearLayoutManager(requireContext())
+
+                    mProfilePageViewModel.getTagSearchResourceResponse.value = Resource.Done()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    mProfilePageViewModel.getTagSearchResourceResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java -> {
+                    dialog.dismiss()
+                }
+            }
+        })
+    }
 }

@@ -24,6 +24,7 @@ import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.*
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.*
+import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.activity.home.fragment.home.HomeViewModel
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.page.activity.workspace.fragment.addworkspace.AddWorkspaceViewModel
@@ -31,7 +32,8 @@ import com.cmpe451.platon.util.Definitions
 import java.util.*
 import kotlin.collections.ArrayList
 
-class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListener,WorkspaceApplicationsAdapter.ApplicationsButtonClickListener, UpcomingEventsAdapter.UpcomingButtonClickListener{
+class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListener,WorkspaceApplicationsAdapter.ApplicationsButtonClickListener,
+    UpcomingEventsAdapter.UpcomingButtonClickListener, SkillsAdapter.OnTagClickedListener{
 
     private lateinit var binding: FragmentPersonalWorkspaceBinding
     private lateinit var dialog:AlertDialog
@@ -436,11 +438,11 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
 
 
     private fun initializeAdapters() {
-        skillsAdapter = SkillsAdapter(ArrayList(), requireContext())
+        skillsAdapter = SkillsAdapter(ArrayList(), requireContext(), this)
         binding.rvWorkspaceSkills.adapter = skillsAdapter
         binding.rvWorkspaceSkills.layoutManager = GridLayoutManager(requireContext(), 3)
 
-        reqAdapter = SkillsAdapter(ArrayList(), requireContext())
+        reqAdapter = SkillsAdapter(ArrayList(), requireContext(), this)
         binding.rvWorkspaceRequirements.adapter = reqAdapter
         binding.rvWorkspaceRequirements.layoutManager = LinearLayoutManager(requireContext())
 
@@ -926,6 +928,52 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
         binding.expandLl.refreshDrawableState()
 
         Definitions().vibrate(50, activity as BaseActivity)
+    }
+
+    var maxNumberOfTagSearchPages = 0
+    /***
+     * Function to handle tag search when a tag in profile page is clicked
+     * @param model Name of the tag clicked
+     * @param position Position of the tag clicked
+     */
+    override fun onTagClicked(model:String, position: Int) {
+        // get all tags related with clicked one, page and perPage can be tuned
+        mWorkspaceViewModel.getTagSearch("[\"%s\"]".format(model), 0, 20)
+
+
+        // observe result
+        mWorkspaceViewModel.getTagSearchResourceResponse.observe(viewLifecycleOwner, {
+
+            when (it.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    maxNumberOfTagSearchPages = it.data?.number_of_pages!!
+                    // prepare dialog to show results
+                    val tagSearchBinding = DialogTagSearchBinding.inflate(layoutInflater, binding.root, false)
+                    val tagSearchDialog = AlertDialog.Builder(requireContext())
+                        .setView(tagSearchBinding.root)
+                        .setOnKeyListener{d,_,_ ->
+                            d.dismiss()
+                            true }
+                        .show()
+                    tagSearchDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+                    tagSearchBinding.rvTagSearch.adapter = SearchElementsAdapter(it.data!!.result_list as ArrayList<SearchElement>, requireContext(),
+                        requireActivity() as WorkspaceActivity,tagSearchDialog
+                    )
+                    tagSearchBinding.rvTagSearch.layoutManager = LinearLayoutManager(requireContext())
+
+                    mWorkspaceViewModel.getTagSearchResourceResponse.value = Resource.Done()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    mWorkspaceViewModel.getTagSearchResourceResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java ->{
+                    dialog.dismiss()
+                }
+            }
+        })
     }
 
 

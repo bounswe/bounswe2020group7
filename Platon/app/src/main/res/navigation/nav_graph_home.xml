@@ -32,6 +32,9 @@
         <action
             android:id="@+id/action_profilePageFragment_to_lottieFragment"
             app:destination="@id/lottieFragment" />
+        <action
+            android:id="@+id/action_profilePageFragment_to_otherProfileFragment"
+            app:destination="@id/otherProfileFragment" />
     </fragment>
     <fragment
         android:id="@+id/followFragment"
@@ -61,6 +64,9 @@
         <argument
             android:name="userId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_otherProfileFragment_self"
+            app:destination="@id/otherProfileFragment" />
     </fragment>
     <fragment
         android:id="@+id/workspaceListFragment"

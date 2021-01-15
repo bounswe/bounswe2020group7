@@ -1,12 +1,7 @@
 package com.cmpe451.platon.page.activity.home.fragment.profilepage
 
 import android.widget.TextView
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.cmpe451.platon.network.Resource
-import com.cmpe451.platon.network.models.*
-import com.google.gson.JsonObject
 import okhttp3.RequestBody
 
 class ProfilePageViewModel: ViewModel() {
@@ -25,6 +20,8 @@ class ProfilePageViewModel: ViewModel() {
     var getEditResearchResourceResponse = repository.editResearchResourceResponse
 
     var getUserComments = repository.userComments
+
+    var getTagSearchResourceResponse = repository.tagSearchResourceResponse
 
     fun addResearchInfo(title:String,description:String?,
                         year:Int,authToken: String){
@@ -94,5 +91,9 @@ class ProfilePageViewModel: ViewModel() {
 
     fun getComments(id: Int, token: String, page: Int, pageSize: Int) {
             repository.getComments(id, token, page, pageSize)
+    }
+
+    fun getTagSearch(name: String, page:Int?, perPage: Int?) {
+        repository.getTagSearchUser(name, page, perPage)
     }
 }

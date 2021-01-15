@@ -82,12 +82,17 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="988" />
-                            <option name="y" value="45" />
+                            <option name="x" value="1368" />
+                            <option name="y" value="-103" />
                           </Point>
                         </option>
                         <option name="myPositions">
                           <map>
+                            <entry key="action_otherProfileFragment_self">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
                             <entry key="action_otherProfileFragment_to_followFragment2">
                               <value>
                                 <LayoutPositions />
@@ -103,8 +108,8 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="500" />
-                            <option name="y" value="63" />
+                            <option name="x" value="333" />
+                            <option name="y" value="-306" />
                           </Point>
                         </option>
                         <option name="myPositions">
@@ -115,6 +120,11 @@
                               </value>
                             </entry>
                             <entry key="action_profilePageFragment_to_lottieFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_profilePageFragment_to_otherProfileFragment">
                               <value>
                                 <LayoutPositions />
                               </value>

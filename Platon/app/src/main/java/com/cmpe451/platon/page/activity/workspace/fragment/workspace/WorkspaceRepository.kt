@@ -245,5 +245,30 @@ class WorkspaceRepository {
         })
     }
 
+    var tagSearchResourceResponse: MutableLiveData<Resource<Search>> = MutableLiveData()
+
+
+    fun getTagSearch(name: String, page: Int?, perPage: Int?) {
+        val service = RetrofitClient.getService()
+        val call = service.getTagSearch(1, name, page, perPage)
+        tagSearchResourceResponse.value = Resource.Loading()
+        call.enqueue(object: Callback<Search?>{
+            override fun onResponse(call: Call<Search?>, response: Response<Search?>) {
+                when {
+                    response.isSuccessful && response.body() != null -> {
+                        tagSearchResourceResponse.value = Resource.Success(response.body()!!)
+                    }
+                    response.errorBody() != null -> tagSearchResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> tagSearchResourceResponse.value = Resource.Error("Unknown error!")
+                }
+            }
+
+            override fun onFailure(call: Call<Search?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+
 
 }

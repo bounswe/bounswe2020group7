@@ -22,6 +22,9 @@ class WorkspaceViewModel : ViewModel() {
 
     var getWorkspaceApplicationsResourceResponse = repository.workspaceApplicationsResourceResponse
 
+    var getTagSearchResourceResponse = repository.tagSearchResourceResponse
+
+
     fun fetchWorkspace(workspace_id:Int, token:String){
         repository.fetchWorkspace(workspace_id, token)
     }
@@ -59,6 +62,9 @@ class WorkspaceViewModel : ViewModel() {
     }
     fun answerWorkspaceApplication(application_id:Int, is_accepted:Int, token:String){
         repository.answerWorkspaceApplication(application_id, is_accepted, token)
+    }
+    fun getTagSearch(name: String, page:Int?, perPage: Int?) {
+        repository.getTagSearch(name, page, perPage)
     }
 
 }
