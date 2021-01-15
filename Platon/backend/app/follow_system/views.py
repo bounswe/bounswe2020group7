@@ -624,7 +624,7 @@ class ReportAPI(Resource):
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
-            if send_email("platon.group7@gmail.com", "Report of a User", "Report of a User", "Following report is deleted with the Report ID: {}".format(report_id),""):
+            if send_email("platon.group7@gmail.com", "Report of a User", "Following report is deleted with the Report ID: {}".format(report_id),""):
                 return make_response(jsonify({'msg': 'Report deletion is successfully sent via email'}), 200)
             else:
                 return make_response(jsonify({'error' : 'E-mail Server Error'}),500)

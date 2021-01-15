@@ -2,7 +2,7 @@ from app.workspace_system.models import Collaboration
 from tests.base_test import BaseTest
 from app.auth_system.models import User
 from app.auth_system.views import generate_token
-from app.follow_system.models import Follow, FollowRequests
+from app.follow_system.models import Follow, FollowRequests, Reports
 from app.profile_management.models import Jobs
 from app import db
 import datetime
@@ -268,6 +268,14 @@ class ReportTest(BaseTest):
         for follow in follows:
             db.session.add(follow)
 
+        reports = [
+            Reports(1,3,"dsds")
+        ]
+
+        for report in reports:
+            db.session.add(report)
+        db.session.commit()
+
 
     def test_post_report_valid(self):
         valid_token = generate_token(1, datetime.timedelta(minutes=10))
@@ -299,6 +307,12 @@ class ReportTest(BaseTest):
         valid_token = generate_token(1, datetime.timedelta(minutes=10))
         actual_response = self.client.get('/api/follow/report', headers={'auth_token': valid_token})
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
+
+    def test_xdelete_report(self):
+        valid_token = generate_token(1, datetime.timedelta(minutes=10))
+        actual_response = self.client.delete('/api/follow/report',query_string={'report_id': 1},headers={'auth_token': valid_token})
+        self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
+
 
     def tearDown(self):
         super().tearDown()
