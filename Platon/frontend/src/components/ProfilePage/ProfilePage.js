@@ -460,7 +460,8 @@ class ProfilePage extends React.Component {
                     <Row className="RatingColumn">
                       <Rating
                         name="half-rating-read"
-                        defaultValue={0}
+
+                        value={this.state.user.rate}
                         precision={0.5}
                         readOnly
                         size="large"
