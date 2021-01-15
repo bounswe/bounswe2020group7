@@ -308,7 +308,7 @@ class ReportTest(BaseTest):
         actual_response = self.client.get('/api/follow/report', headers={'auth_token': valid_token})
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
 
-    def test_xdelete_report(self):
+    def test_delete_report(self):
         valid_token = generate_token(1, datetime.timedelta(minutes=10))
         actual_response = self.client.delete('/api/follow/report',query_string={'report_id': 1},headers={'auth_token': valid_token})
         self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
