@@ -160,7 +160,7 @@ class EMailManager():
 
     @staticmethod
     def send_admin_report_e_mail(reported_user_id,report_text):
-        msg = Message(subject='Report',recipients = ["halilumutozdemir10@gmail.com"])
+        msg = Message(subject='Report',recipients = ["bounswegroup7@gmail.com@gmail.com"])
         msg.html = render_template('report_admin.html',report_text = report_text,user_id = reported_user_id)
         try:
             mail.send(msg)
