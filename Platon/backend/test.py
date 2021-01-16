@@ -7,7 +7,8 @@ from tests.follow_test import FollowTest, ReportTest
 from tests.profile_management_test import ResearchInfoTests,NotificationTests
 from tests.search_engine_test import SearchHistoryTests, WorkspaceSearchTests, UserSearchTests, UpcomingEventsSearchTest
 from tests.upcoming_events_test import UpcomingEventsTest
-
+from tests.recommendation_system_test import RecommendationSystemTest
+from tests.activity_stream_test import ActivityStreamTest
 
 from tests.base_test import TestConfig
 import sqlalchemy
