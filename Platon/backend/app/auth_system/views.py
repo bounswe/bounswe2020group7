@@ -15,6 +15,7 @@ from app.auth_system.forms import GetUserSkillsForm, get_userskill_parser
 from app.auth_system.forms import PostUserSkillsForm, post_userskill_parser
 from app.auth_system.forms import DeleteUserSkillsForm, delete_userskill_parser, FileForm
 from app.auth_system.forms import ProfilePhotoForm, profile_photo_parser
+from app.auth_system.forms import AdminForm, admin_parser
 from app.auth_system.models import User
 from app.profile_management.models import Jobs, Skills, UserSkills
 from app.follow_system.models import Follow, FollowRequests
@@ -627,6 +628,55 @@ class DefaultProfileAPI(Resource):
     @api.doc(responses={200: 'Valid Response'})
     def get(self):
         return send_from_directory(directory=app.config["LOGO_PATH"], filename="platon-logo.jpeg",cache_timeout=0)
+
+@auth_system_ns.route("/admin")
+class AdminAPI(Resource):
+
+    @api.doc(responses={200: 'Valid Response',400:"Inappropriate Input",401:"Unauthorized Input",500: "Database Connection Error"})
+    def delete(self):
+        """
+            Deletes the specfied user from the system
+        """
+        form = AdminForm(request.form)
+        if form.validate():
+            if form.admin_token.data != "admin_platon_group7":
+                return  make_response(jsonify({'error': 'Unauthorized Input'}), 401)
+            try:
+                existing_user = User.query.filter_by(id=form.user_id.data).first()
+                send_email(existing_user.e_mail,
+                            "Your Account is Banned",
+                            "Your account is deleted because of your unappropriate behaviours.",
+                            "")
+                db.session.delete(existing_user)
+                db.sessin.commit()
+                return make_response(jsonify({'msg': 'Given account is successfully banned'}), 200)
+            except:
+                return  make_response(jsonify({'error': 'Database Connection Error'}), 500)
+        else:
+            return  make_response(jsonify({'error': 'Give appropriate input'}), 400)
+
+    @api.doc(responses={200: 'Valid Response',400:"Inappropriate Input",401:"Unauthorized Input",500: "Database Connection Error"})
+    def post(self):
+        """
+            Suspends the specfied user from the system
+        """
+        form = AdminForm(request.form)
+        if form.validate():
+            if form.admin_token.data != "admin_platon_group7":
+                return  make_response(jsonify({'error': 'Unauthorized Input'}), 401)
+            try:
+                existing_user = User.query.filter_by(id=form.user_id.data).first()
+                send_email(existing_user.e_mail,
+                            "Your Account is Suspended",
+                            "Your account is suspended because of your unappropriate behaviours. Our admin team will make their decission as soon as possible.",
+                            "")
+                existing_user.is_valid = 0
+                db.sessin.commit()
+                return make_response(jsonify({'msg': 'Given account is successfully suspended'}), 200)
+            except:
+                return  make_response(jsonify({'error': 'Database Connection Error'}), 500)
+        else:
+            return  make_response(jsonify({'error': 'Give appropriate input'}), 400)
 
 def register_resources(api):
     api.add_namespace(auth_system_ns)

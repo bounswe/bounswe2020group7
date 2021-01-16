@@ -538,6 +538,8 @@ class CommentRateAPI(Resource):
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
 
+from app.profile_management.helpers import EMailManager
+
 @follow_system_ns.route("/report")
 class ReportAPI(Resource):
     '''
@@ -621,7 +623,12 @@ class ReportAPI(Resource):
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
             report_id = report.id
-            if send_email("platon.group7@gmail.com", "Report of a User", "Following report is created with the Report ID: {}".format(report_id),""):
+            try:
+                reported_user = User.query.get(form.reported_user_id.data)
+            except: 
+                return make_response(jsonify({'error': 'DB connection error'}), 500)
+            e_mail_text = "There is a report about the user {} {}".format(reported_user.name,reported_user.surname) + "\n" + form.text.data
+            if EMailManager.send_admin_report_e_mail(form.reported_user_id.data,e_mail_text):
                 return make_response(jsonify({'msg': 'Report addition is successfully sent via email'}), 200)
             else:
                 return make_response(jsonify({'error' : 'E-mail Server Error'}),500)
@@ -661,6 +668,7 @@ class ReportAPI(Resource):
 
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
+
 
 def register_resources(api):
     api.add_namespace(follow_system_ns)

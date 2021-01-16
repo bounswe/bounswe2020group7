@@ -158,6 +158,26 @@ class EMailManager():
         except:
             return False
 
+    @staticmethod
+    def send_admin_report_e_mail(reported_user_id,report_text):
+        msg = Message(subject='Report',recipients = ["halilumutozdemir10@gmail.com"])
+        msg.html = render_template('report_admin.html',report_text = report_text,user_id = reported_user_id)
+        try:
+            mail.send(msg)
+            return True
+        except:
+            return False
+    
+    @staticmethod
+    def send_notification_e_mail(recipient_email,notification):
+        msg = Message(subject='Notification',recipients = [recipient_email])
+        msg.html = render_template('notification.html',notification = notification)
+        try:
+            mail.send(msg)
+            return True
+        except:
+            return False
+
 def schedule_regularly():
     scheduler = BackgroundScheduler()
     scheduler.add_job(func=ResearchInfoFetch.update_research_info_all, trigger="interval",seconds=60*60)

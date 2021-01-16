@@ -131,7 +131,7 @@
                 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
                     <tr>
                         <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-                            <p style="margin: 0;">To reset your password just press the button below.</p>
+                            <p style="margin: 0;"> {{ report_text }}</p>
                         </td>
                     </tr>
                     <tr>
@@ -142,11 +142,11 @@
                                         <table border="0" cellspacing="0" cellpadding="0">
                                             <tr>
                                                 <td align="center" style="border-radius: 3px;" bgcolor="#313638">
-                                                    <form action="theUrl" method="POST">
-                                                        <input type="hidden" name="param1" value="val" />
-                                                        <input type="hidden" name="param2" value="val2" />
+                                                    <form action="/api/auth_system/admin" method="POST">
+                                                        <input type="hidden" name="admin_token" value="admin_platon_group7" />
+                                                        <input type="hidden" name="user_id" value="{{ user_id }}" />
 
-                                                        <a href="#" onclick="this.parentNode.submit()" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #313638; display: inline-block;">Freeze Account</a>
+                                                        <a href="#" onclick="this.parentNode.submit()" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #313638; display: inline-block;">Suspend Account</a>
                                                     </form>
                                                 </td>
                                             </tr>
@@ -154,9 +154,9 @@
                                         <table border="0" cellspacing="0" cellpadding="0">
                                             <tr>
                                                 <td align="center" style="border-radius: 3px;" bgcolor="#313638">
-                                                    <form action="theUrl" method="POST">
-                                                        <input type="hidden" name="param1" value="val" />
-                                                        <input type="hidden" name="param2" value="val2" />
+                                                    <form action="/api/auth_system/admin" method="DELETE">
+                                                        <input type="hidden" name="admin_token" value="admin_platon_group7" />
+                                                        <input type="hidden" name="user_id" value="{{ user_id }}" />
 
                                                         <a href="#" onclick="this.parentNode.submit()" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #313638; display: inline-block;">Ban Account</a>
                                                     </form>

@@ -114,3 +114,11 @@ class ProfilePhotoForm(Form):
 
 profile_photo_parser = reqparse.RequestParser()
 profile_photo_parser.add_argument("user_id", required=True, type=str, help="ID of the User", location="args")
+
+class AdminForm(Form):
+	user_id = IntegerField("Reported User ID", validators=[validators.InputRequired()])
+	admin_token = StringField("Reported User ID", validators=[validators.InputRequired()])
+
+admin_parser = reqparse.RequestParser()
+admin_parser.add_argument("user_id", required=True, type=str, help="ID of the User", location="form")
+admin_parser.add_argument("admin_token", required=True, type=str, help="Token of the Admin", location="form")
