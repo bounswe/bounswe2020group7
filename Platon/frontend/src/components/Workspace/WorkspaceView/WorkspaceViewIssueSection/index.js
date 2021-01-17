@@ -147,7 +147,12 @@ const IssueSection = ({ classes, workspaceId, members }) => {
       if (res.status === 200) {
         const commentCollapse = Array(res.data.result.length).fill(false);
         setOpen(commentCollapse);
+        const issuesLength = res.data.result.length;
+        const commentArray = Array(issuesLength).fill([]);
+        setComments(commentArray);
         setIssues(res.data.result);
+
+
       }
     });
   };
