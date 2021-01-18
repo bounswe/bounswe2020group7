@@ -1,6 +1,7 @@
 package com.cmpe451.platon.page.activity.workspace
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -14,12 +15,15 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.onNavDestinationSelected
 import com.cmpe451.platon.R
+import com.cmpe451.platon.adapter.SearchElementsAdapter
 import com.cmpe451.platon.core.BaseActivity
 import com.cmpe451.platon.databinding.ActivityWorkspaceBinding
+import com.cmpe451.platon.network.models.SearchElement
+import com.cmpe451.platon.page.activity.home.fragment.workspace.WorkspaceListFragmentDirections
 import com.cmpe451.platon.page.activity.workspace.fragment.workspace.WorkspaceFragmentDirections
 import com.cmpe451.platon.util.Definitions
 
-class WorkspaceActivity : BaseActivity() {
+class WorkspaceActivity : BaseActivity(), SearchElementsAdapter.SearchButtonClickListener {
 
     lateinit var toolbar: Toolbar
     lateinit var navController: NavController
@@ -110,5 +114,21 @@ class WorkspaceActivity : BaseActivity() {
 
 
         return super.onSupportNavigateUp()
+    }
+
+    override fun onSearchButtonClicked(element: SearchElement, position: Int) {
+        val collabIds = element.contributor_list!!.map { it.id }
+        val bnd = Bundle()
+        bnd.putString("token", token!!)
+        bnd.putInt("user_id", user_id!!)
+        bnd.putBoolean("add", false)
+        bnd.putInt("workspace_id", element.id)
+        bnd.putBoolean("isOwner", true)
+        if (collabIds.contains(user_id!!)) {
+            bnd.putBoolean("isOwner", true)
+        } else {
+            bnd.putBoolean("isOwner", false)
+        }
+        startActivity(Intent(this, WorkspaceActivity::class.java).putExtras(bnd))
     }
 }

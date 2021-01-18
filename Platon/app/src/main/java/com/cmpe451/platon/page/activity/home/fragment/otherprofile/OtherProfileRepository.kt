@@ -2,11 +2,8 @@ package com.cmpe451.platon.page.activity.home.fragment.otherprofile
 
 import androidx.lifecycle.MutableLiveData
 import com.cmpe451.platon.network.Resource
-import com.cmpe451.platon.network.models.OtherUser
-import com.cmpe451.platon.network.models.Researches
 import com.cmpe451.platon.network.RetrofitClient
-import com.cmpe451.platon.network.models.AllComments
-import com.cmpe451.platon.network.models.Skills
+import com.cmpe451.platon.network.models.*
 import com.google.gson.JsonObject
 import org.json.JSONObject
 import retrofit2.Call
@@ -216,5 +213,28 @@ class OtherProfileRepository() {
         })
     }
 
+    var tagSearchResourceResponse: MutableLiveData<Resource<Search>> = MutableLiveData()
 
+
+    fun getTagSearchUser(name: String, page: Int?, perPage: Int?) {
+        val service = RetrofitClient.getService()
+        val call = service.getTagSearch(0, name, page, perPage)
+        tagSearchResourceResponse.value = Resource.Loading()
+        call.enqueue(object: Callback<Search?>{
+            override fun onResponse(call: Call<Search?>, response: Response<Search?>) {
+                when {
+                    response.isSuccessful && response.body() != null -> {
+                        tagSearchResourceResponse.value = Resource.Success(response.body()!!)
+                    }
+                    response.errorBody() != null -> userSkills.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> tagSearchResourceResponse.value = Resource.Error("Unknown error!")
+                }
+            }
+
+            override fun onFailure(call: Call<Search?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
 }

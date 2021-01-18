@@ -25,20 +25,17 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.*
 import com.cmpe451.platon.core.BaseActivity
-import com.cmpe451.platon.databinding.DialogAddCommentBinding
-import com.cmpe451.platon.databinding.DialogWsInvitationsBinding
-import com.cmpe451.platon.databinding.FragmentProfilePageOthersBinding
-import com.cmpe451.platon.databinding.ResearchesCellBinding
+import com.cmpe451.platon.databinding.*
 import com.cmpe451.platon.listener.PaginationListener
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.Comment
-import com.cmpe451.platon.network.models.OtherUser
+import com.cmpe451.platon.network.models.SearchElement
 import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.activity.home.fragment.workspace.WorkspaceListViewModel
 import com.cmpe451.platon.util.Definitions
 import com.cmpe451.platon.util.Definitions.USERSTATUS
 
-class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjectButtonClickListener, CommentsAdapter.OnCommentClickedListener {
+class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjectButtonClickListener, CommentsAdapter.OnCommentClickedListener, SkillsAdapter.OnTagClickedListener {
 
 
     private lateinit var binding: FragmentProfilePageOthersBinding
@@ -132,7 +129,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
 
 
         binding.rvProfilePageProjects.addOnScrollListener(paginationListenerResearches)
-        binding.rvProfilePageSkills.adapter = SkillsAdapter(ArrayList(), requireContext())
+        binding.rvProfilePageSkills.adapter = SkillsAdapter(ArrayList(), requireContext(), this)
         binding.rvProfilePageSkills.layoutManager = GridLayoutManager(this.activity, 3)
 
         dialog = Definitions().createProgressBar(requireContext())
@@ -515,4 +512,49 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
     }
 
 
+    var maxNumberOfTagSearchPages = 0
+    /***
+     * Function to handle tag search when a tag in profile page is clicked
+     * @param model Name of the tag clicked
+     * @param position Position of the tag clicked
+     */
+    override fun onTagClicked(model:String, position: Int) {
+        // get all tags related with clicked one, page and perPage can be tuned
+        mOtherProfileViewModel.getTagSearchUser("[\"%s\"]".format(model), 0, 20)
+
+
+        // observe result
+        mOtherProfileViewModel.getTagSearchResourceResponse.observe(viewLifecycleOwner, {
+
+            when (it.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Success::class.java -> {
+                    maxNumberOfTagSearchPages = it.data?.number_of_pages!!
+                    // prepare dialog to show results
+                    val tagSearchUserBinding = DialogTagSearchBinding.inflate(layoutInflater, binding.root, false)
+                    val tagSearchDialog = AlertDialog.Builder(requireContext())
+                        .setView(tagSearchUserBinding.root)
+                        .setOnKeyListener{d,_,_ ->
+                            d.dismiss()
+                            true }
+                        .show()
+                    tagSearchDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+                    tagSearchUserBinding.rvTagSearch.adapter = SearchElementsAdapter(it.data!!.result_list as ArrayList<SearchElement>, requireContext(),
+                        requireActivity() as HomeActivity,tagSearchDialog
+                    )
+                    tagSearchUserBinding.rvTagSearch.layoutManager = LinearLayoutManager(requireContext())
+
+                    mOtherProfileViewModel.getTagSearchResourceResponse.value = Resource.Done()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    mOtherProfileViewModel.getTagSearchResourceResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java ->{
+                    dialog.dismiss()
+                }
+            }
+        })
+    }
 }

@@ -24,6 +24,9 @@ class WorkspaceViewModel : ViewModel() {
     var getRecommendedUsersResourceResponse = repository.recommendedUsersResourceResponse
     var getInvitationResponse = repository.invitationResponse
 
+    var getTagSearchResourceResponse = repository.tagSearchResourceResponse
+
+
     fun fetchWorkspace(workspace_id:Int, token:String){
         repository.fetchWorkspace(workspace_id, token)
     }
@@ -62,6 +65,10 @@ class WorkspaceViewModel : ViewModel() {
     fun answerWorkspaceApplication(application_id:Int, is_accepted:Int, token:String){
         repository.answerWorkspaceApplication(application_id, is_accepted, token)
     }
+
+    fun getTagSearch(name: String, page:Int?, perPage: Int?) {
+        repository.getTagSearch(name, page, perPage)
+
     fun getRecommendedCollaborators(workspace_id: Int, number_of_recommendations:Int, token:String){
         repository.getRecommendedCollaborators(workspace_id, number_of_recommendations, token)
     }

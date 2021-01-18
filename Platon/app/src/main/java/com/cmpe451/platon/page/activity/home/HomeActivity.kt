@@ -18,9 +18,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.cursoradapter.widget.CursorAdapter
 import androidx.cursoradapter.widget.SimpleCursorAdapter
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,12 +30,11 @@ import com.cmpe451.platon.listener.PaginationListener
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.*
 import com.cmpe451.platon.page.activity.home.fragment.home.HomeFragmentDirections
-import com.cmpe451.platon.page.activity.home.fragment.profilepage.ProfilePageFragment
+import com.cmpe451.platon.page.activity.home.fragment.otherprofile.OtherProfileFragmentDirections
 import com.cmpe451.platon.page.activity.home.fragment.profilepage.ProfilePageFragmentDirections
 import com.cmpe451.platon.page.activity.home.fragment.workspace.WorkspaceListFragmentDirections
 import com.cmpe451.platon.page.activity.login.LoginActivity
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
-import com.cmpe451.platon.page.activity.workspace.fragment.issues.IssuesFragmentDirections
 import com.cmpe451.platon.util.Definitions
 import java.util.*
 
@@ -896,6 +893,12 @@ class HomeActivity : BaseActivity(),
             }
             R.id.workspaceListFragment -> binding.bottomNavBar.selectedItemId = R.id.homeFragment
             R.id.profilePageFragment -> binding.bottomNavBar.selectedItemId = R.id.homeFragment
+            R.id.otherProfileFragment ->{
+                // pop from the stack all the other profiles
+                while(navController.currentDestination?.id == R.id.otherProfileFragment){
+                    navController.popBackStack()
+                }
+            }
             else -> {
                 navController.navigateUp()
             }
@@ -936,11 +939,19 @@ class HomeActivity : BaseActivity(),
             R.id.homeFragment -> {
                 if (element.name != null) {
                     if (element.id != currUserId) {
+                        try{
                         navController.navigate(
                             HomeFragmentDirections.actionHomeFragmentToOtherProfileFragment(
                                 element.id
                             )
                         )
+                        }catch (e:Exception){
+                            navController.navigate(
+                                OtherProfileFragmentDirections.actionOtherProfileFragmentSelf(
+                                    element.id
+                                )
+                            )
+                        }
                     } else {
                         binding.bottomNavBar.selectedItemId = R.id.profilePageFragment
                     }
@@ -964,6 +975,28 @@ class HomeActivity : BaseActivity(),
                     startActivity(browserIntent)
                 }
 
+            }
+            R.id.profilePageFragment -> {
+                if (element.name != null) {
+                    if (element.id != currUserId) {
+                        try {
+                            navController.navigate(
+                                ProfilePageFragmentDirections.actionProfilePageFragmentToOtherProfileFragment(
+                                    element.id
+                                )
+                            )
+                        }
+                        catch (e:Exception){
+                            navController.navigate(
+                                OtherProfileFragmentDirections.actionOtherProfileFragmentSelf(
+                                    element.id
+                                )
+                            )
+                        }
+                    } else {
+                        binding.bottomNavBar.selectedItemId = R.id.profilePageFragment
+                    }
+                }
             }
         }
         destroyToolbar()

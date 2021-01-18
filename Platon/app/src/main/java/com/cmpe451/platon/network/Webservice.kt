@@ -488,6 +488,12 @@ interface Webservice {
                         @Header("auth_token") authToken: String): Call<JsonObject?>
 
 
+    @GET("api/search_engine/tag_search")
+    fun getTagSearch(@Query("search_type") searchType:Int,
+                     @Query("skills") name: String,
+                     @Query("page") page: Int?,
+                     @Query("per_page") pageSize: Int?): Call<Search?>
+
     @GET("api/recommendation_system/collaboration")
     fun getRecommendedCollaborators(
         @Query("workspace_id") workspace_id:Int,
