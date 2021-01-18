@@ -1,20 +1,22 @@
 package com.cmpe451.platon.page.activity.home.fragment.follow
 
+import android.app.AlertDialog
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpe451.platon.R
 import com.cmpe451.platon.adapter.FollowerFollowingAdapter
+import com.cmpe451.platon.adapter.RecommendedFollowAdapter
+import com.cmpe451.platon.adapter.WorkspaceRecommendationAdapter
+import com.cmpe451.platon.databinding.DialogRecommendedBinding
 import com.cmpe451.platon.databinding.FragmentFollowersFollowingListBinding
 import com.cmpe451.platon.listener.PaginationListener
 import com.cmpe451.platon.network.Resource
@@ -22,6 +24,7 @@ import com.cmpe451.platon.network.models.FollowPerson
 import com.cmpe451.platon.network.models.OtherUser
 import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.activity.home.fragment.profilepage.ProfilePageViewModel
+import com.cmpe451.platon.util.Definitions
 
 class FollowFragment:Fragment() {
     private lateinit var binding: FragmentFollowersFollowingListBinding
@@ -35,11 +38,80 @@ class FollowFragment:Fragment() {
     private val mProfilePageViewModel: ProfilePageViewModel by activityViewModels()
 
     private lateinit var paginationListener:PaginationListener
+    private lateinit var dialog:AlertDialog
 
     private var maxNumOfPages:Int=0
     private val pageSize:Int = 10
 
     private val args: FollowFragmentArgs by navArgs()
+    private lateinit var followRecommendedBinding:DialogRecommendedBinding
+    private lateinit var recDialog:AlertDialog
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.follow_recommendation_btn->{
+                onFollowRecommendationsClicked()
+            }
+        }
+        return item.onNavDestinationSelected(findNavController()) || super.onOptionsItemSelected(item)
+    }
+
+    private fun onFollowRecommendationsClicked() {
+        mFollowViewModel.getFollowRecommendations(20, (activity as HomeActivity).currUserToken)
+        mFollowViewModel.getFollowRecommendationsResponse.observe(viewLifecycleOwner, { t ->
+            when (t.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Error::class.java -> {
+                    Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                    mFollowViewModel.getFollowRecommendationsResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java -> dialog.dismiss()
+                Resource.Success::class.java -> {
+                    if (t.data!!.recommendation_list.isEmpty()) {
+                        Toast.makeText(
+                            requireContext(),
+                            "No new recommendations found",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else {
+                        followRecommendedBinding = DialogRecommendedBinding.inflate(
+                            layoutInflater,
+                            requireView().parent as ViewGroup,
+                            false
+                        )
+                        recDialog =
+                            AlertDialog.Builder(context).setView(followRecommendedBinding.root)
+                                .setCancelable(true).create()
+                        recDialog.show()
+                        followRecommendedBinding.recommendedRv.adapter =
+                            RecommendedFollowAdapter(ArrayList(),
+                                requireContext()){ userId:Int->
+                                if(userId == (activity as HomeActivity).currUserId){
+                                    findNavController().navigate(FollowFragmentDirections.actionFollowFragmentToProfilePageFragment())
+                                }
+                                else {
+                                    findNavController().navigate(FollowFragmentDirections.actionFollowFragmentToOtherProfileFragment(userId))
+                                }
+                                recDialog.dismiss()
+
+                            }
+                        followRecommendedBinding.recommendedRv.layoutManager =
+                            LinearLayoutManager(requireContext())
+                        (followRecommendedBinding.recommendedRv.adapter as RecommendedFollowAdapter).submitList(
+                            t.data!!.recommendation_list as ArrayList
+                        )
+                        followRecommendedBinding.recommendedTitleTv.setOnClickListener {
+                            recDialog.dismiss()
+                        }
+                    }
+
+                    mFollowViewModel.getFollowRecommendationsResponse.value = Resource.Done()
+
+                }
+            }
+        })
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         binding = FragmentFollowersFollowingListBinding.inflate(inflater)
@@ -103,15 +175,15 @@ class FollowFragment:Fragment() {
         menu.findItem(R.id.search_btn)?.isVisible = false
         menu.findItem(R.id.logout_menu_btn)?.isVisible = false
         menu.findItem(R.id.notification_btn)?.isVisible = false
+        menu.findItem(R.id.follow_recommendation_btn)?.isVisible = true
         super.onPrepareOptionsMenu(menu)
     }
 
     private fun setAdapter(){
+        dialog = Definitions().createProgressBar(requireContext())
         rvFollowers = binding.rvFollow
 
         adapter = FollowerFollowingAdapter(ArrayList(), requireContext()) { userId:Int->
-//            Toast.makeText(activity, userId, Toast.LENGTH_LONG)
-//            (activity as HomeActivity).navController.navigate(FollowersFollowingFragmentDirections.actionFollowersFollowingFragmentToProfilePagePrivateFragment(id))
             if(userId == (activity as HomeActivity).currUserId){
                 findNavController().navigate(FollowFragmentDirections.actionFollowFragmentToProfilePageFragment())
             }

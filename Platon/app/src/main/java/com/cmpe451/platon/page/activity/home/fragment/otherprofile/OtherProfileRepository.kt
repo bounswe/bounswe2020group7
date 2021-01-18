@@ -159,7 +159,7 @@ class OtherProfileRepository() {
                     response.isSuccessful && response.body() != null -> {
                         addDeleteCommentResourceResponse.value = Resource.Success(response.body()!!)
                     }
-                    response.errorBody() != null -> userSkills.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    response.errorBody() != null -> addDeleteCommentResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
                     else -> addDeleteCommentResourceResponse.value = Resource.Error("Unknown error!")
                 }
             }
@@ -181,7 +181,7 @@ class OtherProfileRepository() {
                     response.isSuccessful && response.body() != null -> {
                         addDeleteCommentResourceResponse.value = Resource.Success(response.body()!!)
                     }
-                    response.errorBody() != null -> userSkills.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    response.errorBody() != null -> addDeleteCommentResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
                     else -> addDeleteCommentResourceResponse.value = Resource.Error("Unknown error!")
                 }
             }
@@ -202,7 +202,7 @@ class OtherProfileRepository() {
                     response.isSuccessful && response.body() != null -> {
                         invitationResponse.value = Resource.Success(response.body()!!)
                     }
-                    response.errorBody() != null -> userSkills.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    response.errorBody() != null -> invitationResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
                     else -> invitationResponse.value = Resource.Error("Unknown error!")
                 }
             }

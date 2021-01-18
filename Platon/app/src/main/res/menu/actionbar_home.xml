@@ -7,7 +7,7 @@
         android:title="@string/logout_str"
         android:icon="@drawable/ic_logout_24px"
         android:visible="true"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/search_btn"
@@ -15,14 +15,14 @@
         android:title="@string/search_str"
         android:visible="true"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/notification_btn"
         android:icon="@drawable/ic_notifications_24px"
         android:title="@string/notification_str"
         android:visible="true"
-        app:showAsAction="ifRoom"
+        app:showAsAction="always"
         />
 
     <item
@@ -30,5 +30,17 @@
         android:title="@string/add_sorkspace_str"
         android:icon="@drawable/ic_add_24dp"
         android:visible="false"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/workspace_recommendation_btn"
+        android:title="@string/workspace_recommendations_str"
+        android:icon="@drawable/ic_rec_ws_24px"
+        android:visible="false"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/follow_recommendation_btn"
+        android:title="@string/follow_recommendation_str"
+        android:icon="@drawable/ic_group_add_24px"
+        android:visible="false"
+        app:showAsAction="always" />
 </menu>
