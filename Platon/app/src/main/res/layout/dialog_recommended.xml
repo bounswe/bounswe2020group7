@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/primary_dark">
+    <TextView
+        android:id="@+id/recommended_title_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:fontFamily="@font/dm_sans_bold"
+        android:gravity="center_horizontal"
+        android:padding="@dimen/x_small"
+        android:shadowColor="@color/primary_dark"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
+        android:text="@string/recommended_str"
+        android:textAllCaps="false"
+        android:textColor="@color/secondary_yellow"
+        android:textSize="@dimen/project_title_text_size"
+        android:drawablePadding="@dimen/xx_small"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/recommended_rv"
+        android:layout_marginHorizontal="10dp"/>
+
+
+</LinearLayout>

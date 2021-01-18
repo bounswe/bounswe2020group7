@@ -23,6 +23,8 @@ class WorkspaceRepository {
     var applyWorksppaceResourceResponse: MutableLiveData<Resource<JsonObject>> = MutableLiveData()
     var quitWorkspaceResponse: MutableLiveData<Resource<JsonObject>> = MutableLiveData()
     val answerWorkspaceApplicationResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
+    val recommendedUsersResourceResponse:MutableLiveData<Resource<RecommendedUserList>> = MutableLiveData()
+    val invitationResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()
     fun fetchWorkspace(workspace_id:Int, token:String) {
         val service = RetrofitClient.getService()
         val call = service.getWorkspace(workspace_id,token)
@@ -238,6 +240,44 @@ class WorkspaceRepository {
                 }
             }
 
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+    fun getRecommendedCollaborators(workspace_id: Int, number_of_recommendations:Int, token:String){
+        val service = RetrofitClient.getService()
+        val call = service.getRecommendedCollaborators(workspace_id, number_of_recommendations,token)
+        recommendedUsersResourceResponse.value = Resource.Loading()
+        call.enqueue(object: Callback<RecommendedUserList?> {
+            override fun onResponse(call: Call<RecommendedUserList?>, response: Response<RecommendedUserList?>) {
+                when {
+                    response.isSuccessful && response.body() != null -> recommendedUsersResourceResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> recommendedUsersResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> recommendedUsersResourceResponse.value = Resource.Error("Unknown error!")
+                }
+            }
+            override fun onFailure(call: Call<RecommendedUserList?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+    fun sendInvitationToWorkspace(wsId: Int, invId: Int, currUserToken: String) {
+        val service = RetrofitClient.getService()
+        val call = service.inviteToWorkspace(wsId,invId, currUserToken)
+        invitationResponse.value = Resource.Loading()
+        call.enqueue(object: Callback<JsonObject?>{
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when {
+                    response.isSuccessful && response.body() != null -> {
+                        invitationResponse.value = Resource.Success(response.body()!!)
+                    }
+                    response.errorBody() != null -> invitationResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> invitationResponse.value = Resource.Error("Unknown error!")
+                }
+            }
             override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
                 call.clone().enqueue(this)
             }
