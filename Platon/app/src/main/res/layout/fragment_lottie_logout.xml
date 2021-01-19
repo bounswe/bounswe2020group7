@@ -9,7 +9,7 @@
         android:id="@+id/lottie_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:lottie_rawRes="@raw/merry_cristmas"
+        app:lottie_rawRes="@raw/staysafe_stayhome"
         app:lottie_autoPlay="true"
         tools:ignore="InvalidId">
 
