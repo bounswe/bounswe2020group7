@@ -69,7 +69,9 @@ const CreateUpdateModal = ({ isCreate, open, closePopup, workspaceId, currentIss
         deadline: formattedDateString,
       }).then((res) => {
         if (res.status === 200) {
+          console.log("here")
           loadIssues()
+          console.log("here2")
           closePopup()
         }
         else {
