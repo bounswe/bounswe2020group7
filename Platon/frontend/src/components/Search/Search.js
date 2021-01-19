@@ -3,6 +3,7 @@ import "./Search.css";
 
 import requestService from "../../services/requestService";
 import NavBar from "../NavBar/NavBar";
+import AppBar from "../AppBar/AppBar";
 import Spinner from "../Spinner/Spinner";
 import colors from "../../utils/colors";
 
@@ -77,7 +78,7 @@ class Search extends React.Component {
   componentDidMount() {
     const searchQuery = this.props.match.params.searchQuery;
     this.setState({ searchQuery: searchQuery });
-
+    console.log("1");
     if (this.state.checkedUserAfter === true) {
       requestService.getSearchUser(searchQuery).then((response) => {
         this.setState({
@@ -85,13 +86,15 @@ class Search extends React.Component {
         });
       });
     }
+    console.log("2");
     if (this.state.checkedWorkspaceAfter === true) {
-      requestService.getSeachWorkspace(searchQuery).then((response) => {
+      requestService.getSearchWorkspace(searchQuery).then((response) => {
         this.setState({
           searchResult: response.data.result_list,
         });
       });
     }
+    console.log("3");
     if (this.state.checkedUpcomingEventsAfter === true) {
       requestService.getSearchUpcomingEvents(searchQuery).then((response) => {
         this.setState({
@@ -99,6 +102,7 @@ class Search extends React.Component {
         });
       });
     }
+    console.log("4");
 
     Promise.all([
       requestService.getJobList().then((response) => {
@@ -132,7 +136,7 @@ class Search extends React.Component {
     }
     if (this.state.checkedWorkspace === true) {
       requestService
-        .getSeachWorkspace(
+        .getSearchWorkspace(
           this.state.searchQuery,
           this.state.skill_filter,
           this.state.creator_name,
@@ -217,9 +221,9 @@ class Search extends React.Component {
 
   render() {
     return (
-      <div className="SearchLanding">
+      <div className="SearchLanding"> 
         <div className="AppBar">
-          <NavBar />
+        {localStorage.getItem("jwtToken") ? <NavBar /> : <AppBar />}
         </div>
         {this.state.isLoading ? (
           <div className="ProfilePageSpinner">

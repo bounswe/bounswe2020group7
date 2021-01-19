@@ -286,9 +286,6 @@ const postFollowRequest = (follower_id, following_id) => {
 const getSearchUser = (search_query, job_filter, sorting_criteria) => {
   const url = config.BASE_URL;
 
-  const token = localStorage.getItem("jwtToken");
-  axios.defaults.headers.common["auth_token"] = `${token}`;
-
   const params = {
     search_query: search_query,
     sorting_criteria: sorting_criteria,
@@ -512,7 +509,7 @@ const deleteSkill = (skillName) => {
     });
 };
 
-const getSeachWorkspace = (
+const getSearchWorkspace = (
   search_query,
   skill_filter,
   creator_name,
@@ -524,9 +521,6 @@ const getSeachWorkspace = (
   sorting_criteria
 ) => {
   const url = config.BASE_URL;
-
-  const token = localStorage.getItem("jwtToken");
-  axios.defaults.headers.common["auth_token"] = `${token}`;
 
   const params = {
     search_query: search_query,
@@ -572,9 +566,6 @@ const getSearchUpcomingEvents = (
   sorting_criteria
 ) => {
   const url = config.BASE_URL;
-
-  const token = localStorage.getItem("jwtToken");
-  axios.defaults.headers.common["auth_token"] = `${token}`;
 
   const params = {
     search_query: search_query,
@@ -651,7 +642,7 @@ export default {
   getPersonalSkillList,
   postSkill,
   deleteSkill,
-  getSeachWorkspace,
+  getSearchWorkspace,
   getSearchUpcomingEvents,
   addIssueComment,
   getIssueComment,
