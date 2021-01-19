@@ -34,3 +34,14 @@ class Comments(db.Model):
         self.commented_user_id = commented_user_id
         self.rate = rate
         self.text = text
+
+class Reports(db.Model):
+    id = db.Column(db.Integer,primary_key=True,autoincrement=True)
+    owner_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"))
+    reported_user_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"))
+    text = db.Column(db.String(300))
+
+    def __init__(self, owner_id, reported_user_id, text):
+        self.owner_id = owner_id
+        self.reported_user_id = reported_user_id
+        self.text = text

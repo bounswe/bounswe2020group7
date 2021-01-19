@@ -1,8 +1,8 @@
+from app.workspace_system.models import Collaboration
 from tests.base_test import BaseTest
-from tests.base_test import TestConfig
 from app.auth_system.models import User
 from app.auth_system.views import generate_token
-from app.follow_system.models import Follow, FollowRequests
+from app.follow_system.models import Follow, FollowRequests, Reports
 from app.profile_management.models import Jobs
 from app import db
 import datetime
@@ -214,6 +214,105 @@ class FollowTest(BaseTest):
         fl_dict = rp.json
         mylist = [fl['id'] for fl in fl_dict['followings']]
         self.assertTrue(2 not in mylist, 'Unfollow is not successful')
+
+    def tearDown(self):
+        super().tearDown()
+
+class ReportTest(BaseTest):
+    """
+        Unit Tests of the report module
+    """
+    def setUp(self):
+
+        jobs = [
+            Jobs("academician"),
+            Jobs("PhD student")
+        ]
+
+        for job in jobs:
+            db.session.add(job)
+
+        db.session.commit()
+
+        # Umut and Can are public users. Alperen is private user.
+        users = [
+            User("umut@deneme.com", True, "b73ec5e4625ffcb6d0d70826f33be7a75d45b37046e26c4b60d9111266d70e32", 3.5,
+                 "Umut", "Özdemir", False, None, None, None, 1, "boun"),
+            User("can@deneme.com", True, "cce0c2170d1ae52e099c716165d80119ee36840e3252e57f2b2b4d6bb111d8a5", 3.4,
+                 "Can", "Deneme", False, None, None, None, 2, "boun"),
+            User("alperen@deneme.com", True, "hashedpassword", 4.6, "Alperen", "Ozprivate", True, None, None, None, 1, "boun"),
+            User("hilal@deneme.com", True, "hasheddpassword", 4.5, "Hilal", "Private", True, None, None, None, 1, "boun")
+        ]
+        for user in users:
+            db.session.add(user)
+
+        db.session.commit()
+
+        db.session.commit()
+
+        collaborations = [
+            Collaboration(user_1_id=1, user_2_id=2),
+            Collaboration(user_1_id=2, user_2_id=1)
+        ]
+
+        for collaboration in collaborations:
+            db.session.add(collaboration)
+        db.session.commit()
+
+        # Add artificial users to test follow feature.
+        follows = [
+            Follow(1, 2),  # Umut follows Can
+            Follow(3, 2),  # Alperen follows Can
+            Follow(3, 1)  # Alperen follows Umut
+        ]
+        for follow in follows:
+            db.session.add(follow)
+
+        reports = [
+            Reports(1,3,"dsds")
+        ]
+
+        for report in reports:
+            db.session.add(report)
+        db.session.commit()
+
+
+    def test_post_report_valid(self):
+        valid_token = generate_token(1, datetime.timedelta(minutes=10))
+        data = {
+            'reported_user_id': 2,
+            'text': "report"
+        }
+        expected_response = {
+            'msg': 'Report addition is successfully sent via email'
+        }
+        actual_response = self.client.post('/api/follow/report',data=data,headers={'auth_token': valid_token})
+        self.assertEqual(expected_response, json.loads(actual_response.data))
+        self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
+
+    def test_post_report_invalid(self):
+        valid_token = generate_token(1, datetime.timedelta(minutes=10))
+        data = {
+            'reported_user_id': 3,
+            'text': "report"
+        }
+        expected_response = {
+            'error': 'You can not send comments to the user which you did not worked before'
+        }
+        actual_response = self.client.post('/api/follow/report',data=data,headers={'auth_token': valid_token})
+        self.assertEqual(expected_response, json.loads(actual_response.data))
+        self.assertEqual(actual_response.status_code, 403, 'Incorrect HTTP Response Code')
+
+    def test_get_reports(self):
+        valid_token = generate_token(1, datetime.timedelta(minutes=10))
+        actual_response = self.client.get('/api/follow/report', headers={'auth_token': valid_token})
+        self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
+
+    def test_delete_report(self):
+        valid_token = generate_token(1, datetime.timedelta(minutes=10))
+        actual_response = self.client.delete('/api/follow/report',query_string={'report_id': 1},headers={'auth_token': valid_token})
+        self.assertEqual(actual_response.status_code, 200, 'Incorrect HTTP Response Code')
+
 
     def tearDown(self):
         super().tearDown()
