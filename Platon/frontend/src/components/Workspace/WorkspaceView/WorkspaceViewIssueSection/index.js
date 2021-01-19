@@ -3,7 +3,7 @@ import { withStyles } from "@material-ui/core/styles";
 import colors from "../../../../utils/colors";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import { getIssueComments, getIssues, deleteComment } from "./utils";
+import { getIssues } from "./utils";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -18,11 +18,8 @@ import CreateUpdateModal from "./modals/createupdate";
 import Button from "@material-ui/core/Button";
 import DeleteModal from "./modals/delete";
 import AssigneeModal from "./modals/assignee";
-import Collapse from "@material-ui/core/Collapse";
-import AddCommentIcon from "@material-ui/icons/AddComment";
-import AddCommentModal from "./modals/addComment";
-import SpeakerNotesOffIcon from "@material-ui/icons/SpeakerNotesOff";
-import Typography from "@material-ui/core/Typography";
+import CommentsModal from "./modals/comments";
+import { Divider } from "@material-ui/core";
 
 const useStyles = (theme) => ({
   root: {
@@ -50,27 +47,18 @@ const StyledButton = withStyles({
 
 const IssueSection = ({ classes, workspaceId, members }) => {
   const [issues, setIssues] = useState([]);
-  const [comments, setComments] = useState([]);
   const [editOpen, setEditOpen] = useState(false);
   const [commentOpen, setCommentOpen] = useState(false);
   const [assigneeOpen, setAssigneeOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const [currentIssue, setCurrentIssue] = useState(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [open, setOpen] = React.useState(true);
 
   useEffect(() => {
-    console.log(issues);
     getIssues({ workspaceId })
       .then((res) => {
         if (res.status === 200) {
-          console.log("içerde");
-          const issuesLength = res.data.result.length;
-          const commentCollapse = Array(issuesLength).fill(false);
-          setOpen(commentCollapse);
           setIssues(res.data.result);
-          const commentArray = Array(issuesLength).fill([]);
-          setComments(commentArray);
         }
       })
       .catch((error) => {
@@ -78,27 +66,11 @@ const IssueSection = ({ classes, workspaceId, members }) => {
       });
   }, [workspaceId]);
 
-  const handleClick = (issueId, index) => {
-    let prev = open;
-    prev[index] = !open[index];
-    setOpen([...prev]);
-    getIssueComments({ workspaceId, issueId })
-      .then((response) => {
-        if (response.status === 200) {
-          let temp = comments;
-          temp[index] = response.data.result;
-          setComments(temp);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
   const openCommentPopup = (ms) => {
     setCurrentIssue(ms);
     setCommentOpen(true);
   };
+
 
   const openAssigneePopup = (ms) => {
     setCurrentIssue(ms);
@@ -115,38 +87,10 @@ const IssueSection = ({ classes, workspaceId, members }) => {
     setDeleteOpen(true);
   };
   //TODO
-  const handleDeleteComment = (issueId, commentId) => {
-    console.log("1", workspaceId, issueId, commentId)
-    return deleteComment(workspaceId, issueId, commentId)
-      .then((response) => {
-        if (response.status === 200) {
-          console.log(response.data);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const loadComments = (workspaceId, issueId, index) => {
-    return getIssueComments({ workspaceId, issueId })
-      .then((response) => {
-        if (response.status === 200) {
-          let temp = comments;
-          temp[index] = response.data.result;
-          setComments(temp);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
 
   const loadIssues = () => {
     return getIssues({ workspaceId }).then((res) => {
       if (res.status === 200) {
-        const commentCollapse = Array(res.data.result.length).fill(false);
-        setOpen(commentCollapse);
         setIssues(res.data.result);
       }
     });
@@ -172,8 +116,8 @@ const IssueSection = ({ classes, workspaceId, members }) => {
                       <div
                         style={{
                           display: "flex",
+                          flexDirection:"column",
                           justifyContent: "space-between",
-                          paddingRight: "120px",
                         }}
                       >
                         <div
@@ -184,7 +128,7 @@ const IssueSection = ({ classes, workspaceId, members }) => {
                         >
                           {issue && issue.description}
                         </div>
-                        <div>{issue && issue.deadline}</div>
+                        <div>Deadline: {(issue && issue.deadline) ? issue.deadline : "Not specified"}</div>
                       </div>
                     }
                   />
@@ -198,7 +142,7 @@ const IssueSection = ({ classes, workspaceId, members }) => {
                     <IconButton edge="end">
                       <CommentIcon
                         style={{ color: colors.tertiary }}
-                        onClick={() => handleClick(issue.issue_id, index)}
+                        onClick={() => openCommentPopup(issue)}
                       />
                     </IconButton>
                     <IconButton edge="end">
@@ -215,70 +159,11 @@ const IssueSection = ({ classes, workspaceId, members }) => {
                     </IconButton>
                   </ListItemSecondaryAction>
                 </ListItem>
-                <Collapse in={open[index]} timeout="auto" unmountOnExit>
-                  <Typography
-                    style={{ color: colors.tertiaryDark }}
-                    variant="subtitle1"
-                    align="center"
-                  >
-                    Comments
-                  </Typography>
-                  <List component="div" disablePadding fullWidth>
-                    {comments && comments.length !== 0 && comments[index].length === 0 ? (
-                      <Typography
-                        style={{ color: colors.primary }}
-                        variant="subtitle2"
-                        align="center"
-                      >
-                        No Comment
-                      </Typography>
-                    ) : (comments && comments.length !==0 ?
-                      comments[index].map((comment, i) => (
-                        <ListItem>
-                          <ListItemText
-                            primary={`${comment.owner_name} ${comment.owner_surname}`}
-                            secondary={comment.comment}
-                          />
-
-                          <ListItemSecondaryAction>
-                            <IconButton
-                              onClick={() =>
-                                handleDeleteComment(
-                                  issues[index].issue_id,
-                                  comment.comment_id
-                                )
-                              }
-                            >
-                              <SpeakerNotesOffIcon
-                                style={{ color: colors.quinary }}
-                              />
-                            </IconButton>
-                          </ListItemSecondaryAction>
-                        </ListItem>
-                      ))
-                    : null)}
-                  </List>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Button
-                      variant="contained"
-                      style={{ backgroundColor: colors.tertiary }}
-                      onClick={() => openCommentPopup(issue)}
-                      startIcon={<AddCommentIcon />}
-                    >
-                      Add Comment
-                    </Button>
-                  </div>
-                </Collapse>
-                <hr />
+                <Divider/>
               </div>
             ))}
         </List>
+
         <div>
           <div
             style={{
@@ -317,7 +202,7 @@ const IssueSection = ({ classes, workspaceId, members }) => {
           loadIssues={() => loadIssues()}
           members={members}
         />
-        <AddCommentModal
+        <CommentsModal
           closePopup={() => setCommentOpen(false)}
           issue={currentIssue}
           workspaceId={workspaceId}
