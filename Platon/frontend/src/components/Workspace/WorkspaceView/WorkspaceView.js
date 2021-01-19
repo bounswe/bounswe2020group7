@@ -25,6 +25,7 @@ import IconButton from "@material-ui/core/IconButton";
 import WorkspaceViewMilestoneSection from "./WorkspaceViewMilestoneSection";
 import WorkspaceViewIssueSection from "./WorkspaceViewIssueSection";
 import CollaboratorRecommendationDialog from '../../Recommendation/CollaboratorRecommendation/CollaboratorRecommendationDialog/CollaboratorRecommendationDialog'
+import WorkspaceViewTagSearch from "./WorkspaceViewTagSearch/WorkspaceViewTagSearch"
 const colorsDark = [
   colors.tertiaryDark,
   colors.quaternaryDark,
@@ -144,6 +145,9 @@ class WorkspaceView extends Component {
       unauthorized: false,
       quited: false,
       collaboratorDialog: false,
+      tagSearchDialog: false,
+      tag: "",
+      tagColor: colors.primary
     };
   }
 
@@ -355,6 +359,13 @@ class WorkspaceView extends Component {
   handleClose = () => {
     this.setState({collaboratorDialog: false})
   };
+
+  handleClickOpenTagSearch = (tag, tagColor) => {
+    this.setState({tagSearchDialog: true, tag: tag, tagColor: tagColor})
+  }
+  handleCloseTagSearch = () =>{
+    this.setState({tagSearchDialog: false})
+  }
 
   handleErrorText = (text) => {
     this.setState({
@@ -599,20 +610,25 @@ class WorkspaceView extends Component {
                             {this.state.workspace.skills &&
                             this.state.workspace.skills.length !== 0 ? (
                               <div>
-                                {this.state.workspace.skills.map((element) => (
+                                {this.state.workspace.skills.map((element) => {
+                                  const tagColor = colorsDark[
+                                    Math.floor(
+                                      Math.random() * colorsDark.length
+                                    )
+                                  ]
+                                  return  (
                                   <Chip
+                                    onClick={()=>this.handleClickOpenTagSearch(element, tagColor)}
                                     className={classes.chip}
                                     style={{
-                                      backgroundColor:
-                                        colorsDark[
-                                          Math.floor(
-                                            Math.random() * colorsDark.length
-                                          )
-                                        ],
+                                      backgroundColor:tagColor
+
                                     }}
                                     label={element}
                                   />
-                                ))}
+                                )})}
+                            <WorkspaceViewTagSearch tag={this.state.tag} tagColor={this.state.tagColor} workspaceId={this.props.match.params.workspaceId} open={this.state.tagSearchDialog} onClose={this.handleCloseTagSearch}/>
+
                               </div>
                             ) : (
                               "Not specified"

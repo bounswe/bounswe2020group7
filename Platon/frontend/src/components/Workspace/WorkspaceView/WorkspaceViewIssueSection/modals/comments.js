@@ -19,7 +19,6 @@ import Avatar from '@material-ui/core/Avatar';
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import SpeakerNotesOffIcon from "@material-ui/icons/SpeakerNotesOff";
 import IconButton from "@material-ui/core/IconButton";
-import AddCommentModal from "./addComment";
 
 const { BASE_URL } = config;
 const COMMENT_URL = `${BASE_URL}/api/workspaces/issue/comment`;
@@ -165,17 +164,6 @@ const CommentsModal = ({
           </Button>
         </DialogActions>
       </Dialog>
-      <AddCommentModal
-          closePopup={() => openPopupAddComment(false)}
-          issue={issue}
-          workspaceId={workspaceId}
-          open={openAddComment}
-          loadIssues={() => loadIssues()}
-          issues={issues}
-          comment={comment}
-          setComment={setComment}
-          handleSubmit={handleSubmit}
-        />
     </div>
   );
 };
