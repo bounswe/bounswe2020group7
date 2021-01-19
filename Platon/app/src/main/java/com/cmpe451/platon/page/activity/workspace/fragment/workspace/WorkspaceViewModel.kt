@@ -67,7 +67,7 @@ class WorkspaceViewModel : ViewModel() {
     }
 
     fun getTagSearch(name: String, page:Int?, perPage: Int?) {
-        repository.getTagSearch(name, page, perPage)
+        repository.getTagSearch(name, page, perPage)}
 
     fun getRecommendedCollaborators(workspace_id: Int, number_of_recommendations:Int, token:String){
         repository.getRecommendedCollaborators(workspace_id, number_of_recommendations, token)

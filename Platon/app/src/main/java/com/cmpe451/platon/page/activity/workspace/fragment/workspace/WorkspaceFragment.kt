@@ -33,7 +33,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListener,
-    WorkspaceApplicationsAdapter.ApplicationsButtonClickListener, UpcomingEventsAdapter.UpcomingButtonClickListener, SkillsAdapter.OnTagClickedListener
+    WorkspaceApplicationsAdapter.ApplicationsButtonClickListener, UpcomingEventsAdapter.UpcomingButtonClickListener, SkillsAdapter.OnTagClickedListener,
     RecommendedCollaboratorsAdapter.RecommendedUserClickListener{
 
     private lateinit var binding: FragmentPersonalWorkspaceBinding
@@ -1034,6 +1034,8 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
                 }
             }
         })
+    }
+        
     override fun onInviteUserClicked(user: RecommendedUser, position: Int) {
         mWorkspaceViewModel.sendInvitationToWorkspace((activity as WorkspaceActivity).workspace_id!!, user.id, (activity as WorkspaceActivity).token!!)
         this.handledRequestPosition = position
