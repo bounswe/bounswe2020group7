@@ -257,13 +257,15 @@ class EditProfile extends Component {
           showSuccess: "You have deleted your skill successfully",
         });
         requestService
-          .getPersonalSkillList()
+          .getPersonalSkillList(decoded.id)
           .then((resp) => {
             if (resp) {
               let skillArray = [];
+              console.log(resp)
               for (var key in resp.data.skills) {
                 skillArray.push(resp.data.skills[key].name);
               }
+              console.log("s", skillArray)
               this.setState({
                 personalSkills: skillArray,
               });

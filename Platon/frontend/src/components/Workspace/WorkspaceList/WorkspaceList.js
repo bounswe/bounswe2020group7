@@ -25,6 +25,8 @@ import { Link } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import CancelOutlinedIcon from "@material-ui/icons/CancelOutlined";
 import CheckCircleOutlinedIcon from "@material-ui/icons/CheckCircleOutlined";
+import WorkspaceRecommendation from "../../Recommendation/WorkspaceRecommendation/WorkspaceRecommendation";
+
 const useStyles = (theme) => ({
   root: {
     flexGrow: 1,
@@ -74,7 +76,7 @@ class WorkspaceList extends Component {
     };
   }
   componentDidMount() {
-    this.promise()
+    this.promise();
   }
   promise = () => {
     Promise.all([
@@ -85,7 +87,7 @@ class WorkspaceList extends Component {
         loaded: true,
       });
     });
-  }
+  };
   fetchWorkspaces = () => {
     const token = localStorage.getItem("jwtToken");
     const decoded = jwt_decode(token);
@@ -99,7 +101,7 @@ class WorkspaceList extends Component {
       .then((response) => {
         if (response.status === 200) {
           this.setState({
-            workspaces: response.data.workspaces
+            workspaces: response.data.workspaces,
           });
         }
       })
@@ -190,7 +192,7 @@ class WorkspaceList extends Component {
         }
       })
       .catch((err) => {
-        console.log(err)
+        console.log(err);
         this.setState({
           error: "Error occured. " + err.response.data.error,
         });
@@ -247,7 +249,7 @@ class WorkspaceList extends Component {
                 width: "100%",
               }}
             >
-              <div style={{width:"55%"}}>
+              <div style={{ width: "55%" }}>
                 <Typography
                   style={{ color: colors.secondary, marginBottom: "20px" }}
                   component="h1"
@@ -312,71 +314,109 @@ class WorkspaceList extends Component {
                   </Typography>
                 )}
               </div>
-              <div style={{width: "35%"}}>
-                <div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
-              <Link
-                to={`/${this.state.profileId}/workspace/new`}
-                style={{ textDecoration: "none" }}
-              >
-                <IconButton
-                  disableRipple
-                  aria-label="create"
+              <div style={{ width: "35%" }}>
+                <div
                   style={{
-                    border: "none",
-                    borderRadius: "0.5em",
-                    backgroundColor: colors.tertiary,
-
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
                   }}
-
                 >
-                  <AddCircleOutlineIcon style={{ color: colors.secondary }} />
-                  <Typography
-                    style={{ color: colors.secondaryLight, paddingLeft: "5px" }}
-                    component="h1"
-                    variant="h5"
-                    align="center"
+                  <Link
+                    to={`/${this.state.profileId}/workspace/new`}
+                    style={{ textDecoration: "none" }}
                   >
-                    New Workspace
-                  </Typography>
-                </IconButton>
-              </Link>
-              </div>
-              <div style={{marginTop: "40px"}}>
-              <Typography
-                gutterBottom
-                variant="body1"
-                align="center"
-                style={{ color: colors.tertiary }}
-              >
-                Incoming Workspace Invitations
-              </Typography>
-              {this.state.inviter && this.state.inviter.length === 0
-                ? <div style={{textAlign: "center", color: colors.secondary}}>Nothing to show</div>
-                : null}
-              {this.state.inviter.map((inviter, index) => (
-                <div>
-                <div style={{ display: "flex" }}>
-                  <h6 style={{ margin: "auto 0px", color:colors.secondary}} >
-                    {inviter.invitor_fullname} invited you to join{" "}
-                    {inviter.workspace_title}
-                  </h6>
-                  <div>
-                    <IconButton onClick={() => this.handleRejectInvitation(inviter.invitation_id)}>
-                      <CancelOutlinedIcon style={{ color: colors.quinary }} />
-                    </IconButton>
-                    <IconButton onClick={() => this.handleAcceptInvitation(inviter.invitation_id)}>
-                      <CheckCircleOutlinedIcon
-                        style={{ color: colors.quaternary }}
+                    <IconButton
+                      disableRipple
+                      aria-label="create"
+                      style={{
+                        border: "none",
+                        borderRadius: "0.5em",
+                        backgroundColor: colors.tertiary,
+                      }}
+                    >
+                      <AddCircleOutlineIcon
+                        style={{ color: colors.secondary }}
                       />
+                      <Typography
+                        style={{
+                          color: colors.secondaryLight,
+                          paddingLeft: "5px",
+                        }}
+                        component="h1"
+                        variant="h5"
+                        align="center"
+                      >
+                        New Workspace
+                      </Typography>
                     </IconButton>
-
-                  </div>
-
+                  </Link>
                 </div>
-                <hr style={{backgroundColor: colors.primaryDark}}/>
+                <div style={{ marginTop: "40px" }}>
+                  <Typography
+                    gutterBottom
+                    variant="body1"
+                    align="center"
+                    style={{ color: colors.tertiary }}
+                  >
+                    Incoming Workspace Invitations
+                  </Typography>
+                  {this.state.inviter && this.state.inviter.length === 0 ? (
+                    <div
+                      style={{ textAlign: "center", color: colors.secondary }}
+                    >
+                      Nothing to show
+                    </div>
+                  ) : null}
+                  {this.state.inviter.map((inviter, index) => (
+                    <div>
+                      <div style={{ display: "flex" }}>
+                        <h6
+                          style={{
+                            margin: "auto 0px",
+                            color: colors.secondary,
+                          }}
+                        >
+                          {inviter.invitor_fullname} invited you to join{" "}
+                          {inviter.workspace_title}
+                        </h6>
+                        <div>
+                          <IconButton
+                            onClick={() =>
+                              this.handleRejectInvitation(inviter.invitation_id)
+                            }
+                          >
+                            <CancelOutlinedIcon
+                              style={{ color: colors.quinary }}
+                            />
+                          </IconButton>
+                          <IconButton
+                            onClick={() =>
+                              this.handleAcceptInvitation(inviter.invitation_id)
+                            }
+                          >
+                            <CheckCircleOutlinedIcon
+                              style={{ color: colors.quaternary }}
+                            />
+                          </IconButton>
+                        </div>
+                      </div>
+                      <hr style={{ backgroundColor: colors.primaryDark }} />
+                    </div>
+                  ))}
                 </div>
-              ))}
-              </div>
+
+                <div style={{ marginTop: "40px" }}>
+                  <Typography
+                    gutterBottom
+                    variant="body1"
+                    align="center"
+                    style={{ color: colors.quaternary }}
+                  >
+                    Recommended Workspaces to You
+                  </Typography>
+                  <WorkspaceRecommendation />
+                </div>
               </div>
             </div>
           ) : (
