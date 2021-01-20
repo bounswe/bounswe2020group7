@@ -9,6 +9,7 @@ from app.workspace_system.models import Workspace,WorkspaceSkill
 from app.auth_system.models import User
 from app.follow_system.models import Follow,FollowRequests
 from app.workspace_system.models import Contribution,CollaborationApplication,CollaborationInvitation
+from app.workspace_system.helpers import WorkspaceState
 
 import atexit
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -101,7 +102,13 @@ class RecommendationSystem():
         recommendation_records = []
         for recommendation in recommendations:
             if recommendation[0] not in all_contributions + all_applications:
-                recommendation_records.append(WorkspaceRecommendationItem(user_id,recommendation[0],float(recommendation[1])))
+                # Control the state of the workspace
+                try:
+                    ws = Workspace.query.get(recommendation[0])
+                except:
+                    continue
+                if ws.state != int(WorkspaceState.published):
+                    recommendation_records.append(WorkspaceRecommendationItem(user_id,recommendation[0],float(recommendation[1])))
         try:
             db.session.add_all(recommendation_records)
             db.session.commit()
@@ -234,7 +241,7 @@ class RecommendationSystem():
 
 def schedule_regularly():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(func=RecommendationSystem.update_all, trigger="interval",seconds=60)
+    scheduler.add_job(func=RecommendationSystem.update_all, trigger="interval",seconds=5*60)
     scheduler.start()
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())   
