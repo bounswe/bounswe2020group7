@@ -60,6 +60,9 @@ follow_requests_model = api.model('Follow Requests', {
 comment_model = api.model('Comments', {
     'comment_id': fields.Integer,
     'owner_id': fields.Integer,
+    'owner_name': fields.String,
+    'owner_surname': fields.String,
+    'owner_profile_photo': fields.String, 
     'commented_user_id': fields.Integer,
     'timestamp': fields.DateTime,
     'rate': fields.Integer,
@@ -452,6 +455,9 @@ class CommentRateAPI(Resource):
                 return_list.append({
                     "comment_id": comment.id,
                     "owner_id": comment.owner_id,
+                    "owner_name": commenter.name,
+                    "owner_surname": commenter.surname,
+                    "owner_profile_photo": profile_photo_link(commenter.profile_photo,commenter.id),
                     "commented_user_id": comment.commented_user_id,
                     "timestamp": comment.timestamp,
                     "rate": comment.rate,
