@@ -106,6 +106,10 @@ class SearchEngine():
         return sorted(results_list,key = lambda x: " ".join([x[key].lower() for key in key_list]),reverse=reverse)
 
     @staticmethod
+    def sort_results(results_list, key_list, reverse):
+        return sorted(results_list, key=lambda x: " ".join([x[key].lower() for key in key_list]), reverse=reverse)
+
+    @staticmethod
     def add_search_history_item(user_id,query,search_type):
         """
             Adds new search history item record to the database

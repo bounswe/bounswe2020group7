@@ -26,6 +26,7 @@ pyrsistent==0.17.3
 python-dateutil==2.8.1
 python-editor==1.0.4
 pytz==2020.4
+rank-bm25==0.2.1
 requests==2.25.0
 six==1.15.0
 soupsieve==2.0.1

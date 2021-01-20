@@ -2,14 +2,19 @@ from flask import make_response,jsonify,request
 from flask_restplus import Resource,Namespace, fields
 from sqlalchemy import func
 
-from app.search_engine.forms import UserSearchForm, user_search_parser,SearchHistoryForm,search_history_parser
+from app.search_engine.forms import UserSearchForm, user_search_parser,SearchHistoryForm,search_history_parser, WorkspaceSearchForm,ws_search_parser, UpcomingEventsSearchForm, upcoming_events_search_parser
 from app.search_engine.helpers import SearchEngine, SearchType
 from app.search_engine.models import SearchHistoryItem
 from app.profile_management.models import Jobs,Skills,UserSkills
 from app.auth_system.models import User
 from app.auth_system.helpers import decode_token,login_required,profile_photo_link
-from app.search_engine.forms import WorkspaceSearchForm,ws_search_parser
 from app.workspace_system.models import Contribution, Workspace, WorkspaceSkill
+from app.upcoming_events.models import UpcomingEvent
+from app.search_engine.forms import TagSearchForm,tag_search_parser
+
+from string import digits
+from datetime import datetime
+import json
 
 from app import api, db
 import math
@@ -71,6 +76,23 @@ workspace_list_model = api.model('Worksapce List', {
     "number_of_pages": fields.String,
     'workspaces': fields.List(
         fields.Nested(workspace_model)
+    )
+})
+
+upcoming_event_model = api.model('Upcoming Event', {
+    "id": fields.Integer,
+    "title": fields.String,
+    "acronym": fields.String,
+    "location": fields.String,
+    "date": fields.String,
+    "deadline": fields.String,
+    "link": fields.String,
+})
+
+upcoming_event_list_model = api.model('Upcoming Events List', {
+    "number_of_pages": fields.Integer,
+    'upcoming_events': fields.List(
+        fields.Nested(upcoming_event_model)
     )
 })
 
@@ -168,8 +190,7 @@ class UserSearchAPI(Resource):
                         else:
                             id_index = id_list.index(user[0])
                             result_id_score[id_index] =(user[0], result_id_score[id_index][1]+score)
-                except Exception as e:
-                    print(str(e))
+                except:
                     return make_response(jsonify({"error": "Database Connection Problem."}), 500)
             sorted_result_list = []
             # Sort result ids according to their scores
@@ -192,7 +213,7 @@ class UserSearchAPI(Resource):
             # Apply Pagination
             if form.page.data is not None and form.per_page.data is not None:
                 per_page = form.per_page.data
-                number_of_pages = math.ceil(len(sorted_id_list)/per_page)
+                number_of_pages = math.ceil(len(sorted_result_list)/per_page)
                 page = form.page.data if form.page.data < number_of_pages else number_of_pages-1
                 sorted_result_list = sorted_result_list[page*per_page:(page+1)*per_page]
             # Add Search History Item
@@ -271,13 +292,13 @@ class WorkspaceSearchAPI(Resource):
                         try:
                             contributors = Contribution.query.filter(Contribution.workspace_id == workspace[0]).all()
                         except:
-                            return make_response(jsonify({"err": "Database Connection Error"}),500)
+                            return make_response(jsonify({"error": "Database Connection Error"}),500)
                         contributor_list = []
                         for contributor in contributors:
                             try:
                                 user = User.query.get(contributor.user_id)
                             except:
-                                return make_response(jsonify({"err": "Database Connection Error"}),500)
+                                return make_response(jsonify({"error": "Database Connection Error"}),500)
                             contributor_list.append({
                                     "id": user.id,
                                     "name": user.name,
@@ -286,7 +307,7 @@ class WorkspaceSearchAPI(Resource):
                         try:
                             creator_info = User.query.filter(User.id == workspace[1]).first()
                         except:
-                            return make_response(jsonify({"err": "Database Connection Error"}),500)
+                            return make_response(jsonify({"error": "Database Connection Error"}),500)
                         result_list.append({"id":workspace[0], "title": workspace[3], "is_private": int(workspace[2]), 
                                             "description" : workspace[6], "state": workspace[4], "deadline" : workspace[7],
                                             "creation_time": workspace[5], "max_contributors": workspace[8],"contributor_list":contributor_list,
@@ -304,7 +325,7 @@ class WorkspaceSearchAPI(Resource):
                     try:
                         ws_skills = WorkspaceSkill.query.filter(WorkspaceSkill.workspace_id == ws_id).all()
                     except:
-                        return make_response(jsonify({"err": "Database Connection Error"}),500)
+                        return make_response(jsonify({"error": "Database Connection Error"}),500)
 
                     skill_ids = []
                     for ws_skill in ws_skills:
@@ -315,7 +336,7 @@ class WorkspaceSearchAPI(Resource):
                         try:
                             skill_info = Skills.query.filter(Skills.id == skill_id).first()
                         except:
-                            return make_response(jsonify({"err": "Database Connection Error"}),500)
+                            return make_response(jsonify({"error": "Database Connection Error"}),500)
                         
                         skill_names_of_ws.append(skill_info.name)
                     
@@ -430,6 +451,221 @@ class WorkspaceSearchAPI(Resource):
             # Remove Non-Valid Users
             return make_response(jsonify({"number_of_pages": number_of_pages,"result_list": result_list}))
 
+        else:
+            return make_response(jsonify({"error": "Missing data fields or invalid data."}), 400)
+
+@search_engine_ns.route("/upcoming_events")
+class UpcomingEventsSearchAPI(Resource):
+
+    @api.doc(responses={401: 'Account Problems', 400: 'Input Format Error', 500: 'Database Connection Error'})
+    @api.response(200, 'Valid Search Result', upcoming_event_list_model)
+    @api.expect(upcoming_events_search_parser)
+    def get(self):
+        form = UpcomingEventsSearchForm(request.args)
+        if form.validate():
+            search_query = form.search_query.data.lower()
+            # Remove the punctuation in the search query
+            search_query = SearchEngine.remove_punctuation(search_query)
+            # Tokenize the search query
+            tokens = search_query.split()
+            # Get stopwords form the API
+            stopwords = SearchEngine.get_stopwords()
+            # Remove stopwords from the list of tokens
+            tokens = list(set(tokens) - set(stopwords))
+            # Get the semantically related list for our tokens
+            tokens = SearchEngine.semantic_related_list(tokens)
+            # List of user dictionaries that will be send as a search output
+            result_list = []
+            # Score of each user record
+            result_id_score = []
+
+            # Search tokens for title, acronym, location, date or deadline match
+            for token, score in tokens:
+                try:
+                    query = '(LOWER(title) REGEXP ".*{0}.*" \
+                    OR LOWER(acronym) REGEXP ".*{0}.*" OR LOWER(location) REGEXP ".*{0}.*")'  \
+                    .format(token)
+                    sql_statement = "SELECT * FROM upcoming_events WHERE {}".format(query)
+                    result = db.engine.execute(sql_statement)
+                    for upcoming_event in result:
+                        id_list = [i[0] for i in result_id_score]
+                        if upcoming_event[0] not in id_list:
+                            if upcoming_event[-1] == 0:
+                                continue
+                            result_list.append({"id": upcoming_event[0], "title": upcoming_event[1], "acronym": upcoming_event[2],
+                                                "location": upcoming_event[3], "date": upcoming_event[4],
+                                                "deadline": upcoming_event[5], "link": upcoming_event[6]})
+                            result_id_score.append((upcoming_event[0], score))
+                        else:
+                            id_index = id_list.index(upcoming_event[0])
+                            result_id_score[id_index] = (upcoming_event[0], result_id_score[id_index][1] + score)
+                except:
+                    return make_response(jsonify({"error": "Database Connection Problem."}), 500)
+
+            # Search tokens for deadline match
+            deadline_filter_start_list = []
+            if form.deadline_filter_start.data is not None:
+                for result in result_list:
+                    event_deadline = result.get("deadline")
+                    if event_deadline != "N/A":
+                        filter_data = form.deadline_filter_start.data
+                        if datetime.strptime(event_deadline, '%b %d, %Y') >= filter_data:
+                            deadline_filter_start_list.append(result)
+                    result_list = deadline_filter_start_list
+            deadline_filter_end_list = []
+            if form.deadline_filter_end.data is not None:
+                for result in result_list:
+                    event_deadline = result.get("deadline")
+                    if event_deadline != "N/A":
+                        filter_data = form.deadline_filter_end.data
+                        if datetime.strptime(event_deadline, '%b %d, %Y') < filter_data:
+                            deadline_filter_end_list.append(result)
+                    result_list = deadline_filter_end_list
+            # Search tokens for date match
+            date_filter_start_list = []
+            if form.date_filter_start.data is not None:
+                for result in result_list:
+                    event_deadline = result.get("date")
+                    if event_deadline != "N/A":
+                        filter_data = form.date_filter_start.data
+                        if datetime.strptime(event_deadline[0:12].strip(), '%b %d, %Y') >= filter_data:
+                            date_filter_start_list.append(result)
+                    result_list = date_filter_start_list
+            date_filter_end_list = []
+            if form.date_filter_end.data is not None:
+                for result in result_list:
+                    event_deadline = result.get("date")
+                    if event_deadline != "N/A":
+                        filter_data = form.date_filter_end.data
+                        if datetime.strptime(event_deadline[0:12].strip(), '%b %d, %Y') < filter_data:
+                            date_filter_end_list.append(result)
+                    result_list = date_filter_end_list
+            sorted_result_list = []
+            # Sort result ids according to their scores
+            if form.sorting_criteria.data is not None:
+                # Sort Results according to Sorting Criteria
+                if form.sorting_criteria.data == 0:
+                    sorted_result_list = SearchEngine.sort_results(result_list, ["title"], False)
+                    result_list = sorted_result_list
+                else:
+                    dates = []
+                    for result in result_list:
+                        date = result.get("date")
+                        if date != "N/A":
+                            dates.append(date)
+
+                    dates.sort(key = lambda date: datetime.strptime(date[0:12].strip(), '%b %d, %Y'))
+                    for date in dates:
+                        for result in result_list:
+                            if result.get("date") == date:
+                                sorted_result_list.append(result)
+                    result_list = sorted_result_list
+
+            number_of_pages = 1
+            if form.page.data is not None and form.per_page.data is not None:
+                per_page = form.per_page.data
+                number_of_pages = math.ceil(len(result_list) / per_page)
+                page = form.page.data if form.page.data < number_of_pages else number_of_pages - 1
+                result_list = result_list[page * per_page:(page + 1) * per_page]
+            try:
+                auth_token = request.headers.get('auth_token')
+                SearchEngine.add_search_history_item(decode_token(auth_token), search_query, int(SearchType.UPCOMING_EVENT))
+            except:
+                pass
+            return make_response(jsonify({"number_of_pages": number_of_pages, "result_list": result_list}))
+
+        else:
+            return make_response(jsonify({"error": "Missing data fields or invalid data."}), 400)
+
+@search_engine_ns.route("/tag_search")
+class TagSearchAPI(Resource):
+
+    @api.doc(responses={401: 'Account Problems', 400: 'Input Format Error', 500: 'Database Connection Error'})
+    @api.response(200, 'Valid Users', search_user_list_model)
+    @api.response(201, 'Valid Workspaces', workspace_list_model)
+    @api.expect(tag_search_parser)
+    def get(self):
+        form = TagSearchForm(request.args)
+        if form.validate():
+            skill_list = json.loads(form.skills.data)
+            # Find the ids of the skills
+            try:
+                skill_ids = [Skills.query.filter_by(name=skill.title()).first().id for skill in skill_list]
+            except:
+                return make_response(jsonify({"error": "Database Connection Problem."}), 500)
+            result_lists = []
+            # Return Users
+            if form.search_type.data == 0:
+                for skill_id in skill_ids:
+                    try:
+                        user_ids = [user_skill.user_id for user_skill in UserSkills.query.filter_by(skill_id=skill_id).all()]
+                    except:
+                        return make_response(jsonify({"error": "Database Connection Problem."}), 500)
+                    result_lists.append(set(user_ids))
+                result_list = set.intersection(*result_lists)
+                result_response = []
+                for user_id in result_list:
+                    try:
+                        user = User.query.get(user_id)
+                        result_response.append({
+                            "id": user.id,
+                            "name": user.name,
+                            "surname": user.surname,
+                            "profile_photo": profile_photo_link(user.profile_photo,user.id),
+                            "job": Jobs.query.get(user.job_id).name,
+                            "institution": user.institution
+                        })
+                    except:
+                        return make_response(jsonify({"error": "Database Connection Problem."}), 500)
+            else:
+                for skill_id in skill_ids:
+                    try:
+                        ws_ids = [ws_skill.workspace_id for ws_skill in WorkspaceSkill.query.filter_by(skill_id=skill_id).all()]
+                    except:
+                        return make_response(jsonify({"error": "Database Connection Problem."}), 500)
+                    result_lists.append(set(ws_ids))
+                result_list = set.intersection(*result_lists)
+                result_response = []
+                for ws_id in result_list:
+                    try:
+                        ws = Workspace.query.get(ws_id)
+                    except:
+                        return make_response(jsonify({"error": "Database Connection Problem."}), 500)
+                    if ws.is_private:
+                        continue
+                    try:
+                        contributors = Contribution.query.filter(Contribution.workspace_id == ws.id).all()
+                    except:
+                        return make_response(jsonify({"error": "Database Connection Error"}),500)
+                    contributor_list = []
+                    for contributor in contributors:
+                        try:
+                            user = User.query.get(contributor.user_id)
+                        except:
+                            return make_response(jsonify({"error": "Database Connection Error"}),500)
+                        contributor_list.append({
+                                "id": user.id,
+                                "name": user.name,
+                                "surname": user.surname
+                        })
+                    try:
+                        creator_info = User.query.filter(User.id == ws.creator_id).first()
+                    except:
+                        return make_response(jsonify({"error": "Database Connection Error"}),500)
+                result_response.append({"id":ws.id, "title": ws.title, "is_private": int(ws.is_private), 
+                                        "description" : ws.description, "state": ws.state, "deadline" : ws.deadline,
+                                        "creation_time": ws.timestamp, "max_contributors": ws.max_collaborators,"contributor_list":contributor_list,
+                                        "creator_id": creator_info.id, "creator_name": creator_info.name,"creator_surname": creator_info.surname}) 
+
+            # Apply Pagination
+            number_of_pages = 1
+            if form.page.data is not None and form.per_page.data is not None:
+                per_page = form.per_page.data
+                number_of_pages = math.ceil(len(result_list) / per_page)
+                page = form.page.data if form.page.data < number_of_pages else number_of_pages - 1
+                result_response = result_response[page * per_page:(page + 1) * per_page]
+
+            return make_response(jsonify({"result_list": result_response, "number_of_pages":number_of_pages}),200 + form.search_type.data)
         else:
             return make_response(jsonify({"error": "Missing data fields or invalid data."}), 400)
 

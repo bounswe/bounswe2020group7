@@ -71,6 +71,14 @@ delete_workspace_parser = reqparse.RequestParser()
 delete_workspace_parser.add_argument("workspace_id",required=True,type=int,help="ID of the requested workspace", location="form")
 delete_workspace_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
 
+class GetIssueInfoForm(Form):
+	issue_id = IntegerField('issue_id', validators=[validators.DataRequired()])
+	workspace_id = IntegerField('workspace_id', validators=[validators.DataRequired()])
+
+get_issue_info_parser = reqparse.RequestParser()
+get_issue_info_parser.add_argument("issue_id",required=True,type=int,help="ID of the issue", location="args")
+get_issue_info_parser.add_argument("workspace_id",required=True,type=int,help="ID of the requested workspace", location="args")
+get_issue_info_parser.add_argument("auth_token",required=True, type=str, help="Authentication token", location="headers")
 
 class GetIssuesForm(Form):
 	workspace_id = IntegerField('workspace_id', validators=[validators.DataRequired()])

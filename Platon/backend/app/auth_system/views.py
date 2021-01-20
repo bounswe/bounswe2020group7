@@ -15,11 +15,12 @@ from app.auth_system.forms import GetUserSkillsForm, get_userskill_parser
 from app.auth_system.forms import PostUserSkillsForm, post_userskill_parser
 from app.auth_system.forms import DeleteUserSkillsForm, delete_userskill_parser, FileForm
 from app.auth_system.forms import ProfilePhotoForm, profile_photo_parser
+from app.auth_system.forms import AdminForm
 from app.auth_system.models import User
 from app.profile_management.models import Jobs, Skills, UserSkills
 from app.follow_system.models import Follow, FollowRequests
 from app.auth_system.helpers import generate_token,send_email,login_required, hashed, allowed_file, profile_photo_link
-from app.profile_management.helpers import ResearchInfoFetch
+from app.profile_management.helpers import ResearchInfoFetch, EMailManager
 from app.follow_system.helpers import follow_required_user
 from app.workspace_system.models import Collaboration
 
@@ -98,7 +99,7 @@ class ResetPasswordAPI(Resource):
             if not user.is_valid:
                 return make_response(jsonify({'error' : 'Please activate your account'}),401)
             token = generate_token(user.id,app.config['LINK_DURATION'])
-            if send_email(user.e_mail,"Password Reset Link","Click the following link to change tour password\nDo not forget to activate your account today, the link expires in 20 minutes!\nToken: {}".format(token),"{}/resetpassword/{}".format(app.config["FRONTEND_HOSTNAME"],token)):
+            if EMailManager.send_reset_password_e_mail(user.e_mail,token):
                 return make_response(jsonify({'mgs' : 'E-mail is successfully sent'}),200)
             else:
                 return make_response(jsonify({'error' : 'E-mail Server Error'}),500)
@@ -321,12 +322,7 @@ class UserAPI(Resource):
                     # If it fails, an error is raised.
                     try:
                         account_activation_token = generate_token(new_user.id, datetime.timedelta(days=1))
-                        send_email(
-                                    recipient_email=new_user.e_mail,
-                                    subject="Activate Your Platon Account",
-                                    message_body="Please activate your Platon account by clicking the activation link below.\nDo not forget to activate your account today, the link expires in one day!\nToken: {}".format(account_activation_token),
-                                    message_link="{}/activate_account?token={}".format(app.config["FRONTEND_HOSTNAME"],account_activation_token)
-                                    )
+                        EMailManager.send_account_activation_e_mail(new_user.e_mail,account_activation_token)
                     except:
                         return make_response(jsonify({"error" : "The server could not send the account activation e-mail."}), 503)
                     else:
@@ -632,6 +628,55 @@ class DefaultProfileAPI(Resource):
     @api.doc(responses={200: 'Valid Response'})
     def get(self):
         return send_from_directory(directory=app.config["LOGO_PATH"], filename="platon-logo.jpeg",cache_timeout=0)
+
+@auth_system_ns.route("/admin")
+class AdminAPI(Resource):
+
+    @api.doc(responses={200: 'Valid Response',400:"Inappropriate Input",401:"Unauthorized Input",500: "Database Connection Error"})
+    def get(self):
+        """
+            Deletes the specfied user from the system
+        """
+        form = AdminForm(request.args)
+        if form.validate():
+            if form.admin_token.data != "admin_platon_group7":
+                return  make_response(jsonify({'error': 'Unauthorized Input'}), 401)
+            try:
+                existing_user = User.query.filter_by(id=form.user_id.data).first()
+                send_email(existing_user.e_mail,
+                            "Your Account is Banned",
+                            "Your account is deleted because of your unappropriate behaviours.",
+                            "")
+                db.session.delete(existing_user)
+                db.session.commit()
+                return make_response(jsonify({'msg': 'Given account is successfully banned'}), 200)
+            except:
+                return  make_response(jsonify({'error': 'Database Connection Error'}), 500)
+        else:
+            return  make_response(jsonify({'error': 'Give appropriate input'}), 400)
+
+    @api.doc(responses={200: 'Valid Response',400:"Inappropriate Input",401:"Unauthorized Input",500: "Database Connection Error"})
+    def post(self):
+        """
+            Suspends the specfied user from the system
+        """
+        form = AdminForm(request.form)
+        if form.validate():
+            if form.admin_token.data != "admin_platon_group7":
+                return  make_response(jsonify({'error': 'Unauthorized Input'}), 401)
+            try:
+                existing_user = User.query.filter_by(id=form.user_id.data).first()
+                send_email(existing_user.e_mail,
+                            "Your Account is Suspended",
+                            "Your account is suspended because of your unappropriate behaviours. Our admin team will make their decission as soon as possible.",
+                            "")
+                existing_user.is_valid = 0
+                db.session.commit()
+                return make_response(jsonify({'msg': 'Given account is successfully suspended'}), 200)
+            except:
+                return  make_response(jsonify({'error': 'Database Connection Error'}), 500)
+        else:
+            return  make_response(jsonify({'error': 'Give appropriate input'}), 400)
 
 def register_resources(api):
     api.add_namespace(auth_system_ns)

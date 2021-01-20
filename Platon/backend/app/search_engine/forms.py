@@ -1,6 +1,7 @@
-from wtforms import Form, StringField, IntegerField, BooleanField, validators, DateTimeField
+from wtforms import Form, StringField, IntegerField, BooleanField, validators, DateTimeField, ValidationError
 from flask_restplus import reqparse
 import datetime
+import json
 
 class UserSearchForm(Form):
     search_query = StringField("search_query",validators=[validators.DataRequired()])
@@ -50,3 +51,43 @@ ws_search_parser.add_argument('sorting_criteria',type=int,help="None: Semantic R
 ws_search_parser.add_argument('page',type=int,help="Page ID(0-Indexed)",location='args')
 ws_search_parser.add_argument('per_page',type=int,help="Number of Records in a Page",location='args')
 ws_search_parser.add_argument('auth_token', type=str,help="Authantication Token(If registered)",location='headers')
+
+class UpcomingEventsSearchForm(Form):
+    search_query = StringField("search_query",validators=[validators.DataRequired()])
+    date_filter_start = DateTimeField("date_filter_start", default=None)
+    date_filter_end = DateTimeField("date_filter_end", default=None)
+    deadline_filter_start = DateTimeField("deadline_filter_start", default=None)
+    deadline_filter_end = DateTimeField("deadline_filter_end", default=None)
+    sorting_criteria = IntegerField("sorting_criteria",validators=[validators.NumberRange(min=0, max=1),validators.optional()])
+    page = IntegerField("page")
+    per_page = IntegerField("per_page")
+
+upcoming_events_search_parser = reqparse.RequestParser()
+upcoming_events_search_parser.add_argument('search_query',required=True,type=str,help="Search Query",location='args')
+upcoming_events_search_parser.add_argument('date_filter_start',type=datetime.datetime,help="Inclusive.",location='args')
+upcoming_events_search_parser.add_argument('date_filter_end',type=datetime.datetime,help="Exclusive.",location='args')
+upcoming_events_search_parser.add_argument('deadline_filter_start',type=datetime.datetime,help="Inclusive.",location='args')
+upcoming_events_search_parser.add_argument('deadline_filter_end',type=datetime.datetime,help="Exclusive.",location='args')
+upcoming_events_search_parser.add_argument('sorting_criteria',type=int,help="None => Semantic Rating // 0 => Alphabetical Order(A=>Z) // 1 => Date Order",location='args')
+upcoming_events_search_parser.add_argument('page',type=int,help="Page ID(0-Indexed)",location='args')
+upcoming_events_search_parser.add_argument('per_page',type=int,help="Number of Records in a Page",location='args')
+upcoming_events_search_parser.add_argument('auth_token', type=str,help="Authantication Token(If registered)",location='headers')
+
+def validate_json(form, field):
+	try:
+		json.loads(field.data)
+	except ValueError as e:
+		raise ValidationError("This is not a valid JSON string.")
+
+class TagSearchForm(Form):
+    search_type = IntegerField("search_type",validators=[validators.NumberRange(min=0, max=1),validators.InputRequired()])
+    skills = StringField("skills", validators=[validators.InputRequired(), validate_json])
+    page = IntegerField("page")
+    per_page = IntegerField("per_page")
+
+
+tag_search_parser = reqparse.RequestParser()
+tag_search_parser.add_argument('search_type',type=int,help="0 => User 1 => Worksapce",location='args')
+tag_search_parser.add_argument("skills", required=False, type=str, help="The list of the skills required to be able to join the new workspace", location="args")
+tag_search_parser.add_argument('page',type=int,help="Page ID(0-Indexed)",location='args')
+tag_search_parser.add_argument('per_page',type=int,help="Number of Records in a Page",location='args')

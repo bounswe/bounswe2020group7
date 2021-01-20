@@ -44,13 +44,13 @@ class FileSystemAPI(Resource):
             ws_path = FileSystem.workspace_base_path(form.workspace_id.data)
             path = ws_path + os.path.sep + form.path.data
             if FileSystem.is_path_forbidden(ws_path,path):
-                return make_response(jsonify({"err":"It is forbidden to reach this path"}),403)
+                return make_response(jsonify({"error":"It is forbidden to reach this path"}),403)
             file_path = path + os.path.sep + form.filename.data
             if not FileSystem.is_file_exists(file_path):
-                return make_response(jsonify({"err":"There is no such file"}),400) 
+                return make_response(jsonify({"error":"There is no such file"}),400) 
             return send_from_directory(path,form.filename.data,as_attachment=True,cache_timeout=10)
         else:
-            return make_response(jsonify({"err":"Invalid Input"}),400)
+            return make_response(jsonify({"error":"Invalid Input"}),400)
 
     @api.doc(responses={
                 201: "File Successfully Uploaded",
@@ -70,22 +70,22 @@ class FileSystemAPI(Resource):
             ws_path = FileSystem.workspace_base_path(form.workspace_id.data)
             new_file = file_form.new_file.data
             if form.filename.data == '':
-                return make_response(jsonify({"err":"Give Appropriate Filename"}),400)
+                return make_response(jsonify({"error":"Give Appropriate Filename"}),400)
             path = ws_path + os.path.sep + form.path.data
             # Control File Path
             if not FileSystem.is_directory_exists(path):
-                return make_response(jsonify({"err":"Give Appropriate Path"}),400)
+                return make_response(jsonify({"error":"Give Appropriate Path"}),400)
             if FileSystem.is_path_forbidden(ws_path,path):
-                return make_response(jsonify({"err":"It is forbidden to reach this path"}),403)
+                return make_response(jsonify({"error":"It is forbidden to reach this path"}),403)
             file_path = path + os.path.sep + form.filename.data
             # Control File Name is Unique or not
             if FileSystem.is_file_exists(file_path):
-                return make_response(jsonify({"err":"Give Appropriate Filename"}),400)
+                return make_response(jsonify({"error":"Give Appropriate Filename"}),400)
             # Save file to the given path
             new_file.save(file_path)
             return make_response(jsonify({"msg":"Your File is successfully uploaded"}),201)
         else:
-            return make_response(jsonify({"err":"Invalid Input"}),400)
+            return make_response(jsonify({"error":"Invalid Input"}),400)
     
     @api.doc(responses={
                 200: "File Name Successfully Changed",
@@ -107,19 +107,19 @@ class FileSystemAPI(Resource):
             # Control given path exists or not
             path = ws_path + os.path.sep + form.path.data
             if not FileSystem.is_directory_exists(path):
-                return make_response(jsonify({"err":"Give Appropriate Path"}),400)
+                return make_response(jsonify({"error":"Give Appropriate Path"}),400)
             if FileSystem.is_path_forbidden(ws_path,path):
-                return make_response(jsonify({"err":"It is forbidden to reach this path"}),403)
+                return make_response(jsonify({"error":"It is forbidden to reach this path"}),403)
             # Control given file exists or not
             file_path = path + os.path.sep + form.filename.data
             if not FileSystem.is_file_exists(file_path):
-                return make_response(jsonify({"err":"Give Appropriate Filename"}),400)
+                return make_response(jsonify({"error":"Give Appropriate Filename"}),400)
             # Update the given file
             os.remove(file_path)
             new_file.save(file_path)
             return make_response(jsonify({"msg":"Your File is successfully changed"}),200)
         else:
-            return make_response(jsonify({"err":"Invalid Input"}),400)
+            return make_response(jsonify({"error":"Invalid Input"}),400)
     
     @api.doc(responses={
                 200: "File Successfully Deleted",
@@ -139,18 +139,18 @@ class FileSystemAPI(Resource):
             # Control given path exists or not
             path = ws_path + os.path.sep + form.path.data
             if not os.path.exists(path):
-                return make_response(jsonify({"err":"Give Appropriate Path"}),400)
+                return make_response(jsonify({"error":"Give Appropriate Path"}),400)
             if FileSystem.is_path_forbidden(ws_path,path):
-                return make_response(jsonify({"err":"It is forbidden to reach this path"}),403)
+                return make_response(jsonify({"error":"It is forbidden to reach this path"}),403)
             # Control given file exists or not
             file_path = path + os.path.sep + form.filename.data
             if not os.path.isfile(file_path):
-                return make_response(jsonify({"err":"Give Appropriate Filename"}),400)
+                return make_response(jsonify({"error":"Give Appropriate Filename"}),400)
             # Delete file
             os.remove(file_path) 
-            return make_response(jsonify({"err":"Your File is successfully deleted"}),200)
+            return make_response(jsonify({"error":"Your File is successfully deleted"}),200)
         else:
-            return make_response(jsonify({"err":"Invalid Input"}),400)
+            return make_response(jsonify({"error":"Invalid Input"}),400)
 
 @file_system_ns.route("/folder")
 class FolderSystemAPI(Resource):
@@ -173,9 +173,9 @@ class FolderSystemAPI(Resource):
             folder_path = ws_path + os.path.sep + form.path.data
             # Control given path exits or not
             if not FileSystem.is_directory_exists(folder_path):
-                return make_response(jsonify({"err":"Give Appropriate Path"}),400)
+                return make_response(jsonify({"error":"Give Appropriate Path"}),400)
             if FileSystem.is_path_forbidden(ws_path,folder_path):
-                return make_response(jsonify({"err":"It is forbidden to reach this path"}),403)
+                return make_response(jsonify({"error":"It is forbidden to reach this path"}),403)
             file_list = []
             folder_list = []
             # Find list of files and foldes in the given path
@@ -187,7 +187,7 @@ class FolderSystemAPI(Resource):
             cwd = os.path.abspath(folder_path).replace(os.path.abspath(ws_path),".")        
             return make_response(jsonify({"files":file_list,"folders":folder_list,"cwd":cwd}),200)            
         else:
-            return make_response(jsonify({"err":"Invalid Input"}),400)
+            return make_response(jsonify({"error":"Invalid Input"}),400)
 
     @api.doc(responses={
                 201: "Folder Successfully Created",
@@ -207,22 +207,22 @@ class FolderSystemAPI(Resource):
             # Control given path exists or not
             path = ws_path + os.path.sep + form.path.data
             if not FileSystem.is_directory_exists(path):
-                return make_response(jsonify({"err":"Give Appropriate Path"}),400)
+                return make_response(jsonify({"error":"Give Appropriate Path"}),400)
             if FileSystem.is_path_forbidden(ws_path,path):
-                return make_response(jsonify({"err":"It is forbidden to reach this path"}),403)
+                return make_response(jsonify({"error":"It is forbidden to reach this path"}),403)
             # Control new folder name is valid or not
             new_folder_path = path + os.path.sep + form.new_folder_name.data
             if FileSystem.is_directory_exists(new_folder_path):
-                return make_response(jsonify({"err":"Given Folder Exists"}),400)
+                return make_response(jsonify({"error":"Given Folder Exists"}),400)
             # Create folder
             try:
                 os.mkdir(new_folder_path)
             except:
-                return make_response(jsonify({"err":"Recursive directories can not be created"}),400)
+                return make_response(jsonify({"error":"Recursive directories can not be created"}),400)
 
             return make_response(jsonify({"msg":"Folder is successfully created"}),201)
         else:
-            return make_response(jsonify({"err":"Invalid Input"}),400)
+            return make_response(jsonify({"error":"Invalid Input"}),400)
 
     @api.doc(responses={
                 200: "Folder Name Successfully Changed",
@@ -242,23 +242,23 @@ class FolderSystemAPI(Resource):
             # Control given path exists or not
             path = ws_path + os.path.sep + form.path.data
             if os.path.abspath(ws_path) == os.path.abspath(path):
-                return make_response(jsonify({"err":"It is forbidden to change the name of main folder"}),403)
+                return make_response(jsonify({"error":"It is forbidden to change the name of main folder"}),403)
             if not FileSystem.is_directory_exists(path):
-                return make_response(jsonify({"err":"Give Appropriate Path"}),400)
+                return make_response(jsonify({"error":"Give Appropriate Path"}),400)
             if FileSystem.is_path_forbidden(ws_path,path):
-                return make_response(jsonify({"err":"It is forbidden to reach this path"}),403)
+                return make_response(jsonify({"error":"It is forbidden to reach this path"}),403)
             # Calculate new path of the folder
             new_folder_path = path.split(os.path.sep)
             new_folder_path[-1] = form.new_folder_name.data
             new_folder_path = os.path.sep.join(new_folder_path)
             if FileSystem.is_directory_exists(new_folder_path):
-                return make_response(jsonify({"err":"Give Appropriate New File Name"}),400)
+                return make_response(jsonify({"error":"Give Appropriate New File Name"}),400)
             # Rename folder
             os.rename(path,new_folder_path)
             return make_response(jsonify({"msg":"Folder Name is successfully changed"}),200)
 
         else:
-            return make_response(jsonify({"err":"Invalid Input"}),400)
+            return make_response(jsonify({"error":"Invalid Input"}),400)
 
     @api.doc(responses={
                 200: "Folder Successfully Deleted",
@@ -276,18 +276,18 @@ class FolderSystemAPI(Resource):
         if form.validate():
             ws_path = FileSystem.workspace_base_path(form.workspace_id.data)
             if form.path.data == ".":
-                return make_response(jsonify({"err":"Main Folder can not be deleted"}),400)
+                return make_response(jsonify({"error":"Main Folder can not be deleted"}),400)
             # Control given path exists or not
             folder_path = ws_path + os.path.sep + form.path.data
             if FileSystem.is_path_forbidden(ws_path,folder_path):
-                return make_response(jsonify({"err":"It is forbidden to reach this path"}),403)
+                return make_response(jsonify({"error":"It is forbidden to reach this path"}),403)
             if not FileSystem.is_directory_exists(folder_path):
-                return make_response(jsonify({"err":"Folder does not exist"}),400)
+                return make_response(jsonify({"error":"Folder does not exist"}),400)
             # Delete all contents of the folder
             FileSystem.delete_all_content(folder_path)
             return make_response(jsonify({"msg":"Folder is successfully deleted"}),200)
         else:
-            return make_response(jsonify({"err":"Invalid Input"}),400)
+            return make_response(jsonify({"error":"Invalid Input"}),400)
 
 def register_resources(api):
     api.add_namespace(file_system_ns) 

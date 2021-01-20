@@ -10,14 +10,18 @@ from app.follow_system.forms import GetFollowingsForm, GetFollowersForm, GetFoll
     SendFollowRequestsForm, ReplyFollowRequestsForm, UnfollowForm
 from app.follow_system.forms import get_followings_parser, get_followers_parser, get_follow_requests_parser, send_follow_requests_parser, \
     reply_follow_requests_parser, unfollow_parser
-from app.follow_system.models import Follow, FollowRequests, Comments
+from app.follow_system.models import Follow, FollowRequests, Comments, Reports
 from app.auth_system.models import User
 from app.auth_system.views import login_required
+from app.auth_system.helpers import send_email
 from app.follow_system.helpers import follow_required, previous_collaboration_required, update_rate
 from app.profile_management.helpers import NotificationManager
 from app.auth_system.helpers import profile_photo_link
-from app.follow_system.forms import GetCommentsForm, PostCommentForm, DeleteCommentForm
-from app.follow_system.forms import get_comment_parser, post_comment_parser, delete_comment_parser
+from app.follow_system.forms import GetCommentsForm, PostCommentForm, DeleteCommentForm, GetReportsForm, PostReportForm, DeleteReportForm
+from app.follow_system.forms import get_comment_parser, post_comment_parser, delete_comment_parser, get_report_parser, post_report_parser, delete_report_parser
+from app.recommendation_system.helpers import RecommendationSystem
+from app.activity_stream.models import ActivityStreamItem
+from app.activity_stream.helpers import *
 
 follow_system_ns = Namespace("Follow System",
                              description="Follow System Endpoints",
@@ -69,6 +73,21 @@ comment_list_model = api.model('Comments List', {
     'number_of_pages': fields.Integer,
     'result': fields.List(
         fields.Nested(comment_model)
+    )
+})
+report_model = api.model('Reports', {
+    'report_id': fields.Integer,
+    'owner_id': fields.Integer,
+    'reported_user_id': fields.Integer,
+    'reported_user_name': fields.String,
+    'reported_user_surname': fields.String,
+    'text': fields.String
+})
+
+report_list_model = api.model('Reports List', {
+    'number_of_pages': fields.Integer,
+    'result': fields.List(
+        fields.Nested(report_model)
     )
 })
 
@@ -294,14 +313,19 @@ class FollowRequestAPI(Resource):
                 follow_record = Follow(form.follower_id.data, form.following_id.data)
                 try:
                     logged_in_user = User.query.filter(User.id == user_id).first()
-                    text = "{} started to following you".format(logged_in_user.name + " " + logged_in_user.surname)
+                    text = "{} started following you".format(logged_in_user.name + " " + logged_in_user.surname)
                     NotificationManager.add_notification(form.following_id.data,[logged_in_user.id],text)
                 except:
                     return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+                
+                # Add this activity to the Activity Stream
+                activity_stream_follow_activity(logged_in_user, following_user)
 
             try:
                 db.session.add(follow_record)  # Creating a new database entry.
                 db.session.commit()
+                # Remove the recommenadtion item if it exits
+                RecommendationSystem.remove_follow_recommendation(form.follower_id.data,form.following_id.data)
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
@@ -359,6 +383,27 @@ class FollowRequestAPI(Resource):
                 except:
                     return make_response(jsonify({'error': 'Database Connection Error'}), 500)
                 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+                # Add this activity into Activity Stream
+                activity_stream_entry = ActivityStreamItem(
+                    activity_context_vocab = "https://www.w3.org/ns/activitystreams",
+                    activity_summary = "{} {} started following {} {}".format(follower_user.name, follower_user.surname, following_user.name, following_user.surname),
+                    activity_type = "Follow",
+                    activity_actor_type = "Person",
+                    activity_actor_id = follower_user.id,
+                    activity_actor_name = (follower_user.name + " " + follower_user.surname),
+                    activity_actor_image_url = profile_photo_link(follower_user.profile_photo,follower_user.id),
+                    activity_object_type = "Person",
+                    activity_object_id = following_user.id,
+                    activity_object_name = following_user.name + " " + following_user.surname,
+                    activity_object_image_url = profile_photo_link(following_user.profile_photo, following_user.id)
+                )
+                try:
+                    db.session.add(activity_stream_entry)
+                    db.session.commit()
+                except:
+                    return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+            
             # Reject if the state of the reply is 2.
             elif form.state.data == 2:
                 try:
@@ -459,6 +504,10 @@ class CommentRateAPI(Resource):
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
             if update_rate(form.commented_user_id.data):
+
+                # Add this activity into Activity Stream
+                activity_stream_user_comment_activity(user_id, form, comment)
+                
                 return make_response(jsonify({'msg': 'Comment is successfully created'}), 201)
             else:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
@@ -477,10 +526,7 @@ class CommentRateAPI(Resource):
         if form.validate():
             try:
                 # Find comment record
-                comment = Comments.query.filter((Comments.id == form.comment_id.data)).first()
-
-                if comment.owner_id != user_id:
-                    return make_response(jsonify({'error': 'Unauthorized'}), 401)
+                comment = Comments.query.filter((Comments.id == form.comment_id.data)&(Comments.owner_id == user_id)).first()                    
 
                 if comment is None:
                     return make_response(jsonify({'error': 'Comment not found'}), 404)
@@ -491,12 +537,144 @@ class CommentRateAPI(Resource):
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
             
             if update_rate(comment.commented_user_id):
-                return make_response(jsonify({'msg': 'Issue Comment is successfully deleted'}), 201)
+                return make_response(jsonify({'msg': 'Comment is successfully deleted'}), 201)
             else:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
+
+from app.profile_management.helpers import EMailManager
+
+@follow_system_ns.route("/report")
+class ReportAPI(Resource):
+    '''
+        Endpoints for Report Model.
+    '''
+
+    @api.doc(responses={401: 'Account Problems', 400: 'Input Format Error', 500: ' Database Connection Error',
+                        404: 'Not found'})
+    @api.response(200, 'Success', report_list_model)
+    @api.expect(get_report_parser)
+    @login_required
+    def get(user_id, self):
+        '''
+            Get Reports of User.
+        '''
+        form = GetReportsForm(request.args)
+        if form.validate():
+            try:
+                user_reports = Reports.query.filter(
+                    Reports.owner_id == user_id).all()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+            if len(user_reports) == 0:
+                return make_response(jsonify({'result': []}), 200)
+            return_list = []
+            for report in user_reports:
+                try:
+                    reported_user = User.query.filter(User.id == report.reported_user_id).first()
+                except:
+                    return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+                if reported_user is None:
+                    return make_response(jsonify({'error': 'Reported User is None, smth wrong'}), 500)
+                return_list.append({
+                    "report_id": report.id,
+                    "owner_id": report.owner_id,
+                    "reported_user_id": report.reported_user_id,
+                    "reported_user_name": reported_user.name,
+                    "reported_user_surname": reported_user.surname,
+                    "text": report.text
+                })
+            # Pagination functionality
+            number_of_pages = 1
+            if form.page.data is not None and form.per_page.data is not None:
+                per_page = form.per_page.data
+                number_of_pages = math.ceil(len(return_list) / per_page)
+                # Assign the page index to the maximum if it exceeds the max index
+                page = form.page.data if form.page.data < number_of_pages else number_of_pages - 1
+                return_list = return_list[page * per_page:(page + 1) * per_page]
+            return make_response(jsonify({'number_of_pages': number_of_pages, 'result': return_list}), 200)
+        else:
+            return make_response(jsonify({'error': 'Input Format Error'}), 400)
+
+    @api.doc(responses={401: 'Account Problems', 400: 'Input Format Error', 500: ' Database Connection Error',
+                        404: 'Not found', 200: 'Success'})
+    @api.expect(post_report_parser)
+    @login_required
+    @previous_collaboration_required(param_loc="form", requested_user_id_key="reported_user_id")
+    def post(user_id, self):
+        '''
+            Create user report
+        '''
+        form = PostReportForm(request.form)
+        if form.validate():
+            try:
+                prev_report = Reports.query.filter_by(owner_id=user_id,
+                                                        reported_user_id=form.reported_user_id.data).first()
+            except:
+                return make_response(jsonify({'error': 'DB connection error'}), 500)
+
+            if prev_report is not None:
+                return make_response(jsonify({'error': 'You are not allowed to send more than 1 report to a user'}),
+                                     403)
+
+            try:
+                report = Reports(user_id, form.reported_user_id.data, form.text.data)
+            except:
+                return make_response(jsonify({'error': 'DB connection error'}), 500)
+            try:
+                db.session.add(report)
+                db.session.commit()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+            report_id = report.id
+            try:
+                reported_user = User.query.get(form.reported_user_id.data)
+            except: 
+                return make_response(jsonify({'error': 'DB connection error'}), 500)
+            e_mail_text = "There is a report about the user {} {}".format(reported_user.name,reported_user.surname) + "\n" + form.text.data
+            if EMailManager.send_admin_report_e_mail(form.reported_user_id.data,e_mail_text):
+                return make_response(jsonify({'msg': 'Report addition is successfully sent via email'}), 200)
+            else:
+                return make_response(jsonify({'error' : 'E-mail Server Error'}),500)
+        else:
+            return make_response(jsonify({'error': 'Input Format Error'}), 400)
+
+    @api.doc(responses={401: 'Account Problems', 400: 'Input Format Error', 500: ' Database Connection Error',
+                        404: 'Not found', 200: 'Success'})
+    @api.expect(delete_report_parser)
+    @login_required
+    def delete(user_id, self):
+        '''
+            Deletes an user report
+        '''
+        form = DeleteReportForm(request.args)
+        if form.validate():
+            report_id = 0
+            try:
+                # Find report record
+                report = Reports.query.filter((Reports.id == form.report_id.data)).first()
+
+                if report.owner_id != user_id:
+                    return make_response(jsonify({'error': 'Unauthorized'}), 401)
+
+                if report is None:
+                    return make_response(jsonify({'error': 'Report not found'}), 404)
+                report_id = report.id
+                db.session.delete(report)
+                db.session.commit()
+            except:
+                return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+            if send_email("platon.group7@gmail.com", "Report of a User", "Following report is deleted with the Report ID: {}".format(report_id),""):
+                return make_response(jsonify({'msg': 'Report deletion is successfully sent via email'}), 200)
+            else:
+                return make_response(jsonify({'error' : 'E-mail Server Error'}),500)
+
+        else:
+            return make_response(jsonify({'error': 'Input Format Error'}), 400)
+
 
 def register_resources(api):
     api.add_namespace(follow_system_ns)
