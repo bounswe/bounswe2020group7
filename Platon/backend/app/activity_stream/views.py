@@ -128,6 +128,7 @@ class ActivityStreamAPI(Resource):
             for following_id in followings_ids_list:
                 try:
                     # Returns activity stream items with descending timestamp value.
+                    # Activities of the workspace that the user is active should be added.
                     activity_stream_items_list = ActivityStreamItem.query.filter(ActivityStreamItem.activity_actor_id == following_id).order_by(desc(ActivityStreamItem.timestamp)).all()
                 except:
                     # not sure to return error.

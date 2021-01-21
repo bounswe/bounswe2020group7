@@ -191,3 +191,39 @@ def activity_stream_delete_workspace(requested_workspace, requester_id):
             db.session.commit()
         except:
             return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+def get_workspace_title_of_issue(issue):
+    try:
+        workpace = Workspace.query.filter(Workspace.id == issue.workspace_id).first()
+    except:
+        return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+
+    return workpace.title
+
+def activity_stream_create_issue(user_id, issue):
+    try:
+        current_user = User.query.filter(User.id == user_id).first()
+    except:
+        return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+
+    # Activity is added into Activity Stream
+    activity_stream_entry = ActivityStreamItem(
+        activity_context_vocab = "https://www.w3.org/ns/activitystreams",
+        activity_summary = "{} {} created an issue titled '{}' in the workspace '{}'".format(current_user.name, current_user.surname, issue.title, get_workspace_title_of_issue(issue)),
+        activity_type = "Create",
+        activity_actor_type = "Person",
+        activity_actor_id = current_user.id,
+        activity_actor_name = (current_user.name + " " + current_user.surname),
+        activity_actor_image_url = profile_photo_link(current_user.profile_photo,current_user.id),
+        activity_object_type = "Note",
+        activity_object_name = issue.title,
+        activity_object_id = issue.id,
+        activity_object_content = issue.description
+        # Target information can be added later.
+    )
+    try:
+        db.session.add(activity_stream_entry)
+        db.session.commit()
+    except:
+        return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+

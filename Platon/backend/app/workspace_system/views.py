@@ -375,6 +375,9 @@ class IssueAPI(Resource):
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
+            # creates activity stream record
+            activity_stream_create_issue(user_id, issue)
+
             return make_response(jsonify({
                 'msg': 'Issue is successfully created',
                 "issue_id": issue.id, 
