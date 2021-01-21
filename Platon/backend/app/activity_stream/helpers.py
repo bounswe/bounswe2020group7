@@ -253,3 +253,35 @@ def get_activities_in_workspaces(user_id, workspace_ids_list):
         activity_stream_list += activity_stream_items_list
     return activity_stream_list
 
+def activity_stream_post_file(user_id, workspace_id, filename):
+    try:
+        current_user = User.query.filter(User.id == user_id).first()
+        workspace = Workspace.query.filter(Workspace.id == workspace_id).first()
+    except:
+        return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+    
+    try:
+        # Activity is added into Activity Stream
+        activity_stream_entry = ActivityStreamItem(
+            activity_context_vocab = "https://www.w3.org/ns/activitystreams",
+            activity_summary = "{} {} uploaded a new file named '{}' to the workspace '{}'".format(current_user.name, current_user.surname, filename, workspace.title),
+            activity_type = "Create",
+            activity_actor_type = "Person",
+            activity_actor_id = current_user.id,
+            activity_actor_name = (current_user.name + " " + current_user.surname),
+            activity_actor_image_url = profile_photo_link(current_user.profile_photo,current_user.id),
+            activity_object_type = "Document",
+            activity_object_name = workspace.title,
+            activity_object_id = workspace.id,
+            activity_target_type = "Group",
+            activity_target_id = workspace.id,
+            activity_target_name = workspace.title
+        )
+    except:
+        make_response(jsonify({"error" : "error happened while creating activity stream entry"}), 500)
+    
+    try:
+        db.session.add(activity_stream_entry)
+        db.session.commit()
+    except:
+        return make_response(jsonify({'error': 'Database Connection Error'}), 500)

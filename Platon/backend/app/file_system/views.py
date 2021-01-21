@@ -7,6 +7,7 @@ from app.file_system.forms import FolderInfoForm, folder_get_parser, FolderPostP
 from app.file_system.helpers import FileSystem
 from app.workspace_system.helpers import workspace_exists,active_contribution_required, visibility_required
 from app.auth_system.helpers import login_required
+from app.activity_stream.helpers import *
 from app import api, db
 import os
 import pathlib
@@ -83,6 +84,8 @@ class FileSystemAPI(Resource):
                 return make_response(jsonify({"error":"Give Appropriate Filename"}),400)
             # Save file to the given path
             new_file.save(file_path)
+            # Save this activity into Activity Stream
+            activity_stream_post_file(user_id, form.workspace_id.data, form.filename.data)
             return make_response(jsonify({"msg":"Your File is successfully uploaded"}),201)
         else:
             return make_response(jsonify({"error":"Invalid Input"}),400)
