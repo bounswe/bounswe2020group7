@@ -151,6 +151,8 @@ class FileSystemAPI(Resource):
                 return make_response(jsonify({"error":"Give Appropriate Filename"}),400)
             # Delete file
             os.remove(file_path) 
+            # Add this activity into Activity Stream.
+            activity_stream_delete_file(user_id, form.workspace_id.data, form.filename.data)
             return make_response(jsonify({"error":"Your File is successfully deleted"}),200)
         else:
             return make_response(jsonify({"error":"Invalid Input"}),400)

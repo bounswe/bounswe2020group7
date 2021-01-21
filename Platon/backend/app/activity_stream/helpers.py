@@ -357,7 +357,7 @@ def activity_stream_delete_folder(user_id, workspace_id, path):
         workspace = Workspace.query.filter(Workspace.id == workspace_id).first()
     except:
         return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
-    print(path)
+
     folder_name = path.split("/")[-1]
     try:
         # Activity is added into Activity Stream
@@ -371,6 +371,38 @@ def activity_stream_delete_folder(user_id, workspace_id, path):
             activity_actor_image_url = profile_photo_link(current_user.profile_photo,current_user.id),
             activity_object_type = "Document",
             activity_object_name = folder_name,
+            activity_target_type = "Group",
+            activity_target_id = workspace.id,
+            activity_target_name = workspace.title
+        )
+    except:
+        make_response(jsonify({"error" : "error happened while creating activity stream entry"}), 500)
+    
+    try:
+        db.session.add(activity_stream_entry)
+        db.session.commit()
+    except:
+        return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+def activity_stream_delete_file(user_id, workspace_id, filename):
+    try:
+        current_user = User.query.filter(User.id == user_id).first()
+        workspace = Workspace.query.filter(Workspace.id == workspace_id).first()
+    except:
+        return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+
+    try:
+        # Activity is added into Activity Stream
+        activity_stream_entry = ActivityStreamItem(
+            activity_context_vocab = "https://www.w3.org/ns/activitystreams",
+            activity_summary = "{} {} deleted the file named '{}' in the workspace '{}'".format(current_user.name, current_user.surname, filename, workspace.title),
+            activity_type = "Create",
+            activity_actor_type = "Person",
+            activity_actor_id = current_user.id,
+            activity_actor_name = (current_user.name + " " + current_user.surname),
+            activity_actor_image_url = profile_photo_link(current_user.profile_photo,current_user.id),
+            activity_object_type = "Document",
+            activity_object_name = filename,
             activity_target_type = "Group",
             activity_target_id = workspace.id,
             activity_target_name = workspace.title
