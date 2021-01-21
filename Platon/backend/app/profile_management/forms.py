@@ -100,6 +100,15 @@ notification_get_parser.add_argument('page',type=int,help="Page index that you w
 notification_get_parser.add_argument('per_page',type=int,help="Number of items in a page",location='args')
 notification_get_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
 
+class NotificationPostForm(Form):
+    is_email_allowed = IntegerField("is_email_allowed", validators=[validators.optional(), validators.NumberRange(min=0, max=1)])
+    is_notification_allowed = IntegerField("is_notification_allowed", validators=[validators.optional(), validators.NumberRange(min=0, max=1)])
+
+notification_post_parser = reqparse.RequestParser()
+notification_post_parser.add_argument('is_email_allowed',type=int,help="1 => Allowed 0 => Not Allowed",location='form')
+notification_post_parser.add_argument('is_email_allowed',type=int,help="1 => Allowed 0 => Not Allowed",location='form')
+notification_post_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
+
 class NotificationDeleteForm(Form):
     notification_id = IntegerField('notification_id',validators=[validators.DataRequired()])
 
