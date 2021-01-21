@@ -317,3 +317,36 @@ def activity_stream_post_folder(user_id, workspace_id, new_folder_name):
         db.session.commit()
     except:
         return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+def activity_stream_post_milestone(user_id, milestone):
+    try:
+        current_user = User.query.filter(User.id == user_id).first()
+        workspace = Workspace.query.filter(Workspace.id == milestone.workspace_id).first()
+    except:
+        return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+    
+    try:
+        # Activity is added into Activity Stream
+        activity_stream_entry = ActivityStreamItem(
+            activity_context_vocab = "https://www.w3.org/ns/activitystreams",
+            activity_summary = "{} {} created a milestone titled '{}' in the workspace '{}'".format(current_user.name, current_user.surname, milestone.title, workspace.title),
+            activity_type = "Create",
+            activity_actor_type = "Person",
+            activity_actor_id = current_user.id,
+            activity_actor_name = (current_user.name + " " + current_user.surname),
+            activity_actor_image_url = profile_photo_link(current_user.profile_photo,current_user.id),
+            activity_object_type = "Event",
+            activity_object_name = milestone.title,
+            activity_object_id = milestone.id,
+            activity_target_type = "Group",
+            activity_target_id = workspace.id,
+            activity_target_name = workspace.title
+        )
+    except:
+        make_response(jsonify({"error" : "error happened while creating activity stream entry"}), 500)
+    
+    try:
+        db.session.add(activity_stream_entry)
+        db.session.commit()
+    except:
+        return make_response(jsonify({'error': 'Database Connection Error'}), 500)

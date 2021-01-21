@@ -921,6 +921,8 @@ class MilestoneAPI(Resource):
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
+            # Add this activity into Activity Stream.
+            activity_stream_post_milestone(user_id, milestone)
             return make_response(jsonify({'msg': 'milestone is successfully created'}), 200)
 
         else:
