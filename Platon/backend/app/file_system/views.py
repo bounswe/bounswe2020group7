@@ -222,7 +222,8 @@ class FolderSystemAPI(Resource):
                 os.mkdir(new_folder_path)
             except:
                 return make_response(jsonify({"error":"Recursive directories can not be created"}),400)
-
+            # Save this activity into Activity Stream
+            activity_stream_post_folder(user_id, form.workspace_id.data, form.new_folder_name.data)
             return make_response(jsonify({"msg":"Folder is successfully created"}),201)
         else:
             return make_response(jsonify({"error":"Invalid Input"}),400)
