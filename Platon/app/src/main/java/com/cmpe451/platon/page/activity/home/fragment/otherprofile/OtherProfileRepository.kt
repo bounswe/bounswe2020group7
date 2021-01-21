@@ -237,4 +237,31 @@ class OtherProfileRepository() {
 
         })
     }
+
+    var reportUserResourceResponse: MutableLiveData<Resource<JsonObject>> = MutableLiveData()
+
+    fun getReportUser(reported_user_id: Int, text: String?, token: String) {
+        val service = RetrofitClient.getService()
+        val call = service.reportUser(reported_user_id, text, token)
+        reportUserResourceResponse.value = Resource.Loading()
+        call.enqueue(object: Callback<JsonObject?>{
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when {
+                    response.isSuccessful && response.body() != null -> {
+                        reportUserResourceResponse.value = Resource.Success(response.body()!!)
+                    }
+                    response.errorBody() != null -> userSkills.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> reportUserResourceResponse.value = Resource.Error("Unknown error!")
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+
+        })
+    }
+
+
+
 }

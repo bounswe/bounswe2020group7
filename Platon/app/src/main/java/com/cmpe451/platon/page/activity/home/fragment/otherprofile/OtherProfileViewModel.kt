@@ -20,7 +20,7 @@ class OtherProfileViewModel : ViewModel() {
     var getUserComments = repository.userComments
     var getAddDeleteCommentResourceResponse = repository.addDeleteCommentResourceResponse
     var getTagSearchResourceResponse = repository.tagSearchResourceResponse
-
+    var getReportUserResourceResponse = repository.reportUserResourceResponse
     fun getUser(userId:Int, token:String) {
         repository.getUser(userId, token)
     }
@@ -68,5 +68,9 @@ class OtherProfileViewModel : ViewModel() {
     }
     fun getTagSearchUser(name: String, page:Int?, perPage: Int?) {
         repository.getTagSearchUser(name, page, perPage)
+    }
+
+    fun reportUser(reported_user_id:Int, text:String?, token:String){
+        repository.getReportUser(reported_user_id, text, token)
     }
 }

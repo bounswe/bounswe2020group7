@@ -507,4 +507,13 @@ interface Webservice {
     fun getRecommendedWorkspaces(
         @Query("number_of_recommendations") number_of_recommendations:Int,
         @Header("auth_token") authToken :String):Call<RecommendedWorkspaceList?>
+
+
+    @FormUrlEncoded
+    @POST("api/follow/report")
+    fun reportUser(@Field("reported_user_id") reported_user_id: Int,
+                        @Field("text") text: String?,
+                        @Header("auth_token") authToken: String): Call<JsonObject?>
+
+
 }
