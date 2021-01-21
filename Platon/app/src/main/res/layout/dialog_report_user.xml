@@ -3,9 +3,10 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_margin="@dimen/medium"
         android:background="@drawable/view_back_darker"
         android:gravity="center"
         android:orientation="vertical"
@@ -14,8 +15,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-    
 
+        <TextView
+            android:layout_width="match_parent"
+            android:text="@string/report_user_str"
+            android:gravity="center"
+            android:textColor="@color/primary_light"
+            android:textSize="@dimen/title_text_size"
+            android:layout_height="wrap_content" />
         <EditText
             android:id="@+id/et_report"
             android:layout_width="match_parent"
