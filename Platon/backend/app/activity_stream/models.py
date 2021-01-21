@@ -13,7 +13,7 @@ class ActivityStreamItem(db.Model):
     activity_actor_image_url = db.Column(db.String(100), nullable=False)
     timestamp = db.Column(db.DateTime,default=db.func.now(),nullable=False)
     activity_object_type = db.Column(db.String(50), nullable=False)
-    activity_object_id = db.Column(db.Integer, nullable=False)
+    activity_object_id = db.Column(db.Integer, nullable=True)
     activity_object_name = db.Column(db.String(50), nullable=False)
     activity_object_image_url = db.Column(db.String(100), nullable=True)
     activity_object_content = db.Column(db.String(250), nullable=True)
