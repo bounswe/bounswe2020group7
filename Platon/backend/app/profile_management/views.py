@@ -9,11 +9,11 @@ from app.profile_management.forms import ResearchInfoUpdateForm, research_info_u
 from app.profile_management.models import ResearchInformation
 from app.profile_management.helpers import schedule_regularly
 from app.profile_management.models import Skills
-from app.profile_management.models import Jobs
+from app.profile_management.models import Jobs, NotificationStatus
 from app.profile_management.forms import JobsPostForm,jobs_post_parser, JobsPutForm,jobs_put_parser, JobsDeleteForm,jobs_delete_parser
 from app.profile_management.forms import SkillsPostForm,skills_post_parser, SkillsPutForm,skills_put_parser, SkillsDeleteForm,skills_delete_parser
 from app.profile_management.forms import NotificationGetForm,notification_get_parser,NotificationDeleteForm,notification_delete_parser
-from app.profile_management.forms import front_page_parser
+from app.profile_management.forms import front_page_parser, NotificationPostForm, notification_post_parser
 from app.profile_management.models import ResearchInformation,Notification,NotificationRelatedUser
 from app.profile_management.helpers import schedule_regularly,ResearchType
 
@@ -360,6 +360,26 @@ class NotificationAPI(Resource):
             notification_list = notification_list[page*per_page:(page+1)*per_page]
 
         return make_response(jsonify({'number_of_pages':number_of_pages,'notification_list' : notification_list}),200)
+    
+    @api.doc(responses={201:'Successfully Updated',400:'Wrong Input Format',401:'Authantication Problem',404:'Notification Not Found',500:'Database Connection Problem'})
+    @api.expect(notification_post_parser)
+    @login_required
+    def post(user_id,self):
+        form = NotificationPostForm(request.form)
+        if form.validate():
+            try:
+                NotificationStatus.query.filter(NotificationStatus.owner_id == user_id).delete()
+            except:
+                return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
+            notificaton_status = NotificationStatus(owner_id=user_id,is_email_allowed=form.is_email_allowed.data,is_notification_allowed=form.is_notification_allowed.data)
+            try:
+                db.session.add(notificaton_status)
+                db.session.commit()
+            except:
+                return make_response(jsonify({'error' : 'Database Connection Problem'}),500)
+            return make_response(jsonify({'msg' : 'Notification Status Sucessfully Changed'}),201)
+        else:
+            return make_response(jsonify({'error' : 'Wrong Input Format'}),400)
 
     @api.doc(responses={200:'Successfully Deleted',400:'Wrong Input Format',401:'Authantication Problem',404:'Notification Not Found',500:'Database Connection Problem'})
     @api.expect(notification_delete_parser)
