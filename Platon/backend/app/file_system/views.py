@@ -289,6 +289,8 @@ class FolderSystemAPI(Resource):
                 return make_response(jsonify({"error":"Folder does not exist"}),400)
             # Delete all contents of the folder
             FileSystem.delete_all_content(folder_path)
+            # Add this activity into Activity Stream.
+            activity_stream_delete_folder(user_id, form.workspace_id.data, form.path.data)
             return make_response(jsonify({"msg":"Folder is successfully deleted"}),200)
         else:
             return make_response(jsonify({"error":"Invalid Input"}),400)
