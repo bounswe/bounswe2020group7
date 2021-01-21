@@ -200,6 +200,7 @@ class ActivityStreamAPI(Resource):
                 "summary": "Page {} of Activity Stream".format(page),
                 "type": "OrderedCollectionPage",
                 "id": page,
+                "totalItems": number_of_pages,
                 "orderedItems": ordered_items
             }
 
