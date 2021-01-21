@@ -10,6 +10,7 @@ from app.follow_system.models import *
 from app.workspace_system.models import *
 from app.activity_stream.forms import *
 from app.auth_system.helpers import *
+from app.activity_stream.helpers import *
 
 from sqlalchemy import desc
 
@@ -128,13 +129,18 @@ class ActivityStreamAPI(Resource):
             for following_id in followings_ids_list:
                 try:
                     # Returns activity stream items with descending timestamp value.
-                    # Activities of the workspace that the user is active should be added.
                     activity_stream_items_list = ActivityStreamItem.query.filter(ActivityStreamItem.activity_actor_id == following_id).order_by(desc(ActivityStreamItem.timestamp)).all()
                 except:
                     # not sure to return error.
                     return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
 
                 activity_stream_list += activity_stream_items_list
+            
+            # Activities of the workspace that the user is active should be added. 
+            activity_stream_list_of_workspaces = get_activities_in_workspaces(user_id, workspace_ids_list)
+
+            # these two activity streams list should be combined and sorted again.
+            activity_stream_list = sort_activities(activity_stream_list_of_workspaces, activity_stream_list)
 
             # Pagination applied
             per_page = form.per_page.data

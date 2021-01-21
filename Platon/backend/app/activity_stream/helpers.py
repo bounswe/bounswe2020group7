@@ -4,6 +4,7 @@ from app.auth_system.models import *
 from app.activity_stream.models import *
 from app.follow_system.models import *
 from app.auth_system.helpers import profile_photo_link
+from sqlalchemy import desc
 
 
 
@@ -206,24 +207,49 @@ def activity_stream_create_issue(user_id, issue):
     except:
         return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
 
-    # Activity is added into Activity Stream
-    activity_stream_entry = ActivityStreamItem(
-        activity_context_vocab = "https://www.w3.org/ns/activitystreams",
-        activity_summary = "{} {} created an issue titled '{}' in the workspace '{}'".format(current_user.name, current_user.surname, issue.title, get_workspace_title_of_issue(issue)),
-        activity_type = "Create",
-        activity_actor_type = "Person",
-        activity_actor_id = current_user.id,
-        activity_actor_name = (current_user.name + " " + current_user.surname),
-        activity_actor_image_url = profile_photo_link(current_user.profile_photo,current_user.id),
-        activity_object_type = "Note",
-        activity_object_name = issue.title,
-        activity_object_id = issue.id,
-        activity_object_content = issue.description
-        # Target information can be added later.
-    )
+    try:
+        # Activity is added into Activity Stream
+        activity_stream_entry = ActivityStreamItem(
+            activity_context_vocab = "https://www.w3.org/ns/activitystreams",
+            activity_summary = "{} {} created an issue titled '{}' in the workspace '{}'".format(current_user.name, current_user.surname, issue.title, get_workspace_title_of_issue(issue)),
+            activity_type = "Create",
+            activity_actor_type = "Person",
+            activity_actor_id = current_user.id,
+            activity_actor_name = (current_user.name + " " + current_user.surname),
+            activity_actor_image_url = profile_photo_link(current_user.profile_photo,current_user.id),
+            activity_object_type = "Note",
+            activity_object_name = issue.title,
+            activity_object_id = issue.id,
+            activity_object_content = issue.description,
+            activity_target_type = "Group",
+            activity_target_id = issue.workspace_id,
+            activity_target_name = get_workspace_title_of_issue(issue)
+        )
+    except:
+        make_response(jsonify({"error" : "error happened while creating activity stream entry"}), 500)
+    
     try:
         db.session.add(activity_stream_entry)
         db.session.commit()
     except:
         return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+def sort_activities(activity_list_1, activity_list_2):
+    # since they are both in sorted order, merge operation can be performed which is O(N)
+    # however, right now I'll just use built-in sort which is probably O(N*logN)
+    return sorted(activity_list_1+activity_list_2, key=lambda x: x.timestamp, reverse=True)
+
+def get_activities_in_workspaces(user_id, workspace_ids_list):
+    activity_stream_list = []
+    for workspace_id in workspace_ids_list:
+        try:
+            # Returns activity stream items with descending timestamp value.
+            # Design Choice: If activity actor is the current user, don't show this activity in activity stream.
+            activity_stream_items_list = ActivityStreamItem.query.filter((ActivityStreamItem.activity_target_id == workspace_id)&(ActivityStreamItem.activity_target_type == "Group")&(ActivityStreamItem.activity_actor_id != user_id)).order_by(desc(ActivityStreamItem.timestamp)).all()
+        except:
+            # not sure to return error.
+            return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
+
+        activity_stream_list += activity_stream_items_list
+    return activity_stream_list
 
