@@ -26,9 +26,9 @@ def activity_stream_accept_collaboration_invitation(invitation, invitee_id):
         activity_actor_id = current_user.id,
         activity_actor_name = (current_user.name + " " + current_user.surname),
         activity_actor_image_url = profile_photo_link(current_user.profile_photo,current_user.id),
-        activity_object_type = "Group",
-        activity_object_name = workspace.title,
-        activity_object_id = workspace.id,
+        activity_target_type = "Group",
+        activity_target_name = workspace.title,
+        activity_target_id = workspace.id,
     )
     try:
         db.session.add(activity_stream_entry)
@@ -106,9 +106,9 @@ def activity_stream_accept_collaboration_application(application):
         activity_actor_id = current_user.id,
         activity_actor_name = (current_user.name + " " + current_user.surname),
         activity_actor_image_url = profile_photo_link(current_user.profile_photo,current_user.id),
-        activity_object_type = "Group",
-        activity_object_name = workspace.title,
-        activity_object_id = workspace.id,
+        activity_target_type = "Group",
+        activity_target_name = workspace.title,
+        activity_target_id = workspace.id,
     )
     try:
         db.session.add(activity_stream_entry)
@@ -235,10 +235,8 @@ def activity_stream_create_issue(user_id, issue):
     except:
         return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
-def sort_activities(activity_list_1, activity_list_2):
-    # since they are both in sorted order, merge operation can be performed which is O(N)
-    # however, right now I'll just use built-in sort which is probably O(N*logN)
-    return sorted(activity_list_1+activity_list_2, key=lambda x: x.timestamp, reverse=True)
+def sort_activities(activities_list):
+    return sorted(activities_list, key=lambda x: x.timestamp, reverse=True)
 
 def get_activities_in_workspaces(user_id, workspace_ids_list):
     activity_stream_list = []
@@ -415,3 +413,6 @@ def activity_stream_delete_file(user_id, workspace_id, filename):
         db.session.commit()
     except:
         return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+def remove_duplicate_activities(activity_stream_list_of_workspaces, activity_stream_list):
+    return list(set(activity_stream_list + activity_stream_list_of_workspaces))

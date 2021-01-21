@@ -139,8 +139,12 @@ class ActivityStreamAPI(Resource):
             # Activities of the workspace that the user is active should be added. 
             activity_stream_list_of_workspaces = get_activities_in_workspaces(user_id, workspace_ids_list)
 
-            # these two activity streams list should be combined and sorted again.
-            activity_stream_list = sort_activities(activity_stream_list_of_workspaces, activity_stream_list)
+            # Remove duplicate activities.
+            # This happens when if two people are following each other and also collaborate on the same workspace.
+            duplicates_removed_list = remove_duplicate_activities(activity_stream_list_of_workspaces, activity_stream_list)
+
+            # these two activity streams list should be sorted again.
+            activity_stream_list = sort_activities(duplicates_removed_list)
 
             # Pagination applied
             per_page = form.per_page.data
