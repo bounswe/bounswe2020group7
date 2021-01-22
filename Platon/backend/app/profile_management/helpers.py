@@ -180,7 +180,7 @@ class NotificationManager():
             except:
                 return False
         # Send Notification E-Mial if it is allowed
-        if int(notification_status.is_email_allowed) == 1:
+        if notification_status is not None and int(notification_status.is_email_allowed) == 1:
             try:
                 user = User.query.get(owner_id)
             except:
