@@ -37,216 +37,212 @@ const followers = (id) => {
 };
 
 const getUser = (id) => {
-    const url = config.BASE_URL;
-    const params = {
-        user_id: id,
-    };
-    const token = localStorage.getItem("jwtToken");
-    axios.defaults.headers.common["auth_token"] = `${token}`;
-    return axios.get(url + "/api/auth_system/user", {params})
-        .then(response => {
-            //eğer kullanıcı bulunursa (user.data.status = true)
-            if (response) {
-            }
-            return response;
-        })
-        .catch(err => {
-            console.log(err)
-            return err.response;
-        });
+  const url = config.BASE_URL;
+  const params = {
+    user_id: id,
+  };
+  const token = localStorage.getItem("jwtToken");
+  axios.defaults.headers.common["auth_token"] = `${token}`;
+  return axios
+    .get(url + "/api/auth_system/user", { params })
+    .then((response) => {
+      //eğer kullanıcı bulunursa (user.data.status = true)
+      if (response) {
+      }
+      return response;
+    })
+    .catch((err) => {
+      console.log(err);
+      return err.response;
+    });
+};
+const createIssue = (title, description, deadline, workspace_id) => {
+  const url = config.BASE_URL;
+  const params = {
+    title: title,
+    description: description,
+    deadline: deadline,
+    workspace_id: workspace_id,
+  };
+  let formData = new FormData();
 
-}
-const createIssue = (title,description,deadline,workspace_id) => {
-    const url = config.BASE_URL;
-    const params = {
-        title: title,
-        description:description,
-        deadline:deadline,
-        workspace_id:workspace_id
-    };
-    let formData = new FormData();
+  formData.append("title", title);
+  formData.append("description", description);
+  //        formData.append("deadline",deadline);
+  formData.append("workspace_id", workspace_id);
+  const token = localStorage.getItem("jwtToken");
+  axios.defaults.headers.common["auth_token"] = `${token}`;
+  return axios
+    .post(url + "/api/workspaces/issue", formData)
+    .then((response) => {
+      //eğer kullanıcı bulunursa (user.data.status = true)
+      if (response) {
+      }
+      return response;
+    })
+    .catch((err) => {
+      console.log(err);
+      return err.response;
+    });
+};
 
-        formData.append("title", title);
-        formData.append("description",description);
-//        formData.append("deadline",deadline);
-        formData.append("workspace_id",workspace_id);
-    const token = localStorage.getItem("jwtToken");
-    axios.defaults.headers.common["auth_token"] = `${token}`;
-    return axios.post(url + "/api/workspaces/issue", formData)
-        .then(response => {
-            //eğer kullanıcı bulunursa (user.data.status = true)
-            if (response) {
-            }
-            return response;
-        })
-        .catch(err => {
-            console.log(err)
-            return err.response;
-        });
+const deleteIssue = (issue_id, workspace_id) => {
+  const url = config.BASE_URL;
+  const token = localStorage.getItem("jwtToken");
 
-}
+  let formData = new FormData();
+  formData.append("issue_id", issue_id);
+  //        formData.append("description",description);
+  //        formData.append("deadline",deadline);
+  formData.append("workspace_id", workspace_id);
+  axios
+    .delete(url + "/api/workspaces/issue", {
+      headers: {
+        auth_token: token, //the token is a variable which holds the token
+      },
+      data: formData,
+    })
+    .then((response) => {
+      if (response.status === 200) {
+        this.fetchFileStructure();
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+const addIssueComment = (issue_id, workspace_id, description) => {
+  const url = config.BASE_URL;
 
-const deleteIssue = (issue_id,workspace_id) => {
-    const url = config.BASE_URL;
-const token = localStorage.getItem("jwtToken");
+  let formData = new FormData();
 
+  formData.append("issue_id", issue_id);
+  formData.append("comment", description);
+  formData.append("workspace_id", workspace_id);
 
-    let formData = new FormData();
-    formData.append("issue_id",issue_id);
-   //        formData.append("description",description);
-   //        formData.append("deadline",deadline);
-           formData.append("workspace_id",workspace_id);
-    axios
-      .delete(url + "/api/workspaces/issue", {
-        headers: {
-          auth_token: token, //the token is a variable which holds the token
-        },
-        data: formData,
-      })
-      .then((response) => {
-        if (response.status === 200) {
-          this.fetchFileStructure();
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  const token = localStorage.getItem("jwtToken");
+  axios.defaults.headers.common["auth_token"] = `${token}`;
+  return axios
+    .post(url + "/api/workspaces/issue/comment", formData)
+    .then((response) => {
+      //eğer kullanıcı bulunursa (user.data.status = true)
+      if (response) {
+      }
+      return response;
+    })
+    .catch((err) => {
+      console.log(err);
+      return err.response;
+    });
+};
 
+const assignIssue = (issue_id, workspace_id, assignee_id) => {
+  const url = config.BASE_URL;
 
-}
-const addIssueComment = (issue_id,workspace_id,description) => {
-    const url = config.BASE_URL;
+  let formData = new FormData();
 
-    let formData = new FormData();
+  formData.append("issue_id", issue_id);
+  formData.append("assignee_id", assignee_id);
+  formData.append("workspace_id", workspace_id);
+  const token = localStorage.getItem("jwtToken");
+  axios.defaults.headers.common["auth_token"] = `${token}`;
+  return axios
+    .post(url + "/api/workspaces/issue/assignee", formData)
+    .then((response) => {
+      //eğer kullanıcı bulunursa (user.data.status = true)
+      if (response) {
+      }
+      return response;
+    })
+    .catch((err) => {
+      console.log(err);
+      return err.response;
+    });
+};
 
-        formData.append("issue_id", issue_id);
-        formData.append("comment",description);
-        formData.append("workspace_id",workspace_id);
+const getIssueComment = (issue_id, workspace_id, assignee_id) => {
+  const url = config.BASE_URL;
+  const params = {
+    issue_id: issue_id,
+    workspace_id: workspace_id,
+  };
 
-    const token = localStorage.getItem("jwtToken");
-    axios.defaults.headers.common["auth_token"] = `${token}`;
-    return axios.post(url + "/api/workspaces/issue/comment", formData)
-        .then(response => {
-            //eğer kullanıcı bulunursa (user.data.status = true)
-            if (response) {
-            }
-            return response;
-        })
-        .catch(err => {
-            console.log(err)
-            return err.response;
-        });
-
-}
-
-const assignIssue = (issue_id,workspace_id,assignee_id) => {
-    const url = config.BASE_URL;
-
-    let formData = new FormData();
-
-        formData.append("issue_id", issue_id);
-        formData.append("assignee_id",assignee_id);
-        formData.append("workspace_id",workspace_id);
-    const token = localStorage.getItem("jwtToken");
-    axios.defaults.headers.common["auth_token"] = `${token}`;
-    return axios.post(url + "/api/workspaces/issue/assignee", formData)
-        .then(response => {
-            //eğer kullanıcı bulunursa (user.data.status = true)
-            if (response) {
-            }
-            return response;
-        })
-        .catch(err => {
-            console.log(err)
-            return err.response;
-        });
-
-}
-
-const getIssueComment = (issue_id,workspace_id,assignee_id) => {
-    const url = config.BASE_URL;
-    const params = {
-        issue_id: issue_id,
-        workspace_id:workspace_id
-    };
-
-    let formData = new FormData();
-    const token = localStorage.getItem("jwtToken");
-    axios.defaults.headers.common["auth_token"] = `${token}`;
-    return axios.get(url + "/api/workspaces/issue/comment", {params})
-        .then(response => {
-            //eğer kullanıcı bulunursa (user.data.status = true)
-            if (response) {
-            }
-            return response;
-        })
-        .catch(err => {
-            console.log(err)
-            return err.response;
-        });
-}
-
+  let formData = new FormData();
+  const token = localStorage.getItem("jwtToken");
+  axios.defaults.headers.common["auth_token"] = `${token}`;
+  return axios
+    .get(url + "/api/workspaces/issue/comment", { params })
+    .then((response) => {
+      //eğer kullanıcı bulunursa (user.data.status = true)
+      if (response) {
+      }
+      return response;
+    })
+    .catch((err) => {
+      console.log(err);
+      return err.response;
+    });
+};
 
 const getResearchs = (id) => {
-    const url = config.BASE_URL;
-    const params = {
-        user_id: id,
-    };
-    const token = localStorage.getItem("jwtToken");
-    axios.defaults.headers.common["auth_token"] = `${token}`;
-    return axios.get(url + "/api/profile/research_information", {params})
-        .then(response => {
-            //eğer kullanıcı bulunursa (user.data.status = true)
-            if (response) {
-            }
-            return response;
-        })
-        .catch(err => {
-            console.log(err)
-            return err.response;
-        });
+  const url = config.BASE_URL;
+  const params = {
+    user_id: id,
+  };
+  const token = localStorage.getItem("jwtToken");
+  axios.defaults.headers.common["auth_token"] = `${token}`;
+  return axios
+    .get(url + "/api/profile/research_information", { params })
+    .then((response) => {
+      //eğer kullanıcı bulunursa (user.data.status = true)
+      if (response) {
+      }
+      return response;
+    })
+    .catch((err) => {
+      console.log(err);
+      return err.response;
+    });
+};
 
-}
-
-const getIssues = (id,workspace_id) => {
-    const url = config.BASE_URL;
-    const params = {
-        user_id: id,
-        workspace_id:workspace_id,
-    };
-    const token = localStorage.getItem("jwtToken");
-    axios.defaults.headers.common["auth_token"] = `${token}`;
-    return axios.get(url + "/api/workspaces/issue", {params})
-        .then(response => {
-            //eğer kullanıcı bulunursa (user.data.status = true)
-            if (response) {
-            }
-            return response;
-        })
-        .catch(err => {
-            console.log(err)
-            return err.response;
-        });
-
-}
+const getIssues = (id, workspace_id) => {
+  const url = config.BASE_URL;
+  const params = {
+    user_id: id,
+    workspace_id: workspace_id,
+  };
+  const token = localStorage.getItem("jwtToken");
+  axios.defaults.headers.common["auth_token"] = `${token}`;
+  return axios
+    .get(url + "/api/workspaces/issue", { params })
+    .then((response) => {
+      //eğer kullanıcı bulunursa (user.data.status = true)
+      if (response) {
+      }
+      return response;
+    })
+    .catch((err) => {
+      console.log(err);
+      return err.response;
+    });
+};
 
 const getNotifications = () => {
-
-    const url = config.BASE_URL;
-    const token = localStorage.getItem("jwtToken");
-    axios.defaults.headers.common["auth_token"] = `${token}`;
-    return axios.get(url + "/api/profile/notifications")
-        .then(response => {
-            if (response) {
-            }
-            return response;
-        })
-        .catch(err => {
-            console.log(err)
-            return err.response;
-        });
-
-}
+  const url = config.BASE_URL;
+  const token = localStorage.getItem("jwtToken");
+  axios.defaults.headers.common["auth_token"] = `${token}`;
+  return axios
+    .get(url + "/api/profile/notifications")
+    .then((response) => {
+      if (response) {
+      }
+      return response;
+    })
+    .catch((err) => {
+      console.log(err);
+      return err.response;
+    });
+};
 
 const getFeed = () => {
   const url = config.BASE_URL;
@@ -261,7 +257,6 @@ const getFeed = () => {
       return err.response;
     });
 };
-
 
 const postFollowRequest = (follower_id, following_id) => {
   const url = config.BASE_URL;
@@ -290,7 +285,7 @@ const getSearchUser = (search_query, job_filter, sorting_criteria) => {
     search_query: search_query,
     sorting_criteria: sorting_criteria,
   };
-  
+
   if (job_filter !== "") {
     params.job_filter = job_filter;
   }
@@ -573,20 +568,23 @@ const getSearchUpcomingEvents = (
   };
 
   if (date_filter_start !== "") {
-    params.date_filter_start = (date_filter_start + ":00").replaceAt(
-      10,
-      " "
-    );
+    params.date_filter_start = (date_filter_start + ":00").replaceAt(10, " ");
   }
   if (date_filter_end !== "") {
     params.date_filter_end = (date_filter_end + ":00").replaceAt(10, " ");
   }
   if (deadline_filter_start !== "") {
-    params.deadline_filter_start = (deadline_filter_start + ":00").replaceAt(10, " ");
+    params.deadline_filter_start = (deadline_filter_start + ":00").replaceAt(
+      10,
+      " "
+    );
   }
   if (deadline_filter_end !== "") {
-    params.deadline_filter_end = (deadline_filter_end + ":00").replaceAt(10, " ");
-  } 
+    params.deadline_filter_end = (deadline_filter_end + ":00").replaceAt(
+      10,
+      " "
+    );
+  }
 
   return axios
     .get(url + "/api/search_engine/upcoming_events", { params })
@@ -607,6 +605,26 @@ const getSearchHistory = (searchQuery) => {
 
   return axios
     .get(url + "/api/search_engine/upcoming_events?search_query=" + searchQuery)
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => {
+      return err.response;
+    });
+};
+
+const getUserRecommendation = (number_of_recommendations) => {
+  const url = config.BASE_URL;
+
+  const token = localStorage.getItem("jwtToken");
+  axios.defaults.headers.common["auth_token"] = `${token}`;
+
+  const params = {
+    number_of_recommendations: number_of_recommendations,
+  };
+
+  return axios
+    .get(url + "/api/recommendation_system/follow", { params })
     .then((response) => {
       return response;
     })
@@ -649,5 +667,6 @@ export default {
   createIssue,
   assignIssue,
   getIssues,
-  deleteIssue 
+  deleteIssue,
+  getUserRecommendation,
 };

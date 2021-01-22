@@ -105,6 +105,7 @@ class ProfilePage extends React.Component {
       isProfilePrivate: false,
       showSuccess: false,
       inviteDialogOpen: false,
+      recommendedUsers: [],
     }
   }
 
@@ -143,6 +144,7 @@ class ProfilePage extends React.Component {
               this.setState({
                 followers: response.data.followers,
               })
+              console.log(this.state.followers)
             }),
             requestService.getFollowRequests().then((response) => {
               this.setState({
@@ -165,6 +167,14 @@ class ProfilePage extends React.Component {
                 })
               }
             }),
+            requestService.getUserRecommendation(5).then((response) =>{
+              if (response) {
+                this.setState({
+                  recommendedUsers: response.data.recommendation_list,
+                })
+                console.log(this.state.recommendedUsers)
+              }
+            })
           ])
         }
       })
@@ -486,6 +496,9 @@ class ProfilePage extends React.Component {
                       {!this.state.isMyProfile ? null : (
                         <Tab label="Requests" {...a11yProps(3)} />
                       )}
+                      {!this.state.isMyProfile ? null : (
+                        <Tab label="Recommendation" {...a11yProps(4)} />
+                      )}
                     </Tabs>
                   </AppBar>
                   <TabPanel value={this.state.value} index={0}>
@@ -661,6 +674,31 @@ class ProfilePage extends React.Component {
                                   Reject
                                 </Button>
                               </div>
+                            </ListItem>
+                          )
+                        })}
+                      </List>
+                    </TabPanel>
+                  )}
+                  {!this.state.isMyProfile ? null : (
+                    <TabPanel value={this.state.value} index={4}>
+                      <List>
+                        {this.state.recommendedUsers.map((value, index) => {
+                          return (
+                            <ListItem>
+                              <ListItemAvatar>
+                                <Avatar>
+                                  <PersonIcon />
+                                </Avatar>
+                              </ListItemAvatar>
+                              <Link
+                                onClick={() => this.handleProfile(value.id)}
+                              >
+                                <ListItemText
+                                  style={{ color: colors.secondary }}
+                                  primary={`${value.name} ${value.surname}`}
+                                />
+                              </Link>
                             </ListItem>
                           )
                         })}
