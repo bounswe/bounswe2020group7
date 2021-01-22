@@ -365,6 +365,9 @@ class NotificationAPI(Resource):
     @api.expect(notification_post_parser)
     @login_required
     def post(user_id,self):
+        """
+            Updates the Notification Status Information
+        """
         form = NotificationPostForm(request.form)
         if form.validate():
             try:

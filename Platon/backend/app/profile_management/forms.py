@@ -106,7 +106,7 @@ class NotificationPostForm(Form):
 
 notification_post_parser = reqparse.RequestParser()
 notification_post_parser.add_argument('is_email_allowed',type=int,help="1 => Allowed 0 => Not Allowed",location='form')
-notification_post_parser.add_argument('is_email_allowed',type=int,help="1 => Allowed 0 => Not Allowed",location='form')
+notification_post_parser.add_argument('is_notification_allowed',type=int,help="1 => Allowed 0 => Not Allowed",location='form')
 notification_post_parser.add_argument('auth_token',required=True, type=str,help="Authentication Token",location='headers')
 
 class NotificationDeleteForm(Form):

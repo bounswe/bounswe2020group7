@@ -17,7 +17,7 @@ from app.auth_system.forms import DeleteUserSkillsForm, delete_userskill_parser,
 from app.auth_system.forms import ProfilePhotoForm, profile_photo_parser
 from app.auth_system.forms import AdminForm
 from app.auth_system.models import User
-from app.profile_management.models import Jobs, Skills, UserSkills
+from app.profile_management.models import Jobs, Skills, UserSkills, NotificationStatus
 from app.follow_system.models import Follow, FollowRequests
 from app.auth_system.helpers import generate_token,send_email,login_required, hashed, allowed_file, profile_photo_link
 from app.profile_management.helpers import ResearchInfoFetch, EMailManager
@@ -317,6 +317,14 @@ class UserAPI(Resource):
                         ResearchInfoFetch.update_research_info(new_user.id)
                     except:
                         pass
+
+                    # Creates Initial Notification Status Record
+                    try:
+                        notification_status = NotificationStatus(owner_id=new_user.id,is_email_allowed=True,is_notification_allowed=True)
+                        db.session.add(notification_status)
+                        db.session.commit()
+                    except:
+                        return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
 
                     # Tries to send the activation mail to the user.
                     # If it fails, an error is raised.

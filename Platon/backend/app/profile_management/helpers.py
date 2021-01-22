@@ -11,7 +11,7 @@ from enum import IntEnum
 from flask import current_app as config_app
 
 from app.auth_system.models import User
-from app.profile_management.models import ResearchInformation,Notification,NotificationRelatedUser
+from app.profile_management.models import ResearchInformation,Notification,NotificationRelatedUser,NotificationStatus
 
 
 class ResearchType(IntEnum):
@@ -101,33 +101,6 @@ class ResearchInfoFetch():
         except:
             return
 
-
-class NotificationManager():
-    
-    @staticmethod
-    def add_notification(owner_id,related_user_id_list,text,link=None):
-        """
-            Creates notification for a user and also adds related user list to the database
-            If it creates without any problem it returns True,
-            In any problem function returns False
-        """
-        new_notification = Notification(owner_id,text,link)
-        try:
-            db.session.add(new_notification)
-            db.session.commit()
-        except:
-            return False
-
-        related_user_records = [NotificationRelatedUser(new_notification.id,id) for id in related_user_id_list]
-        try:
-            db.session.add_all(related_user_records)
-            db.session.commit()
-        except:
-            return False
-
-        return True
-
-
 class EMailManager():
 
     @staticmethod
@@ -177,6 +150,43 @@ class EMailManager():
             return True
         except:
             return False
+
+class NotificationManager():
+    
+    @staticmethod
+    def add_notification(owner_id,related_user_id_list,text,link=None):
+        """
+            Creates notification for a user and also adds related user list to the database
+            If it creates without any problem it returns True,
+            In any problem function returns False
+        """
+        try:
+            notification_status = NotificationStatus.query.get(owner_id)
+        except:
+            return False
+        # Add Notification if it is allowed    
+        if notification_status is None or int(notification_status.is_notification_allowed) == 1:
+            new_notification = Notification(owner_id,text,link)
+            try:
+                db.session.add(new_notification)
+                db.session.commit()
+            except:
+                return False
+
+            related_user_records = [NotificationRelatedUser(new_notification.id,id) for id in related_user_id_list]
+            try:
+                db.session.add_all(related_user_records)
+                db.session.commit()
+            except:
+                return False
+        # Send Notification E-Mial if it is allowed
+        if int(notification_status.is_email_allowed) == 1:
+            try:
+                user = User.query.get(owner_id)
+            except:
+                return False
+            EMailManager.send_notification_e_mail(user.e_mail,text)
+        return True
 
 def schedule_regularly():
     scheduler = BackgroundScheduler()
