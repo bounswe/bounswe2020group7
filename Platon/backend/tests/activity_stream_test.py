@@ -144,6 +144,7 @@ class ActivityStreamTest(BaseTest):
                                 "summary": "Page 0 of Activity Stream",
                                 "type": "OrderedCollectionPage",
                                 "id": 0,
+                                "totalItems": 1,
                                 "orderedItems": [
                                     {
                                         "@context": {
@@ -217,6 +218,7 @@ class ActivityStreamTest(BaseTest):
                                         "summary": "Page 0 of Activity Stream",
                                         "type": "OrderedCollectionPage",
                                         "id": 0,
+                                        "totalItems": 1,
                                         "orderedItems": [
                                             {
                                                 "@context": {
@@ -321,6 +323,7 @@ class ActivityStreamTest(BaseTest):
                                 "summary": "Page 0 of Activity Stream",
                                 "type": "OrderedCollectionPage",
                                 "id": 0,
+                                "totalItems": 1,
                                 "orderedItems": [
                                             {
                                                 "@context": {
@@ -402,6 +405,7 @@ class ActivityStreamTest(BaseTest):
                                 "summary": "Page 0 of Activity Stream",
                                 "type": "OrderedCollectionPage",
                                 "id": 0,
+                                "totalItems": 1,
                                 "orderedItems": [
                                             {
                                                 "@context": {
@@ -480,6 +484,7 @@ class ActivityStreamTest(BaseTest):
                                 "summary": "Page 0 of Activity Stream",
                                 "type": "OrderedCollectionPage",
                                 "id": 0,
+                                "totalItems": 1,
                                 "orderedItems": [
                                             {
                                                 "@context": {
@@ -582,6 +587,7 @@ class ActivityStreamTest(BaseTest):
                                 "summary": "Page 0 of Activity Stream",
                                 "type": "OrderedCollectionPage",
                                 "id": 0,
+                                "totalItems": 1,
                                 "orderedItems": [
                                             {
                                                 "@context": {
@@ -652,6 +658,7 @@ class ActivityStreamTest(BaseTest):
                                 "summary": "Page 0 of Activity Stream",
                                 "type": "OrderedCollectionPage",
                                 "id": 0,
+                                "totalItems": 1,
                                 "orderedItems": [
                                             {
                                                 "@context": {
@@ -722,6 +729,7 @@ class ActivityStreamTest(BaseTest):
                                 "summary": "Page 0 of Activity Stream",
                                 "type": "OrderedCollectionPage",
                                 "id": 0,
+                                "totalItems": 1,
                                 "orderedItems": [
                                             {
                                                 "@context": {
@@ -786,6 +794,7 @@ class ActivityStreamTest(BaseTest):
                                 "summary": "Page 0 of Activity Stream",
                                 "type": "OrderedCollectionPage",
                                 "id": 0,
+                                "totalItems": 1,
                                 "orderedItems": [
                                             {
                                                 "@context": {
