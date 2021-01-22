@@ -18,7 +18,7 @@ from app.auth_system.helpers import login_required, profile_photo_link
 from app.file_system.helpers import FileSystem
 from app.activity_stream.models import ActivityStreamItem
 from app.activity_stream.helpers import *
-
+from app.profile_management.helpers import NotificationManager
 from app.recommendation_system.helpers import RecommendationSystem
 
 workspace_system_ns = Namespace("Workspace System",
@@ -1595,7 +1595,6 @@ class CollaborationInvitationsAPI(Resource):
                             contribution = Contribution(workspace_id=invitation.workspace_id,user_id=invitee_id,is_active=True)
                             db.session.add(contribution)
                             add_new_collaboration(invitation.workspace_id, invitee_id)
-                            
                             # Before moving to activity stream, changes in db is committed.
                             try:
                                 db.session.commit()
@@ -1681,6 +1680,12 @@ class CollaborationApplicationsAPI(Resource):
                         try:
                             db.session.add(new_application)
                             db.session.commit()
+                            # Add Notification to the Collaborators of the system
+                            try:
+                                user = User.query.get(applicant_id)
+                                text = "{} has applied to a workspace that you collaborated".format(user.name + " " + user.surname)
+                                for contribution in contributions:
+                                    NotificationManager.add_notification(contribution.user_id,[user.id],text)
                             # Remove workspace Recommendation if it exists
                             RecommendationSystem.remove_ws_recommendation(applicant_id,requested_workspace.id)
                         except:
