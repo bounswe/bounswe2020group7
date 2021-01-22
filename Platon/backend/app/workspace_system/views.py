@@ -1816,7 +1816,13 @@ class CollaborationApplicationsAPI(Resource):
                                     db.session.commit()
                                 except:
                                     return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
-                            
+                                # Add Notification to Accepted User
+                                try:
+                                    ws = Workspace.query.get(application.workspace_id)
+                                    text = "Your application to {} is accepted.".format(ws.title)
+                                    NotificationManager.add_notification(application.applicant_id,[contribution.user_id for contribution in active_contributors],text)
+                                except:
+                                    pass
                                 # Activity is added into Activity Stream
                                 activity_stream_accept_collaboration_application(application)
                             
