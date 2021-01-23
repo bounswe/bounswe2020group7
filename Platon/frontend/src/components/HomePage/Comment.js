@@ -110,7 +110,7 @@ class Commentt extends React.Component {
           content={
             <div style={{marginLeft: "10px", textAlign: "left"}}>
               <a href={`/${this.props.userId}`} style={{textDecoration: "none"}}>
-              <div style={{color:colors.septenary}}>{this.props.author}</div>
+              <span style={{color:colors.septenary}}>{this.props.author}</span>
               </a>
               <div style={{color:colors.secondary}}>{this.props.title}</div>
             </div>
