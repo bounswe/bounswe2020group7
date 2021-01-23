@@ -1,4 +1,3 @@
-
 import React, { createElement } from "react";
 import { Comment, Tooltip } from "antd";
 import Avatar from "@material-ui/core/Avatar";
@@ -11,7 +10,7 @@ import {
 } from "@ant-design/icons";
 import colors from "../../utils/colors";
 import Box from "@material-ui/core/Box";
-import './commentStyle.css'
+import "./commentStyle.css";
 class Commentt extends React.Component {
   constructor(props) {
     super(props);
@@ -103,24 +102,24 @@ class Commentt extends React.Component {
     ];
 
     return (
-      <div style={{ display: "flex", alignItems: "center"}}>
+      <div style={{ display: "flex", padding: "0px 8px"}}>
+        <a href={`/${this.props.userId}`} style={{textDecoration: "none"}}>
+        <Avatar src={this.props.avatar} />
+        </a>
         <Comment
-
-        avatar={
-
-              <Avatar
-               src={this.props.avatar}
-              />
-
-            }
           content={
-          <div style={{textAlign:"left"}}>
-          {this.props.author}<br/>
-          {this.props.title}
-          </div>
+            <div style={{marginLeft: "10px", textAlign: "left"}}>
+              <a href={`/${this.props.userId}`} style={{textDecoration: "none"}}>
+              <div style={{color:colors.septenary}}>{this.props.author}</div>
+              </a>
+              <div style={{color:colors.secondary}}>{this.props.title}</div>
+            </div>
           }
-          style={this.props.style?this.props.style:{ color: colors.quinary, marginLeft: "10px"}}
-
+          style={
+            this.props.style
+              ? this.props.style
+              : { color: colors.quinary, marginLeft: "10px" }
+          }
           className="comment"
         />
       </div>
