@@ -114,7 +114,7 @@ class Commentt extends React.Component {
               <p>{this.props.author}</p>
               </>
             }
-          content={this.props.message}
+          content={this.props.title}
           style={this.props.style?this.props.style:{ color: colors.quinary, marginLeft: "10px"}}
         />
       </div>

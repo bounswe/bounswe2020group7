@@ -4,9 +4,7 @@
     <list default="true" id="0f20f1c4-475d-4e74-a6af-05f9b289d905" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Platon/frontend/src/components/HomePage/Comment.js" beforeDir="false" afterPath="$PROJECT_DIR$/Platon/frontend/src/components/HomePage/Comment.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Platon/frontend/src/components/HomePage/HomePage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Platon/frontend/src/components/HomePage/HomePage.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Platon/frontend/src/components/HomePage/InfiniteScroll.js" beforeDir="false" afterPath="$PROJECT_DIR$/Platon/frontend/src/components/HomePage/InfiniteScroll.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Platon/frontend/src/services/requestService.js" beforeDir="false" afterPath="$PROJECT_DIR$/Platon/frontend/src/services/requestService.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,7 +85,14 @@
       <option name="project" value="LOCAL" />
       <updated>1609178690577</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Added Activity Stream Backend Connection. Restyled Activity Stream">
+      <created>1611418125246</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1611418125246</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -125,6 +130,7 @@
     <MESSAGE value="Issue" />
     <MESSAGE value="Issue Entegration Step 1" />
     <MESSAGE value="Issue Completed" />
-    <option name="LAST_COMMIT_MESSAGE" value="Issue Completed" />
+    <MESSAGE value="Added Activity Stream Backend Connection. Restyled Activity Stream" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added Activity Stream Backend Connection. Restyled Activity Stream" />
   </component>
 </project>
