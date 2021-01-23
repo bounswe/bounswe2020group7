@@ -47,14 +47,14 @@ const RatingDialogue = ({ closePopup, open, user, reloadProfile }) => {
       setSnackbar({
         open: true,
         severity: 'error',
-        message: error.response.data.error
+        message: error.response.data.error,
       })
     })
   }
 
   return (
-    <div>
-      <Snackbar
+    <div> {
+      snackbar?.open && (<Snackbar
         open={snackbar}
         autoHideDuration={6000}
         onClose={() => setSnackbar()}
@@ -62,7 +62,8 @@ const RatingDialogue = ({ closePopup, open, user, reloadProfile }) => {
         <Alert onClose={() => setSnackbar(SNACKBAR_INITIAL_STATE)} severity={snackbar?.severity}>
           {snackbar?.message}
         </Alert>
-      </Snackbar>
+      </Snackbar>)
+    }
       <Dialog
         open={open}
         onClose={closePopup}
@@ -73,26 +74,26 @@ const RatingDialogue = ({ closePopup, open, user, reloadProfile }) => {
       >
         <DialogTitle id="alert-dialog-title">Comment & Rate User</DialogTitle>
         <DialogContent>
-            <Rating
-              name="half-rating-read"
-              value={rating}
-              onChange={(event, newValue) => {
-                setRating(newValue)
-              }}
-              precision={1}
-              size="large"
-              style={{display: 'block'}}
-            />
-            <TextField
-              autoFocus
-              margin="dense"
-              id="comment"
-              fullWidth
-              label="Comment (optional)"
-              type="text"
-              onChange={(e) =>setCommentText(e.target.value)}
-              value={commentText}
-            />
+          <Rating
+            name="half-rating-read"
+            value={rating}
+            onChange={(event, newValue) => {
+              setRating(newValue)
+            }}
+            precision={1}
+            size="large"
+            style={{ display: 'block' }}
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="comment"
+            fullWidth
+            label="Comment (optional)"
+            type="text"
+            onChange={(e) => setCommentText(e.target.value)}
+            value={commentText}
+          />
         </DialogContent>
         <DialogActions>
           <Button style={{ color: colors.primary }} onClick={closePopup} color="primary">

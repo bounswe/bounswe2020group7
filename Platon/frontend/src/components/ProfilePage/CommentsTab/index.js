@@ -34,7 +34,7 @@ const CommentsTabComponent = ({ profileId, goToProfile }) => {
             />
             <ListItemText
               style={{ color: colors.secondary, marginLeft: '48px', marginRight: '32px' }}
-              primary={`sfadsfafdasdfasdfaksmfdasdfmalmd flk mfsadkmfa ldsmf aksdmfl askdmfalskmdflaskmdfl kmasldfm kalsdfm lasdkmflaksdmf`}
+              primary={comment.text}
             />
             <Rating
               readOnly
