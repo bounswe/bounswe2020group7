@@ -52,7 +52,8 @@ class InfiniteScroller extends Component {
                     title={track.summary}
                     author={track.actor.name}
                     avatar={'http://18.185.75.161:5000/api' +track.actor.image.url}
-                    style={{ color: colors.tertiary, textAlign: 'center' }}
+                    style={{ color: colors.tertiary, textAlign: 'center'
+                     }}
 
                 />
                 <hr style={{backgroundColor: colors.primaryLight,}} />
