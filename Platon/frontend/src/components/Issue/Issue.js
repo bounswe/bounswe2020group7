@@ -70,7 +70,18 @@ requestService.deleteIssue(issue_id,workspace_id);
 const addCommentIssue=(issue_id,workspace_id,description)=>{
 requestService.addIssueComment(issue_id,workspace_id,description);
 }
+/* title={track.summary}
+                               author={track.actor.name}
+                               avatar={'http://18.185.75.161:5000/api' +track.actor.image.url}
+                               style={{ color: colors.tertiary, textAlign: 'center' }}
 
+                               mode="multiple"
+                                                                              allowClear
+                                                                              style={{ width: '100%' }}
+                                                                              placeholder="Please select"
+                                                                              defaultValue={[]}
+                                                                              onChange={this.handleChange2}
+                               */
 const CommentList = ({ comments }) => (
  <List
      className="comment-list"
@@ -80,21 +91,25 @@ const CommentList = ({ comments }) => (
      renderItem={item => (
        <li>
          <Commentt
-           issue={item.issue}
-           author={item.author}
+           author={item.creator}
            avatar={item.avatar}
-           content={item.description}
-           datetime={item.datetime}
-           func={deleteIssue}
-           funcName={"Delete"}
-           func2={addCommentIssue}
-           funcName2={"Reply To"}
-           childComments={item.childComments}
+           title={item.description}
+           style={{ color: colors.tertiary }}
          />
+         <h>Deadline: {item.datetime}
+         </h>
+        <CommentList comments={item.childComments} />
+        <h>
+        {item.childComments.length}
+        </h>
+
        </li>
      )}
    />
 )
+const sliceArray=(arr,start,end)=>{
+    return arr.slice(start, end);
+    }
 
 const Editor = ({ onChange, onSubmit, submitting, value }) => (
   <>
@@ -135,37 +150,35 @@ class Issue extends React.Component {
                       const toDisplay=[];
                       issues.forEach(function (issue,index){
                       const children=[]
-                      requestService.getIssueComment(issue.issue_id,issue.workspace_id).then((resp)=>{
-                      const childComment=resp.data.result;
-                      childComment.forEach(function(child,index){
-                      children.push(<Comment
-                                         avatar= 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'
-                                         author={''+child.owner_name+' '+child.owner_surname}
-                                         content={<p>{child.comment}</p>}
-                                              />)
-                      })
-                      })
-                      toDisplay.push({
-                                         issue:issue,
-                                         author: issue.title,
+                              requestService.getIssueComment(issue.issue_id,issue.workspace_id).then((resp)=>{
+                              const childComment=resp.data.result;
+                                  childComment.forEach(function(child,index){
+                                  children.push(
+                                  {
+                                     avatar: child.owner_photo,
+                                     creator:""+child.owner_name+" "+child.owner_surname,
+                                     description:child.comment,
+                                     datetime: (<span>{"NABER"}</span>),
+                                   })
+                                  })
+                              })
+                              console.log(children)
+                              console.log(index)
+                                toDisplay.push({
                                          avatar: issue.creator_photo,
-                                         content: (
-                                           <p>
-                                             {issue.description}
-                                           </p>
-                                         ),
+                                         creator:""+issue.creator_name+" "+issue.creator_surname,
+                                         description:issue.description,
                                          datetime: (
-                                             <span>{moment().subtract(1, 'days').fromNow()}</span>
+                                             <span>{moment(issue.deadline).calendar()}</span>
 
                                          ),
-                                         childComments:children
+                                         childComments:children,
                                          }
 
                       )
                       })
-
-
         this.setState({toDisplay:toDisplay})
+        console.log(toDisplay)
     })
 
 
@@ -185,38 +198,7 @@ class Issue extends React.Component {
       componentDidUpdate(){
       const token = localStorage.getItem("jwtToken");
         const decoded = jwt_decode(token);
-      requestService.getIssues(decoded.id,this.props.workspaceId).then((response)=>{
-              const issues=response.data.result;
-              const toDisplay=[];
-              issues.forEach(function (issue,index){
-               const children=[]
-               requestService.getIssueComment(issue.issue_id,issue.workspace_id).then((resp)=>{
-                      const childComment=resp.data.result;
-                      childComment.forEach(function(child,index){
-                      children.push(<Comment
-                                         avatar= 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'
-                                         author={''+child.owner_name+' '+child.owner_surname}
-                                         content={child.comment}
-                                              />)
-                      })
-                      })
-                     toDisplay.push({
-                                  author: issue.title,
-                                  issue:issue,
-                                  avatar: issue.creator_photo,
-                                  content: (
-                                    <p>
-                                      {issue.description}
-                                    </p>
-                                  ),
-                                  datetime: (
-                                      <span>{moment().subtract(1, 'days').fromNow()}</span>
 
-                                  ),
-                                  childComments:children
-                                  }
-               )}
-              )})
       }
 
 
@@ -307,6 +289,8 @@ class Issue extends React.Component {
         }
   render() {
     const { comments, submitting, value } = this.state;
+    console.log(this.state.toDisplay);
+    console.log("AAAAA")
     return (
       <>
         {this.state.toDisplay.length > 0 && <CommentList comments={this.sliceArray(this.state.toDisplay,this.state.page*10,this.state.page*10+10)} />}
