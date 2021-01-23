@@ -254,6 +254,23 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
                 Resource.Loading::class.java -> dialog.show()
             }
         })
+        mOtherProfileViewModel.getReportUserResourceResponse.observe(viewLifecycleOwner, {t->
+
+            when(t.javaClass){
+                Resource.Success::class.java -> {
+                    Toast.makeText(requireContext(), "User reported successfully!", Toast.LENGTH_SHORT).show()
+                    mOtherProfileViewModel.getReportUserResourceResponse.value = Resource.Done()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+                    mOtherProfileViewModel.getReportUserResourceResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java-> dialog.dismiss()
+                Resource.Loading::class.java -> dialog.show()
+            }
+        })
+
+
 
 
         mOtherProfileViewModel.userSkills.observe(viewLifecycleOwner, {t->
@@ -371,21 +388,40 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
 
 
         if(user!!.can_comment){
-            val tmpBinding = DialogAddCommentBinding.inflate(layoutInflater, binding.root, false)
+            val tmpBindingComment = DialogAddCommentBinding.inflate(layoutInflater, binding.root, false)
             val addCommentDialog  =
                 AlertDialog.Builder(requireContext())
-                .setView(tmpBinding.root).create()
+                .setView(tmpBindingComment.root).create()
             addCommentDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             binding.ivAddComment.setOnClickListener{
                 addCommentDialog.show()
             }
 
-            tmpBinding.btnAddComment.setOnClickListener{
+            val tmpBindingReport = DialogReportUserBinding.inflate(layoutInflater, binding.root, false)
+            val reportUserDialog  =
+                AlertDialog.Builder(requireContext())
+                    .setView(tmpBindingReport.root).create()
+            reportUserDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            binding.ivReportUser.setOnClickListener{
+                reportUserDialog.show()
+            }
+
+
+            tmpBindingReport.btnReportUser.setOnClickListener{
+                var text:String? = null
+                if(!tmpBindingReport.etReport.text.isNullOrEmpty()){
+                    text=tmpBindingReport.etReport.text.toString().trim()
+                }
+                mOtherProfileViewModel.reportUser(userId!!, text ,(activity as HomeActivity).currUserToken)
+                reportUserDialog.cancel()
+            }
+
+            tmpBindingComment.btnAddComment.setOnClickListener{
                 var comment:String? = null
-                if(!tmpBinding.etRating.text.isNullOrEmpty() && tmpBinding.etRating.text.toString().toInt() < 6 ){
-                    val rating = tmpBinding.etRating.text.toString().toInt()
-                    if(!tmpBinding.etComment.text.isNullOrEmpty()){
-                        comment=tmpBinding.etComment.text.toString().trim()
+                if(!tmpBindingComment.etRating.text.isNullOrEmpty() && tmpBindingComment.etRating.text.toString().toInt() < 6 ){
+                    val rating = tmpBindingComment.etRating.text.toString().toInt()
+                    if(!tmpBindingComment.etComment.text.isNullOrEmpty()){
+                        comment=tmpBindingComment.etComment.text.toString().trim()
                     }
                     mOtherProfileViewModel.addComment(rating, comment,  userId!!,(activity as HomeActivity).currUserToken)
                     addCommentDialog.cancel()
@@ -395,6 +431,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
             }
         }else{
             binding.ivAddComment.visibility = View.GONE
+            binding.ivReportUser.visibility = View.GONE
         }
 
         if(status == USERSTATUS.FOLLOWING){

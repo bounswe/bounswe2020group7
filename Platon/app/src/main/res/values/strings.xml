@@ -151,12 +151,15 @@
     <string name="applications_str">Applications</string>
     <string name="delete_issue_str">Delete Issue</string>
     <string name="add_comment_str">Add Comment</string>
-    <string name="set_rating_str">Set rating [0–5]</string>
+    <string name="set_rating_str">Set rating [1–5]</string>
     <string name="directory_Str">Directory</string>
     <string name="send_str">Send</string>
     <string name="comment_owner_str">Comment Owner</string>
     <string name="recommended_str">Recommended</string>
     <string name="workspace_recommendations_str">Workspace Recommendations</string>
     <string name="follow_recommendation_str">Follow Recommendations</string>
+    <string name="send_report_str">Send Report</string>
+    <string name="report_details_optional_str">Report Details ( optional )</string>
+    <string name="report_user_str">Report User</string>
 
 </resources>
