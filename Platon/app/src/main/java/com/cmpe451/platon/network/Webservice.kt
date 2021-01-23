@@ -515,5 +515,11 @@ interface Webservice {
                         @Field("text") text: String?,
                         @Header("auth_token") authToken: String): Call<JsonObject?>
 
+    @FormUrlEncoded
+    @POST("api/profile/notifications")
+    fun muteNotifications(@Field("is_email_allowed") is_email_allowed: Int?,
+                   @Field("is_notification_allowed") is_notification_allowed: Int?,
+                   @Header("auth_token") authToken: String): Call<JsonObject?>
+
 
 }

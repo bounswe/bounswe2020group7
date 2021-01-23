@@ -23,6 +23,8 @@ class ProfilePageViewModel: ViewModel() {
 
     var getTagSearchResourceResponse = repository.tagSearchResourceResponse
 
+    var getMuteNotificationsResourceResponse = repository.muteNotificationsResourceResponse
+
     fun addResearchInfo(title:String,description:String?,
                         year:Int,authToken: String){
         repository.addResearch(title, description, year, authToken)
@@ -95,5 +97,8 @@ class ProfilePageViewModel: ViewModel() {
 
     fun getTagSearch(name: String, page:Int?, perPage: Int?) {
         repository.getTagSearchUser(name, page, perPage)
+    }
+    fun muteNotifications(is_email_allowed:Int?,is_notification_allowed:Int?, authToken:String){
+        repository.muteNotifications(is_email_allowed, is_notification_allowed, authToken)
     }
 }
