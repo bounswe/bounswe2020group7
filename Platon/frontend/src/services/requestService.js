@@ -287,14 +287,23 @@ const postFollowRequest = (follower_id, following_id) => {
     });
 };
 
-const getSearchUser = (searchQuery) => {
+const getSearchUser = (search_query, job_filter, sorting_criteria) => {
   const url = config.BASE_URL;
 
   const token = localStorage.getItem("jwtToken");
   axios.defaults.headers.common["auth_token"] = `${token}`;
 
+  const params = {
+    search_query: search_query,
+    sorting_criteria: sorting_criteria,
+  };
+  
+  if (job_filter !== "") {
+    params.job_filter = job_filter;
+  }
+
   return axios
-    .get(url + "/api/search_engine/user?search_query=" + searchQuery)
+    .get(url + "/api/search_engine/user", { params })
     .then((response) => {
       return response;
     })
@@ -412,13 +421,12 @@ const putUser = (
   formData.append("name", name);
   formData.append("surname", surname);
   formData.append("job", job);
-  if(is_private === true){
+  if (is_private === true) {
     formData.append("is_private", 1);
-  }
-  else{
+  } else {
     formData.append("is_private", 0);
   }
-  if(profile_photo !== undefined){
+  if (profile_photo !== undefined) {
     formData.append("profile_photo", profile_photo);
   }
   formData.append("google_scholar_name", google_scholar_name);
@@ -459,7 +467,7 @@ const getPersonalSkillList = (user_id) => {
   };
 
   return axios
-    .get(url + "/api/auth_system/skills", {params})
+    .get(url + "/api/auth_system/skills", { params })
     .then((response) => {
       return response;
     })
@@ -507,6 +515,127 @@ const deleteSkill = (skillName) => {
       return err.response;
     });
 };
+
+const getSeachWorkspace = (
+  search_query,
+  skill_filter,
+  creator_name,
+  creator_surname,
+  starting_date_start,
+  starting_date_end,
+  deadline_start,
+  deadline_end,
+  sorting_criteria
+) => {
+  const url = config.BASE_URL;
+
+  const token = localStorage.getItem("jwtToken");
+  axios.defaults.headers.common["auth_token"] = `${token}`;
+
+  const params = {
+    search_query: search_query,
+    skill_filter: skill_filter,
+    creator_name: creator_name,
+    creator_surname: creator_surname,
+    sorting_criteria: sorting_criteria,
+  };
+
+  if (starting_date_start !== "") {
+    params.starting_date_start = (starting_date_start + ":00").replaceAt(
+      10,
+      " "
+    );
+  }
+  if (starting_date_end !== "") {
+    params.starting_date_end = (starting_date_end + ":00").replaceAt(10, " ");
+  }
+  if (deadline_start !== "") {
+    params.deadline_start = (deadline_start + ":00").replaceAt(10, " ");
+  }
+  if (deadline_end !== "") {
+    params.deadline_end = (deadline_end + ":00").replaceAt(10, " ");
+  }
+
+  return axios
+    .get(url + "/api/search_engine/workspace", { params })
+    .then((response) => {
+      console.log(response);
+      return response;
+    })
+    .catch((err) => {
+      return err.response;
+    });
+};
+
+const getSearchUpcomingEvents = (
+  search_query,
+  date_filter_start,
+  date_filter_end,
+  deadline_filter_start,
+  deadline_filter_end,
+  sorting_criteria
+) => {
+  const url = config.BASE_URL;
+
+  const token = localStorage.getItem("jwtToken");
+  axios.defaults.headers.common["auth_token"] = `${token}`;
+
+  const params = {
+    search_query: search_query,
+    sorting_criteria: sorting_criteria,
+  };
+
+  if (date_filter_start !== "") {
+    params.date_filter_start = (date_filter_start + ":00").replaceAt(
+      10,
+      " "
+    );
+  }
+  if (date_filter_end !== "") {
+    params.date_filter_end = (date_filter_end + ":00").replaceAt(10, " ");
+  }
+  if (deadline_filter_start !== "") {
+    params.deadline_filter_start = (deadline_filter_start + ":00").replaceAt(10, " ");
+  }
+  if (deadline_filter_end !== "") {
+    params.deadline_filter_end = (deadline_filter_end + ":00").replaceAt(10, " ");
+  } 
+
+  return axios
+    .get(url + "/api/search_engine/upcoming_events", { params })
+    .then((response) => {
+      console.log(response);
+      return response;
+    })
+    .catch((err) => {
+      return err.response;
+    });
+};
+
+const getSearchHistory = (searchQuery) => {
+  const url = config.BASE_URL;
+
+  const token = localStorage.getItem("jwtToken");
+  axios.defaults.headers.common["auth_token"] = `${token}`;
+
+  return axios
+    .get(url + "/api/search_engine/upcoming_events?search_query=" + searchQuery)
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => {
+      return err.response;
+    });
+};
+
+String.prototype.replaceAt = function (index, replacement) {
+  return (
+    this.substr(0, index) +
+    replacement +
+    this.substr(index + replacement.length)
+  );
+};
+
 export default {
   followings,
   followers,
@@ -526,6 +655,8 @@ export default {
   getPersonalSkillList,
   postSkill,
   deleteSkill,
+  getSeachWorkspace,
+  getSearchUpcomingEvents,
   addIssueComment,
   getIssueComment,
   createIssue,

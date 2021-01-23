@@ -41,6 +41,7 @@ class WorkspaceEdit extends Component {
       profileId: null,
       workspace: {},
       skillsList: [],
+      upcomingEventsList: [],
     };
   }
   handleCloseError = (event, reason) => {
@@ -81,6 +82,18 @@ class WorkspaceEdit extends Component {
         .catch((err) => {
           console.log(err);
         }),
+        axios
+        .get(url + "/api/upcoming_events")
+        .then((response) => {
+          if (response) {
+            this.setState({
+              upcomingEventsList: response.data.upcoming_events,
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        }),
       axios
         .get(url + "/api/workspaces", {
           params: {
@@ -89,9 +102,13 @@ class WorkspaceEdit extends Component {
         })
         .then((response) => {
           if (response.status === 200) {
+            let upcomingEventListsId = []
+            for(var key in response.data.upcoming_events){
+              upcomingEventListsId.push(response.data.upcoming_events[key].id)
+            }
+
             this.setState({
-              workspace: response.data,
-              loaded: true,
+              workspace: {...response.data, upcoming_events: upcomingEventListsId}
             });
           }
         })
@@ -146,6 +163,11 @@ class WorkspaceEdit extends Component {
       workspace: { ...this.state.workspace, skills: value },
     });
   };
+  handleUpcomingEvents = (value) => {
+    this.setState({
+      workspace: { ...this.state.workspace, upcoming_events: value },
+    });
+  };
   handleSubmit = () => {
     if (this.state.title === "" || this.state.description === "") {
       this.setState({ error: "Title and description are required" });
@@ -159,6 +181,7 @@ class WorkspaceEdit extends Component {
     formData.append("state", this.state.workspace.state);
     formData.append("max_collaborators",this.state.workspace.max_collaborators);
     formData.append("skills", JSON.stringify(this.state.workspace.skills));
+    formData.append("upcoming_events", JSON.stringify(this.state.workspace.upcoming_events));
 
     // is_private handler
     let isPrivateEdited = this.state.workspace.is_private
@@ -204,6 +227,7 @@ class WorkspaceEdit extends Component {
       });
   };
   render() {
+    console.log(this.state.workspace.upcoming_events)
     return (
       <div className="WorkspaceEditContainer">
         <Navbar />
@@ -257,6 +281,9 @@ class WorkspaceEdit extends Component {
                 <WorkspaceInputDate
                   deadline={this.state.workspace.deadline ? this.state.workspace.deadline.replaceAll(".", "-"): this.state.workspace.deadline}
                   handleDeadline={this.handleDeadline}
+                  handleUpcomingEvents={this.handleUpcomingEvents}
+                  upcomingEvents={this.state.workspace.upcoming_events}
+                  upcomingEventsList={this.state.upcomingEventsList}
                 />
                 <hr/>
                 <div style={{display:"flex", justifyContent: "center", alignItems: "center"}}>
