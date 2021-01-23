@@ -248,12 +248,16 @@ const getNotifications = () => {
 
 }
 
-const getFeed = () => {
+const getFeed = (page,per_page) => {
   const url = config.BASE_URL;
   const token = localStorage.getItem("jwtToken");
+  const params = {
+          page: page,
+          per_page:per_page,
+      };
   axios.defaults.headers.common["auth_token"] = `${token}`;
   return axios
-    .get(url + "/api/profile/front_page")
+    .get(url + "/api/activity_stream",{params})
     .then((response) => {
       return response;
     })
