@@ -87,6 +87,8 @@ class UpcomingEventsManager():
                 all_users = User.query.all()
                 for user in all_users:
                     NotificationManager.add_notification(user.id,[],f"{number_of_new_events} new upcoming events have been added.")
+            except:
+                pass
                 
 def schedule_regularly():
     scheduler = BackgroundScheduler()

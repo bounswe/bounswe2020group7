@@ -158,6 +158,10 @@ class GetSelfAPI(Resource):
             # If yes, user information is returned.
             # If not, an error is raised.
             if logged_in_user is not None:
+                try:
+                    notification_status = NotificationStatus.query.get(logged_in_user.id)
+                except:
+                    return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
                 account_information = {
                                         "id": logged_in_user.id,
                                         "name": logged_in_user.name,
@@ -169,7 +173,9 @@ class GetSelfAPI(Resource):
                                         "google_scholar_name": logged_in_user.google_scholar_name,
                                         "researchgate_name": logged_in_user.researchgate_name,
                                         "job": user_job.name,
-                                        "institution": logged_in_user.institution
+                                        "institution": logged_in_user.institution,
+                                        "is_email_allowed": notification_status.is_email_allowed,
+                                        "is_notification_allowed": notification_status.is_notification_allowed
                                         }
                 return make_response(jsonify(account_information), 200)
             else:

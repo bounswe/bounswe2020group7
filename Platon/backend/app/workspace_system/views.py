@@ -1686,6 +1686,8 @@ class CollaborationApplicationsAPI(Resource):
                                 text = "{} has applied to a workspace that you collaborated".format(user.name + " " + user.surname)
                                 for contribution in contributions:
                                     NotificationManager.add_notification(contribution.user_id,[user.id],text)
+                            except:
+                                pass
                             # Remove workspace Recommendation if it exists
                             RecommendationSystem.remove_ws_recommendation(applicant_id,requested_workspace.id)
                         except:
