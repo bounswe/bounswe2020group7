@@ -3,7 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="0f20f1c4-475d-4e74-a6af-05f9b289d905" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Platon/frontend/src/components/Issue/CreateIssue.js" beforeDir="false" afterPath="$PROJECT_DIR$/Platon/frontend/src/components/Issue/CreateIssue.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Platon/frontend/src/components/HomePage/Comment.js" beforeDir="false" afterPath="$PROJECT_DIR$/Platon/frontend/src/components/HomePage/Comment.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Platon/frontend/src/components/HomePage/InfiniteScroll.js" beforeDir="false" afterPath="$PROJECT_DIR$/Platon/frontend/src/components/HomePage/InfiniteScroll.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Platon/frontend/src/components/Issue/Issue.js" beforeDir="false" afterPath="$PROJECT_DIR$/Platon/frontend/src/components/Issue/Issue.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -78,7 +79,28 @@
       <option name="project" value="LOCAL" />
       <updated>1609098634768</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Issue Completed">
+      <created>1609178690577</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1609178690577</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Added Activity Stream Backend Connection. Restyled Activity Stream">
+      <created>1611418125246</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1611418125246</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Added Activity Stream Backend Connection. Restyled Activity Stream. Fixed Conflivt in Comment">
+      <created>1611418577819</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1611418577819</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -114,8 +136,10 @@
     <MESSAGE value="new branch" />
     <MESSAGE value="HomePage i başardık" />
     <MESSAGE value="Issue" />
-    <MESSAGE value="Issue Completed" />
     <MESSAGE value="Issue Entegration Step 1" />
-    <option name="LAST_COMMIT_MESSAGE" value="Issue Entegration Step 1" />
+    <MESSAGE value="Issue Completed" />
+    <MESSAGE value="Added Activity Stream Backend Connection. Restyled Activity Stream" />
+    <MESSAGE value="Added Activity Stream Backend Connection. Restyled Activity Stream. Fixed Conflivt in Comment" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added Activity Stream Backend Connection. Restyled Activity Stream. Fixed Conflivt in Comment" />
   </component>
 </project>
