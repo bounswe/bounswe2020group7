@@ -375,6 +375,9 @@ class IssueAPI(Resource):
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
+            # creates activity stream record
+            activity_stream_create_issue(user_id, issue)
+
             return make_response(jsonify({
                 'msg': 'Issue is successfully created',
                 "issue_id": issue.id, 
@@ -918,6 +921,8 @@ class MilestoneAPI(Resource):
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
+            # Add this activity into Activity Stream.
+            activity_stream_post_milestone(user_id, milestone)
             return make_response(jsonify({'msg': 'milestone is successfully created'}), 200)
 
         else:

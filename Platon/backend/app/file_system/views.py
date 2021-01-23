@@ -7,6 +7,7 @@ from app.file_system.forms import FolderInfoForm, folder_get_parser, FolderPostP
 from app.file_system.helpers import FileSystem
 from app.workspace_system.helpers import workspace_exists,active_contribution_required, visibility_required
 from app.auth_system.helpers import login_required
+from app.activity_stream.helpers import *
 from app import api, db
 import os
 import pathlib
@@ -83,6 +84,8 @@ class FileSystemAPI(Resource):
                 return make_response(jsonify({"error":"Give Appropriate Filename"}),400)
             # Save file to the given path
             new_file.save(file_path)
+            # Save this activity into Activity Stream
+            activity_stream_post_file(user_id, form.workspace_id.data, form.filename.data)
             return make_response(jsonify({"msg":"Your File is successfully uploaded"}),201)
         else:
             return make_response(jsonify({"error":"Invalid Input"}),400)
@@ -148,6 +151,8 @@ class FileSystemAPI(Resource):
                 return make_response(jsonify({"error":"Give Appropriate Filename"}),400)
             # Delete file
             os.remove(file_path) 
+            # Add this activity into Activity Stream.
+            activity_stream_delete_file(user_id, form.workspace_id.data, form.filename.data)
             return make_response(jsonify({"error":"Your File is successfully deleted"}),200)
         else:
             return make_response(jsonify({"error":"Invalid Input"}),400)
@@ -219,7 +224,8 @@ class FolderSystemAPI(Resource):
                 os.mkdir(new_folder_path)
             except:
                 return make_response(jsonify({"error":"Recursive directories can not be created"}),400)
-
+            # Save this activity into Activity Stream
+            activity_stream_post_folder(user_id, form.workspace_id.data, form.new_folder_name.data)
             return make_response(jsonify({"msg":"Folder is successfully created"}),201)
         else:
             return make_response(jsonify({"error":"Invalid Input"}),400)
@@ -285,6 +291,8 @@ class FolderSystemAPI(Resource):
                 return make_response(jsonify({"error":"Folder does not exist"}),400)
             # Delete all contents of the folder
             FileSystem.delete_all_content(folder_path)
+            # Add this activity into Activity Stream.
+            activity_stream_delete_folder(user_id, form.workspace_id.data, form.path.data)
             return make_response(jsonify({"msg":"Folder is successfully deleted"}),200)
         else:
             return make_response(jsonify({"error":"Invalid Input"}),400)
