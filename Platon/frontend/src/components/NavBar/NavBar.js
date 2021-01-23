@@ -207,7 +207,7 @@ const NavBar = ({ itemsPerPage = 3, width = "500px" }) => {
     <div className={classes.root}>
       <AppBar style={{ background: colors.primaryDark }} position="static">
         <Toolbar style={{ justifyContent: "space-around" }}>
-          <a to="/">
+          <a href="/">
             <Logo height="5vh" width="15vh" fill={colors.secondary} />
           </a>
 
