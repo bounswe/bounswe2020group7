@@ -12,7 +12,7 @@ const RatingComponent = ({ profileId }) => {
         setAverageRating(averageRating)
       }
     })
-  })
+  }, [])
 
   return <Rating
     readOnly

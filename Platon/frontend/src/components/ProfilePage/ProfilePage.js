@@ -2,7 +2,6 @@ import React from 'react'
 import './ProfilePage.css'
 import { Button, Card, Col, Container, Row } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import Rating from '@material-ui/lab/Rating'
 import PropTypes from 'prop-types'
 import { withStyles } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
@@ -32,6 +31,7 @@ import EditResearchDialog from './EditResearchDialog/EditResearchDialog'
 import InviteDialog from './InviteDialog'
 import RatingDialogue from './RatingDialog'
 import RatingComponent from './RatingComponent'
+import CommentsTabComponent from './CommentsTab'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props
@@ -611,28 +611,7 @@ class ProfilePage extends React.Component {
                     </List>
                   </TabPanel>
                   <TabPanel value={this.state.value} index={3}>
-                    <List>
-                      {this.state.followings.map((value, index) => {
-                        return (
-                          <Link onClick={() => this.handleProfile(value.id)}>
-                            <ListItem>
-                              <ListItemAvatar>
-                                <Avatar
-                                  src={
-                                    'http://18.185.75.161:5000/api' +
-                                    value.profile_photo
-                                  }
-                                ></Avatar>
-                              </ListItemAvatar>
-                              <ListItemText
-                                style={{ color: colors.secondary }}
-                                primary={`${value.name} ${value.surname}`}
-                              />
-                            </ListItem>
-                          </Link>
-                        )
-                      })}
-                    </List>
+                    <CommentsTabComponent profileId={this.state.user?.id} goToProfile={this.handleProfile}/>
                   </TabPanel>
                   {!this.state.isMyProfile ? null : (
                     <TabPanel value={this.state.value} index={4}>

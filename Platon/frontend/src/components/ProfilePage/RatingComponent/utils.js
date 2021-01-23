@@ -22,4 +22,3 @@ export const calculateAverageRating = (comments) => {
 
   return totalRating / ratingCount
 }
-
