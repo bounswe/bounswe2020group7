@@ -42,7 +42,7 @@ class HomePage extends React.Component {
           <div style={{ width: "30%" }}>
             <TrendingProjects marginLeft="auto" marginRight="auto" itemsPerPage={3} width='400px'/>
           </div>
-          <div style={{ width: "35%" }}><InfiniteScroller /></div>
+          <div style={{ width: "30%" }}><InfiniteScroller /></div>
           <div style={{ width: "30%" }}><UpcomingEvents marginLeft="auto" marginRight="auto" itemsPerPage={3} width='400px' /></div>
         </Box>
         </Container>
