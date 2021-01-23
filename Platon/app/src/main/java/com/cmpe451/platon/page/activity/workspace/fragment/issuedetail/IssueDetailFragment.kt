@@ -28,7 +28,7 @@ import com.cmpe451.platon.util.Definitions
 import java.util.*
 import kotlin.collections.ArrayList
 
-class IssueDetailFragment: Fragment() {
+class IssueDetailFragment: Fragment(), IssueCommentAdapter.OnCommentClickedListener {
     private lateinit var dialog: AlertDialog
     private val mIssueDetailViewModel: IssueDetailViewModel by viewModels()
     private lateinit var sharedPreferences: SharedPreferences
@@ -225,6 +225,26 @@ class IssueDetailFragment: Fragment() {
             }
         })
 
+        mIssueDetailViewModel.deleteIssueCommentResponse.observe(viewLifecycleOwner, { t->
+            when(t.javaClass){
+                Resource.Loading::class.java->{
+                    dialog.show()
+                }
+                Resource.Success::class.java ->{
+                    (binding.issueCommentsRecyclerView.adapter as IssueCommentAdapter).clearElements()
+                    mIssueDetailViewModel.getIssueComments((activity as WorkspaceActivity).workspace_id!!, issue_id.toInt(), maxPageNumberComment, pageSize,(activity as WorkspaceActivity).token!!)
+                    mIssueDetailViewModel.deleteIssueCommentResponse.value = Resource.Done()
+                }
+                Resource.Error::class.java ->{
+                    Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                    mIssueDetailViewModel.deleteIssueCommentResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java->{
+                    dialog.dismiss()
+                }
+            }
+        })
+
     }
     private fun initViews() {
 
@@ -315,6 +335,7 @@ class IssueDetailFragment: Fragment() {
         binding.issueAddComment.setOnClickListener{
             onAddCommentClicked()
         }
+
     }
 
 
@@ -360,7 +381,6 @@ class IssueDetailFragment: Fragment() {
                 datePickerDialog.show()
             }
             true
-
 
         }
 
@@ -527,9 +547,13 @@ class IssueDetailFragment: Fragment() {
         }
     }
 
-
-
-
+    override fun onDeleteCommentClicked(element: IssueComment, position: Int) {
+        print("ert")
+        mIssueDetailViewModel.deleteIssueComment((activity as WorkspaceActivity).workspace_id!!,
+            issue_id.toInt(),
+            element.comment_id,
+            (activity as WorkspaceActivity).token!!)
+    }
 
 
 }
