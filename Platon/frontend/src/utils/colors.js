@@ -14,6 +14,12 @@ const colors = {
     quinary: "#FF8B33",
     quinaryDark: "#B26123",
     quinaryLight: "#FFA25B",
+    senary:"#D2C687",
+    senaryDark: "#B19F43",
+    senaryLight: "#DDD4A6",
+    septenary: "#B5D8CC",
+    septenaryDark:"#79B9A2",
+    septenaryLight: "#D7EAE3"
 }
 
 export default colors;

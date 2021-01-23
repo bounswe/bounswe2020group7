@@ -34,11 +34,12 @@ const UpcomingEventsItem = ({ event }) => {
   return (
     <List className={classes.root}>
       <StyledListItem>
+        <a href={event.link} style={{textDecoration: "none"}}>
         <ListItemText
           classes={{ primary: classes.primary, secondary: classes.secondary }}
           primary={event.title}
           secondary={'Start Date: ' + event.date}
-        />
+        /></a>
       </StyledListItem>
     </List>
 

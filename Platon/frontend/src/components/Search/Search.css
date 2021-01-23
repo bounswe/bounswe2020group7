@@ -44,3 +44,9 @@
     display: flex;
     align-items: center;
 }
+
+.SearchCheckBoxes{
+    display: block !important;
+    color: #E0DFD5;
+    font-family: 'Rubik', sans-serif;
+}
