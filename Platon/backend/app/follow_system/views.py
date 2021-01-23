@@ -504,7 +504,13 @@ class CommentRateAPI(Resource):
             except:
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
             if update_rate(form.commented_user_id.data):
-
+                # Adds Notification to the user
+                try:
+                    user = User.query.get(form.commented_user_id.data)
+                    text = "{} commented on your profile.".format(user.name + " " + user.surname)
+                    NotificationManager.add_notification(form.commented_user_id.data, [user_id], text)
+                except:
+                    return make_response(jsonify({'error': 'DB connection error'}), 500)
                 # Add this activity into Activity Stream
                 activity_stream_user_comment_activity(user_id, form, comment)
                 

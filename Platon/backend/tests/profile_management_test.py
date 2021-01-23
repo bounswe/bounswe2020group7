@@ -471,7 +471,7 @@ class NotificationTests(BaseTest):
         actual_response = self.client.get("/api/profile/notifications",headers = {"auth_token" : valid_token})
         
         self.assertEqual(actual_response.status_code,200)
-        self.assertEqual(expected_response[0]['id'],json.loads(actual_response.data)[0]['id'])
+        self.assertEqual(expected_response[0]['id'],json.loads(actual_response.data)["notification_list"][0]['id'])
     
     def test_get_notification_invalid(self):
         valid_token = generate_token(2,TestConfig.SESSION_DURATION) + "c"
