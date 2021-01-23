@@ -107,14 +107,18 @@ class Commentt extends React.Component {
         <Comment
 
         avatar={
-        <>
+
               <Avatar
                src={this.props.avatar}
               />
-              <p>{this.props.author}</p>
-              </>
+
             }
-          content={this.props.title}
+          content={
+          <div style={{textAlign:"left"}}>
+          {this.props.author}<br/>
+          {this.props.title}
+          </div>
+          }
           style={this.props.style?this.props.style:{ color: colors.quinary, marginLeft: "10px"}}
 
           className="comment"

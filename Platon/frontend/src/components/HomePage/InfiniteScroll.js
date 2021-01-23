@@ -69,7 +69,7 @@ class InfiniteScroller extends Component {
           >
             What's Happening?
           </Typography>
-          <div  style={{backgroundColor: colors.primaryLight, padding:"16px", borderRadius: "0.5em"}} >
+          <div  style={{backgroundColor: colors.primaryLight, padding:"5px", borderRadius: "0.5em"}} >
             <InfiniteScroll
                 pageStart={0}
                 style={{ color: colors.primaryLight, textAlign: 'center' }}

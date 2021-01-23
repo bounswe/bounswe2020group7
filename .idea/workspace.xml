@@ -5,6 +5,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Platon/frontend/src/components/HomePage/Comment.js" beforeDir="false" afterPath="$PROJECT_DIR$/Platon/frontend/src/components/HomePage/Comment.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Platon/frontend/src/components/HomePage/InfiniteScroll.js" beforeDir="false" afterPath="$PROJECT_DIR$/Platon/frontend/src/components/HomePage/InfiniteScroll.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Platon/frontend/src/components/Issue/Issue.js" beforeDir="false" afterPath="$PROJECT_DIR$/Platon/frontend/src/components/Issue/Issue.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,7 +93,14 @@
       <option name="project" value="LOCAL" />
       <updated>1611418125246</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Added Activity Stream Backend Connection. Restyled Activity Stream. Fixed Conflivt in Comment">
+      <created>1611418577819</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1611418577819</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -131,6 +139,7 @@
     <MESSAGE value="Issue Entegration Step 1" />
     <MESSAGE value="Issue Completed" />
     <MESSAGE value="Added Activity Stream Backend Connection. Restyled Activity Stream" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added Activity Stream Backend Connection. Restyled Activity Stream" />
+    <MESSAGE value="Added Activity Stream Backend Connection. Restyled Activity Stream. Fixed Conflivt in Comment" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added Activity Stream Backend Connection. Restyled Activity Stream. Fixed Conflivt in Comment" />
   </component>
 </project>
