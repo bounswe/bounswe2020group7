@@ -6,7 +6,6 @@ import { fade, makeStyles, withStyles } from "@material-ui/core/styles";
 import SearchIcon from "@material-ui/icons/Search";
 import Logo from "../Logo/Logo";
 import colors from "../../utils/colors";
-import { Link } from "react-router-dom";
 import authService from "../../services/authService";
 import jwt_decode from "jwt-decode";
 import Popover from "@material-ui/core/Popover";
@@ -208,9 +207,9 @@ const NavBar = ({ itemsPerPage = 3, width = "500px" }) => {
     <div className={classes.root}>
       <AppBar style={{ background: colors.primaryDark }} position="static">
         <Toolbar style={{ justifyContent: "space-around" }}>
-          <Link to="/">
+          <a to="/">
             <Logo height="5vh" width="15vh" fill={colors.secondary} />
-          </Link>
+          </a>
 
           <div className={classes.search}>
             <div className={classes.searchIcon}>
@@ -229,24 +228,24 @@ const NavBar = ({ itemsPerPage = 3, width = "500px" }) => {
           </div>
 
           <div>
-            <Link to="/" style={{ textDecoration: "none" }}>
+            <a href="/" style={{ textDecoration: "none" }}>
               <IconButton edge="end" aria-label="home">
                 <HomeIcon style={{ color: colors.secondary }} />
               </IconButton>
-            </Link>
-            <Link to={`/${decoded.id}`} style={{ textDecoration: "none" }}>
+            </a>
+            <a href={`/${decoded.id}`} style={{ textDecoration: "none" }}>
               <IconButton edge="end" aria-label="account">
                 <AccountBoxIcon style={{ color: colors.secondary }} />
               </IconButton>
-            </Link>
-            <Link
-              to={`/${decoded.id}/workspace`}
+            </a>
+            <a
+              href={`/${decoded.id}/workspace`}
               style={{ textDecoration: "none" }}
             >
               <IconButton edge="end" aria-label="workspace">
                 <WorkIcon style={{ color: colors.secondary }} />
               </IconButton>
-            </Link>
+            </a>
             <IconButton
               edge="end"
               aria-label="nofitication"
