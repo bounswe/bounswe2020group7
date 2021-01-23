@@ -431,6 +431,7 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
             }
         }else{
             binding.ivAddComment.visibility = View.GONE
+            binding.ivReportUser.visibility = View.GONE
         }
 
         if(status == USERSTATUS.FOLLOWING){
