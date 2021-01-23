@@ -424,25 +424,25 @@ class ActivityStreamTest(BaseTest):
                                                         "url": "/auth_system/logo"
                                                     }
                                                 },
-                                                "object": {
+                                                "target": {
                                                     "type": "Group",
                                                     "id": 4,
                                                     "name": "bos",
                                                     "image": {
                                                         "type": "Image",
                                                         "url": None
-                                                    },
-                                                    "content": None,
-                                                    "ext:ratingValue": None
+                                                    }
                                                 },
-                                                "target": {
+                                                "object": {
                                                             "type": None,
                                                             "id": None,
                                                             "name": None,
                                                             "image": {
                                                                 "type": "Image",
                                                                 "url": None
-                                                            }
+                                                            },
+                                                            "content": None,
+                                                            "ext:ratingValue": None
                                                 }
                                             }
                                 ]
@@ -503,25 +503,25 @@ class ActivityStreamTest(BaseTest):
                                                         "url": "/auth_system/logo"
                                                     }
                                                 },
-                                                "object": {
+                                                "target": {
                                                     "type": "Group",
                                                     "id": 4,
                                                     "name": "bos",
                                                     "image": {
                                                         "type": "Image",
                                                         "url": None
-                                                    },
-                                                    "content": None,
-                                                    "ext:ratingValue": None
+                                                    }
                                                 },
-                                                "target": {
+                                                "object": {
                                                             "type": None,
                                                             "id": None,
                                                             "name": None,
                                                             "image": {
                                                                 "type": "Image",
                                                                 "url": None
-                                                            }
+                                                            },
+                                                            "content": None,
+                                                            "ext:ratingValue": None
                                                 }
                                             },
                                             {
@@ -541,25 +541,25 @@ class ActivityStreamTest(BaseTest):
                                                         "url": "/auth_system/logo"
                                                     }
                                                 },
-                                                "object": {
+                                                "target": {
                                                     "type": "Group",
                                                     "id": 4,
                                                     "name": "bos",
                                                     "image": {
                                                         "type": "Image",
                                                         "url": None
-                                                    },
-                                                    "content": None,
-                                                    "ext:ratingValue": None
+                                                    }
                                                 },
-                                                "target": {
+                                                "object": {
                                                             "type": None,
                                                             "id": None,
                                                             "name": None,
                                                             "image": {
                                                                 "type": "Image",
                                                                 "url": None
-                                                            }
+                                                            },
+                                                            "content": None,
+                                                            "ext:ratingValue": None
                                                 }
                                             }
                                 ]

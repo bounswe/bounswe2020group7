@@ -72,3 +72,9 @@ class NotificationRelatedUser(db.Model):
     def __init__(self,notification_id,related_user_id):
         self.notification_id = notification_id
         self.related_user_id = related_user_id
+
+class NotificationStatus(db.Model):
+    __tablename__ = 'notification_status'
+    owner_id = db.Column(db.Integer,db.ForeignKey('users.id',ondelete="CASCADE"),primary_key=True)
+    is_email_allowed = db.Column(db.Boolean,nullable=False)
+    is_notification_allowed = db.Column(db.Boolean,nullable=False)

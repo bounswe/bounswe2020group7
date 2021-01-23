@@ -6,6 +6,8 @@ from app import db,app
 
 import atexit
 from apscheduler.schedulers.background import BackgroundScheduler
+from app.profile_management.helpers import NotificationManager
+from app.auth_system.models import User
 
 class UpcomingEventsManager():
 
@@ -66,10 +68,12 @@ class UpcomingEventsManager():
         existing_titles = [existing_event.acronym for existing_event in existing_upcoming_events]
         upcoming_event_dict = {existing_event.acronym : existing_event for existing_event in existing_upcoming_events}
         with app.app_context():
+            number_of_new_events = 0
             for upcoming_event in upcoming_events:
                 if upcoming_event["acronym"] in existing_titles:
                     continue
                 else:
+                    number_of_new_events += 1
                     new_event = UpcomingEvent(upcoming_event["title"],upcoming_event["acronym"],upcoming_event["location"],
                                             upcoming_event["date"],upcoming_event["deadline"],upcoming_event["link"])
                 try:
@@ -77,6 +81,14 @@ class UpcomingEventsManager():
                     db.session.commit()
                 except:
                     pass
+            try:
+                if number_of_new_events == 0:
+                    return
+                all_users = User.query.all()
+                for user in all_users:
+                    NotificationManager.add_notification(user.id,[],f"{number_of_new_events} new upcoming events have been added.")
+            except:
+                pass
                 
 def schedule_regularly():
     scheduler = BackgroundScheduler()
