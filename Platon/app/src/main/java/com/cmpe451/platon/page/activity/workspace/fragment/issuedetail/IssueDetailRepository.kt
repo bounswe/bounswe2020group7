@@ -179,7 +179,7 @@ class IssueDetailRepository {
 
     fun deleteIssueComment(workSpaceId: Int, issueId: Int, commentId: Int, authToken: String) {
         val service = RetrofitClient.getService()
-        val call = service.deleteIssueComment(workSpaceId, issueId , commentId, authToken)
+        val call = service.deleteIssueComment(workSpaceId, issueId, commentId, authToken)
 
         deleteIssueCommentResponse.value = Resource.Loading()
         //nullable check

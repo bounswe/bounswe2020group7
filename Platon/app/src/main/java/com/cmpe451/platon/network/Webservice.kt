@@ -473,11 +473,10 @@ interface Webservice {
 
     @FormUrlEncoded
     @HTTP(method = "DELETE" , path = "api/workspaces/issue/comment", hasBody = true)
-    fun deleteIssueComment(
-        @Query("workspace_id") workspaceId:Int,
-        @Query("issue_id") issueId:Int,
-        @Query("commentId") commentId:Int?,
-        @Header("auth_token") authToken :String):Call<JsonObject?>
+    fun deleteIssueComment(@Field("workspace_id") workspaceId:Int,
+                           @Field("issue_id") issueId:Int,
+                           @Field("comment_id") commentId:Int?,
+                           @Header("auth_token") authToken :String):Call<JsonObject?>
 
 
     @FormUrlEncoded
@@ -503,6 +502,7 @@ interface Webservice {
     fun getRecommendedFollows(
         @Query("number_of_recommendations") number_of_recommendations:Int,
         @Header("auth_token") authToken :String):Call<RecommendedUserList?>
+
     @GET("api/recommendation_system/workspace")
     fun getRecommendedWorkspaces(
         @Query("number_of_recommendations") number_of_recommendations:Int,
@@ -514,6 +514,16 @@ interface Webservice {
     fun reportUser(@Field("reported_user_id") reported_user_id: Int,
                         @Field("text") text: String?,
                         @Header("auth_token") authToken: String): Call<JsonObject?>
+
+    @FormUrlEncoded
+    @POST("api/profile/notifications")
+    fun muteNotifications(@Field("is_email_allowed") is_email_allowed: Int?,
+                   @Field("is_notification_allowed") is_notification_allowed: Int?,
+                   @Header("auth_token") authToken: String): Call<JsonObject?>
+
+    @GET("api/upcoming_events/personal_calendar")
+    fun getCalendar(
+        @Header("auth_token") authToken :String):Call<List<CalendarItem>?>
 
 
 }

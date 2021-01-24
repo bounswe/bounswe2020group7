@@ -16,11 +16,14 @@ class HomeViewModel: ViewModel() {
 
     val getTrendingProjectsResourceResponse: MutableLiveData<Resource<TrendingProjects>>
     val getUpcomingEventsResourceResponse: MutableLiveData<Resource<UpcomingEvents>>
-
+    val getCalendarResourceResponse: MutableLiveData<Resource<List<CalendarItem>>>
     init {
         getActivityStreamResourceResponse = repository.activityStreamResourceResponse
         getTrendingProjectsResourceResponse= repository.trendingProjectsResourceResponse
         getUpcomingEventsResourceResponse = repository.upcomingEventsResourceResponse
+
+        getCalendarResourceResponse = repository.calendarResourceResponse
+
     }
 
 
@@ -36,6 +39,10 @@ class HomeViewModel: ViewModel() {
 
     fun getActivities(token:String, page:Int?, pageSize:Int?) {
         repository.getActivityStream(token,page, pageSize)
+    }
+
+    fun getCalendar(token: String){
+        repository.getCalendar(token)
     }
 
 

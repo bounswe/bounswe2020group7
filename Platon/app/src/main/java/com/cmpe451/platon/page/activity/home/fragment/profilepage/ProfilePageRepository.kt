@@ -28,7 +28,7 @@ class ProfilePageRepository() {
 
     val userComments:MutableLiveData<Resource<AllComments>> = MutableLiveData()
 
-
+    var muteNotificationsResourceResponse: MutableLiveData<Resource<JsonObject>> = MutableLiveData()
 
 
     fun addResearch(title:String,description:String?,
@@ -320,6 +320,24 @@ class ProfilePageRepository() {
                 call.clone().enqueue(this)
             }
 
+        })
+    }
+    fun muteNotifications(is_email_allowed:Int?,is_notification_allowed:Int?, authToken:String){
+        val service = RetrofitClient.getService()
+
+        val call = service.muteNotifications(is_email_allowed,is_notification_allowed, authToken)
+        muteNotificationsResourceResponse.value =Resource.Loading()
+        call.enqueue(object : Callback<JsonObject?>{
+            override fun onResponse(call: Call<JsonObject?>, response: Response<JsonObject?>) {
+                when{
+                    response.isSuccessful -> muteNotificationsResourceResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> muteNotificationsResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> muteNotificationsResourceResponse.value = Resource.Error("Unknown error!")
+                }
+            }
+            override fun onFailure(call: Call<JsonObject?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
         })
     }
 
