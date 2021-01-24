@@ -140,6 +140,14 @@ class EditProfile extends Component {
           is_private: this.state.user.is_private,
         });
       }),
+      requestService.getSelf().then((response)=>{
+            this.setState({
+            notification_allowed:response.data.is_notification_allowed,
+            notification_email_allowed:response.data.is_email_allowed,
+            })
+
+      })
+
     ]).then(() => {
       this.setState({
         isLoading: false,

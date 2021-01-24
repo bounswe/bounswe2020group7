@@ -56,6 +56,24 @@ const getUser = (id) => {
         });
 
 }
+const getSelf = () => {
+    const url = config.BASE_URL;
+
+    const token = localStorage.getItem("jwtToken");
+    axios.defaults.headers.common["auth_token"] = `${token}`;
+    return axios.get(url + "/api/auth_system/self")
+        .then(response => {
+
+            if (response) {
+            }
+            return response;
+        })
+        .catch(err => {
+            console.log(err)
+            return err.response;
+        });
+
+}
 const createIssue = (title,description,deadline,workspace_id) => {
     const url = config.BASE_URL;
     const params = {
@@ -683,5 +701,6 @@ export default {
   assignIssue,
   getIssues,
   deleteIssue,
-  postNotification
+  postNotification,
+  getSelf,
 };
