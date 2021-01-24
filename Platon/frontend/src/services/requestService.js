@@ -56,6 +56,24 @@ const getUser = (id) => {
         });
 
 }
+const getSelf = () => {
+    const url = config.BASE_URL;
+
+    const token = localStorage.getItem("jwtToken");
+    axios.defaults.headers.common["auth_token"] = `${token}`;
+    return axios.get(url + "/api/auth_system/self")
+        .then(response => {
+
+            if (response) {
+            }
+            return response;
+        })
+        .catch(err => {
+            console.log(err)
+            return err.response;
+        });
+
+}
 const createIssue = (title,description,deadline,workspace_id) => {
     const url = config.BASE_URL;
     const params = {
@@ -279,6 +297,26 @@ const postFollowRequest = (follower_id, following_id) => {
 
   return axios
     .post(url + "/api/follow/follow_requests", formData)
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => {
+      return err.response;
+    });
+};
+
+const postNotification = (notifications_allowed, email_notifications_allowed) => {
+  const url = config.BASE_URL;
+
+  const token = localStorage.getItem("jwtToken");
+  axios.defaults.headers.common["auth_token"] = `${token}`;
+
+  let formData = new FormData();
+  formData.append("is_email_allowed", email_notifications_allowed);
+  formData.append("is_notification_allowed", notifications_allowed);
+
+  return axios
+    .post(url + "/api/profile/notifications", formData)
     .then((response) => {
       return response;
     })
@@ -662,5 +700,7 @@ export default {
   createIssue,
   assignIssue,
   getIssues,
-  deleteIssue 
+  deleteIssue,
+  postNotification,
+  getSelf,
 };
