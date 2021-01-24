@@ -104,6 +104,7 @@ class PersonalCalendarAPI(Resource):
                                                         "type": 1,
                                                         "title": contributed_workspace.title,
                                                         "deadline": contributed_workspace.deadline,
+                                                        "deadline_str": contributed_workspace.deadline.strftime("%Y.%m.%d"),
                                                         "workspace_id": contributed_workspace.id,
                                                         "workspace_title": contributed_workspace.title
                                                     }
@@ -118,6 +119,7 @@ class PersonalCalendarAPI(Resource):
                                                         "type": 2,
                                                         "title": milestone.title,
                                                         "deadline": milestone.deadline,
+                                                        "deadline_str": milestone.deadline.strftime("%Y.%m.%d %H.%M"),
                                                         "workspace_id": contributed_workspace.id,
                                                         "workspace_title": contributed_workspace.title
                                                     }
@@ -135,6 +137,7 @@ class PersonalCalendarAPI(Resource):
                                                 "type": 3,
                                                 "title": issue.title,
                                                 "deadline": issue.deadline,
+                                                "deadline_str": issue.deadline.strftime("%Y.%m.%d %H.%M"),
                                                 "workspace_id": issue.workspace_id,
                                                 "workspace_title": Workspace.query.filter_by(id=issue.workspace_id).first().title
                                             }
