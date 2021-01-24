@@ -36,17 +36,6 @@ def activity_stream_accept_collaboration_invitation(invitation, invitee_id):
     except:
         return make_response(jsonify({'error': 'Database Connection Error'}), 500)
     
-    return make_response(jsonify({
-            'msg': 'Issue is successfully created',
-            "issue_id": issue.id, 
-            "workspace_id": issue.workspace_id, 
-            "title": issue.title,
-            "description": issue.description,
-            "deadline": issue.deadline,
-            "is_open": issue.is_open,
-            "creator_id": issue.creator_id
-            }), 200)
-
 def activity_stream_follow_activity(logged_in_user, following_user):
     # Add this activity to the Activity Stream
     activity_stream_item = ActivityStreamItem(
@@ -148,6 +137,7 @@ def activity_stream_quit_workspace(user_id, form):
     )
     try:
         db.session.add(activity_stream_entry)
+        db.session.commit()
     except:
         return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
@@ -244,13 +234,24 @@ def activity_stream_create_issue(user_id, issue):
             activity_target_name = get_workspace_title_of_issue(issue)
         )
     except:
-        make_response(jsonify({"error" : "error happened while creating activity stream entry"}), 500)
+        return make_response(jsonify({"error" : "error happened while creating activity stream entry"}), 500)
     
     try:
         db.session.add(activity_stream_entry)
         db.session.commit()
     except:
         return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+    return make_response(jsonify({
+            'msg': 'Issue is successfully created',
+            "issue_id": issue.id, 
+            "workspace_id": issue.workspace_id, 
+            "title": issue.title,
+            "description": issue.description,
+            "deadline": issue.deadline,
+            "is_open": issue.is_open,
+            "creator_id": issue.creator_id
+            }), 200) 
 
 def sort_activities(activities_list):
     return sorted(activities_list, key=lambda x: x.timestamp, reverse=True)
