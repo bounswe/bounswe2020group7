@@ -107,7 +107,6 @@ class ActivityStreamAdapter(private val data: ArrayList<ActivityStreamElement>, 
     }
 
     fun submitElements(newList:ArrayList<ActivityStreamElement>){
-        data.clear()
         data.addAll(newList)
         this.notifyDataSetChanged()
     }

@@ -7,7 +7,9 @@ data class ActivityStream(
         @SerializedName("@context")
         val cont: String,
         val id: Int,
-        val orderedItems:ArrayList<ActivityStreamElement>?)
+        val orderedItems:ArrayList<ActivityStreamElement>?,
+        val totalItems: Int
+)
 
 data class ActivityStreamElement(
         val actor:Actor?,
