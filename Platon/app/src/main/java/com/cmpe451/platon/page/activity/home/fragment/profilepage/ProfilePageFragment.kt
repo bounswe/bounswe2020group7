@@ -40,6 +40,7 @@ import com.cmpe451.platon.network.models.Comment
 import com.cmpe451.platon.network.models.SearchElement
 import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.activity.home.HomeActivityViewModel
+import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.util.Definitions
 import droidninja.filepicker.FilePickerBuilder
 import droidninja.filepicker.FilePickerConst
@@ -245,6 +246,20 @@ class ProfilePageFragment : Fragment(),
                     }
                 }
             })
+        mProfilePageViewModel.getMuteNotificationsResourceResponse.observe(viewLifecycleOwner, {t->
+            when (t.javaClass) {
+                Resource.Loading::class.java ->dialog.show()
+                Resource.Success::class.java -> {
+                    mActivityViewModel.fetchUser((activity as HomeActivity).currUserToken)
+                    mProfilePageViewModel.getMuteNotificationsResourceResponse.value = Resource.Done()
+                }
+                Resource.Error::class.java -> {
+                    Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
+                    mProfilePageViewModel.getMuteNotificationsResourceResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java->dialog.dismiss()
+            }
+        })
 
         mProfilePageViewModel.userSkills.observe(viewLifecycleOwner, { t ->
             when (t.javaClass) {
@@ -350,6 +365,7 @@ class ProfilePageFragment : Fragment(),
                 Resource.Done::class.java->dialog.dismiss()
             }
         })
+
     }
 
 
@@ -580,7 +596,47 @@ class ProfilePageFragment : Fragment(),
             mProfilePageViewModel.getAllSkills()
             onAddDeleteSkillClicked()
         }
-
+        binding.textNameSurname.setOnClickListener {
+            var notifText = "mute app notifications"
+            var notifAllow = 0
+            if(!mActivityViewModel.getUserResourceResponse.value!!.data!!.is_notification_allowed){
+                notifText = "unmute app notifications"
+                notifAllow = 1
+            }
+            AlertDialog.Builder(context)
+                .setMessage("Are you sure you want to ${notifText}?")
+                .setPositiveButton("Yes"
+                ) { _, _ ->
+                    val x = if(mActivityViewModel.getUserResourceResponse.value!!.data!!.is_email_allowed) 1 else 0
+                    mProfilePageViewModel.muteNotifications(x,
+                        notifAllow, (activity as HomeActivity).currUserToken)
+                }
+                .setNegativeButton("Cancel"
+                ) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create().show()
+        }
+        binding.muteEmailNotifIv.setOnClickListener {
+            var notifText = "mute e-mail notifications"
+            var notifAllow = 0
+            if(!mActivityViewModel.getUserResourceResponse.value!!.data!!.is_email_allowed){
+                notifText = "unmute e-mail notifications"
+                notifAllow = 1
+            }
+            AlertDialog.Builder(context)
+                .setMessage("Are you sure you want to ${notifText}?")
+                .setPositiveButton("Yes"
+                ) { _, _ ->
+                    val x = if(mActivityViewModel.getUserResourceResponse.value!!.data!!.is_notification_allowed) 1 else 0
+                    mProfilePageViewModel.muteNotifications(notifAllow,x, (activity as HomeActivity).currUserToken)
+                }
+                .setNegativeButton("Cancel"
+                ) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create().show()
+        }
     }
 
 
