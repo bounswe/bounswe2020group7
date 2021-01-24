@@ -376,19 +376,7 @@ class IssueAPI(Resource):
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
             # creates activity stream record
-            activity_stream_create_issue(user_id, issue)
-
-            return make_response(jsonify({
-                'msg': 'Issue is successfully created',
-                "issue_id": issue.id, 
-	            "workspace_id": issue.workspace_id, 
-	            "title": issue.title,
-	            "description": issue.description,
-	            "deadline": issue.deadline,
-	            "is_open": issue.is_open,
-	            "creator_id": issue.creator_id
-                }), 200)
-
+            return activity_stream_create_issue(user_id, issue)
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
 
@@ -922,8 +910,7 @@ class MilestoneAPI(Resource):
                 return make_response(jsonify({'error': 'Database Connection Error'}), 500)
 
             # Add this activity into Activity Stream.
-            activity_stream_post_milestone(user_id, milestone)
-            return make_response(jsonify({'msg': 'milestone is successfully created'}), 200)
+            return activity_stream_post_milestone(user_id, milestone)
 
         else:
             return make_response(jsonify({'error': 'Input Format Error'}), 400)
@@ -1060,9 +1047,7 @@ class WorkspacesAPI(Resource):
                 else:
                     
                     #Add this activity into Activity Stream if it is public
-                    activity_stream_create_workspace(new_workspace, requester_id)
-
-                    return make_response(jsonify({"message" : "Workspace has been successfully created."}), 201)
+                    return activity_stream_create_workspace(new_workspace, requester_id) 
         else:
             return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
 
@@ -1249,9 +1234,7 @@ class WorkspacesAPI(Resource):
                             return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
                         else:
                             #Add this activity into Activity Stream if it is public
-                            activity_stream_delete_workspace(requested_workspace, requester_id)
-                            
-                            return make_response(jsonify({"message" : "Workspace has been successfully deleted."}), 200)
+                            return activity_stream_delete_workspace(requested_workspace, requester_id)
                     else:
                         return make_response(jsonify({"error" : "You are not the creator of this workspace, you cannot delete it."}), 401)
                 else:
@@ -1874,8 +1857,7 @@ class QuitWorkspaceAPI(Resource):
                 return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
             
             # Add this activity into Activity Stream
-            activity_stream_quit_workspace(user_id, form)
-            return make_response(jsonify({"msg" : "You successfully quited from workspace."}), 201)
+            return activity_stream_quit_workspace(user_id, form)
         else:
             return make_response(jsonify({"error" : "Missing data fields or invalid data."}), 400)
 
