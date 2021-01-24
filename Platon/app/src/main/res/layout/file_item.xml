@@ -27,14 +27,7 @@
         android:textColor="@color/primary_light"
         app:drawableLeftCompat="@drawable/ic_insert_drive_file_24px"
         android:drawablePadding="@dimen/small"/>
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/edit_file_iv"
-        android:src="@drawable/ic_border_color_24px"
-        android:layout_toStartOf="@id/delete_folder_iv"
-        android:layout_centerVertical="true"
-        android:padding="@dimen/xx_small"/>
+
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
