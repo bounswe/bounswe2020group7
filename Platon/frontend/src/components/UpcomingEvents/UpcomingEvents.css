@@ -5,8 +5,7 @@
 }
 
 .UpcomingEventsSpinner {
-    margin: 20vh 0px;
-    height: 20vh;
+    margin: 2vh;
     display: flex;
     justify-content: center;
     align-items: center;

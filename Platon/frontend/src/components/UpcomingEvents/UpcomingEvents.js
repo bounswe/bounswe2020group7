@@ -57,7 +57,7 @@ const UpcomingEvents = ({ itemsPerPage = 5, classes, width = '500px', marginLeft
       </Typography>
         <div className="UpcomingEventsItems" style={{ width: width, marginLeft: marginLeft, marginRight: marginRight }}>
           {fetching && (
-            <div className="TrendingProjectsSpinner">
+            <div className="UpcomingEventsSpinner">
               <Spinner />
             </div>
           )}
@@ -72,6 +72,7 @@ const UpcomingEvents = ({ itemsPerPage = 5, classes, width = '500px', marginLeft
               count={data.number_of_pages}
               onChange={handlePageChange}
               page={page}
+              siblingCount={0}
             />
             <div className="disclaimer" style={{ marginTop: '8px' }}>
               <Typography
