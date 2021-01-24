@@ -3,24 +3,18 @@ package com.cmpe451.platon.page.activity.home.fragment.home
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cmpe451.platon.R
-import com.cmpe451.platon.adapter.ActivityStreamAdapter
-import com.cmpe451.platon.adapter.TrendingProjectsAdapter
-import com.cmpe451.platon.adapter.UpcomingEventsAdapter
+import com.cmpe451.platon.adapter.*
 import com.cmpe451.platon.core.BaseActivity
-import com.cmpe451.platon.databinding.ActivityStreamCellBinding
-import com.cmpe451.platon.databinding.FragmentHomeBinding
-import com.cmpe451.platon.databinding.TrendProjectCellBinding
-import com.cmpe451.platon.databinding.UpcomingEventCellBinding
+import com.cmpe451.platon.databinding.*
 import com.cmpe451.platon.listener.PaginationListener
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.ActivityStreamElement
@@ -30,7 +24,8 @@ import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.util.Definitions
 
-class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonClickListener, UpcomingEventsAdapter.UpcomingButtonClickListener, ActivityStreamAdapter.ActivityStreamButtonClickListener {
+class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonClickListener, UpcomingEventsAdapter.UpcomingButtonClickListener,
+    ActivityStreamAdapter.ActivityStreamButtonClickListener, CalendarAdapter.CalendarButtonClickListener {
 
     private lateinit var binding: FragmentHomeBinding
     private val mHomeViewModel: HomeViewModel by activityViewModels()
@@ -38,6 +33,7 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
     private var maxPageNumberUpcoming:Int=0;
 
     private lateinit var dialog:AlertDialog
+    private lateinit var calendarDialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +59,14 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
         mHomeViewModel.getUpcomingEvents(0, 5)
 
 
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.calendar_btn->{
+                onCalendarClicked()
+            }
+        }
+        return item.onNavDestinationSelected(findNavController()) || super.onOptionsItemSelected(item)
     }
 
     private fun setObservers(){
@@ -141,6 +145,47 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
 
     }
 
+    private fun onCalendarClicked() {
+        mHomeViewModel.getCalendar() //TODO
+        mHomeViewModel.getCalendarResourceResponse.observe(viewLifecycleOwner) { t -> // TODO
+            when (t.javaClass) {
+                Resource.Loading::class.java -> dialog.show()
+                Resource.Error::class.java -> {
+                    Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                    mHomeViewModel.getCalendarResourceResponse.value = Resource.Done()
+                }
+                Resource.Done::class.java -> dialog.dismiss()
+                Resource.Success::class.java -> {
+                    if (t.data!!.isEmpty()) {
+                        Toast.makeText(
+                            requireContext(),
+                            "No personal events found",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else {
+                        val calendarBinding = DialogCalendarBinding.inflate(
+                            layoutInflater,
+                            requireView().parent as ViewGroup,
+                            false
+                        )
+                        calendarDialog = AlertDialog.Builder(context).setView(calendarBinding.root)
+                            .setCancelable(true).create()
+                        calendarDialog.show()
+                        calendarBinding.recommendedRv.adapter =
+                            CalendarAdapter(ArrayList(), requireContext(), this)
+                        calendarBinding.recommendedRv.layoutManager =
+                            LinearLayoutManager(requireContext())
+                        (calendarBinding.recommendedRv.adapter as CalendarAdapter).submitElements(t.data!!)
+                        calendarBinding.recommendedTitleTv.setOnClickListener {
+                            calendarDialog.dismiss()
+                        }
+                    }
+                    mHomeViewModel.getCalendarResourceResponse.value = Resource.Done()
+
+                }
+            }
+        }
+    }
 
     private fun setListeners() {
         dialog = Definitions().createProgressBar(requireContext())
@@ -192,6 +237,18 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.logout_menu_btn)?.isVisible = false
+        menu.findItem(R.id.calendar_btn)?.isVisible = true
         super.onPrepareOptionsMenu(menu)
+    }
+
+    override fun onCalendarItemClicked(wsId: Int) {
+        val bnd = Bundle()
+        bnd.putString("token", (activity as HomeActivity).currUserToken)
+        bnd.putInt("user_id", (activity as HomeActivity).currUserId)
+        bnd.putBoolean("add", false)
+        bnd.putInt("workspace_id", wsId)
+        bnd.putBoolean("isOwner", true)
+        calendarDialog.dismiss()
+        startActivity(Intent(activity, WorkspaceActivity::class.java).putExtras(bnd))
     }
 }

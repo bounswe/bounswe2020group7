@@ -161,5 +161,6 @@
     <string name="send_report_str">Send Report</string>
     <string name="report_details_optional_str">Report Details ( optional )</string>
     <string name="report_user_str">Report User</string>
+    <string name="calendar_str">Your Calendar</string>
 
 </resources>
