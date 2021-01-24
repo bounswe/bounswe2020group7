@@ -287,6 +287,26 @@ const postFollowRequest = (follower_id, following_id) => {
     });
 };
 
+const postNotification = (notifications_allowed, email_notifications_allowed) => {
+  const url = config.BASE_URL;
+
+  const token = localStorage.getItem("jwtToken");
+  axios.defaults.headers.common["auth_token"] = `${token}`;
+
+  let formData = new FormData();
+  formData.append("is_email_allowed", email_notifications_allowed);
+  formData.append("is_notification_allowed", notifications_allowed);
+
+  return axios
+    .post(url + "/api/profile/notifications", formData)
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => {
+      return err.response;
+    });
+};
+
 const getSearchUser = (search_query, job_filter, sorting_criteria) => {
   const url = config.BASE_URL;
 
@@ -662,5 +682,6 @@ export default {
   createIssue,
   assignIssue,
   getIssues,
-  deleteIssue 
+  deleteIssue,
+  postNotification
 };
