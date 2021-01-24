@@ -41,3 +41,12 @@ data class Contributor(
         val surname:String,
         val id:Int
 )
+
+data class CalendarItem(
+        val deadline: String,
+        val deadline_str: String,
+        val title:String,
+        val type:Int,
+        val workspace_id:Int,
+        val workspace_title:String
+)

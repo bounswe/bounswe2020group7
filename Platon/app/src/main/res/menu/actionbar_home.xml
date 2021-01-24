@@ -43,4 +43,10 @@
         android:icon="@drawable/ic_group_add_24px"
         android:visible="false"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/calendar_btn"
+        android:title="@string/calendar_str"
+        android:icon="@drawable/ic_event_note_24px"
+        android:visible="false"
+        app:showAsAction="always" />
 </menu>
