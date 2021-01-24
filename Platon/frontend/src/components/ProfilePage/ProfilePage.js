@@ -144,7 +144,6 @@ class ProfilePage extends React.Component {
               this.setState({
                 followers: response.data.followers,
               })
-              console.log(this.state.followers)
             }),
             requestService.getFollowRequests().then((response) => {
               this.setState({
@@ -497,7 +496,7 @@ class ProfilePage extends React.Component {
                         <Tab label="Requests" {...a11yProps(3)} />
                       )}
                       {!this.state.isMyProfile ? null : (
-                        <Tab label="Recommendation" {...a11yProps(4)} />
+                        <Tab label="Recommendation" {...a11yProps(5)} />
                       )}
                     </Tabs>
                   </AppBar>
@@ -681,7 +680,7 @@ class ProfilePage extends React.Component {
                     </TabPanel>
                   )}
                   {!this.state.isMyProfile ? null : (
-                    <TabPanel value={this.state.value} index={4}>
+                    <TabPanel value={this.state.value} index={5}>
                       <List>
                         {this.state.recommendedUsers.map((value, index) => {
                           return (

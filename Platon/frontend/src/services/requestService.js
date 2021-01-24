@@ -633,6 +633,24 @@ const getUserRecommendation = (number_of_recommendations) => {
     });
 };
 
+const getTagSearch = (search_type, skills) => {
+  const url = config.BASE_URL;
+
+  const params = {
+    search_type: search_type,
+    skills: JSON.stringify(skills),
+  };
+
+  return axios
+    .get(url + "/api/search_engine/tag_search", { params })
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => {
+      return err.response;
+    });
+};
+
 String.prototype.replaceAt = function (index, replacement) {
   return (
     this.substr(0, index) +
@@ -669,4 +687,5 @@ export default {
   getIssues,
   deleteIssue,
   getUserRecommendation,
+  getTagSearch,
 };
