@@ -473,11 +473,10 @@ interface Webservice {
 
     @FormUrlEncoded
     @HTTP(method = "DELETE" , path = "api/workspaces/issue/comment", hasBody = true)
-    fun deleteIssueComment(
-        @Query("workspace_id") workspaceId:Int,
-        @Query("issue_id") issueId:Int,
-        @Query("commentId") commentId:Int?,
-        @Header("auth_token") authToken :String):Call<JsonObject?>
+    fun deleteIssueComment(@Field("workspace_id") workspaceId:Int,
+                           @Field("issue_id") issueId:Int,
+                           @Field("comment_id") commentId:Int?,
+                           @Header("auth_token") authToken :String):Call<JsonObject?>
 
 
     @FormUrlEncoded
