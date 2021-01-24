@@ -78,6 +78,7 @@ const TrendingProjects = ({ itemsPerPage = 5, width= '500px', marginLeft = "0px"
               count={Math.floor(rawData.length / itemsPerPage)}
               onChange={handlePageChange}
               page={page}
+              siblingCount={0}
             />
           </div>
         </div>
