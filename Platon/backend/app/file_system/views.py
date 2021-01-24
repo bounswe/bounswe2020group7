@@ -85,8 +85,7 @@ class FileSystemAPI(Resource):
             # Save file to the given path
             new_file.save(file_path)
             # Save this activity into Activity Stream
-            activity_stream_post_file(user_id, form.workspace_id.data, form.filename.data)
-            return make_response(jsonify({"msg":"Your File is successfully uploaded"}),201)
+            return activity_stream_post_file(user_id, form.workspace_id.data, form.filename.data) 
         else:
             return make_response(jsonify({"error":"Invalid Input"}),400)
     
@@ -152,8 +151,7 @@ class FileSystemAPI(Resource):
             # Delete file
             os.remove(file_path) 
             # Add this activity into Activity Stream.
-            activity_stream_delete_file(user_id, form.workspace_id.data, form.filename.data)
-            return make_response(jsonify({"error":"Your File is successfully deleted"}),200)
+            return activity_stream_delete_file(user_id, form.workspace_id.data, form.filename.data)
         else:
             return make_response(jsonify({"error":"Invalid Input"}),400)
 
@@ -225,8 +223,7 @@ class FolderSystemAPI(Resource):
             except:
                 return make_response(jsonify({"error":"Recursive directories can not be created"}),400)
             # Save this activity into Activity Stream
-            activity_stream_post_folder(user_id, form.workspace_id.data, form.new_folder_name.data)
-            return make_response(jsonify({"msg":"Folder is successfully created"}),201)
+            return activity_stream_post_folder(user_id, form.workspace_id.data, form.new_folder_name.data)
         else:
             return make_response(jsonify({"error":"Invalid Input"}),400)
 
@@ -292,8 +289,7 @@ class FolderSystemAPI(Resource):
             # Delete all contents of the folder
             FileSystem.delete_all_content(folder_path)
             # Add this activity into Activity Stream.
-            activity_stream_delete_folder(user_id, form.workspace_id.data, form.path.data)
-            return make_response(jsonify({"msg":"Folder is successfully deleted"}),200)
+            return activity_stream_delete_folder(user_id, form.workspace_id.data, form.path.data)
         else:
             return make_response(jsonify({"error":"Invalid Input"}),400)
 

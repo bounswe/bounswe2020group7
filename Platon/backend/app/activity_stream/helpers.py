@@ -5,7 +5,7 @@ from app.activity_stream.models import *
 from app.follow_system.models import *
 from app.auth_system.helpers import profile_photo_link
 from sqlalchemy import desc
-from flask import make_response
+from flask import make_response,jsonify
 
 
 
@@ -35,7 +35,7 @@ def activity_stream_accept_collaboration_invitation(invitation, invitee_id):
         db.session.commit()
     except:
         return make_response(jsonify({'error': 'Database Connection Error'}), 500)
-
+    
 def activity_stream_follow_activity(logged_in_user, following_user):
     # Add this activity to the Activity Stream
     activity_stream_item = ActivityStreamItem(
@@ -137,8 +137,11 @@ def activity_stream_quit_workspace(user_id, form):
     )
     try:
         db.session.add(activity_stream_entry)
+        db.session.commit()
     except:
         return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+    return make_response(jsonify({"msg" : "You successfully quited from workspace."}), 201)
 
 
 def activity_stream_create_workspace(new_workspace, requester_id):
@@ -166,6 +169,8 @@ def activity_stream_create_workspace(new_workspace, requester_id):
             db.session.commit()
         except:
             return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+        
+        return make_response(jsonify({"message" : "Workspace has been successfully created."}), 201)
 
 
 def activity_stream_delete_workspace(requested_workspace, requester_id):
@@ -193,6 +198,8 @@ def activity_stream_delete_workspace(requested_workspace, requester_id):
             db.session.commit()
         except:
             return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+        
+        return make_response(jsonify({"message" : "Workspace has been successfully deleted."}), 200)
 
 def get_workspace_title_of_issue(issue):
     try:
@@ -227,13 +234,24 @@ def activity_stream_create_issue(user_id, issue):
             activity_target_name = get_workspace_title_of_issue(issue)
         )
     except:
-        make_response(jsonify({"error" : "error happened while creating activity stream entry"}), 500)
+        return make_response(jsonify({"error" : "error happened while creating activity stream entry"}), 500)
     
     try:
         db.session.add(activity_stream_entry)
         db.session.commit()
     except:
         return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+    return make_response(jsonify({
+            'msg': 'Issue is successfully created',
+            "issue_id": issue.id, 
+            "workspace_id": issue.workspace_id, 
+            "title": issue.title,
+            "description": issue.description,
+            "deadline": issue.deadline,
+            "is_open": issue.is_open,
+            "creator_id": issue.creator_id
+            }), 200) 
 
 def sort_activities(activities_list):
     return sorted(activities_list, key=lambda x: x.timestamp, reverse=True)
@@ -276,13 +294,15 @@ def activity_stream_post_file(user_id, workspace_id, filename):
             activity_target_name = workspace.title
         )
     except:
-        make_response(jsonify({"error" : "error happened while creating activity stream entry"}), 500)
+        return make_response(jsonify({"error" : "error happened while creating activity stream entry"}), 500)
     
     try:
         db.session.add(activity_stream_entry)
         db.session.commit()
     except:
         return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+    
+    return make_response(jsonify({"msg":"Your File is successfully uploaded"}),201)
 
 def activity_stream_post_folder(user_id, workspace_id, new_folder_name):
     try:
@@ -308,13 +328,16 @@ def activity_stream_post_folder(user_id, workspace_id, new_folder_name):
             activity_target_name = workspace.title
         )
     except:
-        make_response(jsonify({"error" : "error happened while creating activity stream entry"}), 500)
+        return make_response(jsonify({"error" : "error happened while creating activity stream entry"}), 500)
     
     try:
         db.session.add(activity_stream_entry)
         db.session.commit()
     except:
         return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+    
+    return make_response(jsonify({"msg":"Folder is successfully created"}),201)
+
 
 def activity_stream_post_milestone(user_id, milestone):
     try:
@@ -341,13 +364,15 @@ def activity_stream_post_milestone(user_id, milestone):
             activity_target_name = workspace.title
         )
     except:
-        make_response(jsonify({"error" : "error happened while creating activity stream entry"}), 500)
+        return make_response(jsonify({"error" : "error happened while creating activity stream entry"}), 500)
     
     try:
         db.session.add(activity_stream_entry)
         db.session.commit()
     except:
         return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+
+    return  make_response(jsonify({'msg': 'milestone is successfully created'}), 200)
 
 def activity_stream_delete_folder(user_id, workspace_id, path):
     try:
@@ -374,13 +399,15 @@ def activity_stream_delete_folder(user_id, workspace_id, path):
             activity_target_name = workspace.title
         )
     except:
-        make_response(jsonify({"error" : "error happened while creating activity stream entry"}), 500)
+        return make_response(jsonify({"error" : "error happened while creating activity stream entry"}), 500)
     
     try:
         db.session.add(activity_stream_entry)
         db.session.commit()
     except:
         return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+    
+    return make_response(jsonify({"msg":"Folder is successfully deleted"}),200)
 
 def activity_stream_delete_file(user_id, workspace_id, filename):
     try:
@@ -406,13 +433,15 @@ def activity_stream_delete_file(user_id, workspace_id, filename):
             activity_target_name = workspace.title
         )
     except:
-        make_response(jsonify({"error" : "error happened while creating activity stream entry"}), 500)
+        return make_response(jsonify({"error" : "error happened while creating activity stream entry"}), 500)
     
     try:
         db.session.add(activity_stream_entry)
         db.session.commit()
     except:
         return make_response(jsonify({'error': 'Database Connection Error'}), 500)
+    
+    return make_response(jsonify({"error":"Your File is successfully deleted"}),200)
 
 def remove_duplicate_activities(activity_stream_list_of_workspaces, activity_stream_list):
     return list(set(activity_stream_list + activity_stream_list_of_workspaces))
