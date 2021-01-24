@@ -148,7 +148,6 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
         mHomeViewModel.getActivityStreamResourceResponse.observe(viewLifecycleOwner, { t->
             when(t.javaClass){
                 Resource.Success::class.java -> {
-                    print("ert")
                     (binding.homeActivityStreamRecyclerView.adapter as ActivityStreamAdapter).submitElements(t.data!!.orderedItems as ArrayList<ActivityStreamElement>)
                 }
                 Resource.Error::class.java ->Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()

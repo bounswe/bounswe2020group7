@@ -59,7 +59,7 @@ class ActivityStreamAdapter(private val data: ArrayList<ActivityStreamElement>, 
 
         val formattedDate =  df.format(Date()).toLong()
         Glide.with(context)
-            .load(Definitions.API_URL + "api" + data[position].actor!!.image)
+            .load(Definitions.API_URL + "api" + data[position].actor!!.image.url)
             .placeholder(R.drawable.ic_o_logo)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .circleCrop()
@@ -71,6 +71,7 @@ class ActivityStreamAdapter(private val data: ArrayList<ActivityStreamElement>, 
                 )
             )
             .into(holder.binding.activityImg)
+
         holder.bindData(holder.binding, position, activityStreamButtonClickListener)
     }
 
