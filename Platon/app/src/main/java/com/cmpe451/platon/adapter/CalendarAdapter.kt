@@ -2,6 +2,7 @@ package com.cmpe451.platon.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,12 +35,12 @@ class CalendarAdapter(private val data: ArrayList<CalendarItem>, private val con
                 2->{
                     binding.typeTv.text = "Milestone"
                     binding.worksapceNameTv.text = "Related Workspace: ${data.workspace_title}"
-                    card.setCardBackgroundColor(R.color.secondary_yellow)
+                    card.setBackgroundColor(card.context.resources.getColor(R.color.secondary_yellow))
                 }
                 3->{
                     binding.typeTv.text = "Issue"
                     binding.worksapceNameTv.text = "Related Workspace: ${data.workspace_title}"
-                    card.setCardBackgroundColor(R.color.very_light_brown)
+                    card.setBackgroundColor(card.context.resources.getColor(R.color.very_light_brown))
                 }
             }
             binding.titleTv.setOnClickListener {

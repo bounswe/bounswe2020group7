@@ -503,6 +503,7 @@ interface Webservice {
     fun getRecommendedFollows(
         @Query("number_of_recommendations") number_of_recommendations:Int,
         @Header("auth_token") authToken :String):Call<RecommendedUserList?>
+
     @GET("api/recommendation_system/workspace")
     fun getRecommendedWorkspaces(
         @Query("number_of_recommendations") number_of_recommendations:Int,
@@ -520,6 +521,10 @@ interface Webservice {
     fun muteNotifications(@Field("is_email_allowed") is_email_allowed: Int?,
                    @Field("is_notification_allowed") is_notification_allowed: Int?,
                    @Header("auth_token") authToken: String): Call<JsonObject?>
+
+    @GET("api/upcoming_events/personal_calendar")
+    fun getCalendar(
+        @Header("auth_token") authToken :String):Call<List<CalendarItem>?>
 
 
 }

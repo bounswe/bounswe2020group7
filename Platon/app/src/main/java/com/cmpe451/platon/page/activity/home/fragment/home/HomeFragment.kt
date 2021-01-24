@@ -146,8 +146,9 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
     }
 
     private fun onCalendarClicked() {
-        mHomeViewModel.getCalendar() //TODO
-        mHomeViewModel.getCalendarResourceResponse.observe(viewLifecycleOwner) { t -> // TODO
+        mHomeViewModel.getCalendar((requireActivity() as HomeActivity).currUserToken)
+
+        mHomeViewModel.getCalendarResourceResponse.observe(viewLifecycleOwner) { t ->
             when (t.javaClass) {
                 Resource.Loading::class.java -> dialog.show()
                 Resource.Error::class.java -> {
@@ -171,17 +172,16 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
                         calendarDialog = AlertDialog.Builder(context).setView(calendarBinding.root)
                             .setCancelable(true).create()
                         calendarDialog.show()
-                        calendarBinding.recommendedRv.adapter =
+                        calendarBinding.calendarRv.adapter =
                             CalendarAdapter(ArrayList(), requireContext(), this)
-                        calendarBinding.recommendedRv.layoutManager =
+                        calendarBinding.calendarRv.layoutManager =
                             LinearLayoutManager(requireContext())
-                        (calendarBinding.recommendedRv.adapter as CalendarAdapter).submitElements(t.data!!)
-                        calendarBinding.recommendedTitleTv.setOnClickListener {
+                        (calendarBinding.calendarRv.adapter as CalendarAdapter).submitElements(t.data!!)
+                        calendarBinding.calendarTitleTv.setOnClickListener {
                             calendarDialog.dismiss()
                         }
                     }
                     mHomeViewModel.getCalendarResourceResponse.value = Resource.Done()
-
                 }
             }
         }

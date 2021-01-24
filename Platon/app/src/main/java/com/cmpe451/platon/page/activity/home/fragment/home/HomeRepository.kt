@@ -3,9 +3,7 @@ package com.cmpe451.platon.page.activity.home.fragment.home
 import androidx.lifecycle.MutableLiveData
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.RetrofitClient
-import com.cmpe451.platon.network.models.ActivityStreamElement
-import com.cmpe451.platon.network.models.TrendingProjects
-import com.cmpe451.platon.network.models.UpcomingEvents
+import com.cmpe451.platon.network.models.*
 import com.cmpe451.platon.util.Definitions
 import org.json.JSONObject
 import retrofit2.Call
@@ -21,6 +19,7 @@ class HomeRepository{
     val trendingProjectsResourceResponse:MutableLiveData<Resource<TrendingProjects>> = MutableLiveData()
     val upcomingEventsResourceResponse:MutableLiveData<Resource<UpcomingEvents>> = MutableLiveData()
 
+    val calendarResourceResponse:MutableLiveData<Resource<List<CalendarItem>>> = MutableLiveData()
 
     fun getActivityStream(token:String, page:Int?, pageSize:Int?){
         val service = RetrofitClient.getService()
@@ -85,6 +84,27 @@ class HomeRepository{
             }
         })
 
+    }
+
+
+    fun getCalendar(token: String) {
+        val service = RetrofitClient.getService()
+        val call = service.getCalendar(token)
+
+        calendarResourceResponse.value = Resource.Loading()
+        call.enqueue(object : Callback<List<CalendarItem>?> {
+            override fun onResponse(call: Call<List<CalendarItem>?>, response: Response<List<CalendarItem>?>) {
+                when{
+                    response.isSuccessful && response.body() != null -> calendarResourceResponse.value = Resource.Success(response.body()!!)
+                    response.errorBody() != null -> calendarResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
+                    else -> calendarResourceResponse.value = Resource.Error("Unknown Error")
+                }
+            }
+
+            override fun onFailure(call: Call<List<CalendarItem>?>, t: Throwable) {
+                call.clone().enqueue(this)
+            }
+        })
     }
 
 
