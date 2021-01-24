@@ -3,6 +3,7 @@ package com.cmpe451.platon.page.activity.home.fragment.home
 import androidx.lifecycle.MutableLiveData
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.RetrofitClient
+import com.cmpe451.platon.network.models.ActivityStream
 import com.cmpe451.platon.network.models.ActivityStreamElement
 import com.cmpe451.platon.network.models.TrendingProjects
 import com.cmpe451.platon.network.models.UpcomingEvents
@@ -16,7 +17,7 @@ import retrofit2.Response
 class HomeRepository{
 
 
-    val activityStreamResourceResponse:MutableLiveData<Resource<List<ActivityStreamElement>>> = MutableLiveData()
+    val activityStreamResourceResponse:MutableLiveData<Resource<ActivityStream>> = MutableLiveData()
 
     val trendingProjectsResourceResponse:MutableLiveData<Resource<TrendingProjects>> = MutableLiveData()
     val upcomingEventsResourceResponse:MutableLiveData<Resource<UpcomingEvents>> = MutableLiveData()
@@ -27,8 +28,8 @@ class HomeRepository{
         val call = service.getActivityStream(token, page, pageSize)
 
         activityStreamResourceResponse.value = Resource.Loading()
-        call.enqueue(object : Callback<List<ActivityStreamElement>?> {
-            override fun onResponse(call: Call<List<ActivityStreamElement>?>, response: Response<List<ActivityStreamElement>?>) {
+        call.enqueue(object : Callback<ActivityStream?> {
+            override fun onResponse(call: Call<ActivityStream?>, response: Response<ActivityStream?>) {
                 when{
                     response.isSuccessful && response.body() != null -> activityStreamResourceResponse.value = Resource.Success(response.body()!!)
                     response.errorBody() != null -> activityStreamResourceResponse.value = Resource.Error(JSONObject(response.errorBody()!!.string()).get("error").toString())
@@ -36,11 +37,10 @@ class HomeRepository{
                 }
             }
 
-            override fun onFailure(call: Call<List<ActivityStreamElement>?>, t: Throwable) {
+            override fun onFailure(call: Call<ActivityStream?>, t: Throwable) {
                 call.clone().enqueue(this)
             }
         })
-
 
     }
 

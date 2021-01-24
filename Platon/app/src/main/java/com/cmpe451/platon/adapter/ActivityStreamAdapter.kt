@@ -6,9 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.signature.MediaStoreSignature
+import com.cmpe451.platon.R
 import com.cmpe451.platon.databinding.ActivityStreamCellBinding
 import com.cmpe451.platon.network.models.ActivityStreamElement
 import com.cmpe451.platon.util.Definitions
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class ActivityStreamAdapter(private val data: ArrayList<ActivityStreamElement>, private val context: Context, private val activityStreamButtonClickListener: ActivityStreamButtonClickListener) :
 
@@ -45,8 +51,26 @@ class ActivityStreamAdapter(private val data: ArrayList<ActivityStreamElement>, 
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
-        holder.binding.titleActivityStreamCell.text = data[position].message
-        Glide.with(context).load(data[position].image).circleCrop().into(holder.binding.activityImg)
+        holder.binding.titleActivityStreamCell.text = data[position].summary
+        //Glide.with(context).load(data[position].image).circleCrop().into(holder.binding.activityImg)
+
+        //TODO: foto
+        val df = SimpleDateFormat("hmsS", Locale.getDefault())
+
+        val formattedDate =  df.format(Date()).toLong()
+        Glide.with(context)
+            .load(Definitions.API_URL + "api" + data[position].actor!!.image)
+            .placeholder(R.drawable.ic_o_logo)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .circleCrop()
+            .signature(
+                MediaStoreSignature(
+                    "image/png",
+                    formattedDate,
+                    0
+                )
+            )
+            .into(holder.binding.activityImg)
         holder.bindData(holder.binding, position, activityStreamButtonClickListener)
     }
 
