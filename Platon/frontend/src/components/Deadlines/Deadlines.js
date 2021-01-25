@@ -80,7 +80,7 @@ const Deadlines = ({
           ))}
           <div className='paginationContainerTrending'>
             <StyledPagination
-              count={Math.floor(rawData.length / itemsPerPage)}
+              count={Math.ceil(rawData.length / itemsPerPage)}
               onChange={handlePageChange}
               page={page}
               siblingCount={0}

@@ -75,7 +75,7 @@ const TrendingProjects = ({ itemsPerPage = 5, width= '500px', marginLeft = "0px"
           ))}
           <div className='paginationContainerTrending'>
             <StyledPagination
-              count={Math.floor(rawData.length / itemsPerPage)}
+              count={Math.ceil(rawData.length / itemsPerPage)}
               onChange={handlePageChange}
               page={page}
               siblingCount={0}
