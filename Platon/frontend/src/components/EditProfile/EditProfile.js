@@ -24,6 +24,7 @@ import Autocomplete, {
 } from "@material-ui/lab/Autocomplete";
 import InputLabel from "@material-ui/core/InputLabel";
 import Chip from "@material-ui/core/Chip";
+import Checkbox from "@material-ui/core/Checkbox";
 
 const filter = createFilterOptions();
 
@@ -82,6 +83,7 @@ class EditProfile extends Component {
       profileId: null,
       isLoading: true,
       jobList: [],
+      permission: false,
       notification_email_allowed:true,
       notification_allowed:true,
     };
@@ -310,6 +312,18 @@ class EditProfile extends Component {
     });
   };
 
+  handlePermission = () => {
+    if (this.state.permission === true) {
+      this.setState({
+        permission: false,
+      });
+    } else {
+      this.setState({
+        permission: true,
+      });
+    }
+  };
+
   render() {
     return (
       <div className="EditProfileLanding">
@@ -321,160 +335,175 @@ class EditProfile extends Component {
             <Spinner />
           </div>
         ) : (
-          <Container className="EditPageContainer">
-            <Row className="mb-3 justify-content-center">
-              <Col sm={6}>
-                <a href={`/${this.state.profileId}`}>Back to profile</a>
-              </Col>
-            </Row>
-            <Row className="mb-3 justify-content-center">
-              <Col sm={6}>
-                <h2 className="ProfileLargeFont">Edit Profile</h2>
-                <hr className="ProfilePageLine" />
-              </Col>
-            </Row>
+            <Container className="EditPageContainer">
+              <Row className="mb-3 justify-content-center">
+                <Col sm={6}>
+                  <a href={`/${this.state.profileId}`}>Back to profile</a>
+                </Col>
+              </Row>
+              <Row className="mb-3 justify-content-center">
+                <Col sm={6}>
+                  <h2 className="ProfileLargeFont">Edit Profile</h2>
+                  <hr className="ProfilePageLine" />
+                </Col>
+              </Row>
 
-            <Row className="mb-3 justify-content-center">
-              <Col sm={6}>
-                <Row>
-                  <Col sm={6}>
-                    <StyledTextField
-                      defaultValue={this.state.user.name}
-                      className="EditProfileTextInput"
-                      id="outlined-basic"
-                      label="First Name"
-                      variant="outlined"
-                      fullWidth
-                      onChange={(e) => this.setState({ name: e.target.value })}
-                    />
-                  </Col>
-                  <Col sm={6}>
-                    <StyledTextField
-                      defaultValue={this.state.user.surname}
-                      className="EditProfileTextInput"
-                      id="outlined-basic"
-                      label="Second Name"
-                      variant="outlined"
-                      fullWidth
-                      onChange={(e) =>
-                        this.setState({ surname: e.target.value })
-                      }
-                    />
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-
-            <Row className="mb-3 justify-content-center">
-              <Col sm={6}>
-                <Autocomplete
-                  freeSolo
-                  id="tags-outlined"
-                  options={this.state.jobList}
-                  getOptionLabel={(option) => option}
-                  value={this.state.job}
-                  onChange={(event, newValue) => this.handleJob(newValue)}
-                  filterSelectedOptions
-                  renderInput={(params) => {
-                    params.inputProps.onChange = this.handleKeyDown;
-                    return (
+              <Row className="mb-3 justify-content-center">
+                <Col sm={6}>
+                  <Row>
+                    <Col sm={6}>
                       <StyledTextField
-                        {...params}
+                        defaultValue={this.state.user.name}
+                        className="EditProfileTextInput"
+                        id="outlined-basic"
+                        label="First Name"
                         variant="outlined"
-                        required
-                        name="affinities"
-                        label="Job"
-                        id="job"
-                        ffullWidth
-                        margin="normal"
+                        fullWidth
+                        onChange={(e) => this.setState({ name: e.target.value })}
                       />
-                    );
-                  }}
-                />
-              </Col>
-            </Row>
+                    </Col>
+                    <Col sm={6}>
+                      <StyledTextField
+                        defaultValue={this.state.user.surname}
+                        className="EditProfileTextInput"
+                        id="outlined-basic"
+                        label="Second Name"
+                        variant="outlined"
+                        fullWidth
+                        onChange={(e) =>
+                          this.setState({ surname: e.target.value })
+                        }
+                      />
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
 
-            <Row className="mb-3 justify-content-center">
-              <Col sm={6}>
-                <InputLabel htmlFor="component-simple">
-                  Profile Photo
+              <Row className="mb-3 justify-content-center">
+                <Col sm={6}>
+                  <Autocomplete
+                    freeSolo
+                    id="tags-outlined"
+                    options={this.state.jobList}
+                    getOptionLabel={(option) => option}
+                    value={this.state.job}
+                    onChange={(event, newValue) => this.handleJob(newValue)}
+                    filterSelectedOptions
+                    renderInput={(params) => {
+                      params.inputProps.onChange = this.handleKeyDown;
+                      return (
+                        <StyledTextField
+                          {...params}
+                          variant="outlined"
+                          required
+                          name="affinities"
+                          label="Job"
+                          id="job"
+                          ffullWidth
+                          margin="normal"
+                        />
+                      );
+                    }}
+                  />
+                </Col>
+              </Row>
+
+              <Row className="mb-3 justify-content-center">
+                <Col sm={6}>
+                  <InputLabel htmlFor="component-simple">
+                    Profile Photo
                 </InputLabel>
-                <StyledTextField
-                  type="file"
-                  className="EditProfileTextInput"
-                  id="outlined-basic"
-                  variant="outlined"
-                  fullWidth
-                  onChange={(e) =>
-                    this.setState({ profile_photo: e.target.files[0] })
-                  }
-                />
-              </Col>
-            </Row>
+                  <StyledTextField
+                    type="file"
+                    className="EditProfileTextInput"
+                    id="outlined-basic"
+                    variant="outlined"
+                    fullWidth
+                    onChange={(e) =>
+                      this.setState({ profile_photo: e.target.files[0] })
+                    }
+                  />
+                </Col>
+              </Row>
 
-            <Row className="mb-3 justify-content-center">
-              <Col sm={6}>
-                <StyledTextField
-                  defaultValue={this.state.user.google_scholar_name}
-                  className="EditProfileTextInput"
-                  id="outlined-basic"
-                  label="Google Scholar Url"
-                  variant="outlined"
-                  fullWidth
-                  onChange={(e) =>
-                    this.setState({ google_scholar_name: e.target.value })
-                  }
-                />
-              </Col>
-            </Row>
-            <Row className="mb-3 justify-content-center">
-              <Col sm={6}>
-                <StyledTextField
-                  defaultValue={this.state.user.researchgate_name}
-                  className="EditProfileTextInput"
-                  id="outlined-basic"
-                  label="Research Gate Url"
-                  variant="outlined"
-                  fullWidth
-                  onChange={(e) =>
-                    this.setState({ researchgate_name: e.target.value })
-                  }
-                />
-              </Col>
-            </Row>
+              <Row className="mb-3 justify-content-center">
+                <Col sm={6}>
+                  <StyledTextField
+                    defaultValue={this.state.user.google_scholar_name}
+                    className="EditProfileTextInput"
+                    id="outlined-basic"
+                    label="Google Scholar Url"
+                    variant="outlined"
+                    fullWidth
+                    onChange={(e) =>
+                      this.setState({ google_scholar_name: e.target.value })
+                    }
+                  />
+                </Col>
+              </Row>
+              <Row className="mb-3 justify-content-center">
+                <Col sm={6}>
+                  <StyledTextField
+                    defaultValue={this.state.user.researchgate_name}
+                    className="EditProfileTextInput"
+                    id="outlined-basic"
+                    label="Research Gate Url"
+                    variant="outlined"
+                    fullWidth
+                    onChange={(e) =>
+                      this.setState({ researchgate_name: e.target.value })
+                    }
+                  />
+                </Col>
+              </Row>
 
-            <Row className="mb-3 justify-content-center">
-              <Col sm={6}>
-                <StyledTextField
-                  defaultValue={this.state.user.institution}
-                  className="EditProfileTextInput"
-                  id="outlined-basic"
-                  label="Institutiton"
-                  variant="outlined"
-                  fullWidth
-                  onChange={(e) =>
-                    this.setState({ institution: e.target.value })
-                  }
-                />
-              </Col>
-            </Row>
-
-            <Row className="mb-3 justify-content-center">
-              <Col sm={6}>
+              <Row className="mb-3 justify-content-center">
                 <FormControlLabel
+                  className="GeneralSmallFont"
                   control={
-                    <Switch
-                      checked={this.state.is_private}
-                      onChange={this.handleSwitch}
-                      name="checkedA"
-                      inputProps={{ "aria-label": "secondary checkbox" }}
+                    <Checkbox
+                      checked={this.state.permission}
+                      onChange={this.handlePermission}
+                      name="checkedUser"
+                      color="primary"
                     />
                   }
-                  label={this.state.is_private ? "Private" : "Public"}
+                  label="I give my permission to use my information"
                 />
-              </Col>
-            </Row>
-            <Row className="mb-3 justify-content-center">
+              </Row>
+
+              <Row className="mb-3 justify-content-center">
+                <Col sm={6}>
+                  <StyledTextField
+                    defaultValue={this.state.user.institution}
+                    className="EditProfileTextInput"
+                    id="outlined-basic"
+                    label="Institutiton"
+                    variant="outlined"
+                    fullWidth
+                    onChange={(e) =>
+                      this.setState({ institution: e.target.value })
+                    }
+                  />
+                </Col>
+              </Row>
+
+              <Row className="mb-3 justify-content-center">
+                <Col sm={6}>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={this.state.is_private}
+                        onChange={this.handleSwitch}
+                        name="checkedA"
+                        inputProps={{ "aria-label": "secondary checkbox" }}
+                      />
+                    }
+                    label={this.state.is_private ? "Private" : "Public"}
+                  />
+                </Col>
+              </Row>
+<Row className="mb-3 justify-content-center">
                           <Col sm={6}>
                             <FormControlLabel
                               control={
@@ -506,86 +535,98 @@ class EditProfile extends Component {
                                       </Col>
                                     </Row>
 
-            <Row className="mb-3 justify-content-center">
-              <Col sm={6}>
-                <Button
-                  className="ProfileUpdateButton"
-                  variant="primary"
-                  size="lg"
-                  block
-                  onClick={this.handleSubmit}
-                >
-                  Update
-                </Button>
-              </Col>
-            </Row>
+              <Row className="mb-3 justify-content-center">
+                <Col sm={6}>
+                  {this.state.permission ? (
+                    <Button
+                      className="ProfileUpdateButton"
+                      variant="primary"
+                      size="lg"
+                      block
+                      onClick={this.handleSubmit}
+                    >
+                      Update
+                    </Button>) :
+                    (<Button
+                      className="ProfileUpdateButton"
+                      variant="primary"
+                      size="lg"
+                      block
+                      disabled
+                      onClick={this.handleSubmit}
+                    >
+                      Update
+                    </Button>)
+                  }
+                </Col>
+              </Row>
 
-            <Row className="mb-3 justify-content-center">
-              <Col sm={6}>
-                <h2 className="ProfileLargeFont">Edit Skills</h2>
-                <hr className="ProfilePageLine" />
-              </Col>
-            </Row>
+              <Row className="mb-3 justify-content-center">
+                <Col sm={6}>
+                  <h2 className="ProfileLargeFont">Edit Skills</h2>
+                  <hr className="ProfilePageLine" />
+                </Col>
+              </Row>
 
-            <Row className="mb-3 justify-content-center">
-              <Col sm={6}>
-                {this.state.personalSkills.map((value, index) => {
-                  return (
-                    <Chip
-                      className="ProfileSkillChip mr-1 mb-1"
-                      label={value}
-                      onDelete={() => this.handleDeleteSkill(value)}
-                      variant="outlined"
-                    />
-                  );
-                })}
-              </Col>
-            </Row>
-
-            <Row className="mb-3 justify-content-center">
-              <Col sm={6}>
-                <Autocomplete
-                  freeSolo
-                  id="tags-outlined"
-                  options={this.state.skills}
-                  getOptionLabel={(option) => option}
-                  value={this.state.newSkill}
-                  onChange={(event, newValue) => this.handleSkill(newValue)}
-                  filterSelectedOptions
-                  renderInput={(params) => {
-                    params.inputProps.onChange = this.handleKeyDownSkill;
+              <Row className="mb-3 justify-content-center">
+                <Col sm={6}>
+                  {this.state.personalSkills.map((value, index) => {
                     return (
-                      <StyledTextField
-                        {...params}
+                      <Chip
+                        className="ProfileSkillChip mr-1 mb-1"
+                        label={value}
+                        onDelete={() => this.handleDeleteSkill(value)}
                         variant="outlined"
-                        required
-                        name="affinities"
-                        label="Skill"
-                        id="Skill"
-                        ffullWidth
-                        margin="normal"
                       />
                     );
-                  }}
-                />
-              </Col>
-            </Row>
+                  })}
+                </Col>
+              </Row>
 
-            <Row className="mb-3 justify-content-center">
-              <Col sm={6}>
-                <Button
-                  className="ProfileUpdateButton"
-                  variant="primary"
-                  size="lg"
-                  block
-                  onClick={this.handlePostSkills}
-                >
-                  Add
+              <Row className="mb-3 justify-content-center">
+                <Col sm={6}>
+                  <Autocomplete
+                    freeSolo
+                    id="tags-outlined"
+                    options={this.state.skills}
+                    getOptionLabel={(option) => option}
+                    value={this.state.newSkill}
+                    onChange={(event, newValue) => this.handleSkill(newValue)}
+                    filterSelectedOptions
+                    renderInput={(params) => {
+                      params.inputProps.onChange = this.handleKeyDownSkill;
+                      return (
+                        <StyledTextField
+                          {...params}
+                          variant="outlined"
+                          required
+                          name="affinities"
+                          label="Skill"
+                          id="Skill"
+                          ffullWidth
+                          margin="normal"
+                        />
+                      );
+                    }}
+                  />
+                </Col>
+              </Row>
+
+              <Row className="mb-3 justify-content-center">
+                <Col sm={6}>
+                  <Button
+                    className="ProfileUpdateButton"
+                    variant="primary"
+                    size="lg"
+                    block
+                    onClick={this.handlePostSkills}
+                  >
+                    Add
                 </Button>
-              </Col>
-            </Row>
-          </Container>
-        )}
+                </Col>
+              </Row>
+            </Container>
+          )}
 
         {this.state.fieldEmptyError && (
           <Snackbar
