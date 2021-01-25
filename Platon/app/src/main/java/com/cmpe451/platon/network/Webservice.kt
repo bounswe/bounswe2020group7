@@ -101,10 +101,10 @@ interface Webservice {
                @Header("auth_token") auth_token :String) : Call<JsonObject?>
 
 
-    @GET("api/profile/front_page")
+    @GET("api/activity_stream")
     fun getActivityStream(@Header("auth_token") auth_token :String,
                           @Query("page") page:Int?,
-                          @Query("per_page") perPage:Int?) : Call<List<ActivityStreamElement>?>
+                          @Query("per_page") perPage:Int?) : Call<ActivityStream?>
 
     @GET("api/profile/notifications")
     fun getNotifications(@Header("auth_token") auth_token :String,

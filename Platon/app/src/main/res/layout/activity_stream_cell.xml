@@ -20,7 +20,6 @@ android:layout_height = "wrap_content">
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:layout_width="@dimen/xxxxx_large"
-        android:background="@color/white"
         android:layout_height="@dimen/xxxxx_large" />
 
     <TextView

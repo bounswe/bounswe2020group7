@@ -21,12 +21,12 @@ class FilesAdapter(private val data: ArrayList<String>, private val filesButtonC
 
         fun bindData(binding: FileItemBinding, file: String, buttonClickListener: FilesButtonClickListener, isOwner: Boolean) {
             if(!isOwner){
-                binding.editFileIv.visibility = View.GONE
+                //binding.editFileIv.visibility = View.GONE
                 binding.deleteFolderIv.visibility = View.GONE
             }
-            binding.editFileIv.setOnClickListener{
-                buttonClickListener.onEditFileClicked(file)
-            }
+            //binding.editFileIv.setOnClickListener{
+                //buttonClickListener.onEditFileClicked(file)
+            //}
             binding.tvFileName.setOnClickListener {
                 buttonClickListener.onFileNameClicked(file)
             }

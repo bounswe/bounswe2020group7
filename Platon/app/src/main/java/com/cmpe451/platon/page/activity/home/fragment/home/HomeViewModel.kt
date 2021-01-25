@@ -9,7 +9,7 @@ import com.cmpe451.platon.util.Definitions
 class HomeViewModel: ViewModel() {
 
     private val repository: HomeRepository = HomeRepository()
-    val getActivityStreamResourceResponse: MutableLiveData<Resource<List<ActivityStreamElement>>>
+    val getActivityStreamResourceResponse: MutableLiveData<Resource<ActivityStream>>
 
     val getTrendingProjectsResourceResponse: MutableLiveData<Resource<TrendingProjects>>
     val getUpcomingEventsResourceResponse: MutableLiveData<Resource<UpcomingEvents>>

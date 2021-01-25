@@ -31,6 +31,9 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
     private val mHomeViewModel: HomeViewModel by activityViewModels()
 
     private var maxPageNumberUpcoming:Int=0;
+    private lateinit var paginationListener:PaginationListener
+    private var maxPageNumberActivity:Int=0
+    private var pageSize:Int = 20
 
     private lateinit var dialog:AlertDialog
     private lateinit var calendarDialog: AlertDialog
@@ -38,7 +41,6 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -54,7 +56,7 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
         setListeners()
 
         setObservers()
-        mHomeViewModel.getActivities((activity as HomeActivity).currUserToken, 0, 5)
+        mHomeViewModel.getActivities((activity as HomeActivity).currUserToken, 0, pageSize)
         mHomeViewModel.getTrendingProjects(10)
         mHomeViewModel.getUpcomingEvents(0, 5)
 
@@ -112,6 +114,21 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
         val layoutManageUpcoming = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         val layoutManageActivity = LinearLayoutManager(context)
 
+        paginationListener = object: PaginationListener(layoutManageActivity, pageSize){
+            override fun loadMoreItems() {
+                if(maxPageNumberActivity-1 > currentPage){
+                    isLoading = true
+                    currentPage++
+                    mHomeViewModel.getActivities((activity as HomeActivity).currUserToken, currentPage, pageSize)
+
+                }
+            }
+
+            override var isLastPage: Boolean = false
+            override var isLoading: Boolean = false
+            override var currentPage: Int = 0
+        }
+
         binding.homeTrendingProjectsRecyclerView.layoutManager = layoutManagerTrending
         binding.homeUpcomingEventsRecyclerView.layoutManager = layoutManageUpcoming
         binding.homeUpcomingEventsRecyclerView.adapter = UpcomingEventsAdapter(ArrayList(),requireContext(), this)
@@ -135,11 +152,10 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
 
 
         binding.homeActivityStreamRecyclerView.layoutParams = LinearLayout.LayoutParams(width, (height/2))
-//        binding.homeUpcomingEventsRecyclerView.layoutParams = LinearLayout.LayoutParams(width/2, height/2)
         binding.homeTrendingProjectsRecyclerView.layoutParams = LinearLayout.LayoutParams(width, (height/2))
-
-
         binding.homeActivityStreamRecyclerView.adapter = ActivityStreamAdapter(myActivities, requireContext(), this)
+
+        binding.homeActivityStreamRecyclerView.addOnScrollListener(paginationListener)
 
 
 
@@ -193,7 +209,8 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
         mHomeViewModel.getActivityStreamResourceResponse.observe(viewLifecycleOwner, { t->
             when(t.javaClass){
                 Resource.Success::class.java -> {
-                    (binding.homeActivityStreamRecyclerView.adapter as ActivityStreamAdapter).submitElements(t.data as ArrayList<ActivityStreamElement>)
+                    maxPageNumberActivity = t.data!!.totalItems
+                    (binding.homeActivityStreamRecyclerView.adapter as ActivityStreamAdapter).submitElements(t.data!!.orderedItems as ArrayList<ActivityStreamElement>)
                 }
                 Resource.Error::class.java ->Toast.makeText(activity, t.message, Toast.LENGTH_SHORT).show()
             }

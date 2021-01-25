@@ -1,13 +1,32 @@
 package com.cmpe451.platon.network.models
 
-data class ActivityStream(val data:List<ActivityStreamElement>?)
+import com.google.gson.annotations.SerializedName
+import java.security.AccessControlContext
 
-
-data class ActivityStreamElement(
-        val image:String?,
-        val message:String?
+data class ActivityStream(
+        @SerializedName("@context")
+        val cont: String,
+        val id: Int,
+        val orderedItems:ArrayList<ActivityStreamElement>?,
+        val totalItems: Int
 )
 
+data class ActivityStreamElement(
+        val actor:Actor?,
+        val summary:String?
+)
+
+data class Actor(
+       val id: Int,
+       val image: ActorImage,
+       val name: String,
+       val type: String
+)
+
+data class ActorImage(
+        val type: String,
+        val url: String
+)
 
 data class UpcomingEvents(
         val number_of_pages:Int,
