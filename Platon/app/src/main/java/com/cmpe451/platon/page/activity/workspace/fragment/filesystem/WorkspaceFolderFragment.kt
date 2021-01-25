@@ -376,7 +376,7 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
     }
 
     override fun onEditFileClicked(fileName: String) {
-        findNavController().navigate(WorkspaceFolderFragmentDirections.actionWorkspaceFolderFragmentToWorkspaceEditorFragment())
+        //TODO("Not yet implemented")
     }
 
     override fun onFileNameClicked(fileName: String) {
