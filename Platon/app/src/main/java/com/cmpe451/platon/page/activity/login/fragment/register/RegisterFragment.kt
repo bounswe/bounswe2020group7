@@ -146,7 +146,7 @@ class RegisterFragment : Fragment() {
             }
             dial.show()
         }
-
+        binding.etNewJob.visibility = View.GONE
         binding.spJob.onItemSelectedListener = object: OnItemSelectedListener{
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 if (binding.spJob.adapter.count-1 == position){
