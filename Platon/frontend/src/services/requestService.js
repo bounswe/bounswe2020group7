@@ -36,26 +36,6 @@ const followers = (id) => {
     });
 };
 
-const getUser = (id) => {
-    const url = config.BASE_URL;
-    const params = {
-        user_id: id,
-    };
-    const token = localStorage.getItem("jwtToken");
-    axios.defaults.headers.common["auth_token"] = `${token}`;
-    return axios.get(url + "/api/auth_system/user", {params})
-        .then(response => {
-            //eğer kullanıcı bulunursa (user.data.status = true)
-            if (response) {
-            }
-            return response;
-        })
-        .catch(err => {
-            console.log(err)
-            return err.response;
-        });
-
-}
 const getSelf = () => {
     const url = config.BASE_URL;
 
@@ -74,6 +54,28 @@ const getSelf = () => {
         });
 
 }
+
+const getUser = (id) => {
+  const url = config.BASE_URL;
+  const params = {
+    user_id: id,
+  };
+  const token = localStorage.getItem("jwtToken");
+  axios.defaults.headers.common["auth_token"] = `${token}`;
+  return axios
+    .get(url + "/api/auth_system/user", { params })
+    .then((response) => {
+      //eğer kullanıcı bulunursa (user.data.status = true)
+      if (response) {
+      }
+      return response;
+    })
+    .catch((err) => {
+      console.log(err);
+      return err.response;
+    });
+};
+
 const createIssue = (title,description,deadline,workspace_id) => {
     const url = config.BASE_URL;
     const params = {
@@ -204,67 +206,65 @@ const getIssueComment = (issue_id,workspace_id,assignee_id) => {
         });
 }
 
-
 const getResearchs = (id) => {
-    const url = config.BASE_URL;
-    const params = {
-        user_id: id,
-    };
-    const token = localStorage.getItem("jwtToken");
-    axios.defaults.headers.common["auth_token"] = `${token}`;
-    return axios.get(url + "/api/profile/research_information", {params})
-        .then(response => {
-            //eğer kullanıcı bulunursa (user.data.status = true)
-            if (response) {
-            }
-            return response;
-        })
-        .catch(err => {
-            console.log(err)
-            return err.response;
-        });
+  const url = config.BASE_URL;
+  const params = {
+    user_id: id,
+  };
+  const token = localStorage.getItem("jwtToken");
+  axios.defaults.headers.common["auth_token"] = `${token}`;
+  return axios
+    .get(url + "/api/profile/research_information", { params })
+    .then((response) => {
+      //eğer kullanıcı bulunursa (user.data.status = true)
+      if (response) {
+      }
+      return response;
+    })
+    .catch((err) => {
+      console.log(err);
+      return err.response;
+    });
+};
 
-}
-
-const getIssues = (id,workspace_id) => {
-    const url = config.BASE_URL;
-    const params = {
-        user_id: id,
-        workspace_id:workspace_id,
-    };
-    const token = localStorage.getItem("jwtToken");
-    axios.defaults.headers.common["auth_token"] = `${token}`;
-    return axios.get(url + "/api/workspaces/issue", {params})
-        .then(response => {
-            //eğer kullanıcı bulunursa (user.data.status = true)
-            if (response) {
-            }
-            return response;
-        })
-        .catch(err => {
-            console.log(err)
-            return err.response;
-        });
-
-}
+const getIssues = (id, workspace_id) => {
+  const url = config.BASE_URL;
+  const params = {
+    user_id: id,
+    workspace_id: workspace_id,
+  };
+  const token = localStorage.getItem("jwtToken");
+  axios.defaults.headers.common["auth_token"] = `${token}`;
+  return axios
+    .get(url + "/api/workspaces/issue", { params })
+    .then((response) => {
+      //eğer kullanıcı bulunursa (user.data.status = true)
+      if (response) {
+      }
+      return response;
+    })
+    .catch((err) => {
+      console.log(err);
+      return err.response;
+    });
+};
 
 const getNotifications = () => {
-
-    const url = config.BASE_URL;
-    const token = localStorage.getItem("jwtToken");
-    axios.defaults.headers.common["auth_token"] = `${token}`;
-    return axios.get(url + "/api/profile/notifications")
-        .then(response => {
-            if (response) {
-            }
-            return response;
-        })
-        .catch(err => {
-            console.log(err)
-            return err.response;
-        });
-
-}
+  const url = config.BASE_URL;
+  const token = localStorage.getItem("jwtToken");
+  axios.defaults.headers.common["auth_token"] = `${token}`;
+  return axios
+    .get(url + "/api/profile/notifications")
+    .then((response) => {
+      if (response) {
+      }
+      return response;
+    })
+    .catch((err) => {
+      console.log(err);
+      return err.response;
+    });
+};
 
 const getFeed = (page,per_page) => {
   const url = config.BASE_URL;
@@ -283,7 +283,6 @@ const getFeed = (page,per_page) => {
       return err.response;
     });
 };
-
 
 const postFollowRequest = (follower_id, following_id) => {
   const url = config.BASE_URL;
@@ -328,14 +327,11 @@ const postNotification = (notifications_allowed, email_notifications_allowed) =>
 const getSearchUser = (search_query, job_filter, sorting_criteria) => {
   const url = config.BASE_URL;
 
-  const token = localStorage.getItem("jwtToken");
-  axios.defaults.headers.common["auth_token"] = `${token}`;
-
   const params = {
     search_query: search_query,
     sorting_criteria: sorting_criteria,
   };
-  
+
   if (job_filter !== "") {
     params.job_filter = job_filter;
   }
@@ -554,7 +550,7 @@ const deleteSkill = (skillName) => {
     });
 };
 
-const getSeachWorkspace = (
+const getSearchWorkspace = (
   search_query,
   skill_filter,
   creator_name,
@@ -566,9 +562,6 @@ const getSeachWorkspace = (
   sorting_criteria
 ) => {
   const url = config.BASE_URL;
-
-  const token = localStorage.getItem("jwtToken");
-  axios.defaults.headers.common["auth_token"] = `${token}`;
 
   const params = {
     search_query: search_query,
@@ -615,29 +608,29 @@ const getSearchUpcomingEvents = (
 ) => {
   const url = config.BASE_URL;
 
-  const token = localStorage.getItem("jwtToken");
-  axios.defaults.headers.common["auth_token"] = `${token}`;
-
   const params = {
     search_query: search_query,
     sorting_criteria: sorting_criteria,
   };
 
   if (date_filter_start !== "") {
-    params.date_filter_start = (date_filter_start + ":00").replaceAt(
-      10,
-      " "
-    );
+    params.date_filter_start = (date_filter_start + ":00").replaceAt(10, " ");
   }
   if (date_filter_end !== "") {
     params.date_filter_end = (date_filter_end + ":00").replaceAt(10, " ");
   }
   if (deadline_filter_start !== "") {
-    params.deadline_filter_start = (deadline_filter_start + ":00").replaceAt(10, " ");
+    params.deadline_filter_start = (deadline_filter_start + ":00").replaceAt(
+      10,
+      " "
+    );
   }
   if (deadline_filter_end !== "") {
-    params.deadline_filter_end = (deadline_filter_end + ":00").replaceAt(10, " ");
-  } 
+    params.deadline_filter_end = (deadline_filter_end + ":00").replaceAt(
+      10,
+      " "
+    );
+  }
 
   return axios
     .get(url + "/api/search_engine/upcoming_events", { params })
@@ -658,6 +651,45 @@ const getSearchHistory = (searchQuery) => {
 
   return axios
     .get(url + "/api/search_engine/upcoming_events?search_query=" + searchQuery)
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => {
+      return err.response;
+    });
+};
+
+const getUserRecommendation = (number_of_recommendations) => {
+  const url = config.BASE_URL;
+
+  const token = localStorage.getItem("jwtToken");
+  axios.defaults.headers.common["auth_token"] = `${token}`;
+
+  const params = {
+    number_of_recommendations: number_of_recommendations,
+  };
+
+  return axios
+    .get(url + "/api/recommendation_system/follow", { params })
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => {
+      return err.response;
+    });
+};
+
+const getTagSearch = (search_type, skills) => {
+  const url = config.BASE_URL;
+
+  const params = {
+    search_type: search_type,
+    skills: JSON.stringify(skills),
+  };
+  
+
+  return axios
+    .get(url + "/api/search_engine/tag_search", { params })
     .then((response) => {
       return response;
     })
@@ -693,7 +725,7 @@ export default {
   getPersonalSkillList,
   postSkill,
   deleteSkill,
-  getSeachWorkspace,
+  getSearchWorkspace,
   getSearchUpcomingEvents,
   addIssueComment,
   getIssueComment,
@@ -701,6 +733,8 @@ export default {
   assignIssue,
   getIssues,
   deleteIssue,
+  getUserRecommendation,
+  getTagSearch,
   postNotification,
   getSelf,
 };

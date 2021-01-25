@@ -3,6 +3,7 @@ import "./Search.css";
 
 import requestService from "../../services/requestService";
 import NavBar from "../NavBar/NavBar";
+import AppBar from "../AppBar/AppBar";
 import Spinner from "../Spinner/Spinner";
 import colors from "../../utils/colors";
 
@@ -15,6 +16,9 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Select from "@material-ui/core/Select";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
+import Autocomplete, {
+  createFilterOptions,
+} from "@material-ui/lab/Autocomplete";
 
 const StyledTextField = withStyles({
   root: {
@@ -60,10 +64,14 @@ class Search extends React.Component {
       checkedUserAfter: true,
       checkedWorkspaceAfter: false,
       checkedUpcomingEventsAfter: false,
+      checkedTagSearchAfter: false,
+      checkedTagSearch: false,
       job_id: null,
       job: "",
       job_list: [],
       sorting_criteria: 0,
+      skills: [],
+      searchSkill: [],
       skill_filter: "",
       creator_name: "",
       creator_surname: "",
@@ -71,13 +79,14 @@ class Search extends React.Component {
       starting_date_end: "",
       deadline_start: "",
       deadline_end: "",
+      search_type: 0,
+      search_type_after: 0,
     };
   }
 
   componentDidMount() {
     const searchQuery = this.props.match.params.searchQuery;
     this.setState({ searchQuery: searchQuery });
-
     if (this.state.checkedUserAfter === true) {
       requestService.getSearchUser(searchQuery).then((response) => {
         this.setState({
@@ -86,7 +95,7 @@ class Search extends React.Component {
       });
     }
     if (this.state.checkedWorkspaceAfter === true) {
-      requestService.getSeachWorkspace(searchQuery).then((response) => {
+      requestService.getSearchWorkspace(searchQuery).then((response) => {
         this.setState({
           searchResult: response.data.result_list,
         });
@@ -105,6 +114,13 @@ class Search extends React.Component {
         if (response) {
           this.setState({
             job_list: response.data,
+          });
+        }
+      }),
+      requestService.getSkillList().then((response) => {
+        if (response) {
+          this.setState({
+            skills: response.data,
           });
         }
       }),
@@ -127,12 +143,13 @@ class Search extends React.Component {
             checkedUserAfter: true,
             checkedWorkspaceAfter: false,
             checkedUpcomingEventsAfter: false,
+            checkedTagSearchAfter: false,
           });
         });
     }
     if (this.state.checkedWorkspace === true) {
       requestService
-        .getSeachWorkspace(
+        .getSearchWorkspace(
           this.state.searchQuery,
           this.state.skill_filter,
           this.state.creator_name,
@@ -149,6 +166,7 @@ class Search extends React.Component {
             checkedUserAfter: false,
             checkedWorkspaceAfter: true,
             checkedUpcomingEventsAfter: false,
+            checkedTagSearchAfter: false,
           });
         });
     }
@@ -168,7 +186,25 @@ class Search extends React.Component {
             checkedUserAfter: false,
             checkedWorkspaceAfter: false,
             checkedUpcomingEventsAfter: true,
+            checkedTagSearchAfter: false,
           });
+        });
+    }
+    if (this.state.checkedTagSearch === true) {
+      console.log("1");
+      requestService
+        .getTagSearch(this.state.search_type, this.state.searchSkill)
+        .then((response) => {
+          console.log(response);
+          if (response.status === 200 || response.status === 201) {
+            this.setState({
+              searchResult: response.data.result_list,
+              checkedUserAfter: false,
+              checkedWorkspaceAfter: false,
+              checkedUpcomingEventsAfter: false,
+              checkedTagSearchAfter: true,
+            });
+          }
         });
     }
   };
@@ -183,6 +219,7 @@ class Search extends React.Component {
         checkedUser: true,
         checkedWorkspace: false,
         checkedUpcomingEvents: false,
+        checkedTagSearch: false,
       });
     }
   };
@@ -197,6 +234,7 @@ class Search extends React.Component {
         checkedUser: false,
         checkedWorkspace: true,
         checkedUpcomingEvents: false,
+        checkedTagSearch: false,
       });
     }
   };
@@ -211,15 +249,38 @@ class Search extends React.Component {
         checkedUser: false,
         checkedWorkspace: false,
         checkedUpcomingEvents: true,
+        checkedTagSearch: false,
       });
     }
+  };
+
+  handleChangeTagSearch = () => {
+    if (this.state.checkedTagSearch === true) {
+      this.setState({
+        checkedTagSearch: false,
+      });
+    } else {
+      this.setState({
+        checkedUser: false,
+        checkedWorkspace: false,
+        checkedUpcomingEvents: false,
+        checkedTagSearch: true,
+      });
+    }
+  };
+
+  handleSkill = (value) => {
+    this.setState((prevState) => ({
+      searchSkill: value,
+    }));
+    console.log(this.state.searchSkill);
   };
 
   render() {
     return (
       <div className="SearchLanding">
         <div className="AppBar">
-          <NavBar />
+          {localStorage.getItem("jwtToken") ? <NavBar /> : <AppBar />}
         </div>
         {this.state.isLoading ? (
           <div className="ProfilePageSpinner">
@@ -290,6 +351,18 @@ class Search extends React.Component {
                       />
                     }
                     label="Upcoming Events"
+                  />
+                  <FormControlLabel
+                    className="SearchCheckBoxes"
+                    control={
+                      <Checkbox
+                        checked={this.state.checkedTagSearch}
+                        onChange={this.handleChangeTagSearch}
+                        name="checkedTagSearch"
+                        color="primary"
+                      />
+                    }
+                    label="Tag Search"
                   />
                   {this.state.checkedUser ? (
                     <div>
@@ -366,7 +439,9 @@ class Search extends React.Component {
                           this.setState({ creator_surname: e.target.value })
                         }
                       />
-                      <InputLabel htmlFor="date-native-simple">Start Date From</InputLabel>
+                      <InputLabel htmlFor="date-native-simple">
+                        Start Date From
+                      </InputLabel>
                       <StyledTextField
                         className="mb-2"
                         id="date-native-simple"
@@ -377,7 +452,9 @@ class Search extends React.Component {
                           this.setState({ starting_date_start: e.target.value })
                         }
                       />
-                      <InputLabel htmlFor="date2-native-simple">Start Date To</InputLabel>
+                      <InputLabel htmlFor="date2-native-simple">
+                        Start Date To
+                      </InputLabel>
                       <StyledTextField
                         className="mb-2"
                         id="date2-native-simple"
@@ -388,7 +465,9 @@ class Search extends React.Component {
                           this.setState({ starting_date_end: e.target.value })
                         }
                       />
-                      <InputLabel htmlFor="date3-native-simple">End Date From</InputLabel>
+                      <InputLabel htmlFor="date3-native-simple">
+                        End Date From
+                      </InputLabel>
                       <StyledTextField
                         className="mb-2"
                         id="date3-native-simple"
@@ -399,7 +478,9 @@ class Search extends React.Component {
                           this.setState({ deadline_start: e.target.value })
                         }
                       />
-                      <InputLabel htmlFor="date4-native-simple">End Date To</InputLabel>
+                      <InputLabel htmlFor="date4-native-simple">
+                        End Date To
+                      </InputLabel>
                       <StyledTextField
                         className="mb-2"
                         id="date4-native-simple"
@@ -446,7 +527,9 @@ class Search extends React.Component {
 
                   {this.state.checkedUpcomingEvents ? (
                     <div>
-                      <InputLabel htmlFor="date1-native-simple">Start Date From</InputLabel>
+                      <InputLabel htmlFor="date1-native-simple">
+                        Start Date From
+                      </InputLabel>
                       <StyledTextField
                         className="mb-2"
                         id="date1-native-simple"
@@ -457,7 +540,9 @@ class Search extends React.Component {
                           this.setState({ starting_date_start: e.target.value })
                         }
                       />
-                      <InputLabel htmlFor="date12-native-simple">Start Date To</InputLabel>
+                      <InputLabel htmlFor="date12-native-simple">
+                        Start Date To
+                      </InputLabel>
                       <StyledTextField
                         className="mb-2"
                         id="date12-native-simple"
@@ -468,7 +553,9 @@ class Search extends React.Component {
                           this.setState({ starting_date_end: e.target.value })
                         }
                       />
-                      <InputLabel htmlFor="date13-native-simple">End Date From</InputLabel>
+                      <InputLabel htmlFor="date13-native-simple">
+                        End Date From
+                      </InputLabel>
                       <StyledTextField
                         className="mb-2"
                         id="date13-native-simple"
@@ -479,7 +566,9 @@ class Search extends React.Component {
                           this.setState({ deadline_start: e.target.value })
                         }
                       />
-                      <InputLabel htmlFor="date14-native-simple">End Date To</InputLabel>
+                      <InputLabel htmlFor="date14-native-simple">
+                        End Date To
+                      </InputLabel>
                       <StyledTextField
                         className="mb-2"
                         id="date14-native-simple"
@@ -513,6 +602,57 @@ class Search extends React.Component {
                       </FormControl>
                     </div>
                   ) : null}
+                  {this.state.checkedTagSearch ? (
+                    <div>
+                      <FormControl className="mb-2">
+                        <InputLabel style={{width:"150px"}} htmlFor="sort-native-simple">
+                          Tag Search Type
+                        </InputLabel>
+                        <Select
+                          native
+                          onChange={(e) => {
+                            this.setState({
+                              search_type: e.target.value,
+                              searchResult: [],
+                            });
+                          }}
+                          inputProps={{
+                            name: "sort",
+                            id: "sort-native-simple",
+                          }}
+                        >
+                          <option value={0}>User</option>
+                          <option value={1}>Workspace</option>
+                        </Select>
+                      </FormControl>
+                      <Autocomplete
+                        multiple
+                        id="tags-outlined"
+                        options={this.state.skills}
+                        getOptionLabel={(option) => option}
+                        value={this.state.newSkill}
+                        onChange={(event, newValue) =>
+                          this.handleSkill(newValue)
+                        }
+                        filterSelectedOptions
+                        renderInput={(params) => {
+                          params.inputProps.onChange = this.handleKeyDownSkill;
+                          return (
+                            <StyledTextField
+                              {...params}
+                              variant="outlined"
+                              required
+                              name="affinities"
+                              label="Skill"
+                              id="Skill"
+                              ffullWidth
+                              margin="normal"
+                            />
+                          );
+                        }}
+                      />
+                    </div>
+                  ) : null}
                 </Col>
                 <Col sm={9}>
                   {this.state.checkedUserAfter
@@ -532,6 +672,64 @@ class Search extends React.Component {
                               <Col sm={6} className="SearchInformation">
                                 <p className="GeneralMediumFont">
                                   {value.name} {value.surname}
+                                </p>
+                              </Col>
+                            </Row>
+                          </Link>
+                        );
+                      })
+                    : null}
+                  {this.state.checkedTagSearchAfter &&
+                  this.state.search_type == 0
+                    ? this.state.searchResult.map((value, index) => {
+                        return (
+                          <Link to={`/` + value.id}>
+                            <Row className="mb-3 UserCardToSearch">
+                              <Col sm={2}>
+                                <Avatar
+                                  src={
+                                    "http://18.185.75.161:5000/api" +
+                                    value.profile_photo
+                                  }
+                                  className="SearchAvatar"
+                                />
+                              </Col>
+                              <Col sm={6} className="SearchInformation">
+                                <p className="GeneralMediumFont">
+                                  {value.name} {value.surname}
+                                </p>
+                              </Col>
+                            </Row>
+                          </Link>
+                        );
+                      })
+                    : null}
+                  {this.state.checkedTagSearchAfter &&
+                  this.state.search_type == 1
+                    ? this.state.searchResult.map((value, index) => {
+                        return (
+                          <Link
+                            to={`/${value.creator_id}/workspace/${value.id}`}
+                          >
+                            <Row className="mb-3 UserCardToSearch">
+                              <Col sm={2}>
+                                <Avatar
+                                  src={
+                                    "http://18.185.75.161:5000/api/auth_system/logo"
+                                  }
+                                  className="SearchAvatar"
+                                />
+                              </Col>
+                              <Col sm={6} className="mt-1">
+                                <p className="GeneralMediumFont mb-0">
+                                  {value.title}
+                                </p>
+                                <p className="GeneralSmallFont mb-0">
+                                  {value.description}
+                                </p>
+                                <p className="GeneralSmallFont mb-0">
+                                  by {value.creator_name}{" "}
+                                  {value.creator_surname}
                                 </p>
                               </Col>
                             </Row>

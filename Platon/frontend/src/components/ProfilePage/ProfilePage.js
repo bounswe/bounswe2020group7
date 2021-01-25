@@ -29,6 +29,7 @@ import axios from 'axios'
 import Spinner from '../Spinner/Spinner'
 import EditResearchDialog from './EditResearchDialog/EditResearchDialog'
 import InviteDialog from './InviteDialog'
+import ReportDialog from './ReportDialog'
 import RatingDialogue from './RatingDialog'
 import RatingComponent from './RatingComponent'
 import CommentsTabComponent from './CommentsTab'
@@ -98,6 +99,9 @@ class ProfilePage extends React.Component {
       isProfilePrivate: false,
       showSuccess: false,
       inviteDialogOpen: false,
+      recommendedUsers: [],
+      reportDialogOpen: false,
+      can_comment: false,
       ratingDialogueOpen: false,
     }
   }
@@ -118,14 +122,17 @@ class ProfilePage extends React.Component {
     requestService
       .getUser(profileId)
       .then((response) => {
+        console.log(response)
         if (response.status == 206) {
           this.setState({
             isProfilePrivate: true,
             user: response.data,
+            can_comment: response.data.can_comment,
           })
         } else {
           this.setState({
             user: response.data,
+            can_comment: response.data.can_comment,
           })
           Promise.all([
             requestService.followings(profileId).then((response) => {
@@ -159,6 +166,14 @@ class ProfilePage extends React.Component {
                 })
               }
             }),
+            requestService.getUserRecommendation(5).then((response) =>{
+              if (response) {
+                this.setState({
+                  recommendedUsers: response.data.recommendation_list,
+                })
+                console.log(this.state.recommendedUsers)
+              }
+            })
           ])
         }
       })
@@ -453,6 +468,19 @@ class ProfilePage extends React.Component {
                       Rate
                     </Button>
                   )}
+                  {(!this.state.can_comment) ? null : (
+                    <Button
+                      className="ReportButton"
+                      variant="primary"
+                      size="lg"
+                      onClick={() => this.setState({
+                        reportDialogOpen: true,
+                      })}
+                      block
+                    >
+                      Report
+                    </Button>
+                  )}
                   {this.state.isProfilePrivate ? null : (
                     <Row className="RatingColumn">
                       <RatingComponent profileId={this.props.match.params.profileId} />
@@ -477,6 +505,9 @@ class ProfilePage extends React.Component {
                       <Tab label="Comments" {...a11yProps(3)} />
                       {!this.state.isMyProfile ? null : (
                         <Tab label="Requests" {...a11yProps(4)} />
+                      )}
+                      {!this.state.isMyProfile ? null : (
+                        <Tab label="Recommendation" {...a11yProps(5)} />
                       )}
                     </Tabs>
                   </AppBar>
@@ -662,6 +693,31 @@ class ProfilePage extends React.Component {
                       </List>
                     </TabPanel>
                   )}
+                  {!this.state.isMyProfile ? null : (
+                    <TabPanel value={this.state.value} index={5}>
+                      <List>
+                        {this.state.recommendedUsers.map((value, index) => {
+                          return (
+                            <ListItem>
+                              <ListItemAvatar>
+                                <Avatar>
+                                  <PersonIcon />
+                                </Avatar>
+                              </ListItemAvatar>
+                              <Link
+                                onClick={() => this.handleProfile(value.id)}
+                              >
+                                <ListItemText
+                                  style={{ color: colors.secondary }}
+                                  primary={`${value.name} ${value.surname}`}
+                                />
+                              </Link>
+                            </ListItem>
+                          )
+                        })}
+                      </List>
+                    </TabPanel>
+                  )}
                 </div>
               </Container>
             )}
@@ -689,6 +745,14 @@ class ProfilePage extends React.Component {
             inviteDialogOpen: false,
           })}
         />
+        <ReportDialog
+          open={this.state.reportDialogOpen}
+          user={this.state.user}
+          closeDialog={() => this.setState({
+            reportDialogOpen: false,
+          })}
+        />
+
         <RatingDialogue
           open={this.state.ratingDialogueOpen}
           user={this.state.user}
