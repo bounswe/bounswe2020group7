@@ -6,8 +6,8 @@ import MuiAccordionDetails from '@material-ui/core/AccordionDetails'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import colors from '../../../utils/colors'
-import { useParams } from 'react-router-dom'
 import { format } from 'date-fns'
+import jwt_decode from 'jwt-decode'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -90,8 +90,11 @@ const DeadlinesItem = ({
   const classes = useStyles()
   const [expanded, setExpanded] = React.useState('')
 
-  const { profileId } = useParams()
   const { deadline: deadlineStr, title, type, workspace_id, workspace_title } = deadline
+
+  const token = localStorage.getItem('jwtToken')
+  const decoded = jwt_decode(token)
+  const profileId = decoded.id
 
   const secondaryText = getSecondaryText(type, title)
 
