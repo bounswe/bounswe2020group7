@@ -652,7 +652,7 @@ class TagSearchAPI(Resource):
                         creator_info = User.query.filter(User.id == ws.creator_id).first()
                     except:
                         return make_response(jsonify({"error": "Database Connection Error"}),500)
-                result_response.append({"id":ws.id, "title": ws.title, "is_private": int(ws.is_private), 
+                    result_response.append({"id":ws.id, "title": ws.title, "is_private": int(ws.is_private), 
                                         "description" : ws.description, "state": ws.state, "deadline" : ws.deadline,
                                         "creation_time": ws.timestamp, "max_contributors": ws.max_collaborators,"contributor_list":contributor_list,
                                         "creator_id": creator_info.id, "creator_name": creator_info.name,"creator_surname": creator_info.surname}) 
