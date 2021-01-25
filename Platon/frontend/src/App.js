@@ -2,7 +2,7 @@ import './App.css';
 import Landing from './components/Landing/Landing';
 import React, { Component } from 'react';
 import HomePage from './components/HomePage/HomePage'
-import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import ForgotPassword from './components/ForgotPassword/ForgotPassword'
 import ResetPassword from './components/ResetPassword/ResetPassword'
 import Login from './components/Login/Login'
@@ -24,7 +24,7 @@ class App extends Component {
       isAuthenticated: false,
     }
   }
-  componentDidMount(){
+  componentDidMount() {
     this.handlerIsAuthenticated();
   }
   handlerIsAuthenticated = () => {
@@ -38,9 +38,9 @@ class App extends Component {
     }
   }
   handlerSuccessfulLogin = () => {
-      this.setState({
-        isAuthenticated: true
-      })
+    this.setState({
+      isAuthenticated: true
+    })
   }
 
   render() {
@@ -49,37 +49,37 @@ class App extends Component {
       <Router>
 
 
-<Switch>
+        <Switch>
 
 
-      <div className="App">
-      <Route path='/activate_account' component={Activation}/>
+          <div className="App">
+            <Route path='/activate_account' component={Activation} />
 
-      <Route path='/' exact
-        render ={ () => !this.state.isAuthenticated ?
-              <Landing/>
-              : <HomePage/>}/>
+            <Route path='/' exact
+              render={() => !this.state.isAuthenticated ?
+                <Landing />
+                : <HomePage />} />
 
-      <Route path='/:profileId(\d+)' exact component={!this.state.isAuthenticated ? Landing : ProfilePage}/>
-      <Route path='/:profileId(\d+)/edit' exact component={!this.state.isAuthenticated ? Landing : EditProfile}/>
-      <Route path='/:profileId(\d+)/workspace' exact component={WorkspaceList}/>
-      <Route path='/:profileId(\d+)/workspace/new' exact component={WorkspaceCreate}/>
-      <Route path='/:profileId(\d+)/workspace/:workspaceId(\d+)' exact component={WorkspaceView}/>
-      <Route path='/:profileId(\d+)/workspace/:workspaceId(\d+)/edit' exact component={WorkspaceEdit}/>
-      <Route path='/login' exact component={() => <Login isAuthenticated={this.state.isAuthenticated} handlerSuccessfulLogin={this.handlerSuccessfulLogin} />}/>
-      <Route path='/register' exact  component={Register}/>
-      <Route path='/forgotpassword' exact component={ForgotPassword}/>
-      <Route path='/resetpassword'  component={ResetPassword}/>
-      <Route path='/search/:searchQuery'  component={Search}/>
-
-
-
-      </div>
-      </Switch>
+            <Route path='/:profileId(\d+)' exact component={!this.state.isAuthenticated ? Login : ProfilePage} />
+            <Route path='/:profileId(\d+)/edit' exact component={!this.state.isAuthenticated ? Login : EditProfile} />
+            <Route path='/:profileId(\d+)/workspace' exact component={!this.state.isAuthenticated ? Login : WorkspaceList} />
+            <Route path='/:profileId(\d+)/workspace/new' exact component={!this.state.isAuthenticated ? Login : WorkspaceCreate} />
+            <Route path='/:profileId(\d+)/workspace/:workspaceId(\d+)' exact component={!this.state.isAuthenticated ? Login : WorkspaceView} />
+            <Route path='/:profileId(\d+)/workspace/:workspaceId(\d+)/edit' exact component={!this.state.isAuthenticated ? Login : WorkspaceEdit} />
+            <Route path='/login' exact component={() => <Login isAuthenticated={this.state.isAuthenticated} handlerSuccessfulLogin={this.handlerSuccessfulLogin} />} />
+            <Route path='/register' exact component={Register} />
+            <Route path='/forgotpassword' exact component={ForgotPassword} />
+            <Route path='/resetpassword' component={ResetPassword} />
+            <Route path='/search/:searchQuery' component={Search} />
 
 
-    </Router>
-     );
+
+          </div>
+        </Switch>
+
+
+      </Router>
+    );
   }
 }
 

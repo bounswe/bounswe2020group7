@@ -77,6 +77,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function onKeyUp(event){
+  var edValue = document.getElementById("searchBox").value;
+  if (event.charCode === 13) {
+    document.location.href = "/search/" + edValue;
+  }
+}
+
 export default function SearchAppBar() {
   const classes = useStyles();
 
@@ -93,12 +100,14 @@ export default function SearchAppBar() {
               <SearchIcon />
             </div>
             <InputBase
+              id = "searchBox"
               placeholder="Search…"
               classes={{
                 root: classes.inputRoot,
                 input: classes.inputInput,
               }}
               inputProps={{ "aria-label": "search" }}
+              onKeyPress = {onKeyUp}
             />
           </div>
 
