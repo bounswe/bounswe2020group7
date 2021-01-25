@@ -3,8 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="0f20f1c4-475d-4e74-a6af-05f9b289d905" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Platon/frontend/src/components/Issue/CreateIssue.js" beforeDir="false" afterPath="$PROJECT_DIR$/Platon/frontend/src/components/Issue/CreateIssue.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Platon/frontend/src/components/Issue/Issue.js" beforeDir="false" afterPath="$PROJECT_DIR$/Platon/frontend/src/components/Issue/Issue.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Platon/frontend/src/components/EditProfile/EditProfile.js" beforeDir="false" afterPath="$PROJECT_DIR$/Platon/frontend/src/components/EditProfile/EditProfile.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Platon/frontend/src/services/requestService.js" beforeDir="false" afterPath="$PROJECT_DIR$/Platon/frontend/src/services/requestService.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,6 +18,7 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="ProjectId" id="1leQwmxJuvUkl0U1HXS2GMiz5Lv" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -78,7 +79,56 @@
       <option name="project" value="LOCAL" />
       <updated>1609098634768</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Issue Completed">
+      <created>1609178690577</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1609178690577</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Added Activity Stream Backend Connection. Restyled Activity Stream">
+      <created>1611418125246</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1611418125246</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Added Activity Stream Backend Connection. Restyled Activity Stream. Fixed Conflivt in Comment">
+      <created>1611418577819</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1611418577819</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Restyled Activity Stream">
+      <created>1611434198952</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1611434198952</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Restyled Activity Stream">
+      <created>1611434530565</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1611434530565</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Added Notification Mute to the EditProfile">
+      <created>1611508785040</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1611508785040</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Added Notification Mute to the EditProfile">
+      <created>1611509475367</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1611509475367</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -114,8 +164,12 @@
     <MESSAGE value="new branch" />
     <MESSAGE value="HomePage i başardık" />
     <MESSAGE value="Issue" />
-    <MESSAGE value="Issue Completed" />
     <MESSAGE value="Issue Entegration Step 1" />
-    <option name="LAST_COMMIT_MESSAGE" value="Issue Entegration Step 1" />
+    <MESSAGE value="Issue Completed" />
+    <MESSAGE value="Added Activity Stream Backend Connection. Restyled Activity Stream" />
+    <MESSAGE value="Added Activity Stream Backend Connection. Restyled Activity Stream. Fixed Conflivt in Comment" />
+    <MESSAGE value="Restyled Activity Stream" />
+    <MESSAGE value="Added Notification Mute to the EditProfile" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added Notification Mute to the EditProfile" />
   </component>
 </project>

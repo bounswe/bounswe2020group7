@@ -84,6 +84,8 @@ class EditProfile extends Component {
       isLoading: true,
       jobList: [],
       permission: false,
+      notification_email_allowed:true,
+      notification_allowed:true,
     };
   }
 
@@ -140,6 +142,14 @@ class EditProfile extends Component {
           is_private: this.state.user.is_private,
         });
       }),
+      requestService.getSelf().then((response)=>{
+            this.setState({
+            notification_allowed:response.data.is_notification_allowed,
+            notification_email_allowed:response.data.is_email_allowed,
+            })
+
+      })
+
     ]).then(() => {
       this.setState({
         isLoading: false,
@@ -168,7 +178,16 @@ class EditProfile extends Component {
       is_private: !this.state.is_private,
     });
   };
-
+  handleNotificationSwitch = (event) => {
+      this.setState({
+        notification_allowed: !this.state.notification_allowed,
+      });
+    };
+  handleNotificationEmailSwitch = (event) => {
+        this.setState({
+          notification_email_allowed: !this.state.notification_email_allowed,
+        });
+      };
   handleSubmit = () => {
     requestService
       .putUser(
@@ -179,7 +198,7 @@ class EditProfile extends Component {
         this.state.profile_photo,
         this.state.google_scholar_name,
         this.state.researchgate_name,
-        this.state.institution
+        this.state.institution,
       )
       .then((response) => {
         if (response.status === 200) {
@@ -193,6 +212,13 @@ class EditProfile extends Component {
           fieldEmptyError: "An error occured!",
         });
       });
+    requestService.postNotification(this.state.notification_allowed?1:0,this.state.notification_email_allowed?1:0).then((response)=>{
+    if (response.status === 200) {
+              this.setState({
+                showSuccess: "You have updated your profile successfully!",
+              });
+              }
+    })
   };
 
   handleJob = (value) => {
@@ -477,6 +503,37 @@ class EditProfile extends Component {
                   />
                 </Col>
               </Row>
+<Row className="mb-3 justify-content-center">
+                          <Col sm={6}>
+                            <FormControlLabel
+                              control={
+                                <Switch
+                                  checked={this.state.notification_allowed}
+                                  onChange={this.handleNotificationSwitch}
+                                  name="checkedA"
+                                  inputProps={{ "aria-label": "secondary checkbox" }}
+                                />
+                              }
+                              label={this.state.notification_allowed ? "Notification Allowed" : "Notifications Muted"}
+                            />
+                          </Col>
+                        </Row>
+
+             <Row className="mb-3 justify-content-center">
+                                      <Col sm={6}>
+                                        <FormControlLabel
+                                          control={
+                                            <Switch
+                                              checked={this.state.notification_email_allowed}
+                                              onChange={this.handleNotificationEmailSwitch}
+                                              name="checkedA"
+                                              inputProps={{ "aria-label": "secondary checkbox" }}
+                                            />
+                                          }
+                                          label={this.state.notification_email_allowed ? "Email Notifications Allowed" : "Email Notifications Muted"}
+                                        />
+                                      </Col>
+                                    </Row>
 
               <Row className="mb-3 justify-content-center">
                 <Col sm={6}>

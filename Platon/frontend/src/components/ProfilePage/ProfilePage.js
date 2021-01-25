@@ -1,15 +1,7 @@
 import React from 'react'
 import './ProfilePage.css'
-import {
-  Container,
-  Col,
-  Row,
-  Button,
-  Card,
-  ResponsiveEmbed,
-} from 'react-bootstrap'
+import { Button, Card, Col, Container, Row } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import Rating from '@material-ui/lab/Rating'
 import PropTypes from 'prop-types'
 import { withStyles } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
@@ -17,7 +9,6 @@ import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
-import Grid from '@material-ui/core/Grid'
 import NavBar from '../NavBar/NavBar'
 import jwt_decode from 'jwt-decode'
 import requestService from '../../services/requestService'
@@ -25,8 +16,7 @@ import { Link } from 'react-router-dom'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
+
 import ListItemText from '@material-ui/core/ListItemText'
 import PersonIcon from '@material-ui/icons/Person'
 import Snackbar from '@material-ui/core/Snackbar'
@@ -40,6 +30,9 @@ import Spinner from '../Spinner/Spinner'
 import EditResearchDialog from './EditResearchDialog/EditResearchDialog'
 import InviteDialog from './InviteDialog'
 import ReportDialog from './ReportDialog'
+import RatingDialogue from './RatingDialog'
+import RatingComponent from './RatingComponent'
+import CommentsTabComponent from './CommentsTab'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props
@@ -109,6 +102,7 @@ class ProfilePage extends React.Component {
       recommendedUsers: [],
       reportDialogOpen: false,
       can_comment: false,
+      ratingDialogueOpen: false,
     }
   }
 
@@ -467,6 +461,9 @@ class ProfilePage extends React.Component {
                       variant="primary"
                       size="lg"
                       block
+                      onClick={() => this.setState({
+                        ratingDialogueOpen: true,
+                      })}
                     >
                       Rate
                     </Button>
@@ -486,13 +483,7 @@ class ProfilePage extends React.Component {
                   )}
                   {this.state.isProfilePrivate ? null : (
                     <Row className="RatingColumn">
-                      <Rating
-                        name="half-rating-read"
-                        defaultValue={0}
-                        precision={0.5}
-                        readOnly
-                        size="large"
-                      />
+                      <RatingComponent profileId={this.props.match.params.profileId} />
                     </Row>
                   )}
                 </Col>
@@ -511,8 +502,9 @@ class ProfilePage extends React.Component {
                       <Tab label="Researchs" {...a11yProps(0)} />
                       <Tab label="Followers" {...a11yProps(1)} />
                       <Tab label="Following" {...a11yProps(2)} />
+                      <Tab label="Comments" {...a11yProps(3)} />
                       {!this.state.isMyProfile ? null : (
-                        <Tab label="Requests" {...a11yProps(3)} />
+                        <Tab label="Requests" {...a11yProps(4)} />
                       )}
                       {!this.state.isMyProfile ? null : (
                         <Tab label="Recommendation" {...a11yProps(5)} />
@@ -649,8 +641,11 @@ class ProfilePage extends React.Component {
                       })}
                     </List>
                   </TabPanel>
+                  <TabPanel value={this.state.value} index={3}>
+                    <CommentsTabComponent profileId={this.state.user?.id} goToProfile={this.handleProfile}/>
+                  </TabPanel>
                   {!this.state.isMyProfile ? null : (
-                    <TabPanel value={this.state.value} index={3}>
+                    <TabPanel value={this.state.value} index={4}>
                       <List>
                         {this.state.follow_requests.map((value, index) => {
                           return (
@@ -755,6 +750,14 @@ class ProfilePage extends React.Component {
           user={this.state.user}
           closeDialog={() => this.setState({
             reportDialogOpen: false,
+          })}
+        />
+
+        <RatingDialogue
+          open={this.state.ratingDialogueOpen}
+          user={this.state.user}
+          closePopup={() => this.setState({
+            ratingDialogueOpen: false,
           })}
         />
       </div>

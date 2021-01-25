@@ -44,11 +44,9 @@ function SimpleDialog(props) {
 
     axios.post(BASE_URL + "/api/workspaces/invitations", formData).then((response)=>{
       if(response.status===201){
-        console.log("içerde")
         props.handleSuccessText("Invitation has been sent successfully!")
       }
     }).catch((error)=>{
-      console.log("içerde2")
       props.handleErrorText(error.response.data.error)
     })
   }

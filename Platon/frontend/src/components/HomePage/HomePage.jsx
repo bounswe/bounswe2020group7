@@ -37,13 +37,11 @@ class HomePage extends React.Component {
           background: colors.primary,
         }}
       >            <NavBar />
-        <Container style={{maxWidth: "1500px", marginTop: "20px" }}>
+        <Container style={{maxWidth: "1400px", marginTop: "20px" }}>
         <Box display="flex" p={1} justifyContent="space-evenly" >
-          <div style={{ width: "30%" }}>
-            <TrendingProjects marginLeft="auto" marginRight="auto" itemsPerPage={3} width='400px' />
-          </div>
-          <div style={{ width: "35%" }}><InfiniteScroller /></div>
-          <div style={{ width: "30%" }}><UpcomingEvents marginLeft="auto" marginRight="auto" itemsPerPage={3} width='400px' /></div>
+         <TrendingProjects marginLeft="auto" marginRight="auto" itemsPerPage={3} width='320px'/>
+         <InfiniteScroller/>
+         <UpcomingEvents marginLeft="auto" marginRight="auto" itemsPerPage={1} width='320px' />
         </Box>
         </Container>
       </Layout>
