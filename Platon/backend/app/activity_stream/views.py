@@ -65,6 +65,7 @@ activity_stream_model = api.model('Activity Stream', {
     "summary": fields.String,
     "type": fields.String,
     "id": fields.Integer,
+    "totalItems": fields.Integer,
     "orderedItems": fields.List(
         fields.Nested(activity_stream_item_model)
     )
@@ -129,7 +130,9 @@ class ActivityStreamAPI(Resource):
             for following_id in followings_ids_list:
                 try:
                     # Returns activity stream items with descending timestamp value.
-                    activity_stream_items_list = ActivityStreamItem.query.filter(ActivityStreamItem.activity_actor_id == following_id).order_by(desc(ActivityStreamItem.timestamp)).all()
+                    # We have to filter out the activities that the user made to a workspace which can be identified if that activity's target type is "Group" or not.
+                    # Activities within workspaces are gathered from database not here but few lines below.
+                    activity_stream_items_list = ActivityStreamItem.query.filter((ActivityStreamItem.activity_actor_id == following_id) & (ActivityStreamItem.activity_target_type != "Group")).order_by(desc(ActivityStreamItem.timestamp)).all()
                 except:
                     # not sure to return error.
                     return make_response(jsonify({"error" : "The server is not connected to the database."}), 500)
