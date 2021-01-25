@@ -640,6 +640,7 @@ const getTagSearch = (search_type, skills) => {
     search_type: search_type,
     skills: JSON.stringify(skills),
   };
+  
 
   return axios
     .get(url + "/api/search_engine/tag_search", { params })

@@ -13,7 +13,7 @@ export const reportUserPost = ({ reported_user_id, text }) => {
       }
   
     let formData = new FormData()
-    formData.append('reported_user_id ', reported_user_id)
+    formData.append('reported_user_id', reported_user_id)
     formData.append('text', text)
   
     return axios.post(REPORT_URL, formData, options)

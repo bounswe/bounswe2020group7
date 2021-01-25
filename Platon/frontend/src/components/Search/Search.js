@@ -80,6 +80,7 @@ class Search extends React.Component {
       deadline_start: "",
       deadline_end: "",
       search_type: 0,
+      search_type_after: 0,
     };
   }
 
@@ -190,20 +191,20 @@ class Search extends React.Component {
         });
     }
     if (this.state.checkedTagSearch === true) {
+      console.log("1");
       requestService
-        .getTagSearch(
-          this.state.search_type,
-          this.state.searchSkill,
-        )
+        .getTagSearch(this.state.search_type, this.state.searchSkill)
         .then((response) => {
           console.log(response);
-          this.setState({
-            searchResult: response.data.result_list,
-            checkedUserAfter: false,
-            checkedWorkspaceAfter: false,
-            checkedUpcomingEventsAfter: false,
-            checkedTagSearchAfter: true,
-          });
+          if (response.status === 200 || response.status === 201) {
+            this.setState({
+              searchResult: response.data.result_list,
+              checkedUserAfter: false,
+              checkedWorkspaceAfter: false,
+              checkedUpcomingEventsAfter: false,
+              checkedTagSearchAfter: true,
+            });
+          }
         });
     }
   };
@@ -269,10 +270,10 @@ class Search extends React.Component {
   };
 
   handleSkill = (value) => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       searchSkill: value,
     }));
-    console.log(this.state.searchSkill)
+    console.log(this.state.searchSkill);
   };
 
   render() {
@@ -286,355 +287,376 @@ class Search extends React.Component {
             <Spinner />
           </div>
         ) : (
-            <div>
-              <Container className="SearchContainer pb-4">
-                <Row className="mb-3 mt-3">
-                  <Col sm={10}>
-                    <StyledTextField
-                      defaultValue={this.props.match.params.searchQuery}
-                      id="outlined-basic"
-                      label="Search"
-                      variant="outlined"
-                      fullWidth
-                      onChange={(e) =>
-                        this.setState({ searchQuery: e.target.value })
-                      }
-                    />
-                  </Col>
-                  <Col sm={2}>
-                    <Button
-                      className="ProfileUpdateButton"
-                      variant="primary"
-                      size="lg"
-                      block
-                      onClick={this.handleSearch}
-                    >
-                      Search
+          <div>
+            <Container className="SearchContainer pb-4">
+              <Row className="mb-3 mt-3">
+                <Col sm={10}>
+                  <StyledTextField
+                    defaultValue={this.props.match.params.searchQuery}
+                    id="outlined-basic"
+                    label="Search"
+                    variant="outlined"
+                    fullWidth
+                    onChange={(e) =>
+                      this.setState({ searchQuery: e.target.value })
+                    }
+                  />
+                </Col>
+                <Col sm={2}>
+                  <Button
+                    className="ProfileUpdateButton"
+                    variant="primary"
+                    size="lg"
+                    block
+                    onClick={this.handleSearch}
+                  >
+                    Search
                   </Button>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col sm={3}>
-                    <FormControlLabel
-                      className="SearchCheckBoxes"
-                      control={
-                        <Checkbox
-                          checked={this.state.checkedUser}
-                          onChange={this.handleChangeUser}
-                          name="checkedUser"
-                          color="primary"
-                        />
-                      }
-                      label="User"
-                    />
-                    <FormControlLabel
-                      className="SearchCheckBoxes"
-                      control={
-                        <Checkbox
-                          checked={this.state.checkedWorkspace}
-                          onChange={this.handleChangeWorkspace}
-                          name="checkedWorkspace"
-                          color="primary"
-                        />
-                      }
-                      label="Workspace"
-                    />
-                    <FormControlLabel
-                      className="SearchCheckBoxes"
-                      control={
-                        <Checkbox
-                          checked={this.state.checkedUpcomingEvents}
-                          onChange={this.handleChangeUpcomingEvents}
-                          name="checkedUpcomingEvents"
-                          color="primary"
-                        />
-                      }
-                      label="Upcoming Events"
-                    />
-                    <FormControlLabel
-                      className="SearchCheckBoxes"
-                      control={
-                        <Checkbox
-                          checked={this.state.checkedTagSearch}
-                          onChange={this.handleChangeTagSearch}
-                          name="checkedTagSearch"
-                          color="primary"
-                        />
-                      }
-                      label="Tag Search"
-                    />
-                    {this.state.checkedUser ? (
-                      <div>
-                        <FormControl className="mb-2">
-                          <InputLabel htmlFor="job-native-simple">Job</InputLabel>
-                          <Select
-                            native
-                            onChange={(event) => {
-                              this.setState({ job_id: event.target.value });
-                            }}
-                            inputProps={{
-                              name: "job",
-                              id: "job-native-simple",
-                            }}
-                          >
-                            <option aria-label="None" value="" />
-                            {this.state.job_list.map((value, index) => {
-                              return (
-                                <option value={value.id}>{value.name}</option>
-                              );
-                            })}
-                          </Select>
-                        </FormControl>
-                        <FormControl className="mb-2">
-                          <InputLabel htmlFor="sort-native-simple">
-                            Sorting Createria
-                        </InputLabel>
-                          <Select
-                            native
-                            onChange={(e) => {
-                              this.setState({ sorting_criteria: e.target.value });
-                            }}
-                            inputProps={{
-                              name: "sort",
-                              id: "sort-native-simple",
-                            }}
-                          >
-                            <option aria-label="None" value="" />
-                            <option value={0}>Alphabetical Order A to Z</option>
-                            <option value={1}>Alphabetical Order Z to A</option>
-                          </Select>
-                        </FormControl>
-                      </div>
-                    ) : null}
-                    {this.state.checkedWorkspace ? (
-                      <div>
-                        <StyledTextField
-                          className="mb-2"
-                          id="outlined-basic"
-                          label="Skill"
-                          variant="outlined"
-                          fullWidth
-                          onChange={(e) =>
-                            this.setState({ skill_filter: e.target.value })
-                          }
-                        />
-                        <StyledTextField
-                          className="mb-2"
-                          id="outlined-basic"
-                          label="Creator Name"
-                          variant="outlined"
-                          fullWidth
-                          onChange={(e) =>
-                            this.setState({ creator_name: e.target.value })
-                          }
-                        />
-                        <StyledTextField
-                          className="mb-2"
-                          id="outlined-basic"
-                          label="Creator Surname"
-                          variant="outlined"
-                          fullWidth
-                          onChange={(e) =>
-                            this.setState({ creator_surname: e.target.value })
-                          }
-                        />
-                        <InputLabel htmlFor="date-native-simple">Start Date From</InputLabel>
-                        <StyledTextField
-                          className="mb-2"
-                          id="date-native-simple"
-                          variant="outlined"
-                          type="datetime-local"
-                          fullWidth
-                          onChange={(e) =>
-                            this.setState({ starting_date_start: e.target.value })
-                          }
-                        />
-                        <InputLabel htmlFor="date2-native-simple">Start Date To</InputLabel>
-                        <StyledTextField
-                          className="mb-2"
-                          id="date2-native-simple"
-                          variant="outlined"
-                          type="datetime-local"
-                          fullWidth
-                          onChange={(e) =>
-                            this.setState({ starting_date_end: e.target.value })
-                          }
-                        />
-                        <InputLabel htmlFor="date3-native-simple">End Date From</InputLabel>
-                        <StyledTextField
-                          className="mb-2"
-                          id="date3-native-simple"
-                          variant="outlined"
-                          type="datetime-local"
-                          fullWidth
-                          onChange={(e) =>
-                            this.setState({ deadline_start: e.target.value })
-                          }
-                        />
-                        <InputLabel htmlFor="date4-native-simple">End Date To</InputLabel>
-                        <StyledTextField
-                          className="mb-2"
-                          id="date4-native-simple"
-                          variant="outlined"
-                          type="datetime-local"
-                          fullWidth
-                          onChange={(e) =>
-                            this.setState({ deadline_end: e.target.value })
-                          }
-                        />
-                        <FormControl className="mb-2">
-                          <InputLabel htmlFor="sort2-native-simple">
-                            Sorting Createria
-                        </InputLabel>
-                          <Select
-                            native
-                            onChange={(e) => {
-                              this.setState({ sorting_criteria: e.target.value });
-                            }}
-                            inputProps={{
-                              name: "sort2",
-                              id: "sort2-native-simple",
-                            }}
-                          >
-                            <option aria-label="None" value="" />
-                            <option value={0}>Ascending Date</option>
-                            <option value={1}>Descending Date</option>
-                            <option value={2}>
-                              Ascending Number of Collaborators Needed
-                          </option>
-                            <option value={3}>
-                              Descending Number of Collaborators Needed
-                          </option>
-                            <option value={4}>
-                              Ascending Alphabetical Order
-                          </option>
-                            <option value={5}>
-                              Descending Alphabetical Orde
-                          </option>
-                          </Select>
-                        </FormControl>
-                      </div>
-                    ) : null}
-
-                    {this.state.checkedUpcomingEvents ? (
-                      <div>
-                        <InputLabel htmlFor="date1-native-simple">Start Date From</InputLabel>
-                        <StyledTextField
-                          className="mb-2"
-                          id="date1-native-simple"
-                          variant="outlined"
-                          type="datetime-local"
-                          fullWidth
-                          onChange={(e) =>
-                            this.setState({ starting_date_start: e.target.value })
-                          }
-                        />
-                        <InputLabel htmlFor="date12-native-simple">Start Date To</InputLabel>
-                        <StyledTextField
-                          className="mb-2"
-                          id="date12-native-simple"
-                          variant="outlined"
-                          type="datetime-local"
-                          fullWidth
-                          onChange={(e) =>
-                            this.setState({ starting_date_end: e.target.value })
-                          }
-                        />
-                        <InputLabel htmlFor="date13-native-simple">End Date From</InputLabel>
-                        <StyledTextField
-                          className="mb-2"
-                          id="date13-native-simple"
-                          variant="outlined"
-                          type="datetime-local"
-                          fullWidth
-                          onChange={(e) =>
-                            this.setState({ deadline_start: e.target.value })
-                          }
-                        />
-                        <InputLabel htmlFor="date14-native-simple">End Date To</InputLabel>
-                        <StyledTextField
-                          className="mb-2"
-                          id="date14-native-simple"
-                          variant="outlined"
-                          type="datetime-local"
-                          fullWidth
-                          onChange={(e) =>
-                            this.setState({ deadline_end: e.target.value })
-                          }
-                        />
-                        <FormControl className="mb-2">
-                          <InputLabel htmlFor="sort3-native-simple">
-                            Sorting Createria
-                        </InputLabel>
-                          <Select
-                            native
-                            onChange={(e) => {
-                              this.setState({ sorting_criteria: e.target.value });
-                            }}
-                            inputProps={{
-                              name: "sort3",
-                              id: "sort2-native-simple",
-                            }}
-                          >
-                            <option aria-label="None" value="" />
-                            <option value={0}>
-                              Ascending Alphabetical Order
-                          </option>
-                            <option value={1}>Ascending Date</option>
-                          </Select>
-                        </FormControl>
-                      </div>
-                    ) : null}
-                    {this.state.checkedTagSearch ? (
-                      <div>
-                        <FormControl className="mb-2">
-                          <InputLabel htmlFor="sort-native-simple">
-                            Search Type
-                        </InputLabel>
-                          <Select
-                            native
-                            onChange={(e) => {
-                              this.setState({ search_type: e.target.value });
-                            }}
-                            inputProps={{
-                              name: "sort",
-                              id: "sort-native-simple",
-                            }}
-                          >
-                            <option value={0}>User</option>
-                            <option value={1}>Workspace</option>
-                          </Select>
-                        </FormControl>
-                        <Autocomplete
-                          multiple
-                          id="tags-outlined"
-                          options={this.state.skills}
-                          getOptionLabel={(option) => option}
-                          value={this.state.newSkill}
-                          onChange={(event, newValue) => this.handleSkill(newValue)}
-                          filterSelectedOptions
-                          renderInput={(params) => {
-                            params.inputProps.onChange = this.handleKeyDownSkill;
-                            return (
-                              <StyledTextField
-                                {...params}
-                                variant="outlined"
-                                required
-                                name="affinities"
-                                label="Skill"
-                                id="Skill"
-                                ffullWidth
-                                margin="normal"
-                              />
-                            );
+                </Col>
+              </Row>
+              <Row>
+                <Col sm={3}>
+                  <FormControlLabel
+                    className="SearchCheckBoxes"
+                    control={
+                      <Checkbox
+                        checked={this.state.checkedUser}
+                        onChange={this.handleChangeUser}
+                        name="checkedUser"
+                        color="primary"
+                      />
+                    }
+                    label="User"
+                  />
+                  <FormControlLabel
+                    className="SearchCheckBoxes"
+                    control={
+                      <Checkbox
+                        checked={this.state.checkedWorkspace}
+                        onChange={this.handleChangeWorkspace}
+                        name="checkedWorkspace"
+                        color="primary"
+                      />
+                    }
+                    label="Workspace"
+                  />
+                  <FormControlLabel
+                    className="SearchCheckBoxes"
+                    control={
+                      <Checkbox
+                        checked={this.state.checkedUpcomingEvents}
+                        onChange={this.handleChangeUpcomingEvents}
+                        name="checkedUpcomingEvents"
+                        color="primary"
+                      />
+                    }
+                    label="Upcoming Events"
+                  />
+                  <FormControlLabel
+                    className="SearchCheckBoxes"
+                    control={
+                      <Checkbox
+                        checked={this.state.checkedTagSearch}
+                        onChange={this.handleChangeTagSearch}
+                        name="checkedTagSearch"
+                        color="primary"
+                      />
+                    }
+                    label="Tag Search"
+                  />
+                  {this.state.checkedUser ? (
+                    <div>
+                      <FormControl className="mb-2">
+                        <InputLabel htmlFor="job-native-simple">Job</InputLabel>
+                        <Select
+                          native
+                          onChange={(event) => {
+                            this.setState({ job_id: event.target.value });
                           }}
-                        />
-                      </div>
-                    ) : null}
-                  </Col>
-                  <Col sm={9}>
-                    {this.state.checkedUserAfter
-                      ? this.state.searchResult.map((value, index) => {
+                          inputProps={{
+                            name: "job",
+                            id: "job-native-simple",
+                          }}
+                        >
+                          <option aria-label="None" value="" />
+                          {this.state.job_list.map((value, index) => {
+                            return (
+                              <option value={value.id}>{value.name}</option>
+                            );
+                          })}
+                        </Select>
+                      </FormControl>
+                      <FormControl className="mb-2">
+                        <InputLabel htmlFor="sort-native-simple">
+                          Sorting Createria
+                        </InputLabel>
+                        <Select
+                          native
+                          onChange={(e) => {
+                            this.setState({ sorting_criteria: e.target.value });
+                          }}
+                          inputProps={{
+                            name: "sort",
+                            id: "sort-native-simple",
+                          }}
+                        >
+                          <option aria-label="None" value="" />
+                          <option value={0}>Alphabetical Order A to Z</option>
+                          <option value={1}>Alphabetical Order Z to A</option>
+                        </Select>
+                      </FormControl>
+                    </div>
+                  ) : null}
+                  {this.state.checkedWorkspace ? (
+                    <div>
+                      <StyledTextField
+                        className="mb-2"
+                        id="outlined-basic"
+                        label="Skill"
+                        variant="outlined"
+                        fullWidth
+                        onChange={(e) =>
+                          this.setState({ skill_filter: e.target.value })
+                        }
+                      />
+                      <StyledTextField
+                        className="mb-2"
+                        id="outlined-basic"
+                        label="Creator Name"
+                        variant="outlined"
+                        fullWidth
+                        onChange={(e) =>
+                          this.setState({ creator_name: e.target.value })
+                        }
+                      />
+                      <StyledTextField
+                        className="mb-2"
+                        id="outlined-basic"
+                        label="Creator Surname"
+                        variant="outlined"
+                        fullWidth
+                        onChange={(e) =>
+                          this.setState({ creator_surname: e.target.value })
+                        }
+                      />
+                      <InputLabel htmlFor="date-native-simple">
+                        Start Date From
+                      </InputLabel>
+                      <StyledTextField
+                        className="mb-2"
+                        id="date-native-simple"
+                        variant="outlined"
+                        type="datetime-local"
+                        fullWidth
+                        onChange={(e) =>
+                          this.setState({ starting_date_start: e.target.value })
+                        }
+                      />
+                      <InputLabel htmlFor="date2-native-simple">
+                        Start Date To
+                      </InputLabel>
+                      <StyledTextField
+                        className="mb-2"
+                        id="date2-native-simple"
+                        variant="outlined"
+                        type="datetime-local"
+                        fullWidth
+                        onChange={(e) =>
+                          this.setState({ starting_date_end: e.target.value })
+                        }
+                      />
+                      <InputLabel htmlFor="date3-native-simple">
+                        End Date From
+                      </InputLabel>
+                      <StyledTextField
+                        className="mb-2"
+                        id="date3-native-simple"
+                        variant="outlined"
+                        type="datetime-local"
+                        fullWidth
+                        onChange={(e) =>
+                          this.setState({ deadline_start: e.target.value })
+                        }
+                      />
+                      <InputLabel htmlFor="date4-native-simple">
+                        End Date To
+                      </InputLabel>
+                      <StyledTextField
+                        className="mb-2"
+                        id="date4-native-simple"
+                        variant="outlined"
+                        type="datetime-local"
+                        fullWidth
+                        onChange={(e) =>
+                          this.setState({ deadline_end: e.target.value })
+                        }
+                      />
+                      <FormControl className="mb-2">
+                        <InputLabel htmlFor="sort2-native-simple">
+                          Sorting Createria
+                        </InputLabel>
+                        <Select
+                          native
+                          onChange={(e) => {
+                            this.setState({ sorting_criteria: e.target.value });
+                          }}
+                          inputProps={{
+                            name: "sort2",
+                            id: "sort2-native-simple",
+                          }}
+                        >
+                          <option aria-label="None" value="" />
+                          <option value={0}>Ascending Date</option>
+                          <option value={1}>Descending Date</option>
+                          <option value={2}>
+                            Ascending Number of Collaborators Needed
+                          </option>
+                          <option value={3}>
+                            Descending Number of Collaborators Needed
+                          </option>
+                          <option value={4}>
+                            Ascending Alphabetical Order
+                          </option>
+                          <option value={5}>
+                            Descending Alphabetical Orde
+                          </option>
+                        </Select>
+                      </FormControl>
+                    </div>
+                  ) : null}
+
+                  {this.state.checkedUpcomingEvents ? (
+                    <div>
+                      <InputLabel htmlFor="date1-native-simple">
+                        Start Date From
+                      </InputLabel>
+                      <StyledTextField
+                        className="mb-2"
+                        id="date1-native-simple"
+                        variant="outlined"
+                        type="datetime-local"
+                        fullWidth
+                        onChange={(e) =>
+                          this.setState({ starting_date_start: e.target.value })
+                        }
+                      />
+                      <InputLabel htmlFor="date12-native-simple">
+                        Start Date To
+                      </InputLabel>
+                      <StyledTextField
+                        className="mb-2"
+                        id="date12-native-simple"
+                        variant="outlined"
+                        type="datetime-local"
+                        fullWidth
+                        onChange={(e) =>
+                          this.setState({ starting_date_end: e.target.value })
+                        }
+                      />
+                      <InputLabel htmlFor="date13-native-simple">
+                        End Date From
+                      </InputLabel>
+                      <StyledTextField
+                        className="mb-2"
+                        id="date13-native-simple"
+                        variant="outlined"
+                        type="datetime-local"
+                        fullWidth
+                        onChange={(e) =>
+                          this.setState({ deadline_start: e.target.value })
+                        }
+                      />
+                      <InputLabel htmlFor="date14-native-simple">
+                        End Date To
+                      </InputLabel>
+                      <StyledTextField
+                        className="mb-2"
+                        id="date14-native-simple"
+                        variant="outlined"
+                        type="datetime-local"
+                        fullWidth
+                        onChange={(e) =>
+                          this.setState({ deadline_end: e.target.value })
+                        }
+                      />
+                      <FormControl className="mb-2">
+                        <InputLabel htmlFor="sort3-native-simple">
+                          Sorting Createria
+                        </InputLabel>
+                        <Select
+                          native
+                          onChange={(e) => {
+                            this.setState({ sorting_criteria: e.target.value });
+                          }}
+                          inputProps={{
+                            name: "sort3",
+                            id: "sort2-native-simple",
+                          }}
+                        >
+                          <option aria-label="None" value="" />
+                          <option value={0}>
+                            Ascending Alphabetical Order
+                          </option>
+                          <option value={1}>Ascending Date</option>
+                        </Select>
+                      </FormControl>
+                    </div>
+                  ) : null}
+                  {this.state.checkedTagSearch ? (
+                    <div>
+                      <FormControl className="mb-2">
+                        <InputLabel style={{width:"150px"}} htmlFor="sort-native-simple">
+                          Tag Search Type
+                        </InputLabel>
+                        <Select
+                          native
+                          onChange={(e) => {
+                            this.setState({
+                              search_type: e.target.value,
+                              searchResult: [],
+                            });
+                          }}
+                          inputProps={{
+                            name: "sort",
+                            id: "sort-native-simple",
+                          }}
+                        >
+                          <option value={0}>User</option>
+                          <option value={1}>Workspace</option>
+                        </Select>
+                      </FormControl>
+                      <Autocomplete
+                        multiple
+                        id="tags-outlined"
+                        options={this.state.skills}
+                        getOptionLabel={(option) => option}
+                        value={this.state.newSkill}
+                        onChange={(event, newValue) =>
+                          this.handleSkill(newValue)
+                        }
+                        filterSelectedOptions
+                        renderInput={(params) => {
+                          params.inputProps.onChange = this.handleKeyDownSkill;
+                          return (
+                            <StyledTextField
+                              {...params}
+                              variant="outlined"
+                              required
+                              name="affinities"
+                              label="Skill"
+                              id="Skill"
+                              ffullWidth
+                              margin="normal"
+                            />
+                          );
+                        }}
+                      />
+                    </div>
+                  ) : null}
+                </Col>
+                <Col sm={9}>
+                  {this.state.checkedUserAfter
+                    ? this.state.searchResult.map((value, index) => {
                         return (
                           <Link to={`/` + value.id}>
                             <Row className="mb-3 UserCardToSearch">
@@ -656,9 +678,10 @@ class Search extends React.Component {
                           </Link>
                         );
                       })
-                      : null}
-                    {this.state.checkedTagSearch && this.state.search_type == 0
-                      ? this.state.searchResult.map((value, index) => {
+                    : null}
+                  {this.state.checkedTagSearchAfter &&
+                  this.state.search_type == 0
+                    ? this.state.searchResult.map((value, index) => {
                         return (
                           <Link to={`/` + value.id}>
                             <Row className="mb-3 UserCardToSearch">
@@ -680,9 +703,10 @@ class Search extends React.Component {
                           </Link>
                         );
                       })
-                      : null}
-                    {this.state.checkedTagSearch && this.state.search_type == 1
-                      ? this.state.searchResult.map((value, index) => {
+                    : null}
+                  {this.state.checkedTagSearchAfter &&
+                  this.state.search_type == 1
+                    ? this.state.searchResult.map((value, index) => {
                         return (
                           <Link
                             to={`/${value.creator_id}/workspace/${value.id}`}
@@ -712,9 +736,9 @@ class Search extends React.Component {
                           </Link>
                         );
                       })
-                      : null}
-                    {this.state.checkedWorkspaceAfter
-                      ? this.state.searchResult.map((value, index) => {
+                    : null}
+                  {this.state.checkedWorkspaceAfter
+                    ? this.state.searchResult.map((value, index) => {
                         return (
                           <Link
                             to={`/${value.creator_id}/workspace/${value.id}`}
@@ -744,9 +768,9 @@ class Search extends React.Component {
                           </Link>
                         );
                       })
-                      : null}
-                    {this.state.checkedUpcomingEventsAfter
-                      ? this.state.searchResult.map((value, index) => {
+                    : null}
+                  {this.state.checkedUpcomingEventsAfter
+                    ? this.state.searchResult.map((value, index) => {
                         return (
                           <a href={value.link}>
                             <Row className="mb-3 UserCardToSearch">
@@ -771,12 +795,12 @@ class Search extends React.Component {
                           </a>
                         );
                       })
-                      : null}
-                  </Col>
-                </Row>
-              </Container>
-            </div>
-          )}
+                    : null}
+                </Col>
+              </Row>
+            </Container>
+          </div>
+        )}
       </div>
     );
   }

@@ -73,7 +73,7 @@ export default function ReportDialog({ user, closeDialog, open }) {
         onClose={closeDialog}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title">Invitation</DialogTitle>
+        <DialogTitle id="form-dialog-title">Report</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Please write a reson why you report {user.name}
@@ -92,7 +92,7 @@ export default function ReportDialog({ user, closeDialog, open }) {
             Report
           </Button>
           <Button onClick={closeDialog} color="primary">
-            Done
+            Exit
           </Button>
         </DialogActions>
       </Dialog>
