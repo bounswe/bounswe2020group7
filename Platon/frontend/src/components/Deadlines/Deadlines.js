@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import Typography from '@material-ui/core/Typography'
-import TrendingProjectsItem from './TrendingProjectsItem/TrendingProjectsItem'
+import DeadlinesItem from './DeadlinesItem/DeadlinesItem'
 import Spinner from '../Spinner/Spinner'
 import colors from '../../utils/colors'
-import './TrendingProjects.css'
+import './Deadlines.css'
 import { withStyles } from '@material-ui/core/styles'
 import Pagination from '@material-ui/lab/Pagination'
+import axios from 'axios'
 
-const TRENDING_PROJECTS_URL = 'http://18.185.75.161:5000/api/workspaces/trending_projects?number_of_workspaces=100000'
+const DEADLINES_URL = 'http://18.185.75.161:5000/api/upcoming_events/personal_calendar'
+axios.defaults.headers.common['auth_token'] = localStorage.getItem('jwtToken')
 
 const StyledPagination = withStyles({
   root: {
@@ -15,17 +17,21 @@ const StyledPagination = withStyles({
   },
 }, { name: 'MuiPaginationItem' })(Pagination)
 
-const TrendingProjects = ({ itemsPerPage = 5, width= '500px', marginLeft = "0px", marginRight = "0px"  }) => {
+const Deadlines = ({
+  itemsPerPage = 5,
+  width = '500px',
+  marginLeft = '0px',
+  marginRight = '0px',
+}) => {
   const [rawData, setRawData] = useState([])
   const [fetching, setFetching] = useState(false)
   const [page, setPage] = useState(1)
 
   useEffect(() => {
     setFetching(true)
-    fetch(TRENDING_PROJECTS_URL)
-      .then((response) => response.json())
-      .then((data) => {
-        setRawData(data.trending_projects)
+    axios.get(DEADLINES_URL)
+      .then((res) => {
+        setRawData(res.data)
         setFetching(false)
       })
       .catch((error) => {
@@ -49,28 +55,27 @@ const TrendingProjects = ({ itemsPerPage = 5, width= '500px', marginLeft = "0px"
   return (
     <div>
       <Typography
-        style={{ color: colors.tertiary, textAlign: 'center' }}
+        style={{ color: 'rgb(255, 139, 51)', textAlign: 'center' }}
         variant="h5"
         gutterBottom
       >
-        Trending Workspaces
+        Upcoming Deadlines
       </Typography>
       {fetching && (
-        <div className="TrendingProjectsSpinner">
+        <div className="DeadlinesSpinner">
           <Spinner />
         </div>
       )}
       {pageData && (
-        <div className="TrendingProjectsItems" style={{width: width, marginLeft: marginLeft, marginRight: marginRight }}>
+        <div
+          className="DeadlinesItems"
+          style={{ width: width, marginLeft: marginLeft, marginRight: marginRight }}
+        >
           {pageData.map((item, index) => (
-            <TrendingProjectsItem
+            <DeadlinesItem
               id={index}
               key={index}
-              title={item.title}
-              description={item.description}
-              contributors={item.contributor_list}
-              profileId={item.creator_id}
-              workspaceId={item.id}
+              deadline={item}
             />
           ))}
           <div className='paginationContainerTrending'>
@@ -87,4 +92,4 @@ const TrendingProjects = ({ itemsPerPage = 5, width= '500px', marginLeft = "0px"
   )
 }
 
-export default TrendingProjects
+export default Deadlines
