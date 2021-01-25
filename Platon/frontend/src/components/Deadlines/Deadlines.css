@@ -1,0 +1,24 @@
+ .DeadlinesItems {
+    background-color: #5A5E5F;
+    border-radius: 0.5em;
+    padding: 16px;
+ }
+
+ .DeadlinesSpinner{
+   margin: 20vh 0px;
+   height: 20vh;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+ }
+
+ .paginationContainerTrending {
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     align-items: center;
+ }
+
+ .paginationContainerTrending .Mui-selected {
+     background-color: rgb(255, 139, 51)!important;
+ }

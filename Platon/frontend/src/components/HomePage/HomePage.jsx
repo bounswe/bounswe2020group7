@@ -41,7 +41,7 @@ class HomePage extends React.Component {
         <Box display="flex" p={1} justifyContent="space-evenly" >
          <TrendingProjects marginLeft="auto" marginRight="auto" itemsPerPage={3} width='320px'/>
          <InfiniteScroller/>
-         <UpcomingEvents marginLeft="auto" marginRight="auto" itemsPerPage={1} width='320px' />
+         <UpcomingEvents marginLeft="auto" marginRight="auto" itemsPerPage={3} width='320px' />
         </Box>
         </Container>
       </Layout>

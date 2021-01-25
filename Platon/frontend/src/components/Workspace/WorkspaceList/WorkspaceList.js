@@ -1,31 +1,33 @@
-import React, { Component } from "react";
-import Navbar from "../../NavBar/NavBar";
-import colors from "../../../utils/colors";
-import config from "../../../utils/config";
-import axios from "axios";
-import Spinner from "../../Spinner/Spinner";
-import MuiAlert from "@material-ui/lab/Alert";
-import Snackbar from "@material-ui/core/Snackbar";
-import "./WorkspaceList.css";
-import { withStyles } from "@material-ui/core/styles";
+import React, { Component } from 'react'
+import Navbar from '../../NavBar/NavBar'
+import colors from '../../../utils/colors'
+import config from '../../../utils/config'
+import axios from 'axios'
+import Spinner from '../../Spinner/Spinner'
+import MuiAlert from '@material-ui/lab/Alert'
+import Snackbar from '@material-ui/core/Snackbar'
+import './WorkspaceList.css'
+import { withStyles } from '@material-ui/core/styles'
 
-import Card from "@material-ui/core/Card";
-import CardHeader from "@material-ui/core/CardHeader";
-import CardContent from "@material-ui/core/CardContent";
-import CardActions from "@material-ui/core/CardActions";
+import Card from '@material-ui/core/Card'
+import CardHeader from '@material-ui/core/CardHeader'
+import CardContent from '@material-ui/core/CardContent'
+import CardActions from '@material-ui/core/CardActions'
 
-import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
-import { red } from "@material-ui/core/colors";
+import IconButton from '@material-ui/core/IconButton'
+import Typography from '@material-ui/core/Typography'
+import { red } from '@material-ui/core/colors'
 
-import PageviewIcon from "@material-ui/icons/Pageview";
-import DeleteIcon from "@material-ui/icons/Delete";
-import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
-import { Link } from "react-router-dom";
-import jwt_decode from "jwt-decode";
-import CancelOutlinedIcon from "@material-ui/icons/CancelOutlined";
-import CheckCircleOutlinedIcon from "@material-ui/icons/CheckCircleOutlined";
-import WorkspaceRecommendation from "../../Recommendation/WorkspaceRecommendation/WorkspaceRecommendation";
+import PageviewIcon from '@material-ui/icons/Pageview'
+import DeleteIcon from '@material-ui/icons/Delete'
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
+import { Link } from 'react-router-dom'
+import jwt_decode from 'jwt-decode'
+import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined'
+import CheckCircleOutlinedIcon from '@material-ui/icons/CheckCircleOutlined'
+import WorkspaceRecommendation
+  from '../../Recommendation/WorkspaceRecommendation/WorkspaceRecommendation'
+import Deadlines from '../../Deadlines/Deadlines'
 
 const useStyles = (theme) => ({
   root: {
@@ -42,30 +44,31 @@ const useStyles = (theme) => ({
   },
   media: {
     height: 0,
-    paddingTop: "56.25%", // 16:9
+    paddingTop: '56.25%', // 16:9
   },
   expand: {
-    transform: "rotate(0deg)",
-    marginLeft: "auto",
-    transition: theme.transitions.create("transform", {
+    transform: 'rotate(0deg)',
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', {
       duration: theme.transitions.duration.shortest,
     }),
   },
   expandOpen: {
-    transform: "rotate(180deg)",
+    transform: 'rotate(180deg)',
   },
   avatar: {
     backgroundColor: red[500],
   },
-});
+})
 
 function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
+  return <MuiAlert elevation={6} variant="filled" {...props} />
 }
+
 
 class WorkspaceList extends Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       workspaces: [],
       success: false,
@@ -73,11 +76,13 @@ class WorkspaceList extends Component {
       loaded: false,
       profileId: null,
       inviter: [],
-    };
+    }
   }
+
   componentDidMount() {
-    this.promise();
+    this.promise()
   }
+
   promise = () => {
     Promise.all([
       this.fetchWorkspaces(),
@@ -85,72 +90,72 @@ class WorkspaceList extends Component {
     ]).then(() => {
       this.setState({
         loaded: true,
-      });
-    });
-  };
+      })
+    })
+  }
   fetchWorkspaces = () => {
-    const token = localStorage.getItem("jwtToken");
-    const decoded = jwt_decode(token);
-    axios.defaults.headers.common["auth_token"] = `${token}`;
-    const url = config.BASE_URL;
+    const token = localStorage.getItem('jwtToken')
+    const decoded = jwt_decode(token)
+    axios.defaults.headers.common['auth_token'] = `${token}`
+    const url = config.BASE_URL
     this.setState({
       profileId: decoded.id,
-    });
+    })
     axios
-      .get(url + "/api/workspaces/self")
+      .get(url + '/api/workspaces/self')
       .then((response) => {
         if (response.status === 200) {
           this.setState({
             workspaces: response.data.workspaces,
-          });
+          })
         }
       })
       .catch((err) => {
-        console.log(err);
-      });
-  };
+        console.log(err)
+      })
+  }
 
   fetchWorkspaceInvitations = () => {
-    const token = localStorage.getItem("jwtToken");
-    axios.defaults.headers.common["auth_token"] = `${token}`;
-    const url = config.BASE_URL;
+    const token = localStorage.getItem('jwtToken')
+    axios.defaults.headers.common['auth_token'] = `${token}`
+    const url = config.BASE_URL
     return axios
-      .get(url + "/api/workspaces/invitations")
+      .get(url + '/api/workspaces/invitations')
       .then((response) => {
         if (response.status === 200) {
           this.setState({
             inviter: response.data,
-          });
+          })
         }
       })
       .catch((err) => {
-        console.log(err);
-      });
-  };
+        console.log(err)
+      })
+  }
   handleCloseError = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
+    if (reason === 'clickaway') {
+      return
     }
 
-    this.setState({ error: false });
-  };
+    this.setState({ error: false })
+  }
 
   handleCloseSuccess = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
+    if (reason === 'clickaway') {
+      return
     }
 
-    this.setState({ success: false });
-  };
+    this.setState({ success: false })
+  }
 
   handleAcceptInvitation = (id) => {
-    const token = localStorage.getItem("jwtToken");
-    const url = config.BASE_URL;
-    let formData = new FormData();
-    formData.append("is_accepted", "1");
-    formData.append("invitation_id", id);
+    const token = localStorage.getItem('jwtToken')
+    const url = config.BASE_URL
+    let formData = new FormData()
+    formData.append('is_accepted', '1')
+    formData.append('invitation_id', id)
     axios
-      .delete(url + "/api/workspaces/invitations", {
+      .delete(url + '/api/workspaces/invitations', {
         headers: {
           auth_token: token, //the token is a variable which holds the token
         },
@@ -159,25 +164,25 @@ class WorkspaceList extends Component {
       .then((response) => {
         if (response.status === 200) {
           this.setState({
-            success: "Successfully accepted.",
-          });
-          this.promise();
+            success: 'Successfully accepted.',
+          })
+          this.promise()
         }
       })
       .catch((err) => {
         this.setState({
-          error: "Error occured. " + err.response.data.error,
-        });
-      });
-  };
+          error: 'Error occured. ' + err.response.data.error,
+        })
+      })
+  }
   handleRejectInvitation = (id) => {
-    const token = localStorage.getItem("jwtToken");
-    const url = config.BASE_URL;
-    let formData = new FormData();
-    formData.append("is_accepted", "0");
-    formData.append("invitation_id", id);
+    const token = localStorage.getItem('jwtToken')
+    const url = config.BASE_URL
+    let formData = new FormData()
+    formData.append('is_accepted', '0')
+    formData.append('invitation_id', id)
     axios
-      .delete(url + "/api/workspaces/invitations", {
+      .delete(url + '/api/workspaces/invitations', {
         headers: {
           auth_token: token, //the token is a variable which holds the token
         },
@@ -186,26 +191,26 @@ class WorkspaceList extends Component {
       .then((response) => {
         if (response.status === 200) {
           this.setState({
-            success: "Successfully rejected.",
-          });
-          this.fetchWorkspaceInvitations();
+            success: 'Successfully rejected.',
+          })
+          this.fetchWorkspaceInvitations()
         }
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err)
         this.setState({
-          error: "Error occured. " + err.response.data.error,
-        });
-      });
-  };
+          error: 'Error occured. ' + err.response.data.error,
+        })
+      })
+  }
 
   deleteWorkspace = (element) => {
-    const token = localStorage.getItem("jwtToken");
-    const url = config.BASE_URL;
-    let formData = new FormData();
-    formData.append("workspace_id", element);
+    const token = localStorage.getItem('jwtToken')
+    const url = config.BASE_URL
+    let formData = new FormData()
+    formData.append('workspace_id', element)
     axios
-      .delete(url + "/api/workspaces", {
+      .delete(url + '/api/workspaces', {
         headers: {
           auth_token: token, //the token is a variable which holds the token
         },
@@ -214,44 +219,45 @@ class WorkspaceList extends Component {
       .then((response) => {
         if (response.status === 200) {
           this.setState({
-            success: "Successfully deleted.",
-          });
-          this.fetchWorkspaces();
+            success: 'Successfully deleted.',
+          })
+          this.fetchWorkspaces()
         }
       })
       .catch((err) => {
         this.setState({
-          error: "Error occured. " + err.response.data.error,
-        });
-      });
-  };
+          error: 'Error occured. ' + err.response.data.error,
+        })
+      })
+  }
+
   render() {
-    const { classes } = this.props;
+    const { classes } = this.props
     return (
       <div className="WorkspaceListContainer">
         <Navbar />
         <div
           className="container"
           style={{
-            marginTop: "50px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
+            marginTop: '50px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
           }}
         >
           {this.state.loaded ? (
             <div
               style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "baseline",
-                width: "100%",
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'baseline',
+                width: '100%',
               }}
             >
-              <div style={{ width: "55%" }}>
+              <div style={{ width: '55%' }}>
                 <Typography
-                  style={{ color: colors.secondary, marginBottom: "20px" }}
+                  style={{ color: colors.secondary, marginBottom: '20px' }}
                   component="h1"
                   variant="h5"
                   align="center"
@@ -279,8 +285,8 @@ class WorkspaceList extends Component {
                         </CardContent>
                         <CardActions
                           style={{
-                            display: "flex",
-                            justifyContent: "space-between",
+                            display: 'flex',
+                            justifyContent: 'space-between',
                           }}
                         >
                           <Link
@@ -301,11 +307,11 @@ class WorkspaceList extends Component {
                           </IconButton>
                         </CardActions>
                       </Card>
-                    );
+                    )
                   })
                 ) : (
                   <Typography
-                    style={{ color: colors.secondary, marginBottom: "20px" }}
+                    style={{ color: colors.secondary, marginBottom: '20px' }}
                     component="h1"
                     variant="h6"
                     align="center"
@@ -314,24 +320,24 @@ class WorkspaceList extends Component {
                   </Typography>
                 )}
               </div>
-              <div style={{ width: "35%" }}>
+              <div style={{ width: '35%' }}>
                 <div
                   style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
                   }}
                 >
                   <Link
                     to={`/${this.state.profileId}/workspace/new`}
-                    style={{ textDecoration: "none" }}
+                    style={{ textDecoration: 'none' }}
                   >
                     <IconButton
                       disableRipple
                       aria-label="create"
                       style={{
-                        border: "none",
-                        borderRadius: "0.5em",
+                        border: 'none',
+                        borderRadius: '0.5em',
                         backgroundColor: colors.tertiary,
                       }}
                     >
@@ -341,7 +347,7 @@ class WorkspaceList extends Component {
                       <Typography
                         style={{
                           color: colors.secondaryLight,
-                          paddingLeft: "5px",
+                          paddingLeft: '5px',
                         }}
                         component="h1"
                         variant="h5"
@@ -352,7 +358,7 @@ class WorkspaceList extends Component {
                     </IconButton>
                   </Link>
                 </div>
-                <div style={{ marginTop: "40px" }}>
+                <div style={{ marginTop: '40px' }}>
                   <Typography
                     gutterBottom
                     variant="body1"
@@ -363,21 +369,21 @@ class WorkspaceList extends Component {
                   </Typography>
                   {this.state.inviter && this.state.inviter.length === 0 ? (
                     <div
-                      style={{ textAlign: "center", color: colors.secondary }}
+                      style={{ textAlign: 'center', color: colors.secondary }}
                     >
                       Nothing to show
                     </div>
                   ) : null}
                   {this.state.inviter.map((inviter, index) => (
                     <div>
-                      <div style={{ display: "flex" }}>
+                      <div style={{ display: 'flex' }}>
                         <h6
                           style={{
-                            margin: "auto 0px",
+                            margin: 'auto 0px',
                             color: colors.secondary,
                           }}
                         >
-                          {inviter.invitor_fullname} invited you to join{" "}
+                          {inviter.invitor_fullname} invited you to join{' '}
                           {inviter.workspace_title}
                         </h6>
                         <div>
@@ -405,8 +411,10 @@ class WorkspaceList extends Component {
                     </div>
                   ))}
                 </div>
-
-                <div style={{ marginTop: "40px" }}>
+                <div style={{ marginTop: '40px' }}>
+                  <Deadlines width={'100%'} />
+                </div>
+                <div style={{ marginTop: '40px' }}>
                   <Typography
                     gutterBottom
                     variant="body1"
@@ -420,7 +428,7 @@ class WorkspaceList extends Component {
               </div>
             </div>
           ) : (
-            <div style={{ marginTop: "150px" }}>
+            <div style={{ marginTop: '150px' }}>
               <Spinner />
             </div>
           )}
@@ -456,7 +464,9 @@ class WorkspaceList extends Component {
           </Snackbar>
         )}
       </div>
-    );
+    )
   }
 }
-export default withStyles(useStyles)(WorkspaceList);
+
+
+export default withStyles(useStyles)(WorkspaceList)
