@@ -67,11 +67,15 @@ function SimpleDialog(props) {
         {props.recommendations.map((user) => (
           <ListItem key={user}>
             <ListItemAvatar>
+            <a href={`/${user.id}`} style={{textDecoration: "none"}}>
               <Avatar className={classes.avatar} src={BASE_URL + "/api" + user.profile_photo} >
                 <PersonIcon />
               </Avatar>
+              </a>
             </ListItemAvatar>
+            <a href={`/${user.id}`} style={{textDecoration: "none"}}>
             <ListItemText primary={`${user.name} ${user.surname}`} secondary={user.institution === "" ? `${user.job}` : `${user.job} @${user.institution}`}/>
+            </a>
             <ListItemSecondaryAction>
               <IconButton onClick={() => handleInvite(user.id)}>
                   <AddCircleIcon style={{color: colors.septenaryDark }}/>
