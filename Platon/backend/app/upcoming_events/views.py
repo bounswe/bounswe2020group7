@@ -98,13 +98,13 @@ class PersonalCalendarAPI(Resource):
             # Also, all the milestones (with a deadline) of the contributed workspaces get added.
             for contribution in active_contributions:
                 contributed_workspace = Workspace.query.filter_by(id=contribution.workspace_id).first()
-                if (contributed_workspace.deadline != None) and \
+                if (contributed_workspace.deadline is not None) and \
                     (contributed_workspace.deadline >= datetime.now()):
                     workspace_deadline_information = {
                                                         "type": 1,
                                                         "title": contributed_workspace.title,
                                                         "deadline": contributed_workspace.deadline,
-                                                        "deadline_str": contributed_workspace.deadline.strftime("%Y.%m.%d"),
+                                                        "deadline_str": contributed_workspace.deadline.strftime("%Y.%m.%d") if contributed_workspace.deadline is not None else "",
                                                         "workspace_id": contributed_workspace.id,
                                                         "workspace_title": contributed_workspace.title
                                                     }
@@ -115,15 +115,16 @@ class PersonalCalendarAPI(Resource):
                                                                             (Milestone.deadline != None) and \
                                                                             (Milestone.deadline >= datetime.now())).all()
                 for milestone in contributed_workspace_milestones:
-                    milestone_deadline_information = {
-                                                        "type": 2,
-                                                        "title": milestone.title,
-                                                        "deadline": milestone.deadline,
-                                                        "deadline_str": milestone.deadline.strftime("%Y.%m.%d %H.%M"),
-                                                        "workspace_id": contributed_workspace.id,
-                                                        "workspace_title": contributed_workspace.title
-                                                    }
-                    personal_calendar.append(milestone_deadline_information)
+                    if milestone.deadline is not None:
+                        milestone_deadline_information = {
+                                                            "type": 2,
+                                                            "title": milestone.title,
+                                                            "deadline": milestone.deadline,
+                                                            "deadline_str": milestone.deadline.strftime("%Y.%m.%d %H.%M") if milestone.deadline is not None else "",
+                                                            "workspace_id": contributed_workspace.id,
+                                                            "workspace_title": contributed_workspace.title
+                                                        }
+                        personal_calendar.append(milestone_deadline_information)
 
             # Issues the user has been assigned get added to the response list,
             # if they do not have an overdue deadline.
@@ -132,16 +133,17 @@ class PersonalCalendarAPI(Resource):
                                             (Issue.is_open == True) and \
                                             (Issue.deadline != None) and \
                                             (Issue.deadline >= datetime.now())).first()
+                if issue.deadline is not None:
 
-                issue_deadline_information = {
-                                                "type": 3,
-                                                "title": issue.title,
-                                                "deadline": issue.deadline,
-                                                "deadline_str": issue.deadline.strftime("%Y.%m.%d %H.%M"),
-                                                "workspace_id": issue.workspace_id,
-                                                "workspace_title": Workspace.query.filter_by(id=issue.workspace_id).first().title
-                                            }
-                personal_calendar.append(issue_deadline_information)
+                    issue_deadline_information = {
+                                                    "type": 3,
+                                                    "title": issue.title,
+                                                    "deadline": issue.deadline,
+                                                    "deadline_str": issue.deadline.strftime("%Y.%m.%d %H.%M") if issue.deadline is not None else "",
+                                                    "workspace_id": issue.workspace_id,
+                                                    "workspace_title": Workspace.query.filter_by(id=issue.workspace_id).first().title
+                                                }
+                    personal_calendar.append(issue_deadline_information)
 
         personal_calendar = sorted(personal_calendar, key=lambda item: item["deadline"])
         return make_response(jsonify(personal_calendar),200) 
