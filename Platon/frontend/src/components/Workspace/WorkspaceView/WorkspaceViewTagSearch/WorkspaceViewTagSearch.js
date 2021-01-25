@@ -44,6 +44,7 @@ function SimpleDialog(props) {
         {`Workspaces with `}<span style={{ color: tagColor }}>{tag}</span>
       </DialogTitle>
       <List style={{ backgroundColor: colors.secondaryLight }}>
+        {props.recommendations && props.recommendations.length === 0 ? <ListItemText style={{padding:"0px 8px"}} primary={`You are a unique person using ${tag} tag on a workspace`}/> : null}
         {props.recommendations.map((workspace) => (
           <ListItem key={workspace}>
             <ListItemText primary={workspace.title} secondary={`Owner: ${workspace.creator_name} ${workspace.creator_surname}`}/>
