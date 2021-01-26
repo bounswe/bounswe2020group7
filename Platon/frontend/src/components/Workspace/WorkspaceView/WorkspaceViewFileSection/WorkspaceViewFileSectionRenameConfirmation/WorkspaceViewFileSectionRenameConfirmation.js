@@ -9,7 +9,7 @@ import colors from "../../../../../utils/colors";
 import TextField from "@material-ui/core/TextField";
 
 export default function WorkspaceViewFileSectionRenameConfirmation(props) {
-  const [rename, setRename] = useState(props.element);
+  const [rename, setRename] = useState("");
   const handleRenameFolder = () => {
     props.handleRenameDialogClose(props.index);
     props.renameFolder(props.element, rename);
@@ -28,7 +28,7 @@ export default function WorkspaceViewFileSectionRenameConfirmation(props) {
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             <TextField
-              value={rename}
+
               onChange={(e) => setRename(e.target.value)}
             />
           </DialogContentText>

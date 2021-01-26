@@ -109,6 +109,7 @@ function handleProfile() {
 
 function onKeyUp(event) {
   var edValue = document.getElementById("searchBox").value;
+  if(edValue==="") return
   if (event.charCode === 13) {
     document.location.href = "/search/" + edValue;
   }
