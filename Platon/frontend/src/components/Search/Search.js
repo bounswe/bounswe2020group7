@@ -130,6 +130,9 @@ class Search extends React.Component {
   }
 
   handleSearch = () => {
+
+    if(this.state.searchQuery==="") return
+
     if (this.state.checkedUser === true) {
       requestService
         .getSearchUser(

@@ -263,31 +263,7 @@ class WorkspaceViewFileSection extends Component {
         console.log(err);
       });
   };
-  renameFolder = (element, rename) => {
-    const token = localStorage.getItem("jwtToken");
-    const url = config.BASE_URL;
-    const c_workspace_id = this.props.workspaceId;
-    const changePath = this.state.cwd + "/" + element;
-    let formData = new FormData();
-    formData.append("workspace_id", c_workspace_id);
-    formData.append("path", changePath);
-    formData.append("new_folder_name", rename);
 
-    axios
-      .put(url + "/api/file_system/folder", formData, {
-        headers: {
-          auth_token: token, //the token is a variable which holds the token
-        },
-      })
-      .then((response) => {
-        if (response.status === 200) {
-          this.fetchFileStructure();
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
   deleteFolder = (element) => {
     const token = localStorage.getItem("jwtToken");
 
@@ -381,6 +357,10 @@ class WorkspaceViewFileSection extends Component {
       });
   };
   renameFolder = (element, rename) => {
+    if (rename==="") {
+      return
+    }
+    console.log("rename", rename==="", rename)
     const token = localStorage.getItem("jwtToken");
     const url = config.BASE_URL;
     const c_workspace_id = this.props.workspaceId;
