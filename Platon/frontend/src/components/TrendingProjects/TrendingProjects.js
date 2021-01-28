@@ -6,8 +6,10 @@ import colors from '../../utils/colors'
 import './TrendingProjects.css'
 import { withStyles } from '@material-ui/core/styles'
 import Pagination from '@material-ui/lab/Pagination'
+import config from '../../utils/config'
+const BASE_URL = config.BASE_URL
 
-const TRENDING_PROJECTS_URL = 'http://18.185.75.161:5000/api/workspaces/trending_projects?number_of_workspaces=100000'
+const TRENDING_PROJECTS_URL = BASE_URL + '/api/workspaces/trending_projects?number_of_workspaces=100000'
 
 const StyledPagination = withStyles({
   root: {

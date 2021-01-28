@@ -7,8 +7,9 @@ import './Deadlines.css'
 import { withStyles } from '@material-ui/core/styles'
 import Pagination from '@material-ui/lab/Pagination'
 import axios from 'axios'
-
-const DEADLINES_URL = 'http://18.185.75.161:5000/api/upcoming_events/personal_calendar'
+import config from '../../utils/config'
+const BASE_URL = config.BASE_URL
+const DEADLINES_URL = BASE_URL + '/api/upcoming_events/personal_calendar'
 axios.defaults.headers.common['auth_token'] = localStorage.getItem('jwtToken')
 
 const StyledPagination = withStyles({

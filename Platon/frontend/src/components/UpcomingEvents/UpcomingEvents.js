@@ -6,8 +6,9 @@ import Spinner from '../Spinner/Spinner'
 import './UpcomingEvents.css'
 import Pagination from '@material-ui/lab/Pagination'
 import { withStyles } from '@material-ui/core/styles'
-
-const BASE_URL = 'http://18.185.75.161:5000/api/upcoming_events'
+import config from '../../utils/config'
+const URL = config.BASE_URL
+const BASE_URL = URL + '/api/upcoming_events'
 
 const useStyles = () => ({
   typography: {

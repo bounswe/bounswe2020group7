@@ -6,6 +6,7 @@ import config from '../../utils/config';
 import requestService from "../../services/requestService";
 import colors from "../../utils/colors";
 import Typography from '@material-ui/core/Typography'
+const BASE_URL = config.BASE_URL
 
 class InfiniteScroller extends Component {
     constructor(props) {
@@ -51,7 +52,7 @@ class InfiniteScroller extends Component {
                 <Commentt
                     title={track.summary}
                     author={track.actor.name}
-                    avatar={'http://18.185.75.161:5000/api' +track.actor.image.url}
+                    avatar={BASE_URL + '/api' +track.actor.image.url}
 
                     style={{ color: colors.tertiary, textAlign: 'center'
                      }}

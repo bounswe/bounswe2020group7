@@ -33,7 +33,7 @@ import ReportDialog from './ReportDialog'
 import RatingDialogue from './RatingDialog'
 import RatingComponent from './RatingComponent'
 import CommentsTabComponent from './CommentsTab'
-
+const BASE_URL = config.BASE_URL
 function TabPanel(props) {
   const { children, value, index, ...other } = props
 
@@ -354,7 +354,7 @@ class ProfilePage extends React.Component {
                   <img
                     className="ProfilePhoto"
                     src={
-                      'http://18.185.75.161:5000/api' +
+                      BASE_URL + '/api' +
                       this.state.user.profile_photo
                     }
                     alt="UserImage"
@@ -602,7 +602,7 @@ class ProfilePage extends React.Component {
                               <ListItemAvatar>
                                 <Avatar
                                   src={
-                                    'http://18.185.75.161:5000/api' +
+                                    BASE_URL + '/api' +
                                     value.profile_photo
                                   }
                                 ></Avatar>
@@ -626,7 +626,7 @@ class ProfilePage extends React.Component {
                               <ListItemAvatar>
                                 <Avatar
                                   src={
-                                    'http://18.185.75.161:5000/api' +
+                                    BASE_URL + '/api' +
                                     value.profile_photo
                                   }
                                 ></Avatar>

@@ -6,7 +6,7 @@ import NavBar from "../NavBar/NavBar";
 import AppBar from "../AppBar/AppBar";
 import Spinner from "../Spinner/Spinner";
 import colors from "../../utils/colors";
-
+import config from "../../utils/config";
 import { Container, Col, Row, Button, Card } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import { TextField, withStyles } from "@material-ui/core";
@@ -19,7 +19,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Autocomplete, {
   createFilterOptions,
 } from "@material-ui/lab/Autocomplete";
-
+const BASE_URL = config.BASE_URL
 const StyledTextField = withStyles({
   root: {
     "& .MuiInputBase-input": {
@@ -666,7 +666,7 @@ class Search extends React.Component {
                               <Col sm={2}>
                                 <Avatar
                                   src={
-                                    "http://18.185.75.161:5000/api" +
+                                    BASE_URL + "/api" +
                                     value.profile_photo
                                   }
                                   className="SearchAvatar"
@@ -691,7 +691,7 @@ class Search extends React.Component {
                               <Col sm={2}>
                                 <Avatar
                                   src={
-                                    "http://18.185.75.161:5000/api" +
+                                    BASE_URL + "/api" +
                                     value.profile_photo
                                   }
                                   className="SearchAvatar"
@@ -718,7 +718,7 @@ class Search extends React.Component {
                               <Col sm={2}>
                                 <Avatar
                                   src={
-                                    "http://18.185.75.161:5000/api/auth_system/logo"
+                                    BASE_URL + "/api/auth_system/logo"
                                   }
                                   className="SearchAvatar"
                                 />
@@ -750,7 +750,7 @@ class Search extends React.Component {
                               <Col sm={2}>
                                 <Avatar
                                   src={
-                                    "http://18.185.75.161:5000/api/auth_system/logo"
+                                    BASE_URL + "/api/auth_system/logo"
                                   }
                                   className="SearchAvatar"
                                 />
@@ -780,7 +780,7 @@ class Search extends React.Component {
                               <Col sm={2}>
                                 <Avatar
                                   src={
-                                    "http://18.185.75.161:5000/api" +
+                                    BASE_URL + "/api" +
                                     value.profile_photo
                                   }
                                   className="SearchAvatar"

@@ -8,7 +8,8 @@ import colors from '../../../utils/colors'
 import List from '@material-ui/core/List'
 import { getComments } from '../RatingComponent/utils'
 import Rating from '@material-ui/lab/Rating'
-
+import config from '../../../utils/config'
+const BASE_URL = config.BASE_URL
 const CommentsTabComponent = ({ profileId, goToProfile }) => {
   const [comments, setComments] = useState([])
 
@@ -26,7 +27,7 @@ const CommentsTabComponent = ({ profileId, goToProfile }) => {
         <Link onClick={() => goToProfile(comment.owner_id)}>
           <ListItem>
             <ListItemAvatar>
-              <Avatar src={'http://18.185.75.161:5000/api' + comment.owner_profile_photo} />
+              <Avatar src={BASE_URL + '/api' + comment.owner_profile_photo} />
             </ListItemAvatar>
             <ListItemText
               style={{ color: colors.secondary, flexShrink: 0 }}
