@@ -1,0 +1,11 @@
+.comment .ant-comment-inner {
+    padding: 0px;
+
+}
+
+.comment .ant-comment-content-detail {
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+}
+

@@ -1,0 +1,61 @@
+.EditPageContainer{
+    padding-top: 2%;
+    padding-bottom: 5%;
+}
+
+.GeneralSmallFont{
+    color: #E0DFD5;
+    font-family: 'Rubik', sans-serif !important;
+    font-size: 16px;
+}
+
+.GeneralMediumFont{
+    color: #E0DFD5;
+    font-family: 'Rubik', sans-serif !important;
+    font-size: 20px;
+}
+
+.ProfileLargeFont{
+    color: #E0DFD5;
+    font-family: 'Rubik', sans-serif;
+    font-size: 48px;
+}
+
+.ProfilePageLine{
+    border: 2px solid #E0DFD5;
+}
+
+.EditProfileTextInput{
+    color: aqua !important;
+}
+
+.ProfileUpdateButton{
+    background-color: #B0DB06 !important;
+    border-color: #B0DB06 !important;
+    font-family: 'Rubik', sans-serif !important;
+}
+
+.MuiFormLabel-root{
+    color:#E0DFD5 !important;
+}
+
+.EditProfileLanding{
+    min-height: 100vh;
+    height: 100%;
+    background-color: #313638;
+}
+.EditProfileSpinner{
+    margin: 20vh 0px;
+
+    height: 50vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.ProfileSkillChip{
+    color: #E0DFD5 !important;
+    font-family: 'Rubik', sans-serif !important;
+    border: #B0DB06 2px solid !important;
+}
