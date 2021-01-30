@@ -1,2 +1,14 @@
 deliverables/
 non_project/
+*__pycache__*
+
+# Add your virtualenv name if you're using one.
+venv/
+
+### vscode ###   auto-generated from https://www.toptal.com/developers/gitignore
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
