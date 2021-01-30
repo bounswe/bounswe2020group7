@@ -40,6 +40,9 @@ class LoginFragment : Fragment() {
 
     private lateinit var dialog: AlertDialog
 
+    /*
+     *  Creates and returns the view hierarchy associated with the fragment.
+     */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         binding = FragmentLoginBinding.inflate(inflater)
@@ -48,6 +51,9 @@ class LoginFragment : Fragment() {
         return binding.root
     }
 
+    /*
+     *  After view creation listeners and observers implemented
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setListeners()
@@ -55,6 +61,9 @@ class LoginFragment : Fragment() {
         doAutoLogin()
     }
 
+    /*
+     *  Auto login handled here
+     */
     private fun doAutoLogin(){
         val mail = sharedPreferences.getString("mail", null)
         val pass = sharedPreferences.getString("pass", null)
@@ -66,6 +75,9 @@ class LoginFragment : Fragment() {
         }
     }
 
+    /*
+     *  Listeners added
+     */
     private fun setListeners() {
         setFieldListeners()
         setButtonListeners()
@@ -87,6 +99,9 @@ class LoginFragment : Fragment() {
         }
     }
 
+    /*
+     *  Button listeners added
+     */
     private fun setButtonListeners(){
         dialog =Definitions().createProgressBar(activity as BaseActivity)
 
@@ -110,6 +125,9 @@ class LoginFragment : Fragment() {
         }
     }
 
+    /*
+     *  Observers of the view model responses handled
+     */
     private fun setObservers(){
         mLoginViewModel.getLoginResourceResponse.observe(viewLifecycleOwner, { t->
             when(t.javaClass){
@@ -142,8 +160,9 @@ class LoginFragment : Fragment() {
         })
     }
 
-
-
+    /*
+     *  Visibilities of top menu bar items handled
+     */
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.search_btn)?.isVisible = false
         menu.findItem(R.id.registerFragment)?.isVisible = false

@@ -32,6 +32,9 @@ import com.cmpe451.platon.util.Definitions
 import java.util.*
 import kotlin.collections.ArrayList
 
+/*
+It consists of the UI Code, data bindings and general logic of application
+ */
 class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListener,
     WorkspaceApplicationsAdapter.ApplicationsButtonClickListener, UpcomingEventsAdapter.UpcomingButtonClickListener, SkillsAdapter.OnTagClickedListener,
     RecommendedCollaboratorsAdapter.RecommendedUserClickListener{
@@ -49,6 +52,10 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
     private var handledRequestPosition:Int =-1
     private lateinit var wsAppBinding:DialogWsApplicationsBinding
     private lateinit var wsRecommendedCollabBinding: DialogRecommendedBinding
+
+    /*
+     *  Creates and returns the view hierarchy associated with the fragment.
+     */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         binding = FragmentPersonalWorkspaceBinding.inflate(inflater)
@@ -56,7 +63,9 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
         return binding.root
     }
 
-
+    /*
+     *  Top menu bar click handled
+     */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.btn_WorkspaceApplications->{
@@ -71,6 +80,9 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
         mWorkspaceViewModel.getWorkspaceApplications((activity as WorkspaceActivity).token!!, (activity as WorkspaceActivity).workspace_id!!, 0, 10)
     }
 
+    /*
+     *  After view creation listeners and observers implemented
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if((activity as WorkspaceActivity).addClicked != null && !(activity as WorkspaceActivity).addClicked!!){
             initializeAdapters()
@@ -101,11 +113,17 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
         getMilestones()
     }
 
+    /*
+    *  Get milestone request handled
+    */
     private fun getMilestones() {
         //pagination will be added late TODO
         mWorkspaceViewModel.getMilestones((activity as WorkspaceActivity).workspace_id!!, null, null, (activity as WorkspaceActivity).token!!)
     }
 
+    /*
+    *  Listeners of the buttons added
+    */
     private fun setListeners() {
         if((activity as WorkspaceActivity).isOwner!!){
             binding.infoTitle.setOnClickListener{
@@ -166,6 +184,9 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
 
     }
 
+    /*
+    *  Click on recommended collaborators handled
+    */
     private fun onRecommendedCollaboratorsClicked() {
         mWorkspaceViewModel.getRecommendedCollaborators((activity as WorkspaceActivity).workspace_id!!, 20, (activity as WorkspaceActivity).token!!)
         mWorkspaceViewModel.getRecommendedUsersResourceResponse.observe(viewLifecycleOwner, {t->
@@ -205,6 +226,9 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
         })
     }
 
+    /*
+    *  Click on add upcoming event handled
+    */
     private fun onAddUpcomingEventClicked() {
         mHomeViewModel.getUpcomingEvents(null, null)
         mHomeViewModel.getUpcomingEventsResourceResponse.observe(viewLifecycleOwner,  { t ->
@@ -248,6 +272,9 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
         })
     }
 
+    /*
+    *  Click on quit button handled
+    */
     private fun onQuitButtonClicked() {
         if(mWorkspaceViewModel.getWorkspaceResponse.value!!.data!!.creator_id == (activity as WorkspaceActivity).user_id){
             AlertDialog.Builder(context)
@@ -285,6 +312,9 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
         }
     }
 
+    /*
+    *  Observers of the workspace view model responses handled
+    */
     @SuppressLint("SetTextI18n")
     private fun setObservers() {
         dialog = Definitions().createProgressBar(requireContext())
@@ -516,6 +546,10 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
         binding.upcomingRv.layoutManager =LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
     }
+
+    /*
+    *  Click on add requirement handled
+    */
     private fun onAddRequirementClicked() {
         requirementsArray.clear()
 
@@ -564,6 +598,10 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
             }
             .create().show()
     }
+
+    /*
+    *  Click on update button handled
+    */
     @SuppressLint("ClickableViewAccessibility")
     private fun onUpdateButtonClicked(){
         val tmpBinding = FragmentEditWorkspaceBinding.inflate(
@@ -670,6 +708,9 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
 
     }
 
+    /*
+    *  Click on add milestone button handled
+    */
     @SuppressLint("ClickableViewAccessibility")
     private fun onAddMilestoneClicked(){
         val tmpBinding = DialogAddMilestoneBinding.inflate(
@@ -760,6 +801,9 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
     }
 
 
+    /*
+    *  Click on update milestone button handled
+    */
     @SuppressLint("ClickableViewAccessibility")
     private fun onUpdateMilestoneClicked(milestone:Milestone){
         val tmpBinding = DialogAddMilestoneBinding.inflate(
@@ -870,7 +914,9 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
     }
 
 
-
+    /*
+    *  Click on delete skill handled
+    */
     private fun onAddDeleteSkillClicked() {
         mAddWorkspaceViewModel.getAllSkills()
         mAddWorkspaceViewModel.allSkills.observe(viewLifecycleOwner,  { t ->
@@ -933,7 +979,7 @@ class WorkspaceFragment : Fragment(), MilestoneAdapter.MilestoneButtonClickListe
         })
     }
 
-
+    
     override fun onMilestoneNameClicked(binding: MilestoneCellBinding) {
         if(binding.expandLl.visibility == View.GONE) binding.expandLl.visibility = View.VISIBLE
         else binding.expandLl.visibility = View.GONE

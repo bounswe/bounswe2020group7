@@ -9,6 +9,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+/*
+ *  It is a bridge between end point and add workspace view model.
+ */
 class AddWorkspaceRepository {
     val allSkills: MutableLiveData<Resource<List<String>>> = MutableLiveData()
 

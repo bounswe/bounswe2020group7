@@ -6,6 +6,10 @@ import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.Skills
 import com.cmpe451.platon.util.Definitions
 
+/*
+ *  It is a bridge between other profile view repository and other profile fragment.
+ */
+
 class OtherProfileViewModel : ViewModel() {
     private var repository: OtherProfileRepository = OtherProfileRepository()
     var getUserResource = repository.userResource

@@ -10,6 +10,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+/*
+ *  It is a bridge between end point and register view model.
+ */
 class RegisterRepository(){
 
     var registerResourceResponse:MutableLiveData<Resource<JsonObject>> = MutableLiveData()

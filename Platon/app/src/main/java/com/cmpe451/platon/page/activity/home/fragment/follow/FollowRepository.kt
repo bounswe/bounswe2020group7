@@ -12,10 +12,15 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+/*
+ *  It is a bridge between end point and follow view model.
+ */
+
 class FollowRepository() {
     val followersResource: MutableLiveData<Resource<Followers>> = MutableLiveData(Resource.Loading())
     val followingResource: MutableLiveData<Resource<Following>> = MutableLiveData(Resource.Loading())
     val followRecommendationsResponse:MutableLiveData<Resource<RecommendedUserList>> = MutableLiveData()
+
 
     fun getFollowers(followingId: Int, authToken: String, page:Int, per_page:Int){
         val service = RetrofitClient.getService()

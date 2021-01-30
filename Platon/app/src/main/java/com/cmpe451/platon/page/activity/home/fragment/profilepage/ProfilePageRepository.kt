@@ -12,6 +12,10 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+/*
+ *  It is a bridge between end point and profile page view model.
+ */
+
 class ProfilePageRepository() {
 
     val researchesResourceResponse: MutableLiveData<Resource<Researches>> = MutableLiveData()

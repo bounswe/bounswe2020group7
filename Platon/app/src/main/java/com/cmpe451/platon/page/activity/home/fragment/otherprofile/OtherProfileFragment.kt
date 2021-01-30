@@ -35,6 +35,10 @@ import com.cmpe451.platon.page.activity.home.fragment.workspace.WorkspaceListVie
 import com.cmpe451.platon.util.Definitions
 import com.cmpe451.platon.util.Definitions.USERSTATUS
 
+/*
+ *  It consists of the UI Code, data bindings and general logic of application
+ */
+
 class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjectButtonClickListener, CommentsAdapter.OnCommentClickedListener, SkillsAdapter.OnTagClickedListener {
 
 
@@ -53,6 +57,9 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
     private val mOtherProfileViewModel: OtherProfileViewModel by viewModels()
     private val mWorkspaceListViewModel:WorkspaceListViewModel by viewModels()
 
+    /*
+     *  Creates and returns the view hierarchy associated with the fragment.
+     */
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -63,6 +70,9 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
         return binding.root
     }
 
+    /*
+     *  After view creation listeners and observers implemented
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializeAdapters()
@@ -70,6 +80,9 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
         setObservers()
     }
 
+    /*
+     *  Layout manager and adapter of the recycler view added
+     */
     private fun initializeAdapters() {
         val layoutManagerProjects = LinearLayoutManager(this.activity)
         paginationListenerResearches = object:PaginationListener(layoutManagerProjects) {
@@ -135,6 +148,9 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
         dialog = Definitions().createProgressBar(requireContext())
     }
 
+    /*
+     *  Observers of the view model responses handled
+     */
     private fun setObservers() {
         mOtherProfileViewModel.getUserComments.observe(viewLifecycleOwner, {t ->
             when(t.javaClass){
@@ -304,6 +320,9 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
 
     }
 
+    /*
+     *  According to privacy of other profile view adapted
+     */
     private fun setView(status:USERSTATUS, isUserPrivate:Boolean) {
         val user = mOtherProfileViewModel.getUserResource.value!!.data
 
@@ -345,6 +364,9 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
         }
     }
 
+    /*
+     *  Button click listeners added
+     */
     private fun setListeners(status:USERSTATUS, isUserPrivate:Boolean){
         val user = mOtherProfileViewModel.getUserResource.value!!.data
 
@@ -517,6 +539,9 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
         }
     }
 
+    /*
+     *  User information is fetched
+     */
     private fun fetchUser() {
         userId = args.userId
         if(userId != null){
@@ -525,7 +550,9 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
         }
     }
 
-
+    /*
+     *  Visibilities of top menu bar items handled
+     */
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.search_btn)?.isVisible = false
         menu.findItem(R.id.notification_btn)?.isVisible = false
@@ -533,6 +560,9 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
         super.onPrepareOptionsMenu(menu)
     }
 
+    /*
+     *  Click on user project handled
+     */
     override fun onUserProjectButtonClicked(binding: ResearchesCellBinding, position: Int) {
         if (binding.descTrendProjectTv.visibility == View.GONE){
             binding.descTrendProjectTv.visibility = View.VISIBLE
@@ -544,6 +574,9 @@ class OtherProfileFragment: Fragment(), OtherUserProjectsAdapter.OtherUserProjec
         Definitions().vibrate(50, activity as BaseActivity)
     }
 
+    /*
+     *  Click on delete comment handled
+     */
     override fun onDeleteCommentClicked(element: Comment, position: Int) {
        mOtherProfileViewModel.deleteComment(element.comment_id, (activity as HomeActivity).currUserToken)
     }

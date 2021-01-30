@@ -26,6 +26,10 @@ import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.page.activity.home.fragment.profilepage.ProfilePageViewModel
 import com.cmpe451.platon.util.Definitions
 
+/*
+ *  It consists of the UI Code, data bindings and general logic of application
+ */
+
 class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButtonClickListener, WorkspaceRecommendationAdapter.WorkspaceRecommendationButtonClickListener{
 
     private lateinit var binding: FragmentWorkspaceListBinding
@@ -37,6 +41,9 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
     private lateinit var wsRecommendedBinding:DialogRecommendedBinding
     private lateinit var recDialog:AlertDialog
 
+    /*
+    *  Click on top menu button item handled
+    */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.workspace_recommendation_btn->{
@@ -46,6 +53,9 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
         return item.onNavDestinationSelected(findNavController()) || super.onOptionsItemSelected(item)
     }
 
+    /*
+    *  Click on workspace recommendation button handled
+    */
     private fun onWorkspaceRecommendationsClicked() {
         mWorkspaceListViewModel.getWorkspaceRecommendations(20, (activity as HomeActivity).currUserToken)
         mWorkspaceListViewModel.getWorkspaceRecommendationsResponse.observe(viewLifecycleOwner, {t->
@@ -84,6 +94,9 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
         })
     }
 
+    /*
+     *  Creates and returns the view hierarchy associated with the fragment.
+     */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         binding = FragmentWorkspaceListBinding.inflate(inflater)
@@ -91,6 +104,9 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
         return binding.root
     }
 
+    /*
+    *  After view creation listeners and observers implemented
+    */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setListeners()
@@ -98,6 +114,9 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
         fetchWorkspaces()
     }
 
+    /*
+    *  Layout manager and adapters of recycler view added
+    */
     private fun setListeners() {
         workspaceListAdapter = WorkspaceListAdapter(ArrayList(), requireContext(), this)
         val layoutManager = LinearLayoutManager(activity)
@@ -118,6 +137,9 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
 //        })
     }
 
+    /*
+     *  Observers of the view model responses handled
+     */
     private fun setObservers(){
         dialog = Definitions().createProgressBar(requireContext())
         mWorkspaceListViewModel.workspaces.observe(viewLifecycleOwner, Observer {
@@ -130,11 +152,16 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
         })
     }
 
+    /*
+     *  Fetch workspace request handled
+     */
     private fun fetchWorkspaces(){
         mWorkspaceListViewModel.getWorkspaces((activity as HomeActivity).currUserToken!!)
     }
 
-
+    /*
+     *  Visibilities of top menu bar items handled
+     */
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.logout_menu_btn)?.isVisible = false
         menu.findItem(R.id.workspace_recommendation_btn)?.isVisible = true
@@ -142,6 +169,9 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
         super.onPrepareOptionsMenu(menu)
     }
 
+    /*
+     *  Click on workspace list handled
+     */
     override fun onWorkspaceListButtonClicked(binding: WorkspaceCellBinding, projectId: Int) {
         val bnd = Bundle()
         bnd.putString("token", (activity as HomeActivity).currUserToken)
@@ -158,6 +188,9 @@ class WorkspaceListFragment : Fragment(), WorkspaceListAdapter.WorkspaceListButt
         super.onResume()
     }
 
+    /*
+     *  Click on workspace handled
+     */
     override fun onWorkspaceClicked(binding: WorkspaceCellBinding, project: RecommendedWorkspace) {
         val bnd = Bundle()
         bnd.putString("token", (activity as HomeActivity).currUserToken)

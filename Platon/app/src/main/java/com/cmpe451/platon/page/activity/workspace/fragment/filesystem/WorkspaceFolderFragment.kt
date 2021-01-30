@@ -32,7 +32,9 @@ import okhttp3.MediaType
 import okhttp3.RequestBody
 import java.io.File
 
-
+/*
+It consists of the UI Code, data bindings and general logic of application
+ */
 class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickListener, FilesAdapter.FilesButtonClickListener {
 
     lateinit var binding:FragmentWorkspaceFolderBinding
@@ -43,6 +45,9 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
 
     private val mWorkspaceFolderViewModel:WorkspaceFolderViewModel by viewModels()
 
+    /*
+     *  Creates and returns the view hierarchy associated with the fragment.
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -52,7 +57,9 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
         return binding.root
     }
 
-
+    /*
+     *  After view creation listeners and observers implemented
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializeAdapters()
@@ -65,6 +72,9 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
 
     }
 
+    /*
+     *  Initializations handled
+     */
     private fun initView() {
         if(!(activity as WorkspaceActivity).isOwner!!){
             binding.filesTitleTv.setCompoundDrawables(null, null, null, null)
@@ -73,6 +83,9 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
 
     }
 
+    /*
+     *  Observers of the view model responses handled
+     */
     private fun setObservers() {
         mWorkspaceFolderViewModel.getFolderResourceResponse.observe(viewLifecycleOwner, {
             when (it.javaClass) {
@@ -154,11 +167,11 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
 
 
         })
-
-
-
     }
 
+    /*
+     *  Button click listeners added
+     */
     private fun setListeners() {
         binding.directoryUpTv.setOnClickListener {
             getFolder("$cwd/..")
@@ -285,6 +298,9 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
 
     }
 
+    /*
+     *  Layout manager and adapter of the recycler view added
+     */
     private fun initializeAdapters() {
         dialog = Definitions().createProgressBar(requireContext())
         binding.rvWorkspaceFolders.adapter = FoldersAdapter(ArrayList(), this, (activity as WorkspaceActivity).isOwner!!)
@@ -295,6 +311,9 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
     }
 
 
+    /*
+     *  Visibility of top menu bar items handled.
+     */
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.workspaceFolderFragment).isVisible = false
         menu.findItem(R.id.add_issue_btn).isVisible = false
@@ -303,6 +322,9 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
         super.onPrepareOptionsMenu(menu)
     }
 
+    /*
+     *  Click on edit folder clicked handled
+     */
     override fun onEditFolderClicked(folder: String) {
         val tmpBinding = DialogAddFolderBinding.inflate(
             layoutInflater,
@@ -325,10 +347,16 @@ class WorkspaceFolderFragment :Fragment(), FoldersAdapter.FoldersButtonClickList
         }
     }
 
+    /*
+     *  Click on folder name clicked handled
+     */
     override fun onFolderNameClicked(folder: String) {
         getFolder("${this.cwd}/$folder")
     }
 
+    /*
+     *  Click on delete folder clicked handled
+     */
     override fun onDeleteFolderClicked(folder: String) {
         AlertDialog.Builder(context)
             .setMessage("Are you sure you want to delete folder $folder? All content within the folder will be lost.")

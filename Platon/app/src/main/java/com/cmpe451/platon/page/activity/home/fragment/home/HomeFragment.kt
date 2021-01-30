@@ -24,6 +24,10 @@ import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.activity.workspace.WorkspaceActivity
 import com.cmpe451.platon.util.Definitions
 
+/*
+ *  It consists of the UI Code, data bindings and general logic of application
+ */
+
 class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonClickListener, UpcomingEventsAdapter.UpcomingButtonClickListener,
     ActivityStreamAdapter.ActivityStreamButtonClickListener, CalendarAdapter.CalendarButtonClickListener {
 
@@ -43,6 +47,9 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
         setHasOptionsMenu(true)
     }
 
+    /*
+     *  Creates and returns the view hierarchy associated with the fragment.
+     */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(inflater)
@@ -50,6 +57,9 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
 
     }
 
+    /*
+     *  After view creation listeners and observers implemented
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
@@ -62,6 +72,10 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
 
 
     }
+
+    /*
+     *  Click on top menu bar items handled
+     */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.calendar_btn->{
@@ -71,6 +85,9 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
         return item.onNavDestinationSelected(findNavController()) || super.onOptionsItemSelected(item)
     }
 
+    /*
+     *  Observers of the view model responses handled
+     */
     private fun setObservers(){
         mHomeViewModel.getTrendingProjectsResourceResponse.observe(viewLifecycleOwner, {t->
             when(t.javaClass){
@@ -103,6 +120,10 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
         })
     }
 
+    /*
+     *  View initialization handled
+     *  Also layout and adapter of recycler views added
+     */
     private fun initViews() {
 
         val myActivities: ArrayList<ActivityStreamElement> = arrayListOf()
@@ -161,6 +182,9 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
 
     }
 
+    /*
+     *  Click on calendar handled
+     */
     private fun onCalendarClicked() {
         mHomeViewModel.getCalendar((requireActivity() as HomeActivity).currUserToken)
 
@@ -203,6 +227,9 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
         }
     }
 
+    /*
+     *  Observers of the view model responses added
+     */
     private fun setListeners() {
         dialog = Definitions().createProgressBar(requireContext())
 
@@ -219,7 +246,9 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
 
     }
 
-
+    /*
+     *  Click on trending projects recycler view cell handled
+     */
     override fun onTrendingProjectButtonClicked(binding: TrendProjectCellBinding, project:TrendingProject) {
         val collabIds = project.contributor_list!!.map{it.id}
         val bnd = Bundle()
@@ -237,6 +266,9 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
         startActivity(Intent(activity, WorkspaceActivity::class.java).putExtras(bnd))
     }
 
+    /*
+     *  Click on upcoming events recycler view cell handled
+     */
     override fun onUpcomingButtonClicked(binding: UpcomingEventCellBinding, position: Int) {
         if (binding.expandLl.visibility == View.GONE){
             binding.expandLl.visibility = View.VISIBLE
@@ -252,6 +284,9 @@ class HomeFragment : Fragment(), TrendingProjectsAdapter.TrendingProjectButtonCl
         //todo
     }
 
+    /*
+     *  Visibilities of top menu bar items handled
+     */
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.logout_menu_btn)?.isVisible = false
         menu.findItem(R.id.calendar_btn)?.isVisible = true

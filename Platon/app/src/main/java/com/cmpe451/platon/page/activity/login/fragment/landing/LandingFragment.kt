@@ -33,6 +33,9 @@ import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.activity.home.fragment.home.HomeViewModel
 import com.cmpe451.platon.util.Definitions
 
+/*
+ *  It consists of the UI Code, data bindings and general logic of application
+ */
 class LandingFragment : Fragment(),TrendingProjectsAdapter.TrendingProjectButtonClickListener, UpcomingEventsAdapter.UpcomingButtonClickListener  {
 
     private lateinit var trendingProjectsRecyclerView: RecyclerView
@@ -46,7 +49,9 @@ class LandingFragment : Fragment(),TrendingProjectsAdapter.TrendingProjectButton
 
     private var maxPageNumberUpcoming:Int=0
 
-
+    /*
+     *  Creates and returns the view hierarchy associated with the fragment.
+     */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         binding = FragmentLandingBinding.inflate(layoutInflater)
@@ -55,6 +60,9 @@ class LandingFragment : Fragment(),TrendingProjectsAdapter.TrendingProjectButton
         return binding.root
     }
 
+    /*
+     *  After view creation listeners and observers implemented
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if(!doAutoLogin()){
@@ -76,6 +84,9 @@ class LandingFragment : Fragment(),TrendingProjectsAdapter.TrendingProjectButton
         return false
     }
 
+    /*
+     *  Observers of the view model responses handled
+     */
     private fun setObservers(){
         mHomeViewModel.getTrendingProjectsResourceResponse.observe(viewLifecycleOwner, {t->
             when(t.javaClass){
@@ -103,6 +114,10 @@ class LandingFragment : Fragment(),TrendingProjectsAdapter.TrendingProjectButton
             }
         })
     }
+
+    /*
+     *  Layout managers and adapters of recycler view added
+     */
     private fun initViews() {
 
         val height = resources.displayMetrics.heightPixels
@@ -140,6 +155,9 @@ class LandingFragment : Fragment(),TrendingProjectsAdapter.TrendingProjectButton
         //password.addTextChangedListener(textWatcher)
     }
 
+    /*
+     *  Click on upcoming event handled
+     */
     override fun onUpcomingButtonClicked(binding: UpcomingEventCellBinding, position:Int) {
         if (binding.expandLl.visibility == View.GONE){
             binding.expandLl.visibility = View.VISIBLE
@@ -153,6 +171,9 @@ class LandingFragment : Fragment(),TrendingProjectsAdapter.TrendingProjectButton
     }
 
 
+    /*
+     *  Click on trending project handled
+     */
     override fun onTrendingProjectButtonClicked(binding: TrendProjectCellBinding, project:TrendingProject) {
         if (binding.descTrendProjectTv.visibility == View.GONE){
             binding.descTrendProjectTv.visibility = View.VISIBLE

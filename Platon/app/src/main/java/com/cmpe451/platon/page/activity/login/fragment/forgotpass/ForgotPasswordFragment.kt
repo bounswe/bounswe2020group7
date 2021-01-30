@@ -33,7 +33,9 @@ class ForgotPasswordFragment : Fragment() {
     private val mForgotPasswordViewModel: ForgotPasswordViewModel by viewModels()
     private lateinit var dialog:AlertDialog
 
-
+    /*
+     *  Creates and returns the view hierarchy associated with the fragment.
+     */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         setHasOptionsMenu(true)
         // Inflate the layout for this fragment
@@ -41,17 +43,26 @@ class ForgotPasswordFragment : Fragment() {
         return binding.root
     }
 
+    /*
+     *  After view creation listeners and observers implemented
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setListeners()
     }
 
+    /*
+     *  Listeners added via here
+     */
     private fun setListeners() {
         setFieldListeners()
         setButtonListeners()
         setObservers()
     }
 
+    /*
+     *  Observers of the view model responses handled
+     */
     private fun setObservers(){
 
         mForgotPasswordViewModel.getSendResetMailResourceResponse.observe(viewLifecycleOwner, { i->
@@ -83,6 +94,9 @@ class ForgotPasswordFragment : Fragment() {
         })
     }
 
+    /*
+     *  Field listener added from here
+     */
     private fun setFieldListeners(){
         binding.emailEt.setOnFocusChangeListener { v, hasFocus ->
             if(!hasFocus){
@@ -122,6 +136,9 @@ class ForgotPasswordFragment : Fragment() {
         }
     }
 
+    /*
+     *  Button listeners added
+     */
     private fun setButtonListeners(){
         dialog = Definitions().createProgressBar(activity as BaseActivity)
 
@@ -140,9 +157,9 @@ class ForgotPasswordFragment : Fragment() {
         }
     }
 
-
-
-
+    /*
+     *  Visibilities of top menu bar items handled
+     */
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.search_btn)?.isVisible = false
         menu.findItem(R.id.registerFragment)?.isVisible = false

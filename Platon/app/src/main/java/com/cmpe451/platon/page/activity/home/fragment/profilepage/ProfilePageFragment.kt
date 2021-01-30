@@ -51,6 +51,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
+/*
+ *  It consists of the UI Code, data bindings and general logic of application
+ */
 
 class ProfilePageFragment : Fragment(),
     UserProjectsAdapter.UserProjectButtonClickListener,
@@ -68,6 +71,10 @@ class ProfilePageFragment : Fragment(),
     private lateinit var dialog:AlertDialog
     private var maxPageNumberResearch:Int=0
     private var maxPageNumberComment:Int=0
+
+    /*
+     *  Creates and returns the view hierarchy associated with the fragment.
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -78,12 +85,18 @@ class ProfilePageFragment : Fragment(),
         return binding.root
     }
 
+    /*
+     *  After view creation listeners and observers implemented
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializeAdapters()
         setListeners()
     }
 
+    /*
+     *  Adapters, pagination listeners and layout manager of the recycler view added
+     */
     private fun initializeAdapters() {
         val layoutManagerProjects = LinearLayoutManager(this.activity)
         paginationListenerResearches = object:PaginationListener(layoutManagerProjects) {
@@ -149,13 +162,18 @@ class ProfilePageFragment : Fragment(),
         dialog = Definitions().createProgressBar(requireContext())
     }
 
-
+    /*
+     *  Listeners added
+     */
     private fun setListeners() {
         setButtonListeners()
         setObservers()
         setFields()
     }
 
+    /*
+     * Observer of the get user resource response added
+     */
     private fun setFields(){
         mActivityViewModel.getUserResourceResponse.observe(viewLifecycleOwner, { t ->
             when (t.javaClass) {
@@ -210,7 +228,9 @@ class ProfilePageFragment : Fragment(),
         })
     }
 
-
+    /*
+     *  Observers of the view model responses handled
+     */
     private fun setObservers() {
         mProfilePageViewModel.getUploadPhotoResourceResponse.observe(viewLifecycleOwner, { t ->
             when (t.javaClass) {
@@ -383,6 +403,9 @@ class ProfilePageFragment : Fragment(),
         }
     }
 
+    /*
+     *  Button click listeners added
+     */
     private fun setButtonListeners() {
         binding.profilePhoto.setOnClickListener{
 
@@ -640,7 +663,9 @@ class ProfilePageFragment : Fragment(),
     }
 
 
-
+    /*
+     *  Add profile photo handled
+     */
     private fun uploadProfilePhoto(data: Uri) {
             if((activity as HomeActivity).checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
                 val path = Definitions().getRealPathFromUri(requireContext(), data)
@@ -659,6 +684,10 @@ class ProfilePageFragment : Fragment(),
                     .into(binding.profilePhoto)
             }
     }
+
+    /*
+     *  Click on delete skill handled
+     */
 
     private fun onAddDeleteSkillClicked(){
         mProfilePageViewModel.allSkills.observe(viewLifecycleOwner, { t ->
@@ -747,6 +776,9 @@ class ProfilePageFragment : Fragment(),
         })
     }
 
+    /*
+     *  Visibilities of top menu bar items handled
+     */
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.search_btn)?.isVisible = false
         menu.findItem(R.id.notification_btn)?.isVisible = false
@@ -754,7 +786,9 @@ class ProfilePageFragment : Fragment(),
     }
 
 
-
+    /*
+     *  Click on user project handled
+     */
     override fun onUserProjectButtonClicked(binding: ResearchesCellBinding, position: Int) {
         if (binding.descTrendProjectTv.visibility == View.GONE){
             binding.descTrendProjectTv.visibility = View.VISIBLE
@@ -766,6 +800,9 @@ class ProfilePageFragment : Fragment(),
         Definitions().vibrate(50, activity as BaseActivity)
     }
 
+    /*
+     *  Click on user project edit handled
+     */
     override fun onUserProjectEditClicked(position: Int) {
         val editBinding = DialogResearchInfoEditBinding.inflate(layoutInflater, binding.root, false)
 

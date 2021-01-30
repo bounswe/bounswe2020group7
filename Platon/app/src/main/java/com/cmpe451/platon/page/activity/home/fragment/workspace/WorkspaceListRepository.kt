@@ -10,6 +10,10 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+/*
+ *  It is a bridge between end point and workspace list view model.
+ */
+
 class WorkspaceListRepository() {
 
     var workspaces : MutableLiveData<Resource<WorkspaceListItems>> = MutableLiveData()

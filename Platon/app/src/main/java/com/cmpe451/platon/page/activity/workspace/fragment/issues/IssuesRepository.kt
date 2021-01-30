@@ -14,6 +14,9 @@ import retrofit2.http.Header
 import retrofit2.http.Query
 import java.sql.SQLTransactionRollbackException
 
+/*
+It is a bridge between end point and view model.
+ */
 class IssuesRepository {
 
     val issuesResponse:MutableLiveData<Resource<Issues>> = MutableLiveData()

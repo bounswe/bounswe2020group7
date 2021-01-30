@@ -6,6 +6,9 @@ import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.*
 import com.cmpe451.platon.util.Definitions
 
+/*
+ *  It is a bridge between home repository and home fragment.
+ */
 class HomeViewModel: ViewModel() {
 
     private val repository: HomeRepository = HomeRepository()

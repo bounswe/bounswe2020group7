@@ -8,6 +8,9 @@ import com.cmpe451.platon.network.models.IssueAssignee
 import retrofit2.http.Field
 import retrofit2.http.Header
 
+/*
+It is a bridge between repository and fragment.
+ */
 
 class IssueDetailViewModel: ViewModel() {
 

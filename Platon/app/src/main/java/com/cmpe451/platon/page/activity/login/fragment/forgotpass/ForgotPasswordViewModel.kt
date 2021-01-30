@@ -7,6 +7,9 @@ import androidx.lifecycle.ViewModel
 import com.cmpe451.platon.network.Resource
 import com.google.gson.JsonObject
 
+/*
+ *   It is a bridge between forgot password repository and  forgot password fragment.
+ */
 class ForgotPasswordViewModel: ViewModel() {
     private val repository = ForgotPasswordRepository()
     val getResetResourceResponse: MutableLiveData<Resource<JsonObject>>
