@@ -9,7 +9,7 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 TEMPLATE_DIR = BASE_DIR + os.path.sep + "templates"
 
-FRONTEND_HOSTNAME = "http://ec2-3-120-98-39.eu-central-1.compute.amazonaws.com"
+FRONTEND_HOSTNAME = "http://127.0.0.1"
 
 if DEVELOPMENT and DEBUG:
     # Define the database - we are working with
