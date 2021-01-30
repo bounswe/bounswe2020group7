@@ -16,6 +16,11 @@ import com.cmpe451.platon.util.Definitions
 class FollowerFollowingAdapter(private val dataSet: ArrayList<FollowPerson>,
                                private val context:Context,
                                private val clickCallback:(Int) ->Unit) : RecyclerView.Adapter<FollowerFollowingAdapter.ViewHolder>() {
+
+    // Provide a reference to the views for each data item
+    // Complex data items may need more than one view per item, and
+    // you provide access to all the views for a data item in a view holder.
+    // Each data item is just a FollowPerson in this case
     class ViewHolder(val binding: FragmentFollowerFollowingItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(model:FollowPerson, context:Context, clickCallback:(Int)->Unit){
             binding.textProfilePageInfoTitle.text = model.name + " " + model.surname
@@ -34,22 +39,28 @@ class FollowerFollowingAdapter(private val dataSet: ArrayList<FollowPerson>,
         }
     }
 
+    // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(FragmentFollowerFollowingItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
+
+    //Adds element to the dataset
     fun submitList(list:ArrayList<FollowPerson>){
 //        this.dataSet.clear()
         this.dataSet.addAll(list)
         notifyDataSetChanged()
     }
 
+    // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount(): Int {
         return dataSet.size
     }
 
+    // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(dataSet[position], context, clickCallback)
     }
+
     /**
      * Clear all elements
      */

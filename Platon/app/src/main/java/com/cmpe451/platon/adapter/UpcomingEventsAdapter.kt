@@ -20,7 +20,7 @@ class UpcomingEventsAdapter(private val data: ArrayList<UpcomingEvent>, private 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder.
-    // Each data item is just a string in this case that is shown in a TextView.
+    // Each data item is just a UpcomingEvent in this case
     class UpcomingEventViewHolder(val view: View, var binding: UpcomingEventCellBinding) : RecyclerView.ViewHolder(view){
         fun bindData(position: Int, buttonClickListener: UpcomingButtonClickListener) {
             view.setOnClickListener{
@@ -29,7 +29,7 @@ class UpcomingEventsAdapter(private val data: ArrayList<UpcomingEvent>, private 
         }
     }
 
-
+    // Interface used in order to handle click
     interface UpcomingButtonClickListener{
         fun onUpcomingButtonClicked(binding: UpcomingEventCellBinding, position:Int)
     }
@@ -94,11 +94,14 @@ class UpcomingEventsAdapter(private val data: ArrayList<UpcomingEvent>, private 
         data.clear()
         this.notifyDataSetChanged()
     }
+
+    // Adds given list of element to dataset
     fun submitList(list:ArrayList<UpcomingEvent>){
-//        data.clear()
         data.addAll(list)
         this.notifyDataSetChanged()
     }
+
+    // Replaces dataset elements with given list of elements
     fun replaceList(list:ArrayList<UpcomingEvent>){
         data.clear()
         data.addAll(list)

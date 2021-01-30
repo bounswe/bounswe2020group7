@@ -36,6 +36,7 @@ class FoldersAdapter(private val data: ArrayList<String>, private val foldersBut
         }
     }
 
+    // Interface used in order to handle click
     interface FoldersButtonClickListener{
         fun onEditFolderClicked(folder:String)
         fun onFolderNameClicked(folder: String)
@@ -49,8 +50,6 @@ class FoldersAdapter(private val data: ArrayList<String>, private val foldersBut
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(holder: FoldersViewHolder, position: Int) {
-
-
         holder.bindData(holder.binding, data[position], foldersButtonClickListener, isOwner)
     }
 
@@ -89,11 +88,14 @@ class FoldersAdapter(private val data: ArrayList<String>, private val foldersBut
         data.clear()
         this.notifyDataSetChanged()
     }
+
+    // Adds element to the dataset
     fun submitElements(list: List<String>){
         data.addAll(list)
         notifyDataSetChanged()
     }
 
+    // Replaces dataset element with given list
     fun replaceElements(list: List<String>){
         data.clear()
         data.addAll(list)

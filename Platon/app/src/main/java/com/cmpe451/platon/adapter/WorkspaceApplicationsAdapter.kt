@@ -17,6 +17,7 @@ import com.cmpe451.platon.network.models.WorkspaceApplication
 class WorkspaceApplicationsAdapter(private val data: ArrayList<WorkspaceApplication>, private val context: Context, private val invitationButtonClickListener: ApplicationsButtonClickListener) :
         RecyclerView.Adapter<WorkspaceApplicationsAdapter.MyViewHolder>(), ToolbarElementsAdapter {
 
+    // Interface used in order to handle click
     interface ApplicationsButtonClickListener{
         fun onApplicationAcceptClicked(request: WorkspaceApplication, position: Int)
         fun onApplicationRejectClicked(request: WorkspaceApplication, position: Int)
@@ -25,7 +26,7 @@ class WorkspaceApplicationsAdapter(private val data: ArrayList<WorkspaceApplicat
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder.
-    // Each data item is just a string in this case that is shown in a TextView.
+    // Each data item is just a WorkspaceApplication in this case
     class MyViewHolder(val binding: NotificationElementCellBinding) : RecyclerView.ViewHolder(binding.root){
         fun bindData(request: WorkspaceApplication, buttonClickListener: ApplicationsButtonClickListener, position: Int) {
             binding.acceptIcon.setOnClickListener{
@@ -87,7 +88,7 @@ class WorkspaceApplicationsAdapter(private val data: ArrayList<WorkspaceApplicat
         this.notifyDataSetChanged()
     }
 
-
+    // Adds given list of element to dataset
     fun submitElements(reqs:List<WorkspaceApplication>){
         data.addAll(reqs)
         notifyDataSetChanged()

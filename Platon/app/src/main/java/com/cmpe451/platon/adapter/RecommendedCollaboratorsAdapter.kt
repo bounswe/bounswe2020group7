@@ -20,7 +20,7 @@ class RecommendedCollaboratorsAdapter(private val data: ArrayList<RecommendedUse
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder.
-    // Each data item is just a string in this case that is shown in a TextView.
+    // Each data item is just a RecommendedUser in this case
     class RecommendedUserViewHolder(val binding: RecommendedProfileCellBinding) : RecyclerView.ViewHolder(binding.root){
 
         @SuppressLint("SetTextI18n")
@@ -47,6 +47,7 @@ class RecommendedCollaboratorsAdapter(private val data: ArrayList<RecommendedUse
         }
     }
 
+    // Interface used in order to handle click
     interface RecommendedUserClickListener{
         fun onInviteUserClicked(user:RecommendedUser, position: Int)
     }
@@ -96,11 +97,14 @@ class RecommendedCollaboratorsAdapter(private val data: ArrayList<RecommendedUse
         data.clear()
         this.notifyDataSetChanged()
     }
+
+    // Adds given list of element to dataset
     fun submitElements(list: List<RecommendedUser>){
         data.addAll(list)
         notifyDataSetChanged()
     }
 
+    // Replaces given list of element with dataset elements
     fun replaceElements(list: List<RecommendedUser>){
         data.clear()
         data.addAll(list)

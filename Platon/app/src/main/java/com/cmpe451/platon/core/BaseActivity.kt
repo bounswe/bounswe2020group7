@@ -9,7 +9,7 @@ import com.cmpe451.platon.R
 
 open class BaseActivity : AppCompatActivity() {
 
-
+    // Base activity that all activities implement this
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base)

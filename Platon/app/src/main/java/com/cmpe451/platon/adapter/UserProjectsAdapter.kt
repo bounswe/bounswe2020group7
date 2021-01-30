@@ -18,7 +18,7 @@ class UserProjectsAdapter(private val data: ArrayList<Research>, private val con
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder.
-    // Each data item is just a string in this case that is shown in a TextView.
+    // Each data item is just a Research in this case
     class UserProjectsViewHolder(val binding: ResearchesCellBinding) : RecyclerView.ViewHolder(binding.root){
 
         fun bindData(binding: ResearchesCellBinding, position: Int,buttonClickListener: UserProjectButtonClickListener) {
@@ -31,6 +31,7 @@ class UserProjectsAdapter(private val data: ArrayList<Research>, private val con
         }
     }
 
+    // Interface used in order to handle click
     interface UserProjectButtonClickListener{
         fun onUserProjectButtonClicked(binding: ResearchesCellBinding, position: Int)
         fun onUserProjectEditClicked(position: Int)
@@ -89,11 +90,14 @@ class UserProjectsAdapter(private val data: ArrayList<Research>, private val con
         data.clear()
         this.notifyDataSetChanged()
     }
+
+    // Adds given list of element to dataset
     fun submitElements(list: List<Research>){
         data.addAll(list)
         notifyDataSetChanged()
     }
 
+    // Replaces given list of element with dataset elements
     fun replaceElements(list: List<Research>){
         data.clear()
         data.addAll(list)
