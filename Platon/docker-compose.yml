@@ -27,7 +27,7 @@ services:
       # update the value of MYSQL_PORT environment variable of "backend" service as well.
       - "3306:3306"
     volumes:
-      - /var/lib/mysql
+      - mysql_data:/var/lib/mysql
   
   backend:
     build: 
@@ -58,6 +58,8 @@ services:
           - backend
     ports:
       - "5000:5000"
+    volumes:
+      - platon_data:/platon_backend/data
 
   # frontend:
   #   build: 
@@ -72,3 +74,6 @@ services:
   #         - frontend
   #   ports:
   #     - "80:3000"
+volumes:
+  mysql_data:
+  platon_data:

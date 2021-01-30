@@ -9,11 +9,30 @@ from dateutil import parser
 from hashlib import sha256
 from functools import wraps
 
+ALLOWED_PHOTO_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_PHOTO_EXTENSIONS
+
+def profile_photo_link(profile_photo_field,user_id):
+    if profile_photo_field is not None and allowed_file(profile_photo_field):
+        return "/auth_system/profile_photo?user_id={}".format(user_id)
+    else:
+        return "/auth_system/logo"
+
 def generate_token(user_id,expire_duration):
     """
         Generates new token for given user id
     """
     return jwt.encode({'id':user_id,'expire_time':(datetime.datetime.now()+expire_duration).isoformat()},app.config['JWT_SESSION_KEY'],app.config['JWT_ALGORITHM']).decode('utf-8')
+
+def decode_token(auth_token):
+    auth_info = jwt.decode(auth_token,app.config['JWT_SESSION_KEY'],algorithms=[app.config['JWT_ALGORITHM']])
+    expire_time = parser.isoparse(auth_info['expire_time'])
+    if expire_time < datetime.datetime.now():
+        return make_response(jsonify({'error' : 'Expired Token'}),401)
+    return int(auth_info["id"])
 
 def login_required(func):
     """
@@ -26,14 +45,13 @@ def login_required(func):
         except:
             return make_response(jsonify({'error' : 'Login Required'}),401)
         try:
-            auth_info = jwt.decode(auth_token,app.config['JWT_SESSION_KEY'],algorithms=[app.config['JWT_ALGORITHM']])
-            expire_time = parser.isoparse(auth_info['expire_time'])
-            if expire_time < datetime.datetime.now():
-                return make_response(jsonify({'error' : 'Expired Token'}),401)
+            id = decode_token(auth_token)
+            if type(id) is not int:
+                return id
         except:
             return make_response(jsonify({'error' : 'Wrong Token Format'}),401)
-        response = func(auth_info['id'],*args,**kws)
-        new_token = generate_token(auth_info['id'],app.config['SESSION_DURATION'])
+        response = func(id,*args,**kws)
+        new_token = generate_token(id,app.config['SESSION_DURATION'])
         response.headers["auth_token"] = new_token
         return response
         

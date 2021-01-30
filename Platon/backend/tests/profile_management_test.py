@@ -1,6 +1,8 @@
 from tests.base_test import BaseTest
 from tests.base_test import TestConfig
 from app.auth_system.models import User
+from app.profile_management.models import Jobs
+from app.profile_management.models import Skills
 from app.profile_management.models import ResearchInformation,Notification,NotificationRelatedUser
 from app.auth_system.views import generate_token
 from app.profile_management.helpers import ResearchInfoFetch,NotificationManager,ResearchType
@@ -9,14 +11,248 @@ from app import db
 import jwt
 import json
 
+class JobsAndSkillsTests(BaseTest):
+
+    def setUp(self):
+        super().setUp()
+        # Add artificial users to test login feature
+        users = [
+            User("umut@deneme.com",True,"b73ec5e4625ffcb6d0d70826f33be7a75d45b37046e26c4b60d9111266d70e32",3.5,"Umut","Özdemir",False,None,None,None),
+            User("can@deneme.com",False,"cce0c2170d1ae52e099c716165d80119ee36840e3252e57f2b2b4d6bb111d8a5",4.6,"Can","Deneme",True,None,None,None)
+        ]
+        for user in users:
+            db.session.add(user)
+        db.session.commit()
+
+        jobs = [
+            Jobs("Teacher"),
+            Jobs("Student"),
+            Jobs("Assistant")
+        ]
+        for job in jobs:
+            db.session.add(job)
+        db.session.commit()
+        skills = [
+            Skills("Java"),
+            Skills("C"),
+            Skills("Python")
+        ]
+        for skill in skills:
+            db.session.add(skill)
+        db.session.commit()
+
+    def test_get_research_info_invalid(self):
+        invalid_token = generate_token(1,TestConfig.SESSION_DURATION) + "c"
+        expected_response = {'error' : 'Wrong Token Format'}
+        actual_response = self.client.get("/api/profile/research_information",data={'user_id':2},headers={'auth_token' : invalid_token})
+        self.assertEqual(expected_response,json.loads(actual_response.data))
+        self.assertEqual(401,actual_response.status_code)
+
+    def jobs_get_valid(self):
+        actual_response = self.client.get("/api/profile/jobs")
+        self.assertEqual(200, actual_response.status_code)
+
+    def skills_get_valid(self):
+        actual_response = self.client.get("/api/profile/skills")
+        self.assertEqual(200, actual_response.status_code)
+
+    def jobs_post_valid(self):
+        valid_token = generate_token(1,TestConfig.SESSION_DURATION)
+        data = {
+            'name': 'Developer'
+        }
+        expected_response = {
+            'msg': 'Successfully added'
+        }
+        actual_response = self.client.post("/api/profile/jobs", data=data,
+                                           headers={'auth_token': valid_token})
+        self.assertEqual(expected_response, json.loads(actual_response.data))
+        self.assertEqual(201, actual_response.status_code)
+        self.assertIsNotNone(Jobs.query.filter(
+            Jobs.name == 'Developer').first())
+
+    def skills_post_valid(self):
+        valid_token = generate_token(1,TestConfig.SESSION_DURATION)
+        data = {
+            'name': 'English'
+        }
+        expected_response = {
+            'msg': 'Successfully added'
+        }
+        actual_response = self.client.post("/api/profile/skills", data=data,
+                                           headers={'auth_token': valid_token})
+        self.assertEqual(expected_response, json.loads(actual_response.data))
+        self.assertEqual(201, actual_response.status_code)
+        self.assertIsNotNone(Skills.query.filter(
+            Skills.name == 'English').first())
+
+    def jobs_put_valid(self):
+        valid_token = generate_token(1,TestConfig.SESSION_DURATION)
+        data = {
+            'id': 2,
+            'name': 'University Student'
+        }
+        expected_response = {
+            'msg': 'Successfully changed'
+        }
+        actual_response = self.client.post("/api/profile/jobs", data=data,
+                                           headers={'auth_token': valid_token})
+        self.assertEqual(expected_response, json.loads(actual_response.data))
+        self.assertEqual(201, actual_response.status_code)
+        self.assertIsNotNone(Jobs.query.filter(
+            Jobs.name == 'University Student').first())
+
+    def skills_put_valid(self):
+        valid_token = generate_token(1,TestConfig.SESSION_DURATION)
+        data = {
+            'id': 2,
+            'name': 'C++'
+        }
+        expected_response = {
+            'msg': 'Successfully changed'
+        }
+        actual_response = self.client.post("/api/profile/skills", data=data,
+                                           headers={'auth_token': valid_token})
+        self.assertEqual(expected_response, json.loads(actual_response.data))
+        self.assertEqual(201, actual_response.status_code)
+        self.assertIsNotNone(Skills.query.filter(
+            Skills.name == 'C++').first())
+
+    def jobs_delete_valid(self):
+        valid_token = generate_token(1,TestConfig.SESSION_DURATION)
+        data = {
+            'id': 1
+        }
+        expected_result = {
+            'msg': 'Successfully Deleted'
+        }
+        actual_response = self.client.delete("/api/profile/jobs", data=data,
+                                             headers={'auth_token': valid_token})
+        self.assertEqual(expected_result, json.loads(actual_response.data))
+        self.assertEqual(200, actual_response.status_code)
+        self.assertIsNone(Jobs.query.filter(Jobs.id == 1).first())
+
+    def skills_delete_valid(self):
+        valid_token = generate_token(1,TestConfig.SESSION_DURATION)
+        data = {
+            'id': 1
+        }
+        expected_result = {
+            'msg': 'Successfully Deleted'
+        }
+        actual_response = self.client.delete("/api/profile/skills", data=data,
+                                             headers={'auth_token': valid_token})
+        self.assertEqual(expected_result, json.loads(actual_response.data))
+        self.assertEqual(200, actual_response.status_code)
+        self.assertIsNone(Skills.query.filter(Skills.id == 1).first())
+
+    def jobs_post_invalid(self):
+        valid_token = generate_token(2,TestConfig.SESSION_DURATION)
+        data = {
+            'title': 'manager'
+        }
+        expected_response = {
+            'error': 'Wrong Input Format'
+        }
+        actual_response = self.client.post("/api/profile/jobs", data=data,
+                                           headers={'auth_token': valid_token})
+        self.assertEqual(expected_response, json.loads(actual_response.data))
+        self.assertEqual(400, actual_response.status_code)
+        self.assertIsNone(Jobs.query.filter(Jobs.name == 'manager').first())
+
+    def skills_post_invalid(self):
+        valid_token = generate_token(2,TestConfig.SESSION_DURATION)
+        data = {
+            'title': 'german'
+        }
+        expected_response = {
+            'error': 'Wrong Input Format'
+        }
+        actual_response = self.client.post("/api/profile/skills", data=data,
+                                           headers={'auth_token': valid_token})
+        self.assertEqual(expected_response, json.loads(actual_response.data))
+        self.assertEqual(400, actual_response.status_code)
+        self.assertIsNone(Skills.query.filter(Skills.name == 'german').first())
+
+    def jobs_put_invalid(self):
+        valid_token = generate_token(1,TestConfig.SESSION_DURATION)
+        data = {
+            'id': 200,
+            'name': 'University Student'
+        }
+        expected_response = {
+            'error': 'Please give an appropriate job ID'
+        }
+        actual_response = self.client.post("/api/profile/jobs", data=data,
+                                           headers={'auth_token': valid_token})
+        self.assertEqual(expected_response, json.loads(actual_response.data))
+        self.assertEqual(400, actual_response.status_code)
+        self.assertIsNone(Jobs.query.filter(
+            Jobs.name == 'University Student').first())
+
+    def skills_put_invalid(self):
+        valid_token = generate_token(2,TestConfig.SESSION_DURATION)
+        data = {
+            'id': 200,
+            'name': 'C++'
+        }
+        expected_response = {
+            'error': 'Please give an appropriate skill ID'
+        }
+        actual_response = self.client.post("/api/profile/skills", data=data,
+                                           headers={'auth_token': valid_token})
+        self.assertEqual(expected_response, json.loads(actual_response.data))
+        self.assertEqual(400, actual_response.status_code)
+        self.assertIsNone(Skills.query.filter(
+            Skills.name == 'C++').first())
+
+    def jobs_delete_invalid(self):
+        valid_token = generate_token(1,TestConfig.SESSION_DURATION)
+        data = {
+            'id': 100
+        }
+        expected_result = {
+            'error': 'Job does not exist'
+        }
+        actual_response = self.client.delete("/api/profile/jobs", data=data,
+                                             headers={'auth_token': valid_token})
+        self.assertEqual(expected_result, json.loads(actual_response.data))
+        self.assertEqual(400, actual_response.status_code)
+        self.assertIsNotNone(Jobs.query.filter(Jobs.id == 100).first())
+
+    def skills_delete_invalid(self):
+        valid_token = generate_token(1,TestConfig.SESSION_DURATION)
+        data = {
+            'id': 100
+        }
+        expected_result = {
+            'error': 'Skill does not exist'
+        }
+        actual_response = self.client.delete("/api/profile/skills", data=data,
+                                             headers={'auth_token': valid_token})
+        self.assertEqual(expected_result, json.loads(actual_response.data))
+        self.assertEqual(400, actual_response.status_code)
+        self.assertIsNotNone(Skills.query.filter(Skills.id == 100).first())
 
 class ResearchInfoTests(BaseTest):
     
     def setUp(self):
         # Add artificial users to test login feature
+        jobs = [
+            Jobs("Academician"),
+            Jobs("PhD Student")
+        ]
+
+        for job in jobs:
+            db.session.add(job)
+
+        db.session.commit()
+        # Add artificia users to test login feature
         users = [
-            User("umut@deneme.com",True,"b73ec5e4625ffcb6d0d70826f33be7a75d45b37046e26c4b60d9111266d70e32",3.5,"Umut","Özdemir",False,None,None,None),
-            User("can@deneme.com",False,"cce0c2170d1ae52e099c716165d80119ee36840e3252e57f2b2b4d6bb111d8a5",4.6,"Can","Deneme",True,None,None,None)
+            User("umut@deneme.com", True, "b73ec5e4625ffcb6d0d70826f33be7a75d45b37046e26c4b60d9111266d70e32", 3.5,
+                 "Umut", "Özdemir", False, None, None, None, 1, "boun"),
+            User("can@deneme.com", False, "cce0c2170d1ae52e099c716165d80119ee36840e3252e57f2b2b4d6bb111d8a5", 3.4,
+                 "Can", "Deneme", False, None, None, None, 2, "boun")
         ]
         for user in users:
             db.session.add(user)
@@ -37,7 +273,8 @@ class ResearchInfoTests(BaseTest):
         for follow in follows:
             db.session.add(follow)
         db.session.commit()
-        
+
+
     def test_add_research_info_valid(self):
         valid_token = generate_token(1,TestConfig.SESSION_DURATION)
         data = {
@@ -93,13 +330,6 @@ class ResearchInfoTests(BaseTest):
         self.assertEqual(400,actual_response.status_code)
         self.assertIsNotNone(ResearchInformation.query.filter(ResearchInformation.id == 1).first())
 
-    def test_get_research_info_invalid(self):
-        invalid_token = generate_token(1,TestConfig.SESSION_DURATION) + "c"
-        expected_response = {'error' : 'Wrong Token Format'}
-        actual_response = self.client.get("/api/profile/research_information",data={'user_id':2},headers={'auth_token' : invalid_token})
-        self.assertEqual(expected_response,json.loads(actual_response.data))
-        self.assertEqual(401,actual_response.status_code)
-    
     def test_fetch_RG_info(self):
         RG_name = "https://www.researchgate.net/profile/Meric_Turan"
         expected_response = [
@@ -192,14 +422,27 @@ class ResearchInfoTests(BaseTest):
 class NotificationTests(BaseTest):
 
     def setUp(self):
+        # Add artificial users to test login feature
+        jobs = [
+            Jobs("Academician"),
+            Jobs("PhD Student")
+        ]
+
+        for job in jobs:
+            db.session.add(job)
+
+        db.session.commit()
         # Add artificia users to test login feature
         users = [
-            User("umut@deneme.com",True,"b73ec5e4625ffcb6d0d70826f33be7a75d45b37046e26c4b60d9111266d70e32",3.5,"Umut","Özdemir",False,None,None,None),
-            User("can@deneme.com",False,"cce0c2170d1ae52e099c716165d80119ee36840e3252e57f2b2b4d6bb111d8a5",4.6,"Can","Deneme",True,None,None,None)
+            User("umut@deneme.com", True, "b73ec5e4625ffcb6d0d70826f33be7a75d45b37046e26c4b60d9111266d70e32", 3.5,
+                 "Umut", "Özdemir", False, None, None, None, 1, "boun"),
+            User("can@deneme.com", False, "cce0c2170d1ae52e099c716165d80119ee36840e3252e57f2b2b4d6bb111d8a5", 3.4,
+                 "Can", "Deneme", False, None, None, None, 2, "boun")
         ]
         for user in users:
             db.session.add(user)
         db.session.commit()
+
         notifications = [
             Notification(1,"Can created a new workspace",None),
             Notification(2,"Umut deletes a workspace","/workspace/1")
@@ -228,7 +471,7 @@ class NotificationTests(BaseTest):
         actual_response = self.client.get("/api/profile/notifications",headers = {"auth_token" : valid_token})
         
         self.assertEqual(actual_response.status_code,200)
-        self.assertEqual(expected_response[0]['id'],json.loads(actual_response.data)[0]['id'])
+        self.assertEqual(expected_response[0]['id'],json.loads(actual_response.data)["notification_list"][0]['id'])
     
     def test_get_notification_invalid(self):
         valid_token = generate_token(2,TestConfig.SESSION_DURATION) + "c"
