@@ -8,6 +8,9 @@ import com.cmpe451.platon.network.models.UpcomingEvents
 import com.cmpe451.platon.util.Definitions
 import com.google.gson.JsonObject
 
+/*
+It is a bridge between repository and fragment.
+ */
 class WorkspaceViewModel : ViewModel() {
 
     private val repository = WorkspaceRepository()

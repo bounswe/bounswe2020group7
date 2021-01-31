@@ -3,6 +3,10 @@ package com.cmpe451.platon.network.models
 import com.google.gson.annotations.SerializedName
 import java.security.AccessControlContext
 
+/*
+ Data classes objects used by Retrofit in order to parse responses of the request. Namings of the objects are self explanatory.
+ */
+
 data class ActivityStream(
         @SerializedName("@context")
         val cont: String,

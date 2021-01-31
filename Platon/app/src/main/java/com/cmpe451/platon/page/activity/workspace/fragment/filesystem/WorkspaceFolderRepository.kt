@@ -11,6 +11,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+/*
+It is a bridge between end point and view model.
+ */
 class WorkspaceFolderRepository {
 
 

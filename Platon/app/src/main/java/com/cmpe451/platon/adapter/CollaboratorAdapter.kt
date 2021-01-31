@@ -12,6 +12,10 @@ import com.cmpe451.platon.network.models.SearchElement
 
 class CollaboratorAdapter(private val data: ArrayList<Contributor>, private val context: Context) :
 
+    // Provide a reference to the views for each data item
+    // Complex data items may need more than one view per item, and
+    // you provide access to all the views for a data item in a view holder.
+    // Each data item is just a Contributor in this case
     RecyclerView.Adapter<CollaboratorAdapter.CollaboratorViewHolder>() {
     class CollaboratorViewHolder(private val view: View, var binding: FragmentFollowerFollowingItemBinding) : RecyclerView.ViewHolder(view){
         fun bindData(binding: FragmentFollowerFollowingItemBinding, model:Contributor, position: Int) {
@@ -63,15 +67,19 @@ class CollaboratorAdapter(private val data: ArrayList<Contributor>, private val 
         data.clear()
         this.notifyDataSetChanged()
     }
+
+    // Adds a list of element to dataset
     fun submitElements(list: List<Contributor>){
         data.clear()
         data.addAll(list)
         notifyDataSetChanged()
     }
 
+    // Returns elements of the dataset
     fun getAllElements():ArrayList<Contributor>{
         return data
     }
 
+    // Returns element size of the dataset.
     override fun getItemCount() = data.size
 }

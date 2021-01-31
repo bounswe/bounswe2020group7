@@ -2,6 +2,9 @@ package com.cmpe451.platon.page.activity.workspace.fragment.addworkspace
 
 import androidx.lifecycle.ViewModel
 
+/*
+ *  It is a bridge between repository and fragment.
+ */
 class AddWorkspaceViewModel:ViewModel() {
     private val repository:AddWorkspaceRepository = AddWorkspaceRepository()
 

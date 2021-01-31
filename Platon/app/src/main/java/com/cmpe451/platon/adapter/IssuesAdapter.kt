@@ -27,6 +27,7 @@ class IssuesAdapter(private val data: ArrayList<Issue>, private val context: Con
         }
     }
 
+    // Interface used in order to handle click
     interface IssuesButtonClickListener{
         fun onIssueButtonClicked(binding: IssueCellBinding, position: Int)
     }
@@ -67,6 +68,7 @@ class IssuesAdapter(private val data: ArrayList<Issue>, private val context: Con
         data.removeAt(position)
         this.notifyItemRemoved(position)
     }
+
     /**
      * Updates element at given position
      */
@@ -74,6 +76,7 @@ class IssuesAdapter(private val data: ArrayList<Issue>, private val context: Con
         data[position] = element
         this.notifyItemChanged(position)
     }
+
     /**
      * Clear all elements
      */
@@ -82,6 +85,7 @@ class IssuesAdapter(private val data: ArrayList<Issue>, private val context: Con
         this.notifyDataSetChanged()
     }
 
+    // Adds given list of element to dataset
     fun submitElements(newList:ArrayList<Issue>){
         data.addAll(newList)
         this.notifyDataSetChanged()

@@ -49,6 +49,7 @@ class CalendarAdapter(private val data: ArrayList<CalendarItem>, private val con
         }
     }
 
+    // Button click listener implemented via this interface
     interface CalendarButtonClickListener{
         fun onCalendarItemClicked(wsId:Int)
     }
@@ -96,6 +97,8 @@ class CalendarAdapter(private val data: ArrayList<CalendarItem>, private val con
         data.clear()
         this.notifyDataSetChanged()
     }
+
+    //Adds element to the dataset
     fun submitElements(list: List<CalendarItem>){
         data.clear()
         data.addAll(list)

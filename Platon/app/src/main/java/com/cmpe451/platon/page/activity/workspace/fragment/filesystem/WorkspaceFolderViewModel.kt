@@ -3,6 +3,9 @@ package com.cmpe451.platon.page.activity.workspace.fragment.filesystem
 import androidx.lifecycle.ViewModel
 import okhttp3.RequestBody
 
+/*
+It is a bridge between repository and fragment.
+ */
 class WorkspaceFolderViewModel:ViewModel() {
 
     private val repository = WorkspaceFolderRepository()

@@ -34,6 +34,9 @@ import com.cmpe451.platon.util.Definitions
 import java.util.*
 import kotlin.collections.ArrayList
 
+/*
+It consists of the UI Code, data bindings and general logic of application
+ */
 class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
 
     //definitions
@@ -49,7 +52,9 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
     private var pageSize:Int=10
 
 
-
+    /*
+     *  Creates and returns the view hierarchy associated with the fragment.
+     */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         binding = FragmentIssuesBinding.inflate(layoutInflater)
@@ -58,6 +63,9 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
         return binding.root
     }
 
+    /*
+     *  After view creation listeners and observers implemented
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
@@ -68,11 +76,11 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
 
     }
 
-    
 
-
+    /*
+    *  Observers of the issue detail view model responses handled
+    */
     private fun setObservers(){
-
         mIssuesViewModel.issuesResponse.observe(viewLifecycleOwner, { t->
             when(t.javaClass){
                 Resource.Loading::class.java->{
@@ -124,6 +132,11 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
 
 
     }
+
+    /*
+    *  View initializations handled
+    *  Also layout manager and adapters of the recycler views added
+    */
     private fun initViews() {
 
         val layoutManagerIssues = LinearLayoutManager(this.activity)
@@ -154,7 +167,9 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
         dialog = Definitions().createProgressBar(requireContext())
     }
 
-
+    /*
+    *  When issue is clicked informations of the issue added to shared preferences
+    */
     override fun onIssueButtonClicked(binding: IssueCellBinding, position: Int) {
         sharedPreferences.edit().putString("issue_title", issuesList[position].title).apply()
         sharedPreferences.edit().putString("issue_description", issuesList[position].description).apply()
@@ -164,6 +179,9 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
         findNavController().navigate(IssuesFragmentDirections.actionIssuesFragmentToIssueDetailFragment())
     }
 
+    /*
+   *  Visibility of top menu items handled
+   */
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.issue_btn)?.isVisible = false
         menu.findItem(R.id.btn_WorkspaceApplications)?.isVisible = false
@@ -250,7 +268,9 @@ class IssuesFragment : Fragment(),IssuesAdapter.IssuesButtonClickListener {
         }
     }
 
-
+    /*
+    *  Clicks on top menu bar items handled
+    */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.add_issue_btn -> onAddIssueButtonClicked()

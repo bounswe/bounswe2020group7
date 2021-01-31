@@ -4,6 +4,9 @@ import android.widget.TextView
 import androidx.lifecycle.ViewModel
 import okhttp3.RequestBody
 
+/*
+ *  It is a bridge between profile page repository and profile page fragment.
+ */
 class ProfilePageViewModel: ViewModel() {
 
     private var repository: ProfilePageRepository = ProfilePageRepository()

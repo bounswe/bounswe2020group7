@@ -20,7 +20,7 @@ class TrendingProjectsAdapter(private val data: ArrayList<TrendingProject>, priv
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder.
-    // Each data item is just a string in this case that is shown in a TextView.
+    // Each data item is just a TrendingProject in this case
     class TrendProjectViewHolder(private val view: View, var binding: TrendProjectCellBinding) : RecyclerView.ViewHolder(view){
 
         fun bindData(binding: TrendProjectCellBinding, project:TrendingProject,buttonClickListener: TrendingProjectButtonClickListener) {
@@ -31,6 +31,7 @@ class TrendingProjectsAdapter(private val data: ArrayList<TrendingProject>, priv
         }
     }
 
+    // Interface used in order to handle click
     interface TrendingProjectButtonClickListener{
         fun onTrendingProjectButtonClicked(binding: TrendProjectCellBinding, project:TrendingProject)
     }
@@ -86,6 +87,8 @@ class TrendingProjectsAdapter(private val data: ArrayList<TrendingProject>, priv
         data.clear()
         this.notifyDataSetChanged()
     }
+
+    // Adds given list of element to dataset
     fun submitElements(list: List<TrendingProject>){
         data.clear()
         data.addAll(list)

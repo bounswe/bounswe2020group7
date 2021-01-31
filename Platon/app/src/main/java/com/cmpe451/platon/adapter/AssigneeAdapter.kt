@@ -62,15 +62,19 @@ class AssigneeAdapter(private val data: ArrayList<Assignee>, private val context
         data.clear()
         this.notifyDataSetChanged()
     }
+
+    //Add elements to dataset
     fun submitElements(list: List<Assignee>){
         data.clear()
         data.addAll(list)
         notifyDataSetChanged()
     }
 
+    //Returns elements of the dataset
     fun getAllElements():ArrayList<Assignee>{
         return data
     }
 
+    //Returns element size of the dataset
     override fun getItemCount() = data.size
 }

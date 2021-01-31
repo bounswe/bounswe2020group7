@@ -17,6 +17,7 @@ import com.cmpe451.platon.network.models.WorkspaceInvitation
 class WorkspaceInvitationsAdapter(private val data: ArrayList<WorkspaceInvitation>, private val context: Context, private val invitationButtonClickListener: InvitationButtonClickListener) :
         RecyclerView.Adapter<WorkspaceInvitationsAdapter.MyViewHolder>(), ToolbarElementsAdapter {
 
+    // Interface used in order to handle click
     interface InvitationButtonClickListener{
         fun onInvitationAcceptClicked(request: WorkspaceInvitation, position: Int)
         fun onInvitationRejectClicked(request: WorkspaceInvitation, position: Int)
@@ -25,7 +26,7 @@ class WorkspaceInvitationsAdapter(private val data: ArrayList<WorkspaceInvitatio
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder.
-    // Each data item is just a string in this case that is shown in a TextView.
+    // Each data item is just a WorkspaceInvitation in this case
     class MyViewHolder(val binding: NotificationElementCellBinding) : RecyclerView.ViewHolder(binding.root){
         fun bindData(request: WorkspaceInvitation, buttonClickListener: InvitationButtonClickListener, position: Int) {
             binding.nameBlock.text = "${request.invitor_fullname} invited you to join workspace ${request.workspace_title}"
@@ -89,7 +90,7 @@ class WorkspaceInvitationsAdapter(private val data: ArrayList<WorkspaceInvitatio
         this.notifyDataSetChanged()
     }
 
-
+    // Adds given list of element to dataset
     fun submitElements(reqs:List<WorkspaceInvitation>){
         data.addAll(reqs)
         notifyDataSetChanged()

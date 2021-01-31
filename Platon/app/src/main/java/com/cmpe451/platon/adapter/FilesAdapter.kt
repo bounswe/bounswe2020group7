@@ -37,6 +37,7 @@ class FilesAdapter(private val data: ArrayList<String>, private val filesButtonC
         }
     }
 
+    // In order to handle click this interface used
     interface FilesButtonClickListener{
         fun onEditFileClicked(fileName:String)
         fun onFileNameClicked(fileName: String)
@@ -88,11 +89,14 @@ class FilesAdapter(private val data: ArrayList<String>, private val filesButtonC
         data.clear()
         this.notifyDataSetChanged()
     }
+
+    // Adds element to the dataset
     fun submitElements(list: List<String>){
         data.addAll(list)
         notifyDataSetChanged()
     }
 
+    // Replaces dataset with new elements
     fun replaceElements(list: List<String>){
         data.clear()
         data.addAll(list)

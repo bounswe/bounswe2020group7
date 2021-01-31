@@ -21,7 +21,7 @@ class WorkspaceRecommendationAdapter(private val data: ArrayList<RecommendedWork
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder.
-    // Each data item is just a string in this case that is shown in a TextView.
+    // Each data item is just a RecommendedUser in this case
     class WorkspaceListViewHolder(private val view: View, var binding: WorkspaceCellBinding) : RecyclerView.ViewHolder(view){
 
         fun bindData(binding: WorkspaceCellBinding, project: RecommendedWorkspace,buttonClickListener: WorkspaceRecommendationButtonClickListener) {
@@ -31,6 +31,8 @@ class WorkspaceRecommendationAdapter(private val data: ArrayList<RecommendedWork
             }
         }
     }
+
+    // Interface used in order to handle click
     interface WorkspaceRecommendationButtonClickListener{
         fun onWorkspaceClicked(binding: WorkspaceCellBinding, project: RecommendedWorkspace)
     }
@@ -86,6 +88,8 @@ class WorkspaceRecommendationAdapter(private val data: ArrayList<RecommendedWork
         data.clear()
         this.notifyDataSetChanged()
     }
+
+    // Adds given list of element to dataset
     fun submitElements(list: List<RecommendedWorkspace>){
         data.clear()
         data.addAll(list)

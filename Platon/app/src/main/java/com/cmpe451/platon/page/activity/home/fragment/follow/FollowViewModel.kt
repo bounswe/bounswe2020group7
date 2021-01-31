@@ -6,6 +6,10 @@ import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.Followers
 import com.cmpe451.platon.network.models.Following
 
+/*
+ *  It is a bridge between follow repository and follow fragment.
+ */
+
 class FollowViewModel: ViewModel() {
 
 

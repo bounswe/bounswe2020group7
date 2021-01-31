@@ -23,6 +23,7 @@ class SearchElementsAdapter(private val data: ArrayList<SearchElement>, private 
 
         RecyclerView.Adapter<SearchElementsAdapter.MyViewHolder>(),ToolbarElementsAdapter {
 
+    // Interface used in order to handle click
     interface SearchButtonClickListener{
         fun onSearchButtonClicked(element: SearchElement, position: Int)
     }
@@ -30,7 +31,7 @@ class SearchElementsAdapter(private val data: ArrayList<SearchElement>, private 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder.
-    // Each data item is just a string in this case that is shown in a TextView.
+    // Each data item is just a SearchElement in this case
     class MyViewHolder(val binding: SearchElementCellBinding) : RecyclerView.ViewHolder(binding.root){
         fun bindData(element:SearchElement, position: Int, buttonClickListener: SearchButtonClickListener, dialog: AlertDialog?) {
             binding.rlSearchElement.setOnClickListener{
@@ -86,6 +87,7 @@ class SearchElementsAdapter(private val data: ArrayList<SearchElement>, private 
         this.notifyItemInserted(position)
     }
 
+    // Adds given list of element to dataset
     fun submitElements(elements: List<SearchElement>){
         data.addAll(elements)
         this.notifyDataSetChanged()

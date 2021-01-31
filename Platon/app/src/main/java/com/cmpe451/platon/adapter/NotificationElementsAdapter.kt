@@ -18,7 +18,7 @@ class NotificationElementsAdapter(private val data: ArrayList<Notification>, pri
         RecyclerView.Adapter<NotificationElementsAdapter.MyViewHolder>(),ToolbarElementsAdapter {
 
 
-
+    // Interface used in order to handle click
     interface NotificationButtonClickListener{
         fun onNotificationButtonClicked(ntf: Notification, position: Int)
         fun onDeleteNotificationClicked(ntf: Notification, position: Int)
@@ -85,6 +85,7 @@ class NotificationElementsAdapter(private val data: ArrayList<Notification>, pri
         this.notifyItemChanged(position)
     }
 
+    // Adds given list of element to dataset
     fun submitElements(ntf:List<Notification>){
         data.addAll(ntf)
         notifyDataSetChanged()

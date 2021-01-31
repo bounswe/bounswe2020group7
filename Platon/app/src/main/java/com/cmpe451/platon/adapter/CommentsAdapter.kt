@@ -18,6 +18,10 @@ class CommentsAdapter(private val data: ArrayList<Comment>, private val context:
         fun onDeleteCommentClicked(element:Comment, position: Int)
     }
 
+    // Provide a reference to the views for each data item
+    // Complex data items may need more than one view per item, and
+    // you provide access to all the views for a data item in a view holder.
+    // Each data item is just a string in this case that is shown in a TextView.
     class CommentsViewHolder(var binding: CommentCellBinding) : RecyclerView.ViewHolder(binding.root){
         fun bindData(model:Comment, position: Int) {
 
@@ -79,14 +83,18 @@ class CommentsAdapter(private val data: ArrayList<Comment>, private val context:
         data.clear()
         this.notifyDataSetChanged()
     }
+
+    // Adds element to the dataset
     fun submitElements(list: List<Comment>){
         data.addAll(list)
         notifyDataSetChanged()
     }
 
+    // Returns elements of the dataset
     fun getAllElements():ArrayList<Comment>{
         return data
     }
 
+    // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = data.size
 }

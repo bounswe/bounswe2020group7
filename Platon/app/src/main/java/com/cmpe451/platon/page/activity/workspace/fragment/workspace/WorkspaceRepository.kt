@@ -11,7 +11,9 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
 
-
+/*
+It is a bridge between end point and view model.
+ */
 class WorkspaceRepository {
 
 

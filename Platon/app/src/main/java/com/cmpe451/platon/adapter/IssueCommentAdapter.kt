@@ -14,10 +14,15 @@ class IssueCommentAdapter(private val data: ArrayList<IssueComment>, private val
 
     RecyclerView.Adapter<IssueCommentAdapter.IssueCommentsViewHolder>() {
 
+    // Interface used in order to handle click
     interface OnCommentClickedListener {
         fun onDeleteCommentClicked(element: IssueComment, position: Int)
     }
 
+    // Provide a reference to the views for each data item
+    // Complex data items may need more than one view per item, and
+    // you provide access to all the views for a data item in a view holder.
+    // Each data item is just a IssueComment in this case
     class IssueCommentsViewHolder(var binding: IssueCommentCellBinding) : RecyclerView.ViewHolder(binding.root){
         fun bindData(model:IssueComment, position: Int) {
 
@@ -79,15 +84,19 @@ class IssueCommentAdapter(private val data: ArrayList<IssueComment>, private val
         data.clear()
         this.notifyDataSetChanged()
     }
+
+    // Adds given list of element to dataset
     fun submitElements(list: List<IssueComment>){
         data.addAll(list)
         notifyDataSetChanged()
     }
 
+    // Returns elements of the dataset
     fun getAllElements():ArrayList<IssueComment>{
         return data
     }
 
+    // Returns element size of the dataset
     override fun getItemCount() = data.size
 
 }

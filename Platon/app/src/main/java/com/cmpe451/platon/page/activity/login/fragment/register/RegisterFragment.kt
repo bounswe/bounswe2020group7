@@ -19,6 +19,9 @@ import com.cmpe451.platon.databinding.FragmentRegisterBinding
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.util.Definitions
 
+/*
+ *  It consists of the UI Code, data bindings and general logic of application
+ */
 
 class RegisterFragment : Fragment() {
 
@@ -26,6 +29,9 @@ class RegisterFragment : Fragment() {
     private lateinit var dialog: AlertDialog
     private val mRegisterViewModel: RegisterViewModel by viewModels()
 
+    /*
+     *  Creates and returns the view hierarchy associated with the fragment.
+     */
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -37,18 +43,27 @@ class RegisterFragment : Fragment() {
         return binding.root
     }
 
+    /*
+     *  After view creation listeners and observers implemented
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setListeners()
         mRegisterViewModel.getAllJobs()
     }
 
+    /*
+     *  Add listener methods called
+     */
     private fun setListeners() {
         setFieldListeners()
         setButtonListeners()
         setObservers()
     }
 
+    /*
+     *  Field listener added
+     */
     private fun setFieldListeners(){
         // terms and conditions must be accepted, otherwise show error
         binding.chkTerms.setOnCheckedChangeListener { t, b ->
@@ -95,6 +110,9 @@ class RegisterFragment : Fragment() {
         }
     }
 
+    /*
+     *  Button click listeners added
+     */
     private fun setButtonListeners(){
         dialog = Definitions().createProgressBar(activity as BaseActivity)
 
@@ -162,6 +180,9 @@ class RegisterFragment : Fragment() {
         }
     }
 
+    /*
+     *  Observers of the view model responses handled
+     */
     private fun setObservers(){
         mRegisterViewModel.getRegisterResourceResponse.observe(viewLifecycleOwner, { t ->
             when (t.javaClass) {
@@ -200,8 +221,9 @@ class RegisterFragment : Fragment() {
         })
     }
 
-
-
+    /*
+     *  Visibilities of top menu bar items handled
+     */
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.search_btn)?.isVisible = false
         menu.findItem(R.id.registerFragment)?.isVisible = false

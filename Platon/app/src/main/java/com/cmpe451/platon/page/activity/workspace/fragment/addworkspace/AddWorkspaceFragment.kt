@@ -24,6 +24,9 @@ import com.cmpe451.platon.util.Definitions
 import java.util.*
 import kotlin.collections.ArrayList
 
+/*
+ *  It consists of the UI Code, data bindings and general logic of application
+ */
 class AddWorkspaceFragment: Fragment() {
 
     lateinit var binding:FragmentAddWorkspaceBinding
@@ -33,6 +36,9 @@ class AddWorkspaceFragment: Fragment() {
     private var requirementsArray:ArrayList<String> = ArrayList()
     private lateinit var dialog:AlertDialog
 
+    /*
+     *  Creates and returns the view hierarchy associated with the fragment.
+     */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
@@ -41,7 +47,9 @@ class AddWorkspaceFragment: Fragment() {
         return binding.root
     }
 
-
+    /*
+     *  After view creation listeners and observers implemented
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
@@ -50,6 +58,9 @@ class AddWorkspaceFragment: Fragment() {
         setObservers()
     }
 
+    /*
+     *  Observers added
+     */
     private fun setObservers() {
         mAddWorkspaceViewModel.getAddDeleteWorkspaceResourceResponse.observe(viewLifecycleOwner,{
             when(it.javaClass){
@@ -68,6 +79,9 @@ class AddWorkspaceFragment: Fragment() {
         })
     }
 
+    /*
+     *  Top bar menu items visibility handled
+     */
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.workspaceFolderFragment)?.isVisible = false
         menu.findItem(R.id.issue_btn)?.isVisible = false
@@ -130,6 +144,9 @@ class AddWorkspaceFragment: Fragment() {
         }
     }
 
+    /*
+     *  Add requuirement click handled
+     */
     private fun onAddRequirementClicked() {
         val tmpBinding = AddRequirementBinding.inflate(
             layoutInflater,
@@ -153,6 +170,9 @@ class AddWorkspaceFragment: Fragment() {
         }
     }
 
+    /*
+     *  Add/Delete skill click handled
+     */
     private fun onAddDeleteSkillClicked() {
         mAddWorkspaceViewModel.allSkills.observe(viewLifecycleOwner,  { t ->
             when (t.javaClass) {

@@ -6,6 +6,9 @@ import androidx.lifecycle.ViewModel
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.Auth
 
+/*
+ *   It is a bridge between login repository and  login fragment.
+ */
 class LoginViewModel: ViewModel() {
 
     var getLoginResourceResponse: MutableLiveData<Resource<Auth>>

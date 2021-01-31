@@ -6,6 +6,9 @@ import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.Job
 import com.google.gson.JsonObject
 
+/*
+ *   It is a bridge between register repository and  register fragment.
+ */
 class RegisterViewModel: ViewModel() {
 
 

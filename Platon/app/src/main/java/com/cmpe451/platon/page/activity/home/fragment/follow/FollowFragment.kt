@@ -26,6 +26,9 @@ import com.cmpe451.platon.page.activity.home.HomeActivity
 import com.cmpe451.platon.page.activity.home.fragment.profilepage.ProfilePageViewModel
 import com.cmpe451.platon.util.Definitions
 
+/*
+ *  It consists of the UI Code, data bindings and general logic of application
+ */
 class FollowFragment:Fragment() {
     private lateinit var binding: FragmentFollowersFollowingListBinding
     private lateinit var following: ArrayList<OtherUser>
@@ -47,6 +50,9 @@ class FollowFragment:Fragment() {
     private lateinit var followRecommendedBinding:DialogRecommendedBinding
     private lateinit var recDialog:AlertDialog
 
+    /*
+     *  Click on the top menu bar items handled
+     */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.follow_recommendation_btn->{
@@ -56,6 +62,9 @@ class FollowFragment:Fragment() {
         return item.onNavDestinationSelected(findNavController()) || super.onOptionsItemSelected(item)
     }
 
+    /*
+     *  Follow recommendation button click handled
+     */
     private fun onFollowRecommendationsClicked() {
         mFollowViewModel.getFollowRecommendations(20, (activity as HomeActivity).currUserToken)
         mFollowViewModel.getFollowRecommendationsResponse.observe(viewLifecycleOwner, { t ->
@@ -112,6 +121,9 @@ class FollowFragment:Fragment() {
         })
     }
 
+    /*
+     *  Creates and returns the view hierarchy associated with the fragment.
+     */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         binding = FragmentFollowersFollowingListBinding.inflate(inflater)
@@ -119,6 +131,10 @@ class FollowFragment:Fragment() {
         following = ArrayList()
         return binding.root
     }
+
+    /*
+     *  After view creation listeners and observers implemented
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setAdapter()
@@ -142,6 +158,9 @@ class FollowFragment:Fragment() {
         }
     }
 
+    /*
+     *  Observers of the view model responses handled
+     */
     private fun setObservers(){
         mFollowViewModel.getFollowingResource.observe(viewLifecycleOwner, { t->
             when(t.javaClass){
@@ -171,6 +190,9 @@ class FollowFragment:Fragment() {
 
     }
 
+    /*
+     *  Visibilities of top menu bar items handled
+     */
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.search_btn)?.isVisible = false
         menu.findItem(R.id.logout_menu_btn)?.isVisible = false
@@ -179,6 +201,9 @@ class FollowFragment:Fragment() {
         super.onPrepareOptionsMenu(menu)
     }
 
+    /*
+     *  Recycler view adapters handled
+     */
     private fun setAdapter(){
         dialog = Definitions().createProgressBar(requireContext())
         rvFollowers = binding.rvFollow

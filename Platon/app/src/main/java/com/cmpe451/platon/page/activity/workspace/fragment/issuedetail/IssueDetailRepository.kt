@@ -12,6 +12,9 @@ import retrofit2.Response
 import retrofit2.http.Field
 import retrofit2.http.Header
 
+/*
+It is a bridge between end point and view model.
+ */
 class IssueDetailRepository {
 
     val deleteIssueResponse: MutableLiveData<Resource<JsonObject>> = MutableLiveData()

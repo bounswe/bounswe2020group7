@@ -45,6 +45,7 @@ class MilestoneAdapter(private val data: ArrayList<Milestone>, private val miles
         }
     }
 
+    // Interface used in order to handle click
     interface MilestoneButtonClickListener{
         fun onMilestoneNameClicked(binding: MilestoneCellBinding)
         fun onEditMilestoneClicked(milestone: Milestone)
@@ -96,11 +97,14 @@ class MilestoneAdapter(private val data: ArrayList<Milestone>, private val miles
         data.clear()
         this.notifyDataSetChanged()
     }
+
+    // Adds given list of element to dataset
     fun submitElements(list: List<Milestone>){
         data.addAll(list)
         notifyDataSetChanged()
     }
 
+    // Replaces given list of elements with dataset elements
     fun replaceElements(list: List<Milestone>){
         data.clear()
         data.addAll(list)

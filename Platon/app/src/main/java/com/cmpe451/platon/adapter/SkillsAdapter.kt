@@ -10,6 +10,11 @@ import com.cmpe451.platon.databinding.SkillCellPersonalBinding
 class SkillsAdapter(private val data: ArrayList<String>,
                     private val context: Context, private val onTagClickedListener: OnTagClickedListener) :
     RecyclerView.Adapter<SkillsAdapter.SkillsViewHolder>() {
+
+    // Provide a reference to the views for each data item
+    // Complex data items may need more than one view per item, and
+    // you provide access to all the views for a data item in a view holder.
+    // Each data item is just a string in this case
     class SkillsViewHolder(private val view: View, var binding: SkillCellPersonalBinding) : RecyclerView.ViewHolder(view){
         fun bindData(binding: SkillCellPersonalBinding, model:String, position: Int, onTagClickedListener: OnTagClickedListener) {
             binding.titleSkill.text = model
@@ -21,6 +26,7 @@ class SkillsAdapter(private val data: ArrayList<String>,
 
     }
 
+    // Interface used in order to handle click
     interface OnTagClickedListener{
         fun onTagClicked(model: String, position: Int)
     }
@@ -67,15 +73,19 @@ class SkillsAdapter(private val data: ArrayList<String>,
         data.clear()
         this.notifyDataSetChanged()
     }
+
+    // Adds given list of element to dataset
     fun submitElements(list: List<String>){
         data.clear()
         data.addAll(list)
         notifyDataSetChanged()
     }
 
+    // Returns elements of the dataset
     fun getAllElements():ArrayList<String>{
         return data
     }
 
+    // Returns element size of the dataset
     override fun getItemCount() = data.size
 }

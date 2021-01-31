@@ -5,6 +5,10 @@ import androidx.lifecycle.ViewModel
 import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.WorkspaceListItems
 
+/*
+ *  It is a bridge between workspace list repository and workspace list fragment.
+ */
+
 class WorkspaceListViewModel : ViewModel() {
 
 

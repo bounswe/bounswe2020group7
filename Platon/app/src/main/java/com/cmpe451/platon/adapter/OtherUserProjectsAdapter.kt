@@ -30,6 +30,7 @@ class OtherUserProjectsAdapter(private val data: ArrayList<Research>, private va
         }
     }
 
+    // Interface used in order to handle click
     interface OtherUserProjectButtonClickListener{
         fun onUserProjectButtonClicked(binding: ResearchesCellBinding, position: Int)
     }
@@ -78,12 +79,13 @@ class OtherUserProjectsAdapter(private val data: ArrayList<Research>, private va
         data.clear()
         this.notifyDataSetChanged()
     }
+
+    // Adds given list of element to dataset
     fun submitElements(list: List<Research>){
         data.clear()
         data.addAll(list)
         notifyDataSetChanged()
     }
-
 
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = data.size

@@ -10,6 +10,9 @@ import com.cmpe451.platon.network.Resource
 import com.cmpe451.platon.network.models.*
 import com.google.gson.JsonObject
 
+/*
+It is a bridge between repository and fragment.
+ */
 class IssuesViewModel: ViewModel(){
 
     val repository = IssuesRepository()

@@ -28,6 +28,9 @@ import com.cmpe451.platon.util.Definitions
 import java.util.*
 import kotlin.collections.ArrayList
 
+/*
+It consists of the UI Code, data bindings and general logic of application
+ */
 class IssueDetailFragment: Fragment(), IssueCommentAdapter.OnCommentClickedListener {
     private lateinit var dialog: AlertDialog
     private val mIssueDetailViewModel: IssueDetailViewModel by viewModels()
@@ -46,6 +49,9 @@ class IssueDetailFragment: Fragment(), IssueCommentAdapter.OnCommentClickedListe
 
     lateinit var binding: FragmentIssueDetailBinding
 
+    /*
+     *  Creates and returns the view hierarchy associated with the fragment.
+     */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         binding = FragmentIssueDetailBinding.inflate(layoutInflater)
@@ -54,6 +60,9 @@ class IssueDetailFragment: Fragment(), IssueCommentAdapter.OnCommentClickedListe
         return binding.root
     }
 
+    /*
+     *  After view creation listeners and observers implemented
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         updateIssueInformations()
@@ -75,7 +84,9 @@ class IssueDetailFragment: Fragment(), IssueCommentAdapter.OnCommentClickedListe
         issue_deadline = sharedPreferences.getString("issue_deadline", null).toString()
     }
 
-
+    /*
+    *  Observers of the issue detail view model responses handled
+    */
     private fun setObservers(){
 
 
@@ -246,6 +257,11 @@ class IssueDetailFragment: Fragment(), IssueCommentAdapter.OnCommentClickedListe
         })
 
     }
+
+    /*
+    *  View initializations handled
+    *  Also layout manager and adapters of the recycler views added
+    */
     private fun initViews() {
 
         val layoutManagerComments = LinearLayoutManager(this.activity)
@@ -339,7 +355,9 @@ class IssueDetailFragment: Fragment(), IssueCommentAdapter.OnCommentClickedListe
     }
 
 
-
+    /*
+   *  Visibility of top menu items handled
+   */
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.issue_btn)?.isVisible = false
         menu.findItem(R.id.add_issue_btn)?.isVisible = false
@@ -349,7 +367,9 @@ class IssueDetailFragment: Fragment(), IssueCommentAdapter.OnCommentClickedListe
     }
 
 
-
+    /*
+    *  Click on update button handled
+    */
     @SuppressLint("ClickableViewAccessibility")
     private fun onUpdateButtonClicked() {
         val tmpBinding = FragmentEditIssueBinding.inflate(
@@ -467,6 +487,9 @@ class IssueDetailFragment: Fragment(), IssueCommentAdapter.OnCommentClickedListe
         }
     }
 
+    /*
+    *  When assignee of the issue wanted to changed. This method is used.
+    */
     private fun onAddAssigneeClicked() {
 
         var contributorNames = ArrayList<String>()
@@ -517,6 +540,9 @@ class IssueDetailFragment: Fragment(), IssueCommentAdapter.OnCommentClickedListe
 
     }
 
+    /*
+    *  Add comment handled when button is clicked
+    */
     private fun onAddCommentClicked() {
         val addBinding = DialogIssueAddCommentBinding.inflate(layoutInflater, binding.root, false)
         val addCommentDialog = AlertDialog.Builder(requireContext())
@@ -547,6 +573,9 @@ class IssueDetailFragment: Fragment(), IssueCommentAdapter.OnCommentClickedListe
         }
     }
 
+    /*
+     *  Click on comment recycler view cell handled
+     */
     override fun onDeleteCommentClicked(element: IssueComment, position: Int) {
         print("ert")
         mIssueDetailViewModel.deleteIssueComment((activity as WorkspaceActivity).workspace_id!!,

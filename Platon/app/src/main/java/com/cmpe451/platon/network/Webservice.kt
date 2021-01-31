@@ -6,6 +6,11 @@ import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.*
 
+/*
+Webservice interface used by Retrofit client. Each method provide connection with diffrent endpoint
+Different types of encoding mechanisms used according to endpoint types
+Method names are self explanatory about which end point it connects
+ */
 interface Webservice {
 
 
