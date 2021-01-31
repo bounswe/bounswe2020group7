@@ -22,3 +22,8 @@ Set Up All System (Frontend-Backend_Database) With Docker-Compose
         4.2 sudo bash run.sh
 
 To achive API Documentation *Please Run the System* and go to `http://127.0.0.1:5000/` or `http://127.0.0.1:5000/documentation`
+
+Database username and password can be found in the path: <Path of Repository>/platon/docker-compose.yml
+	MYSQL_DATABASE=platondb 
+	MYSQL_ROOT_PASSWORD=rootpassword 
+	MYSQL_USER=root
