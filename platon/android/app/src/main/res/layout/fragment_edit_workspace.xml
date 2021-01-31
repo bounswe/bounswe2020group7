@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/primary_dark_darker"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/inner_frame_layout_padding_2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <EditText
+            android:id="@+id/ws_title_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autofillHints=""
+            android:backgroundTint="@color/secondary_blue"
+            android:hint="@string/workspace_title_str"
+            android:inputType="textPersonName|textAutoComplete"
+            android:textColor="@color/primary_light"
+            android:textColorHighlight="@color/secondary_blue"
+            android:textColorHint="@color/secondary_blue"
+            android:textColorLink="@color/secondary_blue" />
+
+        <EditText
+            android:id="@+id/ws_description_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autofillHints=""
+            android:backgroundTint="@color/secondary_blue"
+            android:hint="@string/desc_str"
+            android:inputType="textMultiLine"
+            android:lines="5"
+            android:textColor="@color/primary_light"
+            android:textColorHighlight="@color/secondary_blue"
+            android:textColorHint="@color/secondary_blue"
+            android:textColorLink="@color/secondary_blue" />
+
+        <EditText
+            android:id="@+id/ws_max_collab_number_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autofillHints=""
+            android:maxLength="4"
+            android:backgroundTint="@color/secondary_blue"
+            android:hint="@string/max_collab_str"
+            android:inputType="number"
+            android:textColor="@color/primary_light"
+            android:textColorHighlight="@color/secondary_blue"
+            android:textColorHint="@color/secondary_blue"
+            android:textColorLink="@color/secondary_blue" />
+
+        <EditText
+            android:id="@+id/ws_deadline_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autofillHints=""
+            android:ems="15"
+            android:backgroundTint="@color/secondary_blue"
+            android:hint="@string/deadline_str"
+            android:inputType="date"
+            android:textColor="@color/primary_light"
+            android:textColorHighlight="@color/secondary_blue"
+            android:textColorHint="@color/secondary_blue"
+            android:textColorLink="@color/secondary_blue" />
+        <LinearLayout
+            android:padding="@dimen/xx_small"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/workspace_state_str"
+                android:backgroundTint="@color/secondary_blue"
+                android:textSize="@dimen/project_title_text_size"
+                android:textColorHighlight="@color/primary_light"
+                android:textColorHint="@color/secondary_blue"
+                android:textColor="@color/secondary_blue" />
+
+            <Spinner
+                android:id="@+id/sp_state"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dialog" />
+        </LinearLayout>
+
+
+        <Switch
+            android:id="@+id/private_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/private_workspace_str"
+            android:textColor="@color/primary_light"
+            tools:ignore="UseSwitchCompatOrMaterialXml"
+
+            />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/delete_ws_btn"
+                android:background="@color/secondary_blue_transparent"
+                android:text="@string/delete_workspace_str"
+                android:textColor="@color/primary_light"
+                android:layout_margin="@dimen/x_small"
+                android:padding="@dimen/xx_small"/>
+
+            <Button
+                android:id="@+id/update_ws_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/x_small"
+                android:textColor="@color/primary_light"
+                android:background="@color/secondary_blue_transparent"
+                android:padding="@dimen/xx_small"
+                android:text="@string/edit_workspace_str" />
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph_workspace"
+    app:startDestination="@id/workspaceFragment">
+    <fragment
+        android:id="@+id/workspaceFragment"
+        android:name="com.cmpe451.platon.page.activity.workspace.fragment.workspace.WorkspaceFragment"
+        android:label="Workspace" >
+        <action
+            android:id="@+id/action_workspaceFragment_to_addWorkspaceFragment"
+            app:destination="@id/addWorkspaceFragment" />
+        <action
+            android:id="@+id/action_workspaceFragment_to_issuesFragment"
+            app:destination="@id/issuesFragment" />
+        <action
+            android:id="@+id/action_workspaceFragment_to_workspaceFolderFragment"
+            app:destination="@id/workspaceFolderFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addWorkspaceFragment"
+        android:name="com.cmpe451.platon.page.activity.workspace.fragment.addworkspace.AddWorkspaceFragment"
+        android:label="Add Workspace" />
+    <fragment
+        android:id="@+id/issuesFragment"
+        android:name="com.cmpe451.platon.page.activity.workspace.fragment.issues.IssuesFragment"
+        android:label="Issues" >
+        <action
+            android:id="@+id/action_issuesFragment_to_issueDetailFragment"
+            app:destination="@id/issueDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/issueDetailFragment"
+        android:name="com.cmpe451.platon.page.activity.workspace.fragment.issuedetail.IssueDetailFragment"
+        android:label="Issue Detail" />
+    <fragment
+        android:id="@+id/workspaceFolderFragment"
+        android:name="com.cmpe451.platon.page.activity.workspace.fragment.filesystem.WorkspaceFolderFragment"
+        android:label="Directory" >
+    </fragment>
+</navigation>

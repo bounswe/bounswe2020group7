@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph_home"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.cmpe451.platon.page.activity.home.fragment.home.HomeFragment"
+        android:label="Home" >
+        <action
+            android:id="@+id/action_homeFragment_to_profilePageFragment"
+            app:destination="@id/profilePageFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_homeFragment_to_otherProfileFragment"
+            app:destination="@id/otherProfileFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_homeFragment_to_workspaceListFragment2"
+            app:destination="@id/workspaceListFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
+    <fragment
+        android:id="@+id/profilePageFragment"
+        android:name="com.cmpe451.platon.page.activity.home.fragment.profilepage.ProfilePageFragment"
+        android:label="Your Profile" >
+
+        <action
+            android:id="@+id/action_profilePageFragment_to_followFragment"
+            app:destination="@id/followFragment" />
+        <action
+            android:id="@+id/action_profilePageFragment_to_lottieFragment"
+            app:destination="@id/lottieFragment" />
+        <action
+            android:id="@+id/action_profilePageFragment_to_otherProfileFragment"
+            app:destination="@id/otherProfileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/followFragment"
+        android:name="com.cmpe451.platon.page.activity.home.fragment.follow.FollowFragment"
+        android:label="Details">
+        <action
+            android:id="@+id/action_followFragment_to_otherProfileFragment"
+            app:destination="@id/otherProfileFragment" />
+        <argument
+            android:name="follow"
+            app:argType="string" />
+        <argument
+            android:name="userId"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <action
+            android:id="@+id/action_followFragment_to_profilePageFragment"
+            app:destination="@id/profilePageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/otherProfileFragment"
+        android:name="com.cmpe451.platon.page.activity.home.fragment.otherprofile.OtherProfileFragment"
+        android:label="Profile">
+        <action
+            android:id="@+id/action_otherProfileFragment_to_followFragment2"
+            app:destination="@id/followFragment" />
+        <argument
+            android:name="userId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_otherProfileFragment_self"
+            app:destination="@id/otherProfileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/workspaceListFragment"
+        android:name="com.cmpe451.platon.page.activity.home.fragment.workspace.WorkspaceListFragment"
+        android:label="Workspaces">
+        <action
+            android:id="@+id/action_workspaceListFragment_to_otherProfileFragment"
+            app:destination="@id/otherProfileFragment" />
+        <action
+            android:id="@+id/action_workspaceListFragment_to_profilePageFragment"
+            app:destination="@id/profilePageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/lottieFragment"
+        android:name="com.cmpe451.platon.page.activity.home.fragment.lottie.LottieFragment"
+        android:label="LottieFragment" />
+</navigation>

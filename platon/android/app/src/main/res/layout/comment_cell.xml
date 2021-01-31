@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android = "http://schemas.android.com/apk/res/android"
+    xmlns:card_view = "http://schemas.android.com/apk/res-auto"
+    card_view:cardCornerRadius = "@dimen/medium"
+    card_view:cardElevation="@dimen/xxx_small"
+    android:layout_marginBottom="@dimen/xx_small"
+    android:layout_width = "match_parent"
+    card_view:contentPadding="@dimen/medium"
+    android:layout_margin="@dimen/xx_small"
+    card_view:cardBackgroundColor="@color/primary_dark_lighter"
+    android:layout_height = "wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/rl_commentElement"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_alignParentTop="true"
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/title_text_size_smaller"
+            android:text="@string/loading_str"/>
+
+        <TextView
+            android:layout_below="@+id/tv_title"
+            android:id="@+id/tv_description"
+            android:layout_width="match_parent"
+            android:textSize="@dimen/subtitle_text_size"
+            android:layout_toLeftOf="@+id/iv_deleteComment"
+            android:layout_height="wrap_content"
+            android:text="@string/loading_str"/>
+
+        <RatingBar
+            android:id="@+id/rtb_rating"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/tv_dateTime"
+            style="@android:style/Widget.DeviceDefault.RatingBar.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tv_dateTime"
+            android:layout_width="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:textSize="@dimen/subtitle_text_size"
+            android:layout_height="wrap_content"
+            android:text="@string/loading_str"/>
+
+
+        <ImageView
+            android:id="@+id/iv_deleteComment"
+            android:visibility="gone"
+            android:layout_below="@id/rtb_rating"
+            android:layout_alignParentEnd="true"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_delete_24dp"
+            />
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

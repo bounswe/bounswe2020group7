@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primary_dark"
+    tools:context=".page.activity.login.LoginActivity">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/view_back_darker"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/inner_frame_layout_padding_2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <EditText
+            android:id="@+id/milestone_title_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autofillHints=""
+            android:backgroundTint="@color/secondary_yellow"
+            android:hint="@string/milestone_title_str_title"
+            android:inputType="textPersonName|textAutoComplete"
+            android:textColor="@color/primary_light"
+            android:textColorHighlight="@color/secondary_yellow"
+            android:textColorHint="@color/secondary_yellow"
+            android:textColorLink="@color/secondary_yellow" />
+
+        <EditText
+            android:id="@+id/milestone_description_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autofillHints=""
+            android:backgroundTint="@color/secondary_yellow"
+            android:hint="@string/desc_str"
+            android:inputType="textMultiLine"
+            android:lines="5"
+            android:textColor="@color/primary_light"
+            android:textColorHighlight="@color/secondary_yellow"
+            android:textColorHint="@color/secondary_yellow"
+            android:textColorLink="@color/secondary_yellow" />
+
+        <TextView
+            android:id="@+id/ws_max_collab_number_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autofillHints=""
+            android:backgroundTint="@color/secondary_yellow"
+            android:text="@string/due_to_str"
+            android:maxLength="4"
+            android:layout_margin="@dimen/x_small"
+            android:textSize="@dimen/title_text_size"
+            android:textColor="@color/secondary_yellow"
+            android:textColorHighlight="@color/secondary_yellow"
+            android:textColorHint="@color/secondary_yellow"
+            android:textColorLink="@color/secondary_yellow" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/milestone_deadline_et"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autofillHints=""
+                android:ems="15"
+                android:backgroundTint="@color/secondary_yellow"
+                android:hint="@string/date_str"
+                android:inputType="date"
+                android:textColor="@color/primary_light"
+                android:textColorHighlight="@color/secondary_yellow"
+                android:textColorHint="@color/secondary_yellow"
+                android:textColorLink="@color/secondary_yellow" />
+            <EditText
+                android:id="@+id/milestone_date_et"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autofillHints=""
+                android:ems="15"
+                android:backgroundTint="@color/secondary_yellow"
+                android:hint="@string/time_str"
+                android:inputType="date"
+                android:textColor="@color/primary_light"
+                android:textColorHighlight="@color/secondary_yellow"
+                android:textColorHint="@color/secondary_yellow"
+                android:textColorLink="@color/secondary_yellow" />
+        </LinearLayout>
+        <Button
+            android:id="@+id/button_milestone_add"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:backgroundTint="@color/secondary_yellow"
+            android:text="@string/add_milestone_str"
+            android:textColor="@color/primary_dark_darker" />
+
+    </LinearLayout>
+</ScrollView>
+

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
+    android:background="@color/primary_dark_darker"
+    android:minHeight="?attr/actionBarSize"
+    android:persistentDrawingCache="animation"
+    app:contentInsetStartWithNavigation="0dp"
+    app:navigationIcon="@drawable/ic_arrow_back_24dp"
+    app:titleTextColor="@color/primary_light">
+
+
+</androidx.appcompat.widget.Toolbar>

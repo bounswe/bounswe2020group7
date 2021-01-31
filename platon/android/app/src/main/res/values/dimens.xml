@@ -1,0 +1,51 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <!--
+    Because the window insets on round devices are larger than 15dp, this padding only applies
+    to square screens.
+    -->
+    <dimen name="box_inset_layout_padding">0dp</dimen>
+
+    <!--
+    This padding applies to both square and round screens. The total padding between the buttons
+    and the window insets is box_inset_layout_padding (above variable) on square screens and
+    inner_frame_layout_padding (below variable) on round screens.
+    -->
+    <dimen name="inner_frame_layout_padding">5dp</dimen>
+
+    <dimen name="xxx_small">2dp</dimen>
+    <dimen name="xx_small">4dp</dimen>
+    <dimen name="x_small">6dp</dimen>
+    <dimen name="small">8dp</dimen>
+    <dimen name="medium">10dp</dimen>
+    <dimen name="large">12dp</dimen>
+    <dimen name="x_large">14dp</dimen>
+    <dimen name="xx_large">16dp</dimen>
+    <dimen name="xxx_large">18dp</dimen>
+    <dimen name="xxxx_large">24dp</dimen>
+    <dimen name="xxxxx_large">30dp</dimen>
+
+
+    <dimen name="large_photo">64dp</dimen>
+    <dimen name="medium_photo">32dp</dimen>
+    <dimen name="small_photo">24dp</dimen>
+
+    <dimen name="recycler_view_height_medium">156dp</dimen>
+
+    <dimen name="inner_frame_layout_padding_2">10dp</dimen>
+    <dimen name="title_logo_padding">10dp</dimen>
+    <dimen name="title_height">36dp</dimen>
+    <dimen name="nav_bar_height">50dp</dimen>
+    <dimen name="profile_page_margin">20dp</dimen>
+    <dimen name="profile_margin_half">8dp</dimen>
+    <dimen name="profile_list_height">80dp</dimen>
+    <item name="profile_page_name_section_height" type="dimen">20%</item>
+    <dimen name="title_text_size">20sp</dimen>
+    <dimen name="title_text_size_smaller">16sp</dimen>
+    <dimen name="project_title_text_size">20sp</dimen>
+    <dimen name="desc_text_size">12sp</dimen>
+    <dimen name="subtitle_text_size">10sp</dimen>
+    <dimen name="details_text_size">16sp</dimen>
+</resources>

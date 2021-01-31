@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/view_back_darker"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/inner_frame_layout_padding_2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/firstname_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autofillHints=""
+                android:backgroundTint="@color/secondary_purple"
+                android:hint="@string/firstName_str"
+                android:inputType="textPersonName|textAutoComplete"
+                android:textColor="@color/primary_light"
+                android:textColorHighlight="@color/primary_light"
+                android:textColorHint="@color/secondary_purple"
+                android:textColorLink="@color/secondary_purple" />
+
+            <EditText
+                android:id="@+id/lastname_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autofillHints=""
+                android:backgroundTint="@color/secondary_purple"
+                android:ems="15"
+                android:hint="@string/lastName_str"
+                android:inputType="textPersonName"
+                android:textColor="@color/primary_light"
+                android:textColorHighlight="@color/primary_light"
+                android:textColorHint="@color/secondary_purple"
+                android:textColorLink="@color/secondary_purple" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:padding="@dimen/xx_small"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/job_str"
+                android:backgroundTint="@color/secondary_purple"
+                android:textSize="@dimen/project_title_text_size"
+                android:textColorHighlight="@color/primary_light"
+                android:textColorHint="@color/secondary_purple"
+                android:textColor="@color/secondary_purple" />
+
+            <Spinner
+                android:layout_marginStart="@dimen/medium"
+                android:id="@+id/sp_job"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dialog" />
+        </LinearLayout>
+
+        <EditText
+            android:visibility="gone"
+            android:id="@+id/et_newJob"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            android:backgroundTint="@color/secondary_purple"
+            android:ems="15"
+            android:hint="@string/enter_your_job_str"
+            android:inputType="text"
+            android:textColor="@color/primary_light"
+            android:textColorHighlight="@color/primary_light"
+            android:textColorHint="@color/secondary_purple"
+            android:textColorLink="@color/secondary_purple" />
+
+        <EditText
+            android:id="@+id/et_institution"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            android:backgroundTint="@color/secondary_purple"
+            android:hint="@string/institution_str"
+            android:inputType="text|textAutoCorrect"
+            android:textColor="@color/primary_light"
+            android:textColorHighlight="@color/primary_light"
+            android:textColorHint="@color/secondary_purple"
+            android:textColorLink="@color/secondary_purple" />
+
+        <Switch
+            android:id="@+id/private_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/private_profile_str"
+            android:textColor="@color/primary_light"
+            tools:ignore="UseSwitchCompatOrMaterialXml"
+
+            />
+
+        <Button
+            android:id="@+id/button_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:backgroundTint="@color/secondary_purple"
+            android:text="@string/text_edit_profile"
+            android:textColor="@color/primary_light" />
+</LinearLayout>

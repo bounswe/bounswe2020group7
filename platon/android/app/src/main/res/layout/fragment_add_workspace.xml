@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primary_dark"
+    tools:context=".page.activity.login.LoginActivity">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/view_back_darker"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/inner_frame_layout_padding_2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <EditText
+            android:id="@+id/ws_title_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autofillHints=""
+            android:backgroundTint="@color/secondary_blue"
+            android:hint="@string/workspace_title_str"
+            android:inputType="textPersonName|textAutoComplete"
+            android:textColor="@color/primary_light"
+            android:textColorHighlight="@color/secondary_blue"
+            android:textColorHint="@color/secondary_blue"
+            android:textColorLink="@color/secondary_blue" />
+
+        <EditText
+            android:id="@+id/ws_description_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autofillHints=""
+            android:backgroundTint="@color/secondary_blue"
+            android:hint="@string/desc_str"
+            android:inputType="textMultiLine"
+            android:lines="5"
+            android:textColor="@color/primary_light"
+            android:textColorHighlight="@color/secondary_blue"
+            android:textColorHint="@color/secondary_blue"
+            android:textColorLink="@color/secondary_blue" />
+
+        <EditText
+            android:id="@+id/ws_max_collab_number_et"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autofillHints=""
+            android:backgroundTint="@color/secondary_blue"
+            android:hint="@string/max_collab_str"
+            android:inputType="number"
+            android:maxLength="4"
+            android:textColor="@color/primary_light"
+            android:textColorHighlight="@color/secondary_blue"
+            android:textColorHint="@color/secondary_blue"
+            android:textColorLink="@color/secondary_blue" />
+
+        <EditText
+            android:id="@+id/ws_deadline_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autofillHints=""
+
+            android:ems="15"
+            android:backgroundTint="@color/secondary_blue"
+            android:hint="@string/deadline_str"
+            android:inputType="date"
+            android:textColor="@color/primary_light"
+            android:textColorHighlight="@color/secondary_blue"
+            android:textColorHint="@color/secondary_blue"
+            android:textColorLink="@color/secondary_blue" />
+        <LinearLayout
+            android:id="@+id/add_requirement_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="fill_horizontal"
+            android:layout_marginTop="@dimen/x_small"
+            android:layout_marginEnd="@dimen/x_small">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/requirements_str"
+                android:textColor="@color/secondary_blue"
+                android:textSize="18sp"
+                android:layout_marginStart="@dimen/x_small"
+                app:drawableRightCompat="@drawable/ic_add_24dp" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/add_skill_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="fill_horizontal"
+            android:layout_marginTop="@dimen/x_small"
+            android:layout_marginEnd="@dimen/x_small">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/skills"
+                android:textColor="@color/secondary_blue"
+                android:textSize="18sp"
+                android:layout_marginStart="@dimen/x_small"
+                app:drawableRightCompat="@drawable/ic_add_24dp" />
+
+        </LinearLayout>
+
+
+        <Switch
+            android:id="@+id/private_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/private_workspace_str"
+            android:textColor="@color/primary_light"
+            tools:ignore="UseSwitchCompatOrMaterialXml"
+
+            />
+
+        <Button
+            android:id="@+id/button_workspace_add"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:backgroundTint="@color/secondary_blue_transparent"
+            android:text="@string/add_sorkspace_str"
+            android:textColor="@color/primary_light" />
+
+    </LinearLayout>
+</ScrollView>
+

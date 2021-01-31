@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/primary_dark"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:animateLayoutChanges="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/workspace_title_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/profile_page_margin"
+            android:padding="@dimen/small"
+            android:gravity="center_horizontal"
+            android:text="@string/loading_str"
+            android:textColor="@color/primary_light"
+            android:background="@drawable/view_back_darker"
+            android:textSize="@dimen/title_text_size"
+            app:drawableEndCompat="@drawable/ic_add_24dp"
+            app:drawableStartCompat="@drawable/ic_remove_24px"
+            />
+
+            <TextView
+                android:id="@+id/info_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:fontFamily="@font/dm_sans_bold"
+                android:padding="@dimen/x_small"
+                android:paddingHorizontal="@dimen/title_logo_padding"
+                android:shadowColor="@color/primary_dark"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2"
+                android:text="@string/your_info"
+                android:textColor="@color/secondary_green_transparent"
+                android:textSize="@dimen/project_title_text_size"
+                android:drawablePadding="@dimen/xx_small"
+                app:drawableEndCompat="@drawable/ic_editprofile_24px"
+                />
+
+
+        <TextView
+            android:id="@+id/desc_title_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:fontFamily="@font/dm_sans_bold"
+            android:padding="@dimen/x_small"
+            android:paddingHorizontal="@dimen/title_logo_padding"
+            android:shadowColor="@color/primary_dark"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"
+            android:text="@string/desc_str"
+            android:textColor="@color/secondary_orange_transparent"
+            android:textSize="18sp"
+            android:drawablePadding="@dimen/xx_small"
+            app:drawableEndCompat="@drawable/ic_expand_more_white_24dp" />
+
+
+            <LinearLayout
+                android:id="@+id/project_info_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/profile_page_margin"
+                android:background="@drawable/view_back_darker"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/description_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/xx_small"
+                    android:text="@string/desc_str"
+                    android:textAlignment="center"
+                    android:textColor="@color/primary_light"
+                    android:textSize="@dimen/details_text_size" />
+
+                <TextView
+                    android:id="@+id/isPrivate_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/xx_small"
+                    android:text="@string/is_private_str"
+                    android:textAlignment="center"
+                    android:textColor="@color/primary_light"
+                    android:textSize="@dimen/details_text_size" />
+
+                <TextView
+                    android:id="@+id/maxCollab_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/xx_small"
+                    android:text="@string/max_collab_str"
+                    android:textAlignment="center"
+                    android:textColor="@color/primary_light"
+                    android:textSize="@dimen/details_text_size" />
+
+                <TextView
+                    android:id="@+id/deadline_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/xx_small"
+                    android:text="@string/deadline_str"
+                    android:textAlignment="center"
+                    android:textColor="@color/primary_light"
+                    android:textSize="@dimen/details_text_size" />
+
+                <TextView
+                    android:id="@+id/state_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/xx_small"
+                    android:text="@string/workspace_state_str"
+                    android:textAlignment="center"
+                    android:textColor="@color/primary_light"
+                    android:textSize="@dimen/details_text_size" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/requirements_title_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:fontFamily="@font/dm_sans_bold"
+                android:padding="@dimen/x_small"
+                android:paddingHorizontal="@dimen/title_logo_padding"
+                android:shadowColor="@color/primary_dark"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2"
+                android:text="@string/requirements_str"
+                android:textColor="@color/secondary_orange_transparent"
+                android:textSize="18sp"
+                android:drawablePadding="@dimen/xx_small"
+                app:drawableEndCompat="@drawable/ic_expand_more_white_24dp"
+                />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:id="@+id/requirement_ll">
+            <ImageView
+                android:id="@+id/add_requirement_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_add_24dp"
+                />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_workspace_requirements"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/recycler_view_height_medium"
+                android:layout_margin="@dimen/profile_page_margin"
+                android:background="@drawable/view_back_darker"
+                app:layout_constraintBottom_toTopOf="@id/projects_title"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/info_title"
+                app:layout_constraintVertical_bias="0.6" />
+        </LinearLayout>
+        <TextView
+            android:id="@+id/skills_title_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:fontFamily="@font/dm_sans_bold"
+            android:padding="@dimen/x_small"
+            android:paddingHorizontal="@dimen/title_logo_padding"
+            android:shadowColor="@color/primary_dark"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"
+            android:text="@string/skills"
+            android:textColor="@color/secondary_orange_transparent"
+            android:textSize="18sp"
+            android:drawablePadding="@dimen/xx_small"
+            app:drawableEndCompat="@drawable/ic_expand_more_white_24dp"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/skill_ll"
+            android:visibility="gone" >
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/add_skill_iv"
+                android:src="@drawable/ic_add_24dp"
+                android:layout_gravity="center_horizontal"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_workspace_skills"
+                android:background="@drawable/view_back_darker"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/recycler_view_height_medium"
+                android:layout_margin="@dimen/profile_page_margin"
+                app:layout_constraintBottom_toTopOf="@id/projects_title"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/info_title"
+                app:layout_constraintVertical_bias="0.6" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/milestone_title_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:fontFamily="@font/dm_sans_bold"
+            android:gravity="start"
+            android:padding="@dimen/x_small"
+            android:shadowColor="@color/primary_dark"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"
+            android:text="@string/milestone_str"
+            android:textAllCaps="false"
+            android:textColor="@color/secondary_yellow"
+            android:textSize="@dimen/project_title_text_size"
+            android:drawablePadding="@dimen/xx_small"
+            app:drawableEndCompat="@drawable/ic_add_24dp"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/milestone_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/profile_page_margin"
+            app:layout_constraintBottom_toTopOf="@id/projects_title"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/info_title"
+            app:layout_constraintVertical_bias="0.6" />
+        <TextView
+            android:id="@+id/upcoming_title_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:fontFamily="@font/dm_sans_bold"
+            android:gravity="start"
+            android:padding="@dimen/x_small"
+            android:shadowColor="@color/primary_dark"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="2"
+            android:text="@string/upcoming_events_str"
+            android:textAllCaps="false"
+            android:textColor="@color/secondary_green"
+            android:textSize="@dimen/project_title_text_size"
+            android:drawablePadding="@dimen/xx_small"
+            app:drawableEndCompat="@drawable/ic_add_24dp"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/upcoming_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/profile_page_margin"
+            app:layout_constraintBottom_toTopOf="@id/projects_title"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/info_title"
+            app:layout_constraintVertical_bias="0.6" />
+            <TextView
+                android:id="@+id/collab_title_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:fontFamily="@font/dm_sans_bold"
+                android:gravity="start"
+                android:padding="@dimen/x_small"
+                android:shadowColor="@color/primary_dark"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2"
+                android:text="@string/collaborators"
+                android:textAllCaps="false"
+                android:textColor="@color/secondary_purple"
+                android:textSize="@dimen/project_title_text_size"
+                android:drawablePadding="@dimen/xx_small"
+                app:drawableEndCompat="@drawable/ic_add_24dp"
+                />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/collaborators_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/profile_page_margin"
+            app:layout_constraintBottom_toTopOf="@id/projects_title"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/info_title"
+            app:layout_constraintVertical_bias="0.6" />
+
+
+
+
+
+
+    </LinearLayout>
+
+</ScrollView>

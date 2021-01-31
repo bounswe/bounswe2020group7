@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_margin="@dimen/xxx_small"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@drawable/view_back_darker"
+    >
+    <ImageView
+        android:id="@+id/profile_page_icon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_vertical"
+        android:layout_margin="@dimen/xx_small"
+        app:srcCompat="@drawable/ic_launcher_foreground" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="10"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/tv_name_surname"
+            android:padding="@dimen/x_small"
+            android:layout_marginStart="@dimen/small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name Surname"
+            android:textSize="@dimen/details_text_size"
+            android:textColor="@color/primary_light" />
+        <TextView
+            android:id="@+id/tv_job"
+            android:padding="@dimen/x_small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/small"
+            android:text="Job"
+            android:textSize="@dimen/desc_text_size"
+            android:textColor="@color/primary_light" />
+        <TextView
+            android:id="@+id/tv_institution"
+            android:padding="@dimen/x_small"
+            android:layout_marginStart="@dimen/small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Institution"
+            android:textSize="@dimen/desc_text_size"
+            android:textColor="@color/primary_light" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_invite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="center_vertical"
+        android:layout_margin="@dimen/xx_small"
+        app:srcCompat="@drawable/ic_add_24dp" />
+
+
+</LinearLayout>
+
