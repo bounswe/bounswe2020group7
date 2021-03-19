@@ -4,7 +4,7 @@ chardet==3.0.4
 Django==3.0.7
 django-crispy-forms==1.9.1
 django-rest-framework==0.1.0
-djangorestframework==3.11.0
+djangorestframework==3.11.2
 idna==2.9
 mysqlclient==1.4.6
 pytz==2020.1
